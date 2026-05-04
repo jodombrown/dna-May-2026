@@ -1,0 +1,3094 @@
+{
+  "generatedAt": "2026-05-04T16:42:33Z",
+  "repoHead": "95d7978550d044bf199ea6148fff11d77ce4295f",
+  "summary": {
+    "healthScore": 77.9,
+    "anyCount": 446,
+    "anyCountUndocumented": 337,
+    "anyCountDocumented": 109,
+    "rlsCoveragePercent": 94.4,
+    "interconnectionScore": 90.0,
+    "mobileCompliancePercent": 73.0,
+    "buildPasses": true,
+    "lintPasses": false
+  },
+  "typescript": {
+    "tsconfigStrict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "tscErrors": 0,
+    "totalAnyCount": 446,
+    "documentedExceptions": 109,
+    "undocumentedViolations": 337,
+    "violations": [
+      {
+        "file": "src/components/admin/AdminDashboardLayout.tsx",
+        "line": 211,
+        "context": "        if (stats) {\n          setPendingFeedback((stats as any)?.feedback?.pending || 0);\n          setPendingModeration((stats as any)?.moderation?.pending_flags || 0);"
+      },
+      {
+        "file": "src/components/admin/AdminDashboardLayout.tsx",
+        "line": 212,
+        "context": "          setPendingFeedback((stats as any)?.feedback?.pending || 0);\n          setPendingModeration((stats as any)?.moderation?.pending_flags || 0);\n        }"
+      },
+      {
+        "file": "src/components/admin/EngagementDashboard.tsx",
+        "line": 31,
+        "context": "  cohort: string | null;\n  event_context: any;\n  user_email?: string;"
+      },
+      {
+        "file": "src/components/admin/EngagementDashboard.tsx",
+        "line": 133,
+        "context": "        p.notification_preferences && \n        (p.notification_preferences as any)?.engagement_reminders === false\n      ).length || 0;"
+      },
+      {
+        "file": "src/components/admin/ContributionModerationQueue.tsx",
+        "line": 67,
+        "context": "        created_at: item.created_at,\n        user_name: (item.profiles as any)?.display_name || 'Unknown',\n        user_email: (item.profiles as any)?.email || '',"
+      },
+      {
+        "file": "src/components/admin/ContributionModerationQueue.tsx",
+        "line": 68,
+        "context": "        user_name: (item.profiles as any)?.display_name || 'Unknown',\n        user_email: (item.profiles as any)?.email || '',\n        admin_notes: item.admin_notes"
+      },
+      {
+        "file": "src/components/admin/SignalAnalyticsDashboard.tsx",
+        "line": 57,
+        "context": "      const totalSignals = signals?.length || 0;\n      const activeSignals = signals?.filter(s => (s.signal_data as any)?.status === 'active').length || 0;"
+      },
+      {
+        "file": "src/components/ui/location-autocomplete.tsx",
+        "line": 80,
+        "context": "          const data = await response.json();\n          const formattedResults: LocationResult[] = data.map((item: any) => ({\n            display_name: item.display_name,"
+      },
+      {
+        "file": "src/components/ui/responsive-modal.tsx",
+        "line": 63,
+        "context": "  if (isMobile) {\n    return <DrawerTitle className={className} {...(props as any)}>{children}</DrawerTitle>;\n  }"
+      },
+      {
+        "file": "src/components/ui/responsive-modal.tsx",
+        "line": 65,
+        "context": "  }\n  return <DialogTitle className={className} {...(props as any)}>{children}</DialogTitle>;\n}"
+      },
+      {
+        "file": "src/components/ui/responsive-modal.tsx",
+        "line": 71,
+        "context": "  if (isMobile) {\n    return <DrawerDescription className={className} {...(props as any)}>{children}</DrawerDescription>;\n  }"
+      },
+      {
+        "file": "src/components/ui/responsive-modal.tsx",
+        "line": 73,
+        "context": "  }\n  return <DialogDescription className={className} {...(props as any)}>{children}</DialogDescription>;\n}"
+      },
+      {
+        "file": "src/components/navigation/AccountDrawer.tsx",
+        "line": 111,
+        "context": "    try {\n      await generateProfilePDF(profile as any);\n      toast.success('Profile PDF downloaded successfully');"
+      },
+      {
+        "file": "src/components/convene/EventFormFields.tsx",
+        "line": 228,
+        "context": "              type=\"button\"\n              onClick={() => onChange({ format: option.value as any })}\n              className={cn("
+      },
+      {
+        "file": "src/components/profile/AvatarUploadModal.tsx",
+        "line": 37,
+        "context": "\n  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {\n    setCroppedAreaPixels(croppedAreaPixels);"
+      },
+      {
+        "file": "src/components/profile/ProfileCard.tsx",
+        "line": 53,
+        "context": "  // SAFELY HANDLE ARRAY OR STRING\n  const getStringArray = (value: any): string[] => {\n    if (Array.isArray(value)) return value.filter(Boolean);"
+      },
+      {
+        "file": "src/components/profile/ProfileDataFetcher.ts",
+        "line": 4,
+        "context": "\nexport const useProfileDataFetcher = (profile: any) => {\n  const fetchProjectsAndInitiatives = async () => {"
+      },
+      {
+        "file": "src/components/profile/UsernameManager.tsx",
+        "line": 109,
+        "context": "      const { data, error } = await supabase\n        .rpc('update_username' as any, { \n          new_username: username"
+      },
+      {
+        "file": "src/components/profile/ProfileMissingFields.tsx",
+        "line": 17,
+        "context": "interface ProfileMissingFieldsProps {\n  profile: any;\n  compact?: boolean;"
+      },
+      {
+        "file": "src/components/profile/ImpactRadarChart.tsx",
+        "line": 109,
+        "context": "              dataKey=\"c\"\n              tick={(props: any) => (\n                <CustomTick"
+      },
+      {
+        "file": "src/components/profile/ProfileShareDropdown.tsx",
+        "line": 23,
+        "context": "  fullName?: string;\n  profile?: any; // For PDF generation\n  showDownload?: boolean;"
+      },
+      {
+        "file": "src/components/profile/LinkedInExperienceSection.tsx",
+        "line": 17,
+        "context": "interface ExperienceSectionProps {\n  profile: any;\n  isOwnProfile: boolean;"
+      },
+      {
+        "file": "src/components/profile/ProfileBadges.tsx",
+        "line": 63,
+        "context": "\n  const earnedSlugs = new Set(userBadges.map(b => (b.badge as any)?.slug ?? ''));\n  const featuredBadges = userBadges.filter(b => b.is_featured);"
+      },
+      {
+        "file": "src/components/profile/ProfileCompletionBar.tsx",
+        "line": 11,
+        "context": "interface ProfileCompletionBarProps {\n  profile: any;\n  showMissingFields?: boolean;"
+      },
+      {
+        "file": "src/components/profile/edit/AfricaFocusSection.tsx",
+        "line": 40,
+        "context": "\n  const updateFocusArea = (index: number, field: 'geography' | 'sectors', value: any) => {\n    const updated = [...africaFocusAreas];"
+      },
+      {
+        "file": "src/components/profile/edit/types.ts",
+        "line": 55,
+        "context": "  formData: ProfileEditFormData;\n  onUpdate: (field: keyof ProfileEditFormData, value: any) => void;\n  errors?: Record<string, string>;"
+      },
+      {
+        "file": "src/components/profile/form/ProfileFormSubmission.ts",
+        "line": 39,
+        "context": "      updated_at: new Date().toISOString(),\n    } as any)\n    .eq('id', userId);"
+      },
+      {
+        "file": "src/components/profile/form/hooks/useProfileFormState.ts",
+        "line": 6,
+        "context": "interface UseProfileFormStateProps {\n  profile: any;\n  user: { email?: string } | null;"
+      },
+      {
+        "file": "src/components/profile/cross-5c/ProfileContributionsSection.tsx",
+        "line": 110,
+        "context": "        const { data: badges, error: badgesError } = await supabase\n          .from('contribution_badges' as any)\n          .select(`"
+      },
+      {
+        "file": "src/components/profile/cross-5c/ProfileContributionsSection.tsx",
+        "line": 124,
+        "context": "        if (!badgesError && badges) {\n          (badges as any[]).forEach((badge: { id: string; badge_type: string | null; description: string | null; created_at: string; space_id: string; spaces: { name: string } | null }) => {\n            allContributions.push({"
+      }
+    ],
+    "topFiles": [
+      {
+        "file": "src/pages/admin/contributions/ContributionAnalytics.tsx",
+        "count": 16
+      },
+      {
+        "file": "src/pages/ProfileEdit.tsx",
+        "count": 13
+      },
+      {
+        "file": "src/pages/admin/analytics/CollaborationAnalytics.tsx",
+        "count": 13
+      },
+      {
+        "file": "src/pages/africa/RegionHubPage.tsx",
+        "count": 10
+      },
+      {
+        "file": "src/pages/dna/admin/ConveyAnalytics.tsx",
+        "count": 10
+      },
+      {
+        "file": "src/pages/africa/CountryHubPage.tsx",
+        "count": 9
+      },
+      {
+        "file": "src/services/badge-service.ts",
+        "count": 8
+      },
+      {
+        "file": "src/pages/NotificationSettingsPage.tsx",
+        "count": 7
+      },
+      {
+        "file": "src/components/feed/CommentSection.tsx",
+        "count": 6
+      },
+      {
+        "file": "src/components/feed/cards/OpportunityFeedCard.tsx",
+        "count": 6
+      }
+    ]
+  },
+  "rls": {
+    "totalTables": 179,
+    "tablesWithoutRLS": [],
+    "tablesNoPolicies": [],
+    "tablesSelectOnly": [
+      "badge_definitions",
+      "cron_job_logs",
+      "event_reminder_logs",
+      "geographic_relevance",
+      "hub_metrics",
+      "rate_limit_checks",
+      "reserved_hashtags",
+      "space_templates",
+      "super_admin_protected",
+      "username_history"
+    ],
+    "tables": [
+      {
+        "name": "activity_feed",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "ada_cohort_memberships",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "ada_cohorts",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "ada_experiment_assignments",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "ada_experiment_variants",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "ada_experiments",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "ada_policies",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "adin_insights",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "adin_preferences",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "adin_queries",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "adin_query_log",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "adin_user_usage",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "admin_activity_log",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "admin_allowed_emails",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "admin_sessions",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "alpha_feedback",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "alpha_invites",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "announcement_dismissals",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "announcements",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "applications",
+        "enabled": true,
+        "policyCount": 12,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "badge_counts",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "badge_definitions",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "beta_waitlist",
+        "enabled": true,
+        "policyCount": 12,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "blocked_users",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "comment_reactions",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "comment_reports",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "comments",
+        "enabled": true,
+        "policyCount": 27,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "communities",
+        "enabled": true,
+        "policyCount": 32,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "composer_drafts",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "content_attribution",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "content_flags",
+        "enabled": true,
+        "policyCount": 13,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "continents",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "contribution_acknowledgments",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "contribution_fulfillments",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "contribution_needs",
+        "enabled": true,
+        "policyCount": 12,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "contribution_offers",
+        "enabled": true,
+        "policyCount": 12,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "contribution_reports",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "conversation_participants",
+        "enabled": true,
+        "policyCount": 19,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "conversations_new",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "countries",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "cron_job_logs",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "dia_composer_suggestions",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "dia_conversations",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "dia_feed_insights",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "dia_match_results",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "dia_messages",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "dia_nudges",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "dia_rematch_queue",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "diaspora_data",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "dismissed_recommendations",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "draft_posts",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "economic_indicators",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "entity_vectors",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_analytics",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "event_attendees",
+        "enabled": true,
+        "policyCount": 13,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_blasts",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_checkins",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_comments",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_promo_codes",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_registration_questions",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_reminder_logs",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "event_reports",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "event_roles",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_ticket_holds",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_ticket_types",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_tickets",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "event_waitlist",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "events",
+        "enabled": true,
+        "policyCount": 87,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "events_log",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "feed_bookmarks",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "feed_comments",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "feed_engagement",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "feed_engagement_events",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "feed_items",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "feed_reactions",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "feed_research_responses",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "feed_reshares",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "feedback_attachments",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "feedback_categories",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "feedback_channel_memberships",
+        "enabled": true,
+        "policyCount": 11,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "feedback_channels",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "feedback_messages",
+        "enabled": true,
+        "policyCount": 15,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "feedback_reactions",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "geographic_relevance",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "group_join_requests",
+        "enabled": true,
+        "policyCount": 12,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "group_members",
+        "enabled": true,
+        "policyCount": 34,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "group_messages",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "group_post_comments",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "group_post_likes",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "group_posts",
+        "enabled": true,
+        "policyCount": 13,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "groups",
+        "enabled": true,
+        "policyCount": 20,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "hashtag_followers",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "hashtag_usage_requests",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "hashtags",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "hidden_posts",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "hub_host_applications",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "hub_metrics",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "hub_notification_signups",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "impact_attributions",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "impact_badges",
+        "enabled": true,
+        "policyCount": 12,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "innovation_data",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "introductions",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "invites",
+        "enabled": true,
+        "policyCount": 14,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "message_reactions",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "message_reports",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "messages_new",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "messaging_conversations",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "messaging_messages",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "messaging_metadata",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "messaging_participants",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "monthly_reports",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "muted_authors",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "network_edges",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "notification_batches",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "notification_preferences",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "notification_records",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "nudges",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "onboarding_progress",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "onboarding_state",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "opportunities",
+        "enabled": true,
+        "policyCount": 29,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "opportunity_bookmarks",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "opportunity_interests",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "platform_fees",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "political_digest",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "post_analytics",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "post_bookmarks",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "post_hashtags",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "post_mentions",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "post_reports",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "post_views",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "profile_badges",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "profile_completion",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "profile_interests",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "profile_skills",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "profile_views_hub",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "projects",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "provinces",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "push_subscriptions",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "push_tokens",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "rate_limit_checks",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "regions",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "release_changelog",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "release_features",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "release_media",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "releases",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "reserved_hashtags",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "saved_items",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "saved_posts",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "search_preferences",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "space_attachments",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "space_members",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "space_reports",
+        "enabled": true,
+        "policyCount": 11,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "space_roles",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "space_task_dependencies",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "space_tasks",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "space_templates",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "space_updates",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "spaces",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "sponsor_placements",
+        "enabled": true,
+        "policyCount": 5,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "sponsors",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "super_admin_protected",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "system_settings",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "task_comments",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_communities",
+        "enabled": true,
+        "policyCount": 4,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_dashboard_preferences",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "user_engagement_tracking",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "user_feed_preferences",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_follows",
+        "enabled": true,
+        "policyCount": 9,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_hashtag_limits",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "user_interactions",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_last_view_state",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_nudge_state",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_onboarding_selections",
+        "enabled": true,
+        "policyCount": 6,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "user_presence",
+        "enabled": true,
+        "policyCount": 3,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "user_recommendations",
+        "enabled": true,
+        "policyCount": 10,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      },
+      {
+        "name": "user_restrictions",
+        "enabled": true,
+        "policyCount": 1,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "user_vectors",
+        "enabled": true,
+        "policyCount": 8,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": true,
+        "status": "ok"
+      },
+      {
+        "name": "username_history",
+        "enabled": true,
+        "policyCount": 2,
+        "hasSelect": true,
+        "hasInsert": false,
+        "hasUpdate": false,
+        "hasDelete": false,
+        "status": "warn"
+      },
+      {
+        "name": "users",
+        "enabled": true,
+        "policyCount": 7,
+        "hasSelect": true,
+        "hasInsert": true,
+        "hasUpdate": true,
+        "hasDelete": false,
+        "status": "ok"
+      }
+    ]
+  },
+  "interconnections": [
+    {
+      "from": "connect.profiles",
+      "to": "convene.events (via event_attendees)",
+      "present": true,
+      "evidence": "event_attendees junction table created (supabase/migrations/20251025171327_b588f6f5-29e2-4aef-b332-c05e48943164.sql)"
+    },
+    {
+      "from": "connect.profiles",
+      "to": "collaborate.spaces (via space_members)",
+      "present": true,
+      "evidence": "space_members table created (supabase/migrations/20250808004949_9d834cd4-abc1-415b-bb90-f5b98da966ad.sql); collaboration_memberships also exists"
+    },
+    {
+      "from": "connect.profiles",
+      "to": "collaborate.opportunity_applications",
+      "present": true,
+      "evidence": "applications table with user_id->profiles(id) and opportunity_id->opportunities(id) (supabase/migrations/20251006141555_eaf1fc2f-60b0-447d-b4a5-2091742443a7.sql)"
+    },
+    {
+      "from": "connect.profiles",
+      "to": "contribute.applications",
+      "present": false,
+      "evidence": "No table named contribute_applications. CONTRIBUTE flow uses contribution_offers (need_id->contribution_needs, created_by uuid). No FK from contribution_offers.created_by to profiles(id) declared, though convention is auth.users.id == profiles.id."
+    },
+    {
+      "from": "connect.profiles",
+      "to": "convey.posts (author)",
+      "present": true,
+      "evidence": "posts.author_id added with FK to auth.users(id) (supabase/migrations/20250727051046-8fe6333f-1b72-466b-a031-4194ba739d62.sql); posts.author_id used in triggers and RPCs"
+    },
+    {
+      "from": "convene.events",
+      "to": "collaborate.spaces (events.related_space_id)",
+      "present": true,
+      "evidence": "events.related_space_id UUID added; collaboration_spaces.related_event_id UUID added (supabase/migrations/20260212100001_post_composer_alter_tables.sql)"
+    },
+    {
+      "from": "convene.events",
+      "to": "messaging.conversations (auto-thread)",
+      "present": true,
+      "evidence": "trg_event_create_thread AFTER INSERT trigger on events; trg_registration_join_thread on event_registrations (supabase/migrations/20260220050734_17849969-fae4-4ddd-aabb-dfb973ce758f.sql)"
+    },
+    {
+      "from": "collaborate.spaces",
+      "to": "messaging.conversations (auto-channel)",
+      "present": true,
+      "evidence": "trg_space_create_channel on spaces and trg_collab_space_create_channel on collaboration_spaces; trg_space_member_join_channel on space_members"
+    },
+    {
+      "from": "contribute.opportunities",
+      "to": "messaging.conversations (auto-thread)",
+      "present": true,
+      "evidence": "create_opportunity_messaging_thread RPC + trg_auto_create_opportunity_thread trigger (supabase/migrations/20260220050734_..)"
+    },
+    {
+      "from": "5C.entities",
+      "to": "DIA polymorphic ref",
+      "present": true,
+      "partial": true,
+      "evidence": "dia_match_results.match_category CHECK (people, opportunity, space, event) with matched_entity_id UUID. Note: NO dia_cards table; CONTRIBUTE not in match_category enum (only via 'opportunity' surface)."
+    }
+  ],
+  "modules": {
+    "connect": {
+      "fileCount": 96,
+      "componentCount": 71,
+      "pageCount": 3,
+      "openIssues": 1,
+      "lastModified": "2026-05-04"
+    },
+    "convene": {
+      "fileCount": 66,
+      "componentCount": 41,
+      "pageCount": 13,
+      "openIssues": 0,
+      "lastModified": "2026-05-04"
+    },
+    "collaborate": {
+      "fileCount": 11,
+      "componentCount": 2,
+      "pageCount": 9,
+      "openIssues": 0,
+      "lastModified": "2026-05-04"
+    },
+    "contribute": {
+      "fileCount": 11,
+      "componentCount": 3,
+      "pageCount": 8,
+      "openIssues": 2,
+      "lastModified": "2026-05-04"
+    },
+    "convey": {
+      "fileCount": 21,
+      "componentCount": 16,
+      "pageCount": 5,
+      "openIssues": 3,
+      "lastModified": "2026-05-04"
+    }
+  },
+  "knownIssues": [
+    {
+      "id": "convey-story-badge-color",
+      "title": "CONVEY Story badge color",
+      "severity": "low",
+      "module": "convey",
+      "file": "src/components/convey/ConveyEditorialCards.tsx",
+      "line": 245,
+      "status": "fixed",
+      "note": "Canonical Story card uses bg-dna-copper/90 (HSL 25 51% 46% = #B87333 family). Compliant. Note: ConveyStoryCard.tsx legacy variant uses bg-dna-gold/10 for 'story' subtype \u2014 different contexts."
+    },
+    {
+      "id": "convey-excerpt-leak",
+      "title": "CONVEY excerpt metadata leak",
+      "severity": "medium",
+      "module": "convey",
+      "file": "src/components/convey/ConveyEditorialCards.tsx",
+      "line": 39,
+      "status": "partially-fixed",
+      "note": "getExcerpt() in ConveyEditorialCards.tsx strips 'Read Time: X min | Tags: ...' headers and concatenated CamelCase hashtag blocks. Used at lines 280 and 478. However, raw story.content?.substring(0, N) without sanitization still appears at: ConveyCategorySection.tsx:151, ConveyTrendingSection.tsx:96, ConveyStoryCard.tsx:187/229/306, and several h3 title fallbacks in ConveyEditorialCards.tsx (258, 393, 474). Title fallbacks also leak metadata when story.title is empty."
+    },
+    {
+      "id": "contribute-collaborate-boundary",
+      "title": "CONTRIBUTE/COLLABORATE schema boundary",
+      "severity": "low",
+      "module": "contribute",
+      "file": "supabase/migrations/20251114080926_*.sql",
+      "line": 0,
+      "status": "defensible",
+      "note": "COLLABORATE = opportunities (title, description, type, status, visibility, tags, location, link) \u2014 public 'find a role' postings. CONTRIBUTE = contribution_needs (space_id REQUIRED, type, title, description, status, priority, focus_areas, region, target_amount, currency, time_commitment, duration, needed_by) PLUS contribution_offers (need_id REQUIRED, message, offered_amount). Distinct shapes: COLLABORATE is a marketplace; CONTRIBUTE is space-scoped need-fulfillment. Boundary is logically defensible \u2014 should NOT be unified. Overlap: both have title/description/status; both have user creator. Differences: CONTRIBUTE is space-required (FK), needs/offers paired model, has currency+target_amount, time_commitment, region; COLLABORATE is standalone, has role_type/organization/deadline/tags."
+    },
+    {
+      "id": "sprint1-tier1.3-any",
+      "title": "Sprint 1 Tier 1.3 \u2014 TypeScript any reduction",
+      "severity": "medium",
+      "module": "platform",
+      "file": "src/",
+      "line": 0,
+      "status": "goal-not-met",
+      "note": "Goal: Sprint 5 reaches 50% reduction. Current: 337 undocumented `any` violations + 109 documented `supabase as any` exceptions = 446 total. No baseline shipped from Sprint 1 visible in this audit, but with strict:false, noImplicitAny:false, strictNullChecks:false in tsconfig.app.json there's no enforcement to drive reduction. Concrete next step: enable strictNullChecks first (smallest blast radius), then noImplicitAny."
+    },
+    {
+      "id": "tsconfig-strict",
+      "title": "tsconfig strict mode disabled",
+      "severity": "high",
+      "module": "platform",
+      "file": "tsconfig.app.json",
+      "line": 0,
+      "status": "open",
+      "note": "strict:false, noImplicitAny:false, strictNullChecks:false \u2014 explicitly disabled. tsc --noEmit returns 0 errors but only because rules are off. No actual type safety guarantee from current TS config."
+    },
+    {
+      "id": "eslint-broken",
+      "title": "ESLint configuration broken",
+      "severity": "medium",
+      "module": "platform",
+      "file": "eslint.config.js",
+      "line": 0,
+      "status": "open",
+      "note": "`npm run lint` fails with TypeError in @typescript-eslint/no-unused-expressions rule (peer dep mismatch with ESLint 9.39.2). Lint cannot run currently."
+    },
+    {
+      "id": "main-bundle-size",
+      "title": "Main bundle exceeds 500 KB",
+      "severity": "medium",
+      "module": "platform",
+      "file": "dist/assets/index-*.js",
+      "line": 0,
+      "status": "open",
+      "note": "index chunk: 1.7 MB raw / 513 KB gzipped. Vite warns 'Some chunks are larger than 500 kB after minification'. Largest contributors likely: html2canvas, recharts (generateCategoricalChart 326 KB), Encoder 389 KB, emoji-picker 270 KB. Consider manualChunks splitting and lazy-loading these."
+    },
+    {
+      "id": "dia-impact-orphan",
+      "title": "Legacy /dna/Impact page orphaned",
+      "severity": "low",
+      "module": "contribute",
+      "file": "src/pages/dna/Impact.tsx",
+      "line": 1,
+      "status": "open",
+      "note": "App.tsx:55 lazy-imports DnaImpact, but App.tsx:639 routes /dna/impact to <Navigate to=\"/dna/contribute\" replace />. The component is never rendered. File should be deleted and import removed."
+    },
+    {
+      "id": "dia-no-contribute-category",
+      "title": "DIA matching does not include CONTRIBUTE category",
+      "severity": "low",
+      "module": "dia",
+      "file": "supabase/migrations/20260212300000_dia_core_engine_tables.sql",
+      "line": 53,
+      "status": "open",
+      "note": "dia_match_results.match_category CHECK only allows ('people', 'opportunity', 'space', 'event'). Direct contribution_needs/contribution_offers matching not surfaced via DIA. Acceptable if 'opportunity' is the canonical surface, but the CHECK constraint blocks future expansion to a 'contribute' category."
+    },
+    {
+      "id": "n+1-postcard",
+      "title": "N+1: PostCard issues 6 useQuery calls per item",
+      "severity": "high",
+      "module": "convey",
+      "file": "src/components/feed/PostCard.tsx",
+      "line": 55,
+      "status": "open",
+      "note": "PostCard issues 6 separate useQuery calls per render (author, likeCount, hasLiked, commentCount, shareCount, isSaved). On a feed of N posts: 6\u00d7N round-trips. Should be replaced with a single batched query in the parent that joins author + counts + viewer-state via .select('*, profiles(*), post_reactions(...)'). Same pattern in CommentSection.tsx CommentItem (3 calls per comment)."
+    },
+    {
+      "id": "n+1-comment-item",
+      "title": "N+1: CommentItem issues 3 useQuery calls per item",
+      "severity": "medium",
+      "module": "feed",
+      "file": "src/components/feed/CommentSection.tsx",
+      "line": 250,
+      "status": "open",
+      "note": "Each CommentItem renders 3 useQuery calls (author, likeCount, hasLiked). On a long thread that's 3\u00d7N queries. Batch in parent useQuery using select('*, author:profiles(id, display_name, avatar_url), comment_likes(user_id)')."
+    },
+    {
+      "id": "n+1-badge-loop",
+      "title": "Loop INSERT in badge backfill",
+      "severity": "low",
+      "module": "connect",
+      "file": "src/services/profileIdentityHubService.ts",
+      "line": 658,
+      "status": "open",
+      "note": "for-of loop performs `await supabase.from('profile_badges').insert(...)` per badge rule. Replace with single `.insert(badgesArray)`. Low impact since this only runs at badge backfill events."
+    }
+  ],
+  "orphans": [
+    {
+      "file": "src/components/BuildingTogetherSection.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/FeedbackPanel.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/JoinBetaDialog.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/PlatformFeatureShowcase.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/RequestDemoDialog.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/StayNotifiedPanel/NotificationBenefits.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/StayNotifiedPanel/NotificationForm.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/WhoIsDNAForSection.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/alpha/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/auth/BetaWaitlist.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/collaborate/CollaborateDIADiscoveryCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/CallToActionSection.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/ConnectTabs.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/EventCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/ModernEventCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/PrototypeNotice.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/SearchTypeahead.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/hub/NetworkHighlights.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/search/SearchSection.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/connect/tabs/ProfessionalsMockData.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/contribute/ContributeDIADiscoveryCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/convene/ConveneCategoryChips.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/convene/ConveneMapView.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/convene/management/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/events/EventRecommendations.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/events/Join.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/BookmarkButton.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/CommentDrawer.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/ContextLabel.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/CreatePost.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/FeedGreeting.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/FeedProfileCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/FeedQuickLinks.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/FeedRightSidebar.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/FeedSkeleton.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/PostComments.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/ReactionBar.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/ShareMenu.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/TrendingHashtags.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/activity-cards/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/feed/cards/MemberSpotlightCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/header/Logo.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/hubs/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/identity-hub/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/linkedin/ProfileCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/linkedin/RecentActivity.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/ConversationListItem.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/GroupHeader.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/GroupInfoPanel.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/MessageBubble.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/MessageComposer.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/MessageSearch.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/TypingIndicator.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/inbox/ConversationActions.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/messaging/inbox/ConversationListItem.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/mobile/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/network/ConnectionCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/network/ConnectionRequestCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/network/MutualConnections.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/network/NetworkSearch.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/notifications/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/onboarding/LocationSearch.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/onboarding/WelcomeOverlay.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/onboarding/steps/AvatarUpload.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/onboarding/steps/DiasporaImpactStep.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/onboarding/steps/ProfessionalStep.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/onboarding/validation/OnboardingValidation.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/posts/PostComments.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/posts/RepostDialog.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile-v2/ProfileV2Completion.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile-v2/ProfileV2Verification.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/ActivityIndicator.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/LinkedInExperienceSection.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/LinkedInProjectsSection.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/ProfileCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/ProfileCompletionBanner.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/ProfileDataFetcher.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/ProfileFormHelpers.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/RequireProfileScore.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/edit/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/BasicInfoSection.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/ImageUploadHandler.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/LocationAutocomplete.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/ProfileFormSubmission.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/hooks/useProfileFormArrays.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/hooks/useProfileFormDraft.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/hooks/useProfileFormState.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/profile/form/locationData.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/search/AdvancedFilters.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/search/AdvancedSearch.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/search/SearchFeaturePreview.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/search/SearchFeedbackForm.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/search/SearchResults.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/social/OpportunityCard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/survey/PageSpecificSurvey.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/aspect-ratio.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/chart.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/enhanced-card.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/form.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/loading-spinner.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/pagination.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/sidebar.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/spinner.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/tag.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/toggle-group.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/ui/use-toast.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/components/waitlist/WaitlistPopup.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/config/crossActions.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/config/design-tokens.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/config/legacyRedirects.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/config/platform-architecture.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/config/viewStateModules.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/contexts/SocialFeedContext.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/data/enhancedCollaborationData.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/data/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/data/platformData.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/convene/useEventNetworkAttendees.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useAdaptiveConfig.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useBetaStatus.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useBreathingAnimation.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useConnectFiltering.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useConveneLogic.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useConveyAnalytics.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useConveyLogic.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useFeatureFlags.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useFeedQuery.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useIdentityHub.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useIsAdmin.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useLiveEvents.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useNetworkStatus.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useOpportunityThread.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/usePillarStats.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/usePinnedPosts.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useProfileUnlock.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useRealtimeMessages.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useScrollPosition.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useSpaceChannel.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useTasks.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/hooks/useWhatsNext.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/animation.config.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/cacheUtils.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/cultural-colors.config.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/mobileHeaderSpacing.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/rateLimit.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/realtimeManager.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/releases.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/lib/spacing.config.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/OpportunityDetail.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/Programs.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/ReleasesPage.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/Resources.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/Services.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/admin/AlphaFeedbackDashboard.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/admin/Moderation.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/admin/SponsorshipManagement.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/dna/collaborate/CollaborateDiscovery.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/dna/contribute/ContributeDiscovery.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/dna/settings/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/pages/documentation/PlatformOverview.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/routes/adminRoutes.tsx",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/scripts/seedAlphaData.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/ada/CohortEvaluationService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/ada/ExperimentService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/communitiesService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/communityPostsService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/dia/index.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/digestService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/embeddingService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/eventAnalytics.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/eventsService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/matchingService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/notificationIntelligence.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/personalization-engine.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/postsService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/searchService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/services/seedDataService.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/ada.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/applicationTypes.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/collaborate.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/community.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/contributionTypes.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/messagingV2.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/opportunityTypes.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/profileIdentity.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/types/searchTypes.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/utils/eventFilters.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/utils/eventHelpers.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/utils/featureGate.ts",
+      "lastModified": "2026-05-04"
+    },
+    {
+      "file": "src/utils/searchFilters.ts",
+      "lastModified": "2026-05-04"
+    }
+  ],
+  "diaNaming": {
+    "assistantOccurrences": 0,
+    "violations": [],
+    "admeOccurrences": 0,
+    "impactAsModuleOccurrences": [
+      {
+        "file": "src/App.tsx",
+        "line": 55,
+        "context": "const DnaImpact = lazy(() => import(\"./pages/dna/Impact\")); \u2014 legacy, target route is now Navigate to /dna/contribute"
+      },
+      {
+        "file": "src/App.tsx",
+        "line": 262,
+        "context": "LegacyImpactIdRedirect \u2014 redirects /dna/impact/:id to /dna/contribute/:id (intentional)"
+      },
+      {
+        "file": "src/pages/dna/Impact.tsx",
+        "line": 1,
+        "context": "DnaImpact component file still exists; route only redirects."
+      }
+    ]
+  },
+  "build": {
+    "passes": true,
+    "duration": "20.43s",
+    "totalDistSizeMB": 12,
+    "chunkCount": 300,
+    "largestChunks": [
+      {
+        "file": "index.js",
+        "sizeKB": 1701.82,
+        "gzipKB": 513.5
+      },
+      {
+        "file": "Encoder.js",
+        "sizeKB": 388.7,
+        "gzipKB": 102.48
+      },
+      {
+        "file": "generateCategoricalChart.js",
+        "sizeKB": 325.95,
+        "gzipKB": 87.76
+      },
+      {
+        "file": "emoji-picker-react.esm.js",
+        "sizeKB": 269.99,
+        "gzipKB": 63.79
+      },
+      {
+        "file": "MyEvents.js",
+        "sizeKB": 218.13,
+        "gzipKB": 68.85
+      },
+      {
+        "file": "html2canvas.esm.js",
+        "sizeKB": 201.42,
+        "gzipKB": 48.03
+      },
+      {
+        "file": "ConveneMapView.js",
+        "sizeKB": 157.96,
+        "gzipKB": 46.85
+      },
+      {
+        "file": "index.es.js",
+        "sizeKB": 150.15,
+        "gzipKB": 51.39
+      },
+      {
+        "file": "EventDetail.js",
+        "sizeKB": 118.14,
+        "gzipKB": 35.58
+      },
+      {
+        "file": "ProfileV2.js",
+        "sizeKB": 102.31,
+        "gzipKB": 25.34
+      }
+    ]
+  },
+  "lint": {
+    "passes": false,
+    "error": "TypeError: Error while loading rule '@typescript-eslint/no-unused-expressions': Cannot read properties of undefined (reading 'allowShortCircuit'). Peer-dep mismatch with ESLint 9.39.2."
+  },
+  "errors": [
+    "ESLint configuration error prevented lint pass from running (see lint.error)."
+  ]
+}
