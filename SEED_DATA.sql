@@ -397,10 +397,14 @@ ON CONFLICT DO NOTHING;
 
 -- ============================================
 -- EVENTS (7 events: 5 upcoming, 2 past)
--- Uses correct columns: organizer_id, start_time, end_time, format, location_name
+-- Aligns with the post-composer events schema
+-- (organizer_id, start_time, end_time, format, location_name,
+--  is_public, is_cancelled). The legacy `status` column does not
+-- exist on this table — `is_cancelled = false` is the canonical
+-- "live" signal.
 -- ============================================
 
-INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, status)
+INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, is_public, is_cancelled)
 SELECT
   'Pan-African Tech Summit 2026',
   'The premier gathering for African and diaspora tech professionals. Keynotes, panels, and networking covering fintech, healthtech, agtech, and AI.',
@@ -410,10 +414,11 @@ SELECT
   'conference',
   'virtual',
   p.id,
-  'published'
+  true,
+  false
 FROM profiles p WHERE p.email = 'alpha1@dna-test.com';
 
-INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, status)
+INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, is_public, is_cancelled)
 SELECT
   'Diaspora Investor Networking Mixer — Lagos',
   'An intimate evening connecting diaspora investors with Nigerian founders. Pitch presentations and one-on-one meetings.',
@@ -423,10 +428,11 @@ SELECT
   'networking',
   'in_person',
   p.id,
-  'published'
+  true,
+  false
 FROM profiles p WHERE p.email = 'alpha8@dna-test.com';
 
-INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, status)
+INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, meeting_url, is_public, is_cancelled)
 SELECT
   'Afrobeats x Entrepreneurship: Where Culture Meets Business',
   'A unique hybrid event exploring the business of African music and culture. Panel discussions on IP ownership and licensing.',
@@ -436,10 +442,12 @@ SELECT
   'meetup',
   'hybrid',
   p.id,
-  'published'
+  'https://meet.example.com/afrobeats-x-entrepreneurship',
+  true,
+  false
 FROM profiles p WHERE p.email = 'alpha14@dna-test.com';
 
-INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, status)
+INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, meeting_url, is_public, is_cancelled)
 SELECT
   'DNA Community Storytelling Night',
   'Share your diaspora story. An evening of personal narratives, cultural connections, and community building.',
@@ -449,10 +457,12 @@ SELECT
   'social',
   'virtual',
   p.id,
-  'published'
+  'https://meet.example.com/dna-storytelling-night',
+  true,
+  false
 FROM profiles p WHERE p.email = 'alpha5@dna-test.com';
 
-INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, status)
+INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, meeting_url, is_public, is_cancelled)
 SELECT
   'Climate Finance for African Reforestation: A Workshop',
   'Hands-on workshop on carbon credit methodology and community ownership models for climate-positive projects.',
@@ -462,11 +472,13 @@ SELECT
   'workshop',
   'virtual',
   p.id,
-  'published'
+  'https://meet.example.com/climate-finance-workshop',
+  true,
+  false
 FROM profiles p WHERE p.email = 'alpha15@dna-test.com';
 
 -- Past events
-INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, status)
+INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, meeting_url, is_public, is_cancelled)
 SELECT
   'DNA Year-End Diaspora Gathering 2025',
   'A celebration of what the diaspora community built this year. Reflections, awards, and plans for 2026.',
@@ -476,10 +488,12 @@ SELECT
   'social',
   'virtual',
   p.id,
-  'published'
+  'https://meet.example.com/dna-year-end-2025',
+  true,
+  false
 FROM profiles p WHERE p.email = 'alpha1@dna-test.com';
 
-INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, status)
+INSERT INTO events (title, description, start_time, end_time, location_name, event_type, format, organizer_id, is_public, is_cancelled)
 SELECT
   'Build for Africa Hackathon — Lagos Edition',
   '48-hour hackathon building solutions for African markets. Teams of 3-5, mentored by diaspora tech leaders.',
@@ -489,137 +503,157 @@ SELECT
   'workshop',
   'in_person',
   p.id,
-  'published'
+  true,
+  false
 FROM profiles p WHERE p.email = 'alpha3@dna-test.com';
 
 -- ============================================
--- COLLABORATION SPACES (5 spaces: 3 active, 1 stalled, 1 new)
--- Uses correct column: title (not name)
+-- SPACES (5 spaces: 4 active, 1 stalled)
+-- The legacy `collaboration_spaces` table was dropped in
+-- 20260429100000_collaborate_rebuild_r1b1_cleanup_remediation.sql.
+-- Seed against the canonical `spaces` table with the locked-spec
+-- column set (name, slug, space_type, status, visibility,
+-- created_by). After-INSERT trigger trg_space_create_channel
+-- materialises the general channel automatically.
 -- ============================================
 
-INSERT INTO collaboration_spaces (title, description, created_by, status)
+INSERT INTO spaces (name, slug, description, space_type, status, visibility, created_by)
 SELECT 'AfroTech Accelerator Cohort 3',
+  'afrotech-accelerator-cohort-3',
   'Collaborative space for the 3rd cohort of the AfroTech Accelerator. Shared resources, milestone tracking.',
-  p.id, 'active'
+  'program', 'active', 'community',
+  p.id
 FROM profiles p WHERE p.email = 'alpha1@dna-test.com';
 
-INSERT INTO collaboration_spaces (title, description, created_by, status)
+INSERT INTO spaces (name, slug, description, space_type, status, visibility, created_by)
 SELECT 'Diaspora Investment Fund — Due Diligence',
+  'diaspora-investment-fund-due-diligence',
   'Research and due diligence workspace for evaluating investment opportunities in African markets.',
-  p.id, 'active'
+  'working_group', 'active', 'private',
+  p.id
 FROM profiles p WHERE p.email = 'alpha8@dna-test.com';
 
 -- STALLED SPACE (updated_at 10+ days ago for DIA stall detection)
-INSERT INTO collaboration_spaces (title, description, created_by, status, updated_at)
+INSERT INTO spaces (name, slug, description, space_type, status, visibility, created_by, updated_at)
 SELECT 'Lagos-London Trade Bridge',
+  'lagos-london-trade-bridge',
   'Exploring trade corridor opportunities between Lagos and London. Logistics, regulatory frameworks.',
-  p.id, 'active', NOW() - INTERVAL '15 days'
+  'initiative', 'active', 'community',
+  p.id, NOW() - INTERVAL '15 days'
 FROM profiles p WHERE p.email = 'alpha6@dna-test.com';
 
-INSERT INTO collaboration_spaces (title, description, created_by, status)
+INSERT INTO spaces (name, slug, description, space_type, status, visibility, created_by)
 SELECT 'Heritage Preservation Digital Archive',
+  'heritage-preservation-digital-archive',
   'Building a digital archive of African cultural heritage artifacts, stories, and oral histories.',
-  p.id, 'active'
+  'project', 'active', 'public',
+  p.id
 FROM profiles p WHERE p.email = 'alpha5@dna-test.com';
 
-INSERT INTO collaboration_spaces (title, description, created_by, status)
+INSERT INTO spaces (name, slug, description, space_type, status, visibility, created_by)
 SELECT 'African Women in STEM Network',
+  'african-women-in-stem-network',
   'Support network for African and diaspora women in STEM. Mentorship, job sharing, and advocacy.',
-  p.id, 'active'
+  'working_group', 'active', 'community',
+  p.id
 FROM profiles p WHERE p.email = 'alpha2@dna-test.com';
 
 -- ============================================
 -- OPPORTUNITIES (10 entries)
--- Uses correct columns: type, status='active', tags
+-- Aligned with the post-composer opportunities schema:
+-- direction (need|offer), category, compensation_type,
+-- location_relevance, audience, status='active', tags.
+-- The legacy `type / visibility / location` columns were removed
+-- when the table was rebuilt in 20260212100000_post_composer_tables.sql.
 -- ============================================
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, specific_country, tags, audience, status, created_by)
 SELECT 'React Native Developer for Mobile App',
   'Looking for an experienced React Native developer to build our mobile app MVP. 3-month contract, remote.',
-  'technical', 'active', 'public',
+  'need', 'technical', 'paid', 'remote', NULL,
   ARRAY['React Native', 'Mobile', 'MVP'],
-  'Remote',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha3@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, specific_region, tags, audience, status, created_by)
 SELECT 'Fintech Regulatory Advisor',
   'Need legal/regulatory guidance for launching a payment product in 3 West African markets.',
-  'business', 'active', 'public',
+  'need', 'business', 'paid', 'regional', 'West Africa',
   ARRAY['Fintech', 'Regulatory', 'West Africa'],
-  'Remote',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha1@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, specific_country, tags, audience, status, created_by)
 SELECT 'Pro Bono Legal Consultation',
   'Offering free legal consultation for African startups incorporating in the UK or EU.',
-  'business', 'active', 'public',
+  'offer', 'business', 'pro_bono', 'country', 'UK',
   ARRAY['Legal', 'Pro Bono', 'UK', 'EU'],
-  'London, UK',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha9@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, tags, audience, status, created_by)
 SELECT 'Mentorship for Early-Stage Founders',
   'Available to mentor 3 early-stage founders in fintech or real estate. Monthly calls and pitch deck review.',
-  'business', 'active', 'public',
+  'offer', 'business', 'pro_bono', 'remote',
   ARRAY['Mentorship', 'Fintech', 'Real Estate'],
-  'Atlanta, GA / Remote',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha8@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, tags, audience, status, created_by)
 SELECT 'Grant Writer for Climate Project',
   'Seeking an experienced grant writer for climate finance funding applications.',
-  'creative', 'active', 'public',
+  'need', 'creative', 'paid', 'remote',
   ARRAY['Grant Writing', 'Climate', 'Carbon Credits'],
-  'Remote',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha15@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, specific_region, tags, audience, status, created_by)
 SELECT 'UX Designer for Health App',
   'Looking for a UX designer familiar with low-literacy user interfaces for telemedicine in rural East Africa.',
-  'creative', 'active', 'public',
+  'need', 'creative', 'paid', 'regional', 'East Africa',
   ARRAY['UX Design', 'Healthcare', 'Telemedicine'],
-  'Remote',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha2@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, tags, audience, status, created_by)
 SELECT 'Music Licensing Expertise',
   'Offering guidance on music licensing, IP protection, and royalty structures for African artists.',
-  'creative', 'active', 'public',
+  'offer', 'creative', 'pro_bono', 'remote',
   ARRAY['Music', 'IP', 'Licensing'],
-  'Dakar / Remote',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha14@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, tags, audience, status, created_by)
 SELECT 'Data Analysis for Development Metrics',
   'Can help with statistical analysis and ML modeling for development-focused projects. Pro bono.',
-  'technical', 'active', 'public',
+  'offer', 'technical', 'pro_bono', 'remote',
   ARRAY['Data Science', 'ML', 'Development'],
-  'Brussels / Remote',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha10@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, specific_country, tags, audience, status, created_by)
 SELECT 'Seed Funding for AgTech Startup',
   'Raising a $500K seed round for our precision agriculture platform. Looking for diaspora investors.',
-  'business', 'active', 'public',
+  'need', 'business', 'equity', 'country', 'Ghana',
   ARRAY['AgTech', 'Seed Funding', 'Agriculture'],
-  'Accra, Ghana',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha3@dna-test.com';
 
-INSERT INTO opportunities (title, description, type, status, visibility, tags, location, created_by)
+INSERT INTO opportunities (title, description, direction, category, compensation_type, location_relevance, specific_country, tags, audience, status, created_by)
 SELECT 'Marketing Strategy for African Brand Launch',
   'Need a growth marketer to help launch our African skincare brand in the US market.',
-  'creative', 'active', 'public',
+  'need', 'creative', 'paid', 'country', 'United States',
   ARRAY['Marketing', 'Skincare', 'Brand Launch'],
-  'Houston, TX',
+  'public', 'active',
   p.id
 FROM profiles p WHERE p.email = 'alpha11@dna-test.com';
 
@@ -743,6 +777,6 @@ FROM profiles p WHERE p.email = 'alpha15@dna-test.com';
 SELECT 'Profiles seeded: ' || COUNT(*) FROM profiles WHERE email LIKE 'alpha%@dna-test.com' AND full_name IS NOT NULL AND full_name != '';
 SELECT 'Connections seeded: ' || COUNT(*) FROM connections WHERE created_at > NOW() - INTERVAL '30 days';
 SELECT 'Events seeded: ' || COUNT(*) FROM events WHERE title LIKE '%Pan-African%' OR title LIKE '%Diaspora%' OR title LIKE '%Afrobeats%' OR title LIKE '%DNA%' OR title LIKE '%Climate%' OR title LIKE '%Hackathon%';
-SELECT 'Spaces seeded: ' || COUNT(*) FROM collaboration_spaces WHERE title IN ('AfroTech Accelerator Cohort 3', 'Diaspora Investment Fund — Due Diligence', 'Lagos-London Trade Bridge', 'Heritage Preservation Digital Archive', 'African Women in STEM Network');
+SELECT 'Spaces seeded: ' || COUNT(*) FROM spaces WHERE name IN ('AfroTech Accelerator Cohort 3', 'Diaspora Investment Fund — Due Diligence', 'Lagos-London Trade Bridge', 'Heritage Preservation Digital Archive', 'African Women in STEM Network');
 SELECT 'Opportunities seeded: ' || COUNT(*) FROM opportunities WHERE title LIKE '%React Native%' OR title LIKE '%Fintech Regulatory%' OR title LIKE '%Pro Bono%';
 SELECT 'Posts seeded: ' || COUNT(*) FROM posts WHERE content LIKE '%Hackathon%' OR content LIKE '%carbon credit%' OR content LIKE '%data sovereignty%';
