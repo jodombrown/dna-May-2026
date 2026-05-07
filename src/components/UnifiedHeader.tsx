@@ -424,9 +424,19 @@ const UnifiedHeader = () => {
                       <NavLink
                         key={item.name}
                         to={item.path}
-                        className="text-gray-700 hover:text-dna-forest transition-colors font-medium"
+                        className={cn(
+                          "transition-colors font-medium inline-flex items-center gap-2",
+                          item.featured
+                            ? "text-dna-emerald hover:text-dna-emerald-dark font-heritage tracking-[0.04em]"
+                            : "text-gray-700 hover:text-dna-forest"
+                        )}
                       >
                         {item.name}
+                        {item.badge && (
+                          <span className="rounded-full bg-dna-copper text-white text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5">
+                            {item.badge}
+                          </span>
+                        )}
                       </NavLink>
                     ))}
                     
@@ -505,10 +515,32 @@ const UnifiedHeader = () => {
                               ))}
                             </div>
 
+                            {/* Featured items (e.g. ROADMAP) */}
+                            {filteredNavItems.some((i) => i.featured) && (
+                              <div className="border-b pb-4 mb-4">
+                                <p className="text-sm text-gray-600 mb-2 font-medium px-4">Featured</p>
+                                {filteredNavItems.filter((i) => i.featured).map((item) => (
+                                  <Button
+                                    key={item.name}
+                                    variant="ghost"
+                                    className="justify-start text-left w-full hover:bg-dna-emerald-subtle hover:text-dna-emerald-dark transition-all duration-200 focus:ring-0 focus:ring-offset-0 font-heritage tracking-[0.04em]"
+                                    onClick={() => handleNavClick(item)}
+                                  >
+                                    <span className="text-dna-emerald">{item.name}</span>
+                                    {item.badge && (
+                                      <span className="ml-2 rounded-full bg-dna-copper text-white text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5">
+                                        {item.badge}
+                                      </span>
+                                    )}
+                                  </Button>
+                                ))}
+                              </div>
+                            )}
+
                             {/* The 5 C's Section */}
                             <div className="border-b pb-4 mb-4">
                               <p className="text-sm text-gray-600 mb-2 font-medium px-4">The 5 C's</p>
-                              {filteredNavItems.map((item) => (
+                              {filteredNavItems.filter((i) => !i.featured).map((item) => (
                                 <Button
                                   key={item.name}
                                   variant="ghost"
