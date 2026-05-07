@@ -46,18 +46,23 @@ export default function GroupsBrowse() {
     enabled: !!user,
   });
 
-  // Real-time subscription
+  // Real-time subscription scoped to public groups only. Browse is a
+  // discovery surface for non-members, so private/secret group changes
+  // are intentionally excluded. Previously this subscribed to a shared
+  // `groups_updates` channel that collided with GroupsPage and fired
+  // for every group action across the platform.
   useEffect(() => {
     if (!user) return;
 
     const channel = supabase
-      .channel('groups_updates')
+      .channel(`groups-browse-${user.id}`)
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'groups',
+          filter: `privacy=eq.public`,
         },
         () => {
           refetch();
@@ -66,7 +71,7 @@ export default function GroupsBrowse() {
       .subscribe();
 
     return () => {
-      channel.unsubscribe();
+      supabase.removeChannel(channel);
     };
   }, [user, refetch]);
 

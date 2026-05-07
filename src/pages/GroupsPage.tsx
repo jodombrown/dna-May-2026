@@ -48,18 +48,22 @@ export default function GroupsPage() {
     enabled: !!user,
   });
 
-  // Real-time subscription
+  // Real-time subscription scoped to the current user's group memberships.
+  // Previously this subscribed to a shared `groups_updates` channel that
+  // (a) collided with GroupsBrowse and (b) was unfiltered, causing every
+  // group action by any user to invalidate this query for every session.
   useEffect(() => {
     if (!user) return;
 
     const channel = supabase
-      .channel('groups_updates')
+      .channel(`groups-page-${user.id}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'groups',
+          table: 'group_members',
+          filter: `user_id=eq.${user.id}`,
         },
         () => {
           refetch();
@@ -68,7 +72,7 @@ export default function GroupsPage() {
       .subscribe();
 
     return () => {
-      channel.unsubscribe();
+      supabase.removeChannel(channel);
     };
   }, [user, refetch]);
 
