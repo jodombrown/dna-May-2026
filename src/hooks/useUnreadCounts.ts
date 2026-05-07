@@ -92,14 +92,21 @@ export function useUnreadCounts(): UnreadCounts {
 
     let entry = channelRegistry.get(registryKey);
     if (!entry) {
+      // Subscribe to UPDATE on conversation_participants filtered by the
+      // current user. The broadcast_new_message trigger on messages_new
+      // increments unread_count for every recipient, and mark_conversation_read
+      // resets it — both fire UPDATE events here. This replaces a previous
+      // platform-wide INSERT subscription on `messages` that invalidated
+      // every session's unread count whenever any user sent any message.
       const channel = supabase
-        .channel(`unread-counts-${user.id}`)
+        .channel(`unread-messages-${user.id}`)
         .on(
           'postgres_changes',
           {
-            event: 'INSERT',
+            event: 'UPDATE',
             schema: 'public',
-            table: 'messages',
+            table: 'conversation_participants',
+            filter: `user_id=eq.${user.id}`,
           },
           () => {
             queryClient.invalidateQueries({ queryKey: [UNREAD_QUERY_KEY, 'messages'] });
