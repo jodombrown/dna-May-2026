@@ -95,14 +95,74 @@ tight; can be deleted as part of a future archive cleanup.
 
 ---
 
-## Phase 2 — HIGH (Pending)
+## Phase 2 — HIGH (Resolved)
 
-Same anti-pattern (unfiltered subscriptions on high-write tables) at
-lower blast radius:
+The three Phase 2 HIGH-severity findings have been remediated on branch
+`claude/fix-realtime-subscriptions-OkVEz`. Lovable verification still
+pending per the Phase 2 PRD.
 
-- `useRealtimeReactions`
-- `GroupDetailsPage` group likes/comments
-- `EventsPage` unfiltered events channel
+Schema check performed against the migrations in `supabase/migrations/`:
+
+- `post_likes`, `post_reactions` — only `post_id`, `user_id`. **No**
+  `post_author_id` denormalization, so Approach A (author-scoped) was
+  not available without a new migration; Approach B (post-set-scoped)
+  was used instead.
+- `group_post_likes`, `group_post_comments` — only `post_id`,
+  `user_id`/`author_id`. **No** `group_id` denormalization, so the
+  filter is `post_id=in.(...)` against the currently-loaded group post
+  set rather than `group_id=eq.${groupId}`.
+
+### Fix #1 — `useRealtimeReactions` scoped to a post set
+
+**File:** `src/hooks/useRealtimeReactions.ts`,
+`src/contexts/SocialFeedContext.tsx`
+
+**Before:** Subscribed to every `post_likes` and `post_reactions`
+INSERT/DELETE platform-wide. Every reaction by any user invalidated
+every active session that mounted the hook.
+
+**After:** Hook now requires a `postIds: readonly string[]` prop. When
+the array is empty, no subscription is created. When non-empty, both
+channels carry `filter: post_id=in.(${ids.join(',')})`. The post-id key
+is sorted and joined to give a stable dependency that doesn't rebuild
+the channel for the same set in a different array reference.
+`SocialFeedProvider` derives the post set from `Object.keys(engagement)`
+(the posts it has been asked to track via `initializePost`).
+
+### Fix #2 — `GroupDetailsPage` scoped to current group's post set
+
+**File:** `src/pages/GroupDetailsPage.tsx`
+
+**Before:** A single channel subscribed to `group_posts` (filtered by
+`group_id`), `group_members` (filtered by `group_id`), and unfiltered
+`group_post_likes` and `group_post_comments`. Every like/comment on
+every group's posts platform-wide invalidated every session viewing any
+group.
+
+**After:** The channel is split. The original `group_${groupId}_updates`
+channel keeps `group_posts` and `group_members` (both already filtered
+by `group_id`). A second channel
+`group_${groupId}_engagement_${idCount}` subscribes to
+`group_post_likes` and `group_post_comments` filtered by
+`post_id=in.(...)` against the loaded posts query result. The
+engagement channel is rebuilt when posts change (e.g. a new post
+arrives via the `group_posts` subscription, which triggers a refetch,
+which yields a new post-id key).
+
+### Fix #3 — `EventsPage` realtime removed in favor of 60s polling
+
+**File:** `src/pages/EventsPage.tsx`
+
+**Before:** Subscribed to all `events` table changes (INSERT/UPDATE/
+DELETE) with no filter. Every event created or modified by any user
+invalidated every session's events page.
+
+**After:** Realtime channel removed entirely. The existing `useQuery`
+gains `refetchInterval: 60_000`. Events are infrequent compared to
+reactions/comments, so 60 second freshness is acceptable and the cost
+of an unfiltered channel is not justified. If product feedback later
+demands sub-5s freshness for invited events specifically, the rollback
+plan is to add Option 2 (filter by `event_attendees` membership scope).
 
 ## Phase 3 — MEDIUM (Pending, needs design)
 

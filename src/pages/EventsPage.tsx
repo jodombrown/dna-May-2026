@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+const EVENTS_REFETCH_INTERVAL_MS = 60_000;
+
 type EventFilter = 'upcoming' | 'past' | 'my_events' | 'attending';
 
 export default function EventsPage() {
@@ -31,6 +33,9 @@ export default function EventsPage() {
   const [typeFilter, setTypeFilter] = useState<EventType | 'all'>('all');
   const [formatFilter, setFormatFilter] = useState<EventFormat | 'all'>('all');
 
+  // Realtime removed: 60s refetch sufficient for events discovery
+  // (Phase 2 audit). Events are infrequent compared to reactions/comments,
+  // so the cost of an unfiltered realtime channel is not justified.
   const { data: events, refetch, isLoading } = useQuery({
     queryKey: ['events', user?.id, activeTab, typeFilter, formatFilter],
     queryFn: async () => {
@@ -49,31 +54,8 @@ export default function EventsPage() {
       return (data || []) as EventListItem[];
     },
     enabled: !!user,
+    refetchInterval: EVENTS_REFETCH_INTERVAL_MS,
   });
-
-  // Real-time subscription
-  useEffect(() => {
-    if (!user) return;
-
-    const channel = supabase
-      .channel('events_updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'events',
-        },
-        () => {
-          refetch();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, [user, refetch]);
 
   const filteredEvents = events?.filter((event) =>
     event.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
