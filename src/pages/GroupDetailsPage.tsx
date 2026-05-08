@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -265,7 +265,17 @@ export default function GroupDetailsPage() {
     enabled: !!group && !!user,
   });
 
-  // Real-time updates
+  // group_post_likes and group_post_comments do not carry a denormalized
+  // group_id column, so the only available scope is post_id. We derive the
+  // current page's post IDs from the loaded posts query.
+  const postIdsKey = useMemo(() => {
+    if (!posts || posts.length === 0) return '';
+    return posts.map((p) => p.post_id).sort().join(',');
+  }, [posts]);
+
+  // Real-time updates — group_posts and group_members are filtered by
+  // group_id; group_post_likes and group_post_comments are filtered by the
+  // post_id set of currently-loaded group posts.
   useEffect(() => {
     if (!group) return;
 
@@ -290,28 +300,6 @@ export default function GroupDetailsPage() {
         {
           event: '*',
           schema: 'public',
-          table: 'group_post_likes',
-        },
-        () => {
-          refetchPosts();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'group_post_comments',
-        },
-        () => {
-          refetchPosts();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
           table: 'group_members',
           filter: `group_id=eq.${groupId}`,
         },
@@ -326,6 +314,47 @@ export default function GroupDetailsPage() {
       channel.unsubscribe();
     };
   }, [group?.group_id, refetchPosts, queryClient]);
+
+  // Scope likes/comments realtime to the loaded post set. Rebuilds when the
+  // post set changes (new post, navigation between groups, etc.).
+  useEffect(() => {
+    if (!group || !postIdsKey) return;
+
+    const groupId = group.group_id;
+    const filter = `post_id=in.(${postIdsKey})`;
+
+    const channel = supabase
+      .channel(`group_${groupId}_engagement_${postIdsKey.length}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_post_likes',
+          filter,
+        },
+        () => {
+          refetchPosts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'group_post_comments',
+          filter,
+        },
+        () => {
+          refetchPosts();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [group?.group_id, postIdsKey, refetchPosts]);
 
   // Join group mutation
   const joinGroupMutation = useMutation({

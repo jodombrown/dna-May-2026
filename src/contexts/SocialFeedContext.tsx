@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react';
 import { useRealtimeReactions } from '@/hooks/useRealtimeReactions';
 import type { RealtimeReactionPayload, RealtimeLikePayload } from '@/hooks/useRealtimeReactions';
 
@@ -148,8 +148,12 @@ export const SocialFeedProvider: React.FC<SocialFeedProviderProps> = ({ children
     });
   }, []);
 
-  // Set up realtime subscriptions
+  // Scope realtime to the posts this provider is currently tracking.
+  // Without this scope every reaction platform-wide invalidated every session.
+  const trackedPostIds = useMemo(() => Object.keys(engagement), [engagement]);
+
   useRealtimeReactions({
+    postIds: trackedPostIds,
     onReactionUpdate: handleReactionUpdate,
     onLikeUpdate: handleLikeUpdate
   });
