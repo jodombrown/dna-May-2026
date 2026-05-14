@@ -7,15 +7,16 @@
  */
 
 import React from 'react';
-import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseSection, PulseStatus } from '@/types/pulse';
+
+type IconComponent = React.ComponentType<{ className?: string; strokeWidth?: number | string }>;
 
 interface PulseTrayItemProps {
   item: {
     key: string;
     label: string;
-    icon: LucideIcon;
+    icon: IconComponent;
     href: string;
   };
   pulseData: Partial<PulseSection> | null;

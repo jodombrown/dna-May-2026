@@ -12,13 +12,18 @@
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Users, Calendar, Home, Layers, Grid3X3 } from 'lucide-react';
+import { Home, Grid3X3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePulseNavigation, type MoreButtonState } from '@/hooks/usePulseNavigation';
 import type { PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useKeyboardDetection } from '@/hooks/useKeyboardDetection';
+import {
+  SankofaIcon,
+  NkonsonkonsonIcon,
+  FuntunfunefuIcon,
+} from '@/components/icons/adinkra';
 
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
@@ -26,17 +31,17 @@ import { PulseDockTray } from './PulseDockTray';
 interface PrimaryItemBase {
   key: string;
   label: string;
-  icon: typeof Users;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number | string }>;
   href: string | null;
   isCenter?: boolean;
   isTrigger?: boolean;
 }
 
 const PRIMARY_ITEMS: PrimaryItemBase[] = [
-  { key: 'connect', label: 'Connect', icon: Users, href: '/dna/connect' },
-  { key: 'convene', label: 'Convene', icon: Calendar, href: '/dna/convene' },
+  { key: 'connect', label: 'Connect', icon: SankofaIcon, href: '/dna/connect' },
+  { key: 'convene', label: 'Convene', icon: NkonsonkonsonIcon, href: '/dna/convene' },
   { key: 'feed', label: 'Feed', icon: Home, href: '/dna/feed', isCenter: true },
-  { key: 'collaborate', label: 'Collaborate', icon: Layers, href: '/dna/collaborate' },
+  { key: 'collaborate', label: 'Collaborate', icon: FuntunfunefuIcon, href: '/dna/collaborate' },
   { key: 'more', label: 'More', icon: Grid3X3, href: null, isTrigger: true },
 ];
 
