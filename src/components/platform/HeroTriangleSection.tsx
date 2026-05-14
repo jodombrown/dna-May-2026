@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Users, Handshake, Heart, Calendar, Newspaper, ArrowDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
+import {
+  SankofaIcon,
+  NkonsonkonsonIcon,
+  FuntunfunefuIcon,
+  AdinkrahenIcon,
+  MpatapoIcon,
+} from '@/components/icons/adinkra';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 
 const HeroTriangleSection = () => {
@@ -39,7 +46,7 @@ const HeroTriangleSection = () => {
               >
                 <div className="flex justify-center mb-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Users className="w-7 h-7 text-white" />
+                    <SankofaIcon size={28} className="text-white" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-dna-forest mb-3">Connect</h3>
@@ -59,7 +66,7 @@ const HeroTriangleSection = () => {
               >
                 <div className="flex justify-center mb-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-dna-sunset to-dna-copper rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Calendar className="w-7 h-7 text-white" />
+                    <NkonsonkonsonIcon size={28} className="text-white" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-dna-sunset mb-3">Convene</h3>
@@ -79,7 +86,7 @@ const HeroTriangleSection = () => {
               >
                 <div className="flex justify-center mb-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Handshake className="w-7 h-7 text-white" />
+                    <FuntunfunefuIcon size={28} className="text-white" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-dna-copper mb-3">Collaborate</h3>
@@ -99,7 +106,7 @@ const HeroTriangleSection = () => {
               >
                 <div className="flex justify-center mb-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-dna-mint to-dna-emerald rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Heart className="w-7 h-7 text-white" />
+                    <AdinkrahenIcon size={28} className="text-white" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-dna-emerald mb-3">Contribute</h3>
@@ -119,7 +126,7 @@ const HeroTriangleSection = () => {
               >
                 <div className="flex justify-center mb-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-dna-ochre to-dna-gold rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Newspaper className="w-7 h-7 text-white" />
+                    <MpatapoIcon size={28} className="text-white" />
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-dna-ochre mb-3">Convey</h3>
