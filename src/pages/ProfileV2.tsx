@@ -40,6 +40,7 @@ import { ProfileRecentPosts } from '@/components/profile-v2/ProfileRecentPosts';
 
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
+import { ProfileAsanteSection } from '@/components/contribute/recognition/ProfileAsanteSection';
 
 // SEO component for public profiles
 import { PublicProfileSEO } from '@/components/public-profile';
@@ -439,7 +440,9 @@ const ProfileV2: React.FC = () => {
               isOwner={permissions.is_owner}
             />
 
-            {/* Mutual Connections (Non-Owner Only) */}
+            {/* Asante received — Phase 4 Group 1 */}
+            <ProfileAsanteSection profileId={profile.id} />
+
             {!permissions.is_owner && user?.id && profile?.id && (
               <MutualConnectionsWidget
                 userId={profile.id}

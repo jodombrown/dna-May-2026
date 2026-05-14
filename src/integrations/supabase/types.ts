@@ -14,6 +14,170 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_events: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          event_type: string
+          id: string
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ad_campaigns: {
+        Row: {
+          advertiser_id: string
+          body: string | null
+          click_count: number
+          created_at: string
+          cta_label: string
+          cta_url: string
+          daily_budget_cents: number | null
+          ends_at: string | null
+          headline: string
+          id: string
+          image_url: string | null
+          impression_count: number
+          name: string
+          priority: number
+          spent_cents: number
+          starts_at: string | null
+          status: Database["public"]["Enums"]["ad_campaign_status"]
+          target_placement: string
+          total_budget_cents: number | null
+          updated_at: string
+        }
+        Insert: {
+          advertiser_id: string
+          body?: string | null
+          click_count?: number
+          created_at?: string
+          cta_label?: string
+          cta_url: string
+          daily_budget_cents?: number | null
+          ends_at?: string | null
+          headline: string
+          id?: string
+          image_url?: string | null
+          impression_count?: number
+          name: string
+          priority?: number
+          spent_cents?: number
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["ad_campaign_status"]
+          target_placement: string
+          total_budget_cents?: number | null
+          updated_at?: string
+        }
+        Update: {
+          advertiser_id?: string
+          body?: string | null
+          click_count?: number
+          created_at?: string
+          cta_label?: string
+          cta_url?: string
+          daily_budget_cents?: number | null
+          ends_at?: string | null
+          headline?: string
+          id?: string
+          image_url?: string | null
+          impression_count?: number
+          name?: string
+          priority?: number
+          spent_cents?: number
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["ad_campaign_status"]
+          target_placement?: string
+          total_budget_cents?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_campaigns_advertiser_id_fkey"
+            columns: ["advertiser_id"]
+            isOneToOne: false
+            referencedRelation: "advertisers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_intake_submissions: {
+        Row: {
+          company_name: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          created_at: string
+          goals: string | null
+          id: string
+          industry: string | null
+          internal_notes: string | null
+          message: string | null
+          monthly_budget_range: string | null
+          preferred_placements: string[] | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          website_url: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          created_at?: string
+          goals?: string | null
+          id?: string
+          industry?: string | null
+          internal_notes?: string | null
+          message?: string | null
+          monthly_budget_range?: string | null
+          preferred_placements?: string[] | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          website_url?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          created_at?: string
+          goals?: string | null
+          id?: string
+          industry?: string | null
+          internal_notes?: string | null
+          message?: string | null
+          monthly_budget_range?: string | null
+          preferred_placements?: string[] | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       ada_cohort_memberships: {
         Row: {
           cohort_id: string
@@ -519,6 +683,63 @@ export type Database = {
         }
         Relationships: []
       }
+      advertisers: {
+        Row: {
+          billing_email: string | null
+          contact_email: string
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          internal_notes: string | null
+          logo_url: string | null
+          name: string
+          slug: string
+          status: Database["public"]["Enums"]["advertiser_status"]
+          tier: Database["public"]["Enums"]["advertiser_tier"]
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          billing_email?: string | null
+          contact_email: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          internal_notes?: string | null
+          logo_url?: string | null
+          name: string
+          slug: string
+          status?: Database["public"]["Enums"]["advertiser_status"]
+          tier?: Database["public"]["Enums"]["advertiser_tier"]
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          billing_email?: string | null
+          contact_email?: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          internal_notes?: string | null
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          status?: Database["public"]["Enums"]["advertiser_status"]
+          tier?: Database["public"]["Enums"]["advertiser_tier"]
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       alpha_feedback: {
         Row: {
           area: string | null
@@ -675,30 +896,42 @@ export type Database = {
       }
       beta_waitlist: {
         Row: {
+          archived_at: string | null
+          archived_by: string | null
           created_at: string
           email: string
           full_name: string | null
           id: string
+          last_invite_sent_at: string | null
+          last_invite_sent_by: string | null
           linkedin_url: string | null
           message: string | null
           status: string
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           email: string
           full_name?: string | null
           id?: string
+          last_invite_sent_at?: string | null
+          last_invite_sent_by?: string | null
           linkedin_url?: string | null
           message?: string | null
           status?: string
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
+          archived_by?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
+          last_invite_sent_at?: string | null
+          last_invite_sent_by?: string | null
           linkedin_url?: string | null
           message?: string | null
           status?: string
@@ -1538,7 +1771,7 @@ export type Database = {
             foreignKeyName: "contribution_acknowledgments_fulfillment_id_fkey"
             columns: ["fulfillment_id"]
             isOneToOne: false
-            referencedRelation: "contribution_fulfillments"
+            referencedRelation: "need_fulfillments"
             referencedColumns: ["id"]
           },
           {
@@ -1704,6 +1937,36 @@ export type Database = {
           },
         ]
       }
+      contribution_manifests: {
+        Row: {
+          created_at: string
+          headline: string | null
+          id: string
+          is_published: boolean
+          last_reviewed_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          headline?: string | null
+          id?: string
+          is_published?: boolean
+          last_reviewed_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          headline?: string | null
+          id?: string
+          is_published?: boolean
+          last_reviewed_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       contribution_needs: {
         Row: {
           created_at: string
@@ -1830,22 +2093,34 @@ export type Database = {
         Row: {
           conversation_id: string
           id: string
+          is_archived: boolean
+          is_muted: boolean
+          is_pinned: boolean
           joined_at: string
           last_read_at: string
+          role: string
           user_id: string
         }
         Insert: {
           conversation_id: string
           id?: string
+          is_archived?: boolean
+          is_muted?: boolean
+          is_pinned?: boolean
           joined_at?: string
           last_read_at?: string
+          role?: string
           user_id: string
         }
         Update: {
           conversation_id?: string
           id?: string
+          is_archived?: boolean
+          is_muted?: boolean
+          is_pinned?: boolean
           joined_at?: string
           last_read_at?: string
+          role?: string
           user_id?: string
         }
         Relationships: [
@@ -1860,9 +2135,12 @@ export type Database = {
       }
       conversations: {
         Row: {
+          bucket_for_a: string
+          bucket_for_b: string
           created_at: string
           deleted_by_a: boolean | null
           deleted_by_b: boolean | null
+          disappearing_seconds: number | null
           id: string
           is_archived_by_a: boolean | null
           is_archived_by_b: boolean | null
@@ -1871,13 +2149,18 @@ export type Database = {
           is_pinned_by_a: boolean | null
           is_pinned_by_b: boolean | null
           last_message_at: string | null
+          last_summarised_message_id: string | null
+          summary_payload: Json | null
           user_a: string
           user_b: string
         }
         Insert: {
+          bucket_for_a?: string
+          bucket_for_b?: string
           created_at?: string
           deleted_by_a?: boolean | null
           deleted_by_b?: boolean | null
+          disappearing_seconds?: number | null
           id?: string
           is_archived_by_a?: boolean | null
           is_archived_by_b?: boolean | null
@@ -1886,13 +2169,18 @@ export type Database = {
           is_pinned_by_a?: boolean | null
           is_pinned_by_b?: boolean | null
           last_message_at?: string | null
+          last_summarised_message_id?: string | null
+          summary_payload?: Json | null
           user_a: string
           user_b: string
         }
         Update: {
+          bucket_for_a?: string
+          bucket_for_b?: string
           created_at?: string
           deleted_by_a?: boolean | null
           deleted_by_b?: boolean | null
+          disappearing_seconds?: number | null
           id?: string
           is_archived_by_a?: boolean | null
           is_archived_by_b?: boolean | null
@@ -1901,6 +2189,8 @@ export type Database = {
           is_pinned_by_a?: boolean | null
           is_pinned_by_b?: boolean | null
           last_message_at?: string | null
+          last_summarised_message_id?: string | null
+          summary_payload?: Json | null
           user_a?: string
           user_b?: string
         }
@@ -2109,6 +2399,65 @@ export type Database = {
         }
         Relationships: []
       }
+      currency_stances: {
+        Row: {
+          archived_at: string | null
+          availability: Database["public"]["Enums"]["stance_availability"]
+          created_at: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          description: string | null
+          display_order: number
+          id: string
+          is_archived: boolean
+          manifest_id: string
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["stance_visibility"]
+        }
+        Insert: {
+          archived_at?: string | null
+          availability?: Database["public"]["Enums"]["stance_availability"]
+          created_at?: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_archived?: boolean
+          manifest_id: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+          visibility?: Database["public"]["Enums"]["stance_visibility"]
+        }
+        Update: {
+          archived_at?: string | null
+          availability?: Database["public"]["Enums"]["stance_availability"]
+          created_at?: string
+          currency?: Database["public"]["Enums"]["contribution_currency"]
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_archived?: boolean
+          manifest_id?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["stance_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "currency_stances_manifest_id_fkey"
+            columns: ["manifest_id"]
+            isOneToOne: false
+            referencedRelation: "contribution_manifests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dashboard_analytics: {
         Row: {
           created_at: string
@@ -2156,6 +2505,157 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dia_brief_cards: {
+        Row: {
+          body: string
+          brief_date: string
+          c_module: string
+          cta_label: string
+          cta_route: string
+          expires_at: string
+          generated_at: string
+          id: string
+          is_fallback: boolean
+          position: number
+          reasoning: string
+          signal_strength: number
+          signal_type: string
+          target_entity_id: string | null
+          target_entity_type: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          brief_date: string
+          c_module: string
+          cta_label: string
+          cta_route: string
+          expires_at: string
+          generated_at?: string
+          id?: string
+          is_fallback?: boolean
+          position: number
+          reasoning: string
+          signal_strength: number
+          signal_type: string
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          brief_date?: string
+          c_module?: string
+          cta_label?: string
+          cta_route?: string
+          expires_at?: string
+          generated_at?: string
+          id?: string
+          is_fallback?: boolean
+          position?: number
+          reasoning?: string
+          signal_strength?: number
+          signal_type?: string
+          target_entity_id?: string | null
+          target_entity_type?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dia_brief_cards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dia_brief_cards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dia_brief_interactions: {
+        Row: {
+          card_id: string
+          created_at: string
+          id: string
+          interaction_type: Database["public"]["Enums"]["brief_interaction_type"]
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          id?: string
+          interaction_type: Database["public"]["Enums"]["brief_interaction_type"]
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          id?: string
+          interaction_type?: Database["public"]["Enums"]["brief_interaction_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dia_brief_interactions_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "dia_brief_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dia_brief_interactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dia_brief_interactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dia_brief_snoozes: {
+        Row: {
+          created_at: string
+          id: string
+          snoozed_until: string
+          thread_id: string
+          thread_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          snoozed_until: string
+          thread_id: string
+          thread_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          snoozed_until?: string
+          thread_id?: string
+          thread_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       dia_insights: {
         Row: {
@@ -2205,6 +2705,174 @@ export type Database = {
           start_date?: string | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      dia_messaging_events: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          model: string | null
+          ref_id: string | null
+          user_id: string
+          variant: string | null
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          model?: string | null
+          ref_id?: string | null
+          user_id: string
+          variant?: string | null
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          model?: string | null
+          ref_id?: string | null
+          user_id?: string
+          variant?: string | null
+        }
+        Relationships: []
+      }
+      dia_messaging_feedback: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          helpful: boolean
+          id: string
+          model: string | null
+          ref_id: string | null
+          surface: string
+          user_id: string
+          variant: string | null
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          helpful: boolean
+          id?: string
+          model?: string | null
+          ref_id?: string | null
+          surface: string
+          user_id: string
+          variant?: string | null
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          helpful?: boolean
+          id?: string
+          model?: string | null
+          ref_id?: string | null
+          surface?: string
+          user_id?: string
+          variant?: string | null
+        }
+        Relationships: []
+      }
+      dia_messaging_prefs: {
+        Row: {
+          created_at: string
+          email_digest: boolean
+          smart_replies_enabled: boolean
+          summaries_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_digest?: boolean
+          smart_replies_enabled?: boolean
+          summaries_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_digest?: boolean
+          smart_replies_enabled?: boolean
+          summaries_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dia_nudges: {
+        Row: {
+          acted_on_at: string | null
+          action: Json
+          body: string | null
+          c_module: string
+          channel: string
+          created_at: string
+          delivered_at: string | null
+          dismissed_at: string | null
+          emitted_at: string
+          entity_id: string | null
+          entity_kind: string | null
+          expires_at: string
+          headline: string
+          id: string
+          nudge_type: string
+          payload: Json
+          priority: number
+          seen_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          acted_on_at?: string | null
+          action?: Json
+          body?: string | null
+          c_module: string
+          channel?: string
+          created_at?: string
+          delivered_at?: string | null
+          dismissed_at?: string | null
+          emitted_at?: string
+          entity_id?: string | null
+          entity_kind?: string | null
+          expires_at?: string
+          headline: string
+          id?: string
+          nudge_type: string
+          payload?: Json
+          priority?: number
+          seen_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          acted_on_at?: string | null
+          action?: Json
+          body?: string | null
+          c_module?: string
+          channel?: string
+          created_at?: string
+          delivered_at?: string | null
+          dismissed_at?: string | null
+          emitted_at?: string
+          entity_id?: string | null
+          entity_kind?: string | null
+          expires_at?: string
+          headline?: string
+          id?: string
+          nudge_type?: string
+          payload?: Json
+          priority?: number
+          seen_at?: string | null
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -4127,6 +4795,45 @@ export type Database = {
           },
         ]
       }
+      group_message_mentions: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          mentioned_user_id: string
+          message_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          mentioned_user_id: string
+          message_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          mentioned_user_id?: string
+          message_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_message_mentions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations_new"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_message_mentions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages_new"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       group_messages: {
         Row: {
           content: string | null
@@ -4289,6 +4996,38 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_starred_messages: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          id: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          message_id: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          message_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_starred_messages_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages_new"
             referencedColumns: ["id"]
           },
         ]
@@ -4665,6 +5404,39 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_notification_signups: {
+        Row: {
+          created_at: string
+          email: string
+          hub: string
+          id: string
+          name: string | null
+          preferences: Json
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          hub: string
+          id?: string
+          name?: string | null
+          preferences?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          hub?: string
+          id?: string
+          name?: string | null
+          preferences?: Json
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       impact_attributions: {
         Row: {
           connection_id: string
@@ -5032,6 +5804,66 @@ export type Database = {
         }
         Relationships: []
       }
+      message_mentions: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          mentioned_user_id: string
+          message_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          mentioned_user_id: string
+          message_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          mentioned_user_id?: string
+          message_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_mentions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_mentions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_rate_log: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          id: number
+          sender_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: number
+          sender_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: number
+          sender_id?: string
+        }
+        Relationships: []
+      }
       message_reactions: {
         Row: {
           created_at: string
@@ -5056,29 +5888,76 @@ export type Database = {
         }
         Relationships: []
       }
+      message_receipts: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          delivered_at: string | null
+          message_id: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          delivered_at?: string | null
+          message_id: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          delivered_at?: string | null
+          message_id?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_receipts_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
+          client_id: string | null
           content: string
           conversation_id: string
           created_at: string
+          deleted_at: string | null
+          edited_at: string | null
+          forwarded_from_message_id: string | null
           id: string
           payload: Json | null
           read: boolean
           sender_id: string
         }
         Insert: {
+          client_id?: string | null
           content: string
           conversation_id: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          forwarded_from_message_id?: string | null
           id?: string
           payload?: Json | null
           read?: boolean
           sender_id: string
         }
         Update: {
+          client_id?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
+          forwarded_from_message_id?: string | null
           id?: string
           payload?: Json | null
           read?: boolean
@@ -5092,6 +5971,13 @@ export type Database = {
             referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "messages_forwarded_from_message_id_fkey"
+            columns: ["forwarded_from_message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
         ]
       }
       messages_new: {
@@ -5102,6 +5988,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           edited_at: string | null
+          forwarded_from_message_id: string | null
           id: string
           is_deleted: boolean
           media_urls: Json | null
@@ -5118,6 +6005,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           edited_at?: string | null
+          forwarded_from_message_id?: string | null
           id?: string
           is_deleted?: boolean
           media_urls?: Json | null
@@ -5134,6 +6022,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           edited_at?: string | null
+          forwarded_from_message_id?: string | null
           id?: string
           is_deleted?: boolean
           media_urls?: Json | null
@@ -5149,6 +6038,13 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations_new"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_new_forwarded_from_message_id_fkey"
+            columns: ["forwarded_from_message_id"]
+            isOneToOne: false
+            referencedRelation: "messages_new"
             referencedColumns: ["id"]
           },
           {
@@ -5218,6 +6114,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      module_status: {
+        Row: {
+          label: string
+          module: string
+          state: Database["public"]["Enums"]["module_status_state"]
+          target_launch: string | null
+          updated_at: string
+        }
+        Insert: {
+          label: string
+          module: string
+          state: Database["public"]["Enums"]["module_status_state"]
+          target_launch?: string | null
+          updated_at?: string
+        }
+        Update: {
+          label?: string
+          module?: string
+          state?: Database["public"]["Enums"]["module_status_state"]
+          target_launch?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       monthly_reports: {
         Row: {
@@ -5305,6 +6225,140 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      need_declarations: {
+        Row: {
+          closed_at: string | null
+          context: string | null
+          created_at: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          ends_at: string | null
+          expires_at: string | null
+          id: string
+          published_at: string | null
+          related_stance_id: string | null
+          scope: Database["public"]["Enums"]["need_scope"]
+          starts_at: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["stance_visibility"]
+        }
+        Insert: {
+          closed_at?: string | null
+          context?: string | null
+          created_at?: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          ends_at?: string | null
+          expires_at?: string | null
+          id?: string
+          published_at?: string | null
+          related_stance_id?: string | null
+          scope?: Database["public"]["Enums"]["need_scope"]
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["need_status"]
+          tags?: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+          visibility?: Database["public"]["Enums"]["stance_visibility"]
+        }
+        Update: {
+          closed_at?: string | null
+          context?: string | null
+          created_at?: string
+          currency?: Database["public"]["Enums"]["contribution_currency"]
+          ends_at?: string | null
+          expires_at?: string | null
+          id?: string
+          published_at?: string | null
+          related_stance_id?: string | null
+          scope?: Database["public"]["Enums"]["need_scope"]
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["need_status"]
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["stance_visibility"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "need_declarations_related_stance_id_fkey"
+            columns: ["related_stance_id"]
+            isOneToOne: false
+            referencedRelation: "currency_stances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      need_fulfillments: {
+        Row: {
+          cancelled_at: string | null
+          cancelled_by: string | null
+          confirmed_at: string | null
+          created_at: string
+          fulfilled_at: string | null
+          fulfiller_id: string
+          fulfiller_message: string | null
+          id: string
+          need_id: string
+          requester_id: string
+          room_curation_id: string | null
+          status: string
+          thread_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          fulfilled_at?: string | null
+          fulfiller_id: string
+          fulfiller_message?: string | null
+          id?: string
+          need_id: string
+          requester_id: string
+          room_curation_id?: string | null
+          status?: string
+          thread_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          cancelled_by?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          fulfilled_at?: string | null
+          fulfiller_id?: string
+          fulfiller_message?: string | null
+          id?: string
+          need_id?: string
+          requester_id?: string
+          room_curation_id?: string | null
+          status?: string
+          thread_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "need_fulfillments_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "need_declarations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "need_fulfillments_room_curation_id_fkey"
+            columns: ["room_curation_id"]
+            isOneToOne: false
+            referencedRelation: "room_curations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       newsletter_subscriptions: {
         Row: {
@@ -5438,13 +6492,6 @@ export type Database = {
             columns: ["space_id"]
             isOneToOne: false
             referencedRelation: "spaces"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "nudges_task_id_fkey"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -6927,6 +7974,8 @@ export type Database = {
           sectors: string[] | null
           seeking_mentorship: boolean | null
           selected_pillars: string[] | null
+          show_presence: boolean
+          show_read_receipts: boolean
           skill_tags: Json | null
           skills: string[] | null
           skills_needed: string[] | null
@@ -7141,6 +8190,8 @@ export type Database = {
           sectors?: string[] | null
           seeking_mentorship?: boolean | null
           selected_pillars?: string[] | null
+          show_presence?: boolean
+          show_read_receipts?: boolean
           skill_tags?: Json | null
           skills?: string[] | null
           skills_needed?: string[] | null
@@ -7355,6 +8406,8 @@ export type Database = {
           sectors?: string[] | null
           seeking_mentorship?: boolean | null
           selected_pillars?: string[] | null
+          show_presence?: boolean
+          show_read_receipts?: boolean
           skill_tags?: Json | null
           skills?: string[] | null
           skills_needed?: string[] | null
@@ -7787,6 +8840,539 @@ export type Database = {
         }
         Relationships: []
       }
+      remittance_caveats: {
+        Row: {
+          body: string
+          id: string
+          sort_order: number
+        }
+        Insert: {
+          body: string
+          id?: string
+          sort_order?: number
+        }
+        Update: {
+          body?: string
+          id?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      remittance_channel_players: {
+        Row: {
+          channel_id: string
+          detail: string | null
+          id: string
+          name: string
+          sort_order: number
+          stat: string | null
+        }
+        Insert: {
+          channel_id: string
+          detail?: string | null
+          id?: string
+          name: string
+          sort_order?: number
+          stat?: string | null
+        }
+        Update: {
+          channel_id?: string
+          detail?: string | null
+          id?: string
+          name?: string
+          sort_order?: number
+          stat?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "remittance_channel_players_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "remittance_channels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      remittance_channels: {
+        Row: {
+          callout: string | null
+          icon: string | null
+          id: string
+          name: string
+          sort_order: number
+          tagline: string | null
+        }
+        Insert: {
+          callout?: string | null
+          icon?: string | null
+          id: string
+          name: string
+          sort_order?: number
+          tagline?: string | null
+        }
+        Update: {
+          callout?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          sort_order?: number
+          tagline?: string | null
+        }
+        Relationships: []
+      }
+      remittance_citations: {
+        Row: {
+          citation_type: string
+          detail: string | null
+          id: string
+          sort_order: number
+          title: string
+          url: string | null
+          viz_key: string
+        }
+        Insert: {
+          citation_type: string
+          detail?: string | null
+          id?: string
+          sort_order?: number
+          title: string
+          url?: string | null
+          viz_key: string
+        }
+        Update: {
+          citation_type?: string
+          detail?: string | null
+          id?: string
+          sort_order?: number
+          title?: string
+          url?: string | null
+          viz_key?: string
+        }
+        Relationships: []
+      }
+      remittance_compare_corridors: {
+        Row: {
+          channel: string
+          fee_pct: number | null
+          from_country: string
+          id: string
+          to_country: string
+        }
+        Insert: {
+          channel: string
+          fee_pct?: number | null
+          from_country: string
+          id?: string
+          to_country: string
+        }
+        Update: {
+          channel?: string
+          fee_pct?: number | null
+          from_country?: string
+          id?: string
+          to_country?: string
+        }
+        Relationships: []
+      }
+      remittance_corridor_comparisons: {
+        Row: {
+          created_at: string
+          estimates: Json
+          from_country: string
+          id: string
+          session_id: string | null
+          to_country: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          estimates: Json
+          from_country: string
+          id?: string
+          session_id?: string | null
+          to_country: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          estimates?: Json
+          from_country?: string
+          id?: string
+          session_id?: string | null
+          to_country?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      remittance_cost_data: {
+        Row: {
+          color: string | null
+          id: string
+          label: string
+          note: string | null
+          pct: number
+          sort_order: number
+        }
+        Insert: {
+          color?: string | null
+          id?: string
+          label: string
+          note?: string | null
+          pct: number
+          sort_order?: number
+        }
+        Update: {
+          color?: string | null
+          id?: string
+          label?: string
+          note?: string | null
+          pct?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      remittance_diaspora_bonds: {
+        Row: {
+          country: string
+          detail: string | null
+          flag: string | null
+          headline: string | null
+          id: string
+          label: string | null
+          sort_order: number
+          status: string | null
+        }
+        Insert: {
+          country: string
+          detail?: string | null
+          flag?: string | null
+          headline?: string | null
+          id?: string
+          label?: string | null
+          sort_order?: number
+          status?: string | null
+        }
+        Update: {
+          country?: string
+          detail?: string | null
+          flag?: string | null
+          headline?: string | null
+          id?: string
+          label?: string | null
+          sort_order?: number
+          status?: string | null
+        }
+        Relationships: []
+      }
+      remittance_diaspora_regions: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          population_millions: number
+          region: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          population_millions: number
+          region: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          population_millions?: number
+          region?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      remittance_fatf_status: {
+        Row: {
+          country: string
+          id: string
+          sort_order: number
+          status: string
+          status_date: string | null
+        }
+        Insert: {
+          country: string
+          id?: string
+          sort_order?: number
+          status: string
+          status_date?: string | null
+        }
+        Update: {
+          country?: string
+          id?: string
+          sort_order?: number
+          status?: string
+          status_date?: string | null
+        }
+        Relationships: []
+      }
+      remittance_forecast: {
+        Row: {
+          id: string
+          sort_order: number
+          value: number
+          year_label: string
+        }
+        Insert: {
+          id?: string
+          sort_order?: number
+          value: number
+          year_label: string
+        }
+        Update: {
+          id?: string
+          sort_order?: number
+          value?: number
+          year_label?: string
+        }
+        Relationships: []
+      }
+      remittance_future_trends: {
+        Row: {
+          body: string | null
+          icon: string | null
+          id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          icon?: string | null
+          id?: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          body?: string | null
+          icon?: string | null
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      remittance_fx_cases: {
+        Row: {
+          after_label: string | null
+          before_label: string | null
+          body: string | null
+          country: string
+          delta: string | null
+          event: string | null
+          flag: string | null
+          id: string
+          sort_order: number
+        }
+        Insert: {
+          after_label?: string | null
+          before_label?: string | null
+          body?: string | null
+          country: string
+          delta?: string | null
+          event?: string | null
+          flag?: string | null
+          id?: string
+          sort_order?: number
+        }
+        Update: {
+          after_label?: string | null
+          before_label?: string | null
+          body?: string | null
+          country?: string
+          delta?: string | null
+          event?: string | null
+          flag?: string | null
+          id?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      remittance_gdp_leaders: {
+        Row: {
+          country: string
+          id: string
+          pct_gdp: number
+          sort_order: number
+        }
+        Insert: {
+          country: string
+          id?: string
+          pct_gdp: number
+          sort_order?: number
+        }
+        Update: {
+          country?: string
+          id?: string
+          pct_gdp?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      remittance_macro_flows: {
+        Row: {
+          fill: string | null
+          flow_type: string
+          id: string
+          sort_order: number
+          value: number
+        }
+        Insert: {
+          fill?: string | null
+          flow_type: string
+          id?: string
+          sort_order?: number
+          value: number
+        }
+        Update: {
+          fill?: string | null
+          flow_type?: string
+          id?: string
+          sort_order?: number
+          value?: number
+        }
+        Relationships: []
+      }
+      remittance_newsletter_subscribers: {
+        Row: {
+          consent: boolean
+          created_at: string
+          email: string
+          id: string
+          source: string
+        }
+        Insert: {
+          consent?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          source?: string
+        }
+        Update: {
+          consent?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      remittance_sources: {
+        Row: {
+          id: string
+          name: string
+          role: string | null
+          sort_order: number
+          url: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          role?: string | null
+          sort_order?: number
+          url?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          role?: string | null
+          sort_order?: number
+          url?: string | null
+        }
+        Relationships: []
+      }
+      remittance_top_corridors: {
+        Row: {
+          from_country: string
+          id: string
+          note: string | null
+          sort_order: number
+          to_country: string
+          usd_billions: number
+        }
+        Insert: {
+          from_country: string
+          id?: string
+          note?: string | null
+          sort_order?: number
+          to_country: string
+          usd_billions: number
+        }
+        Update: {
+          from_country?: string
+          id?: string
+          note?: string | null
+          sort_order?: number
+          to_country?: string
+          usd_billions?: number
+        }
+        Relationships: []
+      }
+      remittance_top_recipients: {
+        Row: {
+          country: string
+          flag: string | null
+          id: string
+          pct_gdp: number
+          sort_order: number
+          source: string | null
+          usd_billions: number
+        }
+        Insert: {
+          country: string
+          flag?: string | null
+          id?: string
+          pct_gdp: number
+          sort_order?: number
+          source?: string | null
+          usd_billions: number
+        }
+        Update: {
+          country?: string
+          flag?: string | null
+          id?: string
+          pct_gdp?: number
+          sort_order?: number
+          source?: string | null
+          usd_billions?: number
+        }
+        Relationships: []
+      }
+      remittance_use_of_funds: {
+        Row: {
+          color: string | null
+          id: string
+          name: string
+          sort_order: number
+          value: number
+        }
+        Insert: {
+          color?: string | null
+          id?: string
+          name: string
+          sort_order?: number
+          value: number
+        }
+        Update: {
+          color?: string | null
+          id?: string
+          name?: string
+          sort_order?: number
+          value?: number
+        }
+        Relationships: []
+      }
       reserved_hashtags: {
         Row: {
           can_be_used: boolean | null
@@ -7816,6 +9402,878 @@ export type Database = {
           source?: string | null
         }
         Relationships: []
+      }
+      roadmap_attendees: {
+        Row: {
+          country_code: string | null
+          edition_year: number
+          email: string
+          full_name: string | null
+          goals: string | null
+          id: string
+          interests: Json
+          networking_opt_in: boolean
+          organization: string | null
+          registered_at: string
+          role_title: string | null
+          source: string | null
+          status: string
+          ticket_type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          country_code?: string | null
+          edition_year?: number
+          email: string
+          full_name?: string | null
+          goals?: string | null
+          id?: string
+          interests?: Json
+          networking_opt_in?: boolean
+          organization?: string | null
+          registered_at?: string
+          role_title?: string | null
+          source?: string | null
+          status?: string
+          ticket_type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          country_code?: string | null
+          edition_year?: number
+          email?: string
+          full_name?: string | null
+          goals?: string | null
+          id?: string
+          interests?: Json
+          networking_opt_in?: boolean
+          organization?: string | null
+          registered_at?: string
+          role_title?: string | null
+          source?: string | null
+          status?: string
+          ticket_type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      roadmap_event_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          edition_year: number
+          id: string
+          image_url: string
+          is_approved: boolean
+          user_id: string | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          edition_year: number
+          id?: string
+          image_url: string
+          is_approved?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          edition_year?: number
+          id?: string
+          image_url?: string
+          is_approved?: boolean
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      roadmap_impact_metrics: {
+        Row: {
+          created_at: string
+          display_order: number
+          edition_year: number
+          id: string
+          label: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          edition_year?: number
+          id?: string
+          label: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          edition_year?: number
+          id?: string
+          label?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      roadmap_reminder_prefs: {
+        Row: {
+          created_at: string
+          email_enabled: boolean
+          lead_minutes: number
+          push_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_enabled?: boolean
+          lead_minutes?: number
+          push_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_enabled?: boolean
+          lead_minutes?: number
+          push_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      roadmap_saved_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_saved_sessions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_session_reminder_sends: {
+        Row: {
+          id: string
+          sent_at: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          sent_at?: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          sent_at?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_session_reminder_sends_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_sessions: {
+        Row: {
+          created_at: string
+          day_label: string
+          description: string | null
+          display_order: number
+          edition_year: number
+          end_time: string | null
+          id: string
+          is_published: boolean
+          lead: string | null
+          location: string | null
+          recording_published_at: string | null
+          recording_thumbnail_url: string | null
+          recording_url: string | null
+          start_time: string | null
+          time_label: string | null
+          title: string
+          track_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_label: string
+          description?: string | null
+          display_order?: number
+          edition_year?: number
+          end_time?: string | null
+          id?: string
+          is_published?: boolean
+          lead?: string | null
+          location?: string | null
+          recording_published_at?: string | null
+          recording_thumbnail_url?: string | null
+          recording_url?: string | null
+          start_time?: string | null
+          time_label?: string | null
+          title: string
+          track_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_label?: string
+          description?: string | null
+          display_order?: number
+          edition_year?: number
+          end_time?: string | null
+          id?: string
+          is_published?: boolean
+          lead?: string | null
+          location?: string | null
+          recording_published_at?: string | null
+          recording_thumbnail_url?: string | null
+          recording_url?: string | null
+          start_time?: string | null
+          time_label?: string | null
+          title?: string
+          track_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_sessions_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_speaker_followers: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          notify_email: boolean
+          source: string
+          speaker_id: string
+          unsubscribe_token: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          notify_email?: boolean
+          source?: string
+          speaker_id: string
+          unsubscribe_token?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          notify_email?: boolean
+          source?: string
+          speaker_id?: string
+          unsubscribe_token?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_speaker_followers_speaker_id_fkey"
+            columns: ["speaker_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_speakers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_speaker_update_sends: {
+        Row: {
+          email: string
+          error: string | null
+          id: string
+          provider_message_id: string | null
+          sent_at: string
+          status: string
+          update_id: string
+        }
+        Insert: {
+          email: string
+          error?: string | null
+          id?: string
+          provider_message_id?: string | null
+          sent_at?: string
+          status: string
+          update_id: string
+        }
+        Update: {
+          email?: string
+          error?: string | null
+          id?: string
+          provider_message_id?: string | null
+          sent_at?: string
+          status?: string
+          update_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_speaker_update_sends_update_id_fkey"
+            columns: ["update_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_speaker_updates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_speaker_updates: {
+        Row: {
+          body_md: string
+          created_at: string
+          created_by: string
+          cta_label: string | null
+          cta_url: string | null
+          dispatched_at: string | null
+          edition_year: number
+          id: string
+          last_error: string | null
+          published_at: string | null
+          recipients_count: number | null
+          speaker_id: string
+          subject: string
+        }
+        Insert: {
+          body_md: string
+          created_at?: string
+          created_by: string
+          cta_label?: string | null
+          cta_url?: string | null
+          dispatched_at?: string | null
+          edition_year?: number
+          id?: string
+          last_error?: string | null
+          published_at?: string | null
+          recipients_count?: number | null
+          speaker_id: string
+          subject: string
+        }
+        Update: {
+          body_md?: string
+          created_at?: string
+          created_by?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          dispatched_at?: string | null
+          edition_year?: number
+          id?: string
+          last_error?: string | null
+          published_at?: string | null
+          recipients_count?: number | null
+          speaker_id?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_speaker_updates_speaker_id_fkey"
+            columns: ["speaker_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_speakers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_speakers: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          country_code: string | null
+          created_at: string
+          display_order: number
+          edition_year: number
+          full_name: string
+          id: string
+          is_announced: boolean
+          linkedin_url: string | null
+          organization: string | null
+          role_title: string | null
+          slug: string
+          twitter_url: string | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          country_code?: string | null
+          created_at?: string
+          display_order?: number
+          edition_year?: number
+          full_name: string
+          id?: string
+          is_announced?: boolean
+          linkedin_url?: string | null
+          organization?: string | null
+          role_title?: string | null
+          slug: string
+          twitter_url?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          country_code?: string | null
+          created_at?: string
+          display_order?: number
+          edition_year?: number
+          full_name?: string
+          id?: string
+          is_announced?: boolean
+          linkedin_url?: string | null
+          organization?: string | null
+          role_title?: string | null
+          slug?: string
+          twitter_url?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      roadmap_sponsor_digest_sends: {
+        Row: {
+          id: string
+          manager_user_id: string
+          sent_at: string
+          sponsor_id: string
+          week_start: string
+        }
+        Insert: {
+          id?: string
+          manager_user_id: string
+          sent_at?: string
+          sponsor_id: string
+          week_start: string
+        }
+        Update: {
+          id?: string
+          manager_user_id?: string
+          sent_at?: string
+          sponsor_id?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_sponsor_digest_sends_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_sponsor_leads: {
+        Row: {
+          created_at: string
+          email: string
+          follow_up_at: string | null
+          id: string
+          last_contacted_at: string | null
+          message: string | null
+          name: string
+          notes: string | null
+          organization: string | null
+          source: string
+          sponsor_id: string
+          status: string
+          updated_at: string
+          updated_by: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          follow_up_at?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          message?: string | null
+          name: string
+          notes?: string | null
+          organization?: string | null
+          source?: string
+          sponsor_id: string
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          follow_up_at?: string | null
+          id?: string
+          last_contacted_at?: string | null
+          message?: string | null
+          name?: string
+          notes?: string | null
+          organization?: string | null
+          source?: string
+          sponsor_id?: string
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_sponsor_leads_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_sponsor_managers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          role: string
+          sponsor_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          role?: string
+          sponsor_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          role?: string
+          sponsor_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roadmap_sponsor_managers_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "roadmap_sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roadmap_sponsors: {
+        Row: {
+          blurb: string | null
+          contact_email: string | null
+          created_at: string
+          cta_label: string | null
+          cta_url: string | null
+          display_order: number
+          edition_year: number
+          id: string
+          is_published: boolean
+          logo_url: string | null
+          name: string
+          slug: string
+          tier: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          blurb?: string | null
+          contact_email?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          display_order?: number
+          edition_year?: number
+          id?: string
+          is_published?: boolean
+          logo_url?: string | null
+          name: string
+          slug: string
+          tier?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          blurb?: string | null
+          contact_email?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          display_order?: number
+          edition_year?: number
+          id?: string
+          is_published?: boolean
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          tier?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      roadmap_subscribers: {
+        Row: {
+          edition_year: number
+          email: string
+          id: string
+          source: string
+          subscribed_at: string
+        }
+        Insert: {
+          edition_year?: number
+          email: string
+          id?: string
+          source?: string
+          subscribed_at?: string
+        }
+        Update: {
+          edition_year?: number
+          email?: string
+          id?: string
+          source?: string
+          subscribed_at?: string
+        }
+        Relationships: []
+      }
+      roadmap_survey_responses: {
+        Row: {
+          created_at: string
+          edition_year: number
+          email: string | null
+          highlight: string | null
+          id: string
+          improvement: string | null
+          nps: number | null
+          themes: string[] | null
+          user_id: string | null
+          would_attend_again: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          edition_year: number
+          email?: string | null
+          highlight?: string | null
+          id?: string
+          improvement?: string | null
+          nps?: number | null
+          themes?: string[] | null
+          user_id?: string | null
+          would_attend_again?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          edition_year?: number
+          email?: string | null
+          highlight?: string | null
+          id?: string
+          improvement?: string | null
+          nps?: number | null
+          themes?: string[] | null
+          user_id?: string | null
+          would_attend_again?: boolean | null
+        }
+        Relationships: []
+      }
+      roadmap_testimonials: {
+        Row: {
+          author_name: string
+          author_org: string | null
+          author_role: string | null
+          avatar_url: string | null
+          created_at: string
+          display_order: number
+          edition_year: number
+          id: string
+          is_featured: boolean
+          quote: string
+        }
+        Insert: {
+          author_name: string
+          author_org?: string | null
+          author_role?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          display_order?: number
+          edition_year?: number
+          id?: string
+          is_featured?: boolean
+          quote: string
+        }
+        Update: {
+          author_name?: string
+          author_org?: string | null
+          author_role?: string | null
+          avatar_url?: string | null
+          created_at?: string
+          display_order?: number
+          edition_year?: number
+          id?: string
+          is_featured?: boolean
+          quote?: string
+        }
+        Relationships: []
+      }
+      roadmap_tracks: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          display_order: number
+          edition_year: number
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          edition_year?: number
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          edition_year?: number
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      room_curations: {
+        Row: {
+          created_at: string
+          curation_date: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          dismissed_at: string | null
+          engaged_at: string | null
+          engaged_thread_id: string | null
+          id: string
+          kind: Database["public"]["Enums"]["match_kind"]
+          reasoning: string
+          reasoning_source: Database["public"]["Enums"]["reasoning_source"]
+          score: number
+          subject_need_id: string | null
+          subject_stance_id: string | null
+          subject_user_id: string
+          viewer_need_id: string | null
+          viewer_stance_id: string | null
+          viewer_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          curation_date?: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          dismissed_at?: string | null
+          engaged_at?: string | null
+          engaged_thread_id?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["match_kind"]
+          reasoning: string
+          reasoning_source?: Database["public"]["Enums"]["reasoning_source"]
+          score?: number
+          subject_need_id?: string | null
+          subject_stance_id?: string | null
+          subject_user_id: string
+          viewer_need_id?: string | null
+          viewer_stance_id?: string | null
+          viewer_user_id: string
+        }
+        Update: {
+          created_at?: string
+          curation_date?: string
+          currency?: Database["public"]["Enums"]["contribution_currency"]
+          dismissed_at?: string | null
+          engaged_at?: string | null
+          engaged_thread_id?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["match_kind"]
+          reasoning?: string
+          reasoning_source?: Database["public"]["Enums"]["reasoning_source"]
+          score?: number
+          subject_need_id?: string | null
+          subject_stance_id?: string | null
+          subject_user_id?: string
+          viewer_need_id?: string | null
+          viewer_stance_id?: string | null
+          viewer_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_curations_subject_need_id_fkey"
+            columns: ["subject_need_id"]
+            isOneToOne: false
+            referencedRelation: "need_declarations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_curations_subject_stance_id_fkey"
+            columns: ["subject_stance_id"]
+            isOneToOne: false
+            referencedRelation: "currency_stances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_curations_viewer_need_id_fkey"
+            columns: ["viewer_need_id"]
+            isOneToOne: false
+            referencedRelation: "need_declarations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_curations_viewer_stance_id_fkey"
+            columns: ["viewer_stance_id"]
+            isOneToOne: false
+            referencedRelation: "currency_stances"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       saved_posts: {
         Row: {
@@ -8163,6 +10621,8 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: string
+          last_nudge_at: string | null
+          nudge_count: number
           parent_task_id: string | null
           priority: string | null
           sort_order: number | null
@@ -8181,6 +10641,8 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          last_nudge_at?: string | null
+          nudge_count?: number
           parent_task_id?: string | null
           priority?: string | null
           sort_order?: number | null
@@ -8199,6 +10661,8 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          last_nudge_at?: string | null
+          nudge_count?: number
           parent_task_id?: string | null
           priority?: string | null
           sort_order?: number | null
@@ -8518,6 +10982,38 @@ export type Database = {
         }
         Relationships: []
       }
+      starred_messages: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          id: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          message_id: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          message_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "starred_messages_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_comments: {
         Row: {
           author_id: string
@@ -8543,93 +11039,40 @@ export type Database = {
           space_id?: string
           task_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "task_comments_task_id_fkey"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "tasks"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      tasks: {
+      trend_follows: {
         Row: {
-          assigned_by: string | null
-          assigned_to: string | null
-          assignee_id: string | null
-          completed_at: string | null
-          created_at: string
-          created_by: string
-          description: string | null
-          due_date: string | null
+          followed_at: string
+          hashtag: string
           id: string
-          initiative_id: string | null
-          last_nudge_at: string | null
-          milestone_id: string | null
-          nudge_count: number | null
-          order_index: number | null
-          priority: string
-          space_id: string
-          status: string
-          title: string
-          updated_at: string
+          user_id: string
         }
         Insert: {
-          assigned_by?: string | null
-          assigned_to?: string | null
-          assignee_id?: string | null
-          completed_at?: string | null
-          created_at?: string
-          created_by: string
-          description?: string | null
-          due_date?: string | null
+          followed_at?: string
+          hashtag: string
           id?: string
-          initiative_id?: string | null
-          last_nudge_at?: string | null
-          milestone_id?: string | null
-          nudge_count?: number | null
-          order_index?: number | null
-          priority?: string
-          space_id: string
-          status?: string
-          title: string
-          updated_at?: string
+          user_id: string
         }
         Update: {
-          assigned_by?: string | null
-          assigned_to?: string | null
-          assignee_id?: string | null
-          completed_at?: string | null
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          due_date?: string | null
+          followed_at?: string
+          hashtag?: string
           id?: string
-          initiative_id?: string | null
-          last_nudge_at?: string | null
-          milestone_id?: string | null
-          nudge_count?: number | null
-          order_index?: number | null
-          priority?: string
-          space_id?: string
-          status?: string
-          title?: string
-          updated_at?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "tasks_initiative_id_fkey"
-            columns: ["initiative_id"]
+            foreignKeyName: "trend_follows_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "initiatives"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "tasks_milestone_id_fkey"
-            columns: ["milestone_id"]
+            foreignKeyName: "trend_follows_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "milestones"
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -8710,6 +11153,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
       }
       user_communities: {
         Row: {
@@ -9124,6 +11588,45 @@ export type Database = {
           },
         ]
       }
+      user_reports: {
+        Row: {
+          conversation_id: string | null
+          created_at: string
+          details: string | null
+          id: string
+          message_id: string | null
+          reason: Database["public"]["Enums"]["user_report_reason"]
+          reporter_id: string
+          status: Database["public"]["Enums"]["user_report_status"]
+          target_user_id: string
+          updated_at: string
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          message_id?: string | null
+          reason: Database["public"]["Enums"]["user_report_reason"]
+          reporter_id: string
+          status?: Database["public"]["Enums"]["user_report_status"]
+          target_user_id: string
+          updated_at?: string
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string
+          details?: string | null
+          id?: string
+          message_id?: string | null
+          reason?: Database["public"]["Enums"]["user_report_reason"]
+          reporter_id?: string
+          status?: Database["public"]["Enums"]["user_report_status"]
+          target_user_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           granted_at: string | null
@@ -9336,6 +11839,38 @@ export type Database = {
           },
         ]
       }
+      waitlist_notes: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          note: string
+          waitlist_entry_id: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          id?: string
+          note: string
+          waitlist_entry_id: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          waitlist_entry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlist_notes_waitlist_entry_id_fkey"
+            columns: ["waitlist_entry_id"]
+            isOneToOne: false
+            referencedRelation: "beta_waitlist"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       waitlist_signups: {
         Row: {
           causes: string[] | null
@@ -9528,6 +12063,15 @@ export type Database = {
         }
         Relationships: []
       }
+      pulse_metrics_daily: {
+        Row: {
+          c_module: string | null
+          event_count: number | null
+          hour_bucket: string | null
+          unique_users: number | null
+        }
+        Relationships: []
+      }
       user_impact_summary: {
         Row: {
           collaborate_actions: number | null
@@ -9577,6 +12121,14 @@ export type Database = {
         }
         Returns: string
       }
+      admin_get_user_roles: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"][]
+      }
+      admin_lookup_user_id_by_email: {
+        Args: { _email: string }
+        Returns: string
+      }
       admin_verify_user: {
         Args: { admin_user_id: string; target_user_id: string }
         Returns: boolean
@@ -9596,7 +12148,7 @@ export type Database = {
         }[]
       }
       are_users_connected: {
-        Args: { u1: string; u2: string }
+        Args: { _a: string; _b: string }
         Returns: boolean
       }
       block_user: {
@@ -9688,6 +12240,34 @@ export type Database = {
         Returns: boolean
       }
       cleanup_expired_adin_cache: { Args: never; Returns: number }
+      close_need_declaration: {
+        Args: { declaration_id: string }
+        Returns: {
+          closed_at: string | null
+          context: string | null
+          created_at: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          ends_at: string | null
+          expires_at: string | null
+          id: string
+          published_at: string | null
+          related_stance_id: string | null
+          scope: Database["public"]["Enums"]["need_scope"]
+          starts_at: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["stance_visibility"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "need_declarations"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       compute_influence_score: {
         Args: { target_user_id: string }
         Returns: number
@@ -9697,6 +12277,22 @@ export type Database = {
           profile_record: Database["public"]["Tables"]["profiles"]["Row"]
         }
         Returns: number
+      }
+      compute_reasoning_string: {
+        Args: {
+          p_currency: Database["public"]["Enums"]["contribution_currency"]
+          p_kind: Database["public"]["Enums"]["match_kind"]
+          p_shared_tags: string[]
+          p_subject_need_title: string
+          p_subject_stance_title: string
+          p_viewer_need_title: string
+          p_viewer_stance_title: string
+        }
+        Returns: string
+      }
+      confirm_fulfillment: {
+        Args: { p_fulfillment_id: string }
+        Returns: undefined
       }
       cosine_similarity: { Args: { vec1: Json; vec2: Json }; Returns: number }
       create_acknowledgment: {
@@ -9814,6 +12410,10 @@ export type Database = {
         Returns: string
       }
       cron_overdue_task_reminders: { Args: never; Returns: undefined }
+      curate_room_for_user: {
+        Args: { p_max_per_kind?: number }
+        Returns: number
+      }
       delete_reshare: {
         Args: { p_original_post_id: string; p_user_id: string }
         Returns: undefined
@@ -9859,8 +12459,18 @@ export type Database = {
           username: string
         }[]
       }
+      dismiss_curation: { Args: { curation_id: string }; Returns: undefined }
+      edit_group_message: {
+        Args: { p_message_id: string; p_new_content: string }
+        Returns: undefined
+      }
+      edit_message: {
+        Args: { p_message_id: string; p_new_content: string }
+        Returns: undefined
+      }
       enqueue_reminders_for_all_users: { Args: never; Returns: number }
       ensure_connection: { Args: { u1: string; u2: string }; Returns: string }
+      ensure_manifest: { Args: never; Returns: string }
       ensure_profile_for_user: {
         Args: { p_email?: string; p_user: string }
         Returns: undefined
@@ -9870,6 +12480,7 @@ export type Database = {
         Returns: boolean
       }
       event_owner_id: { Args: { p_event: string }; Returns: string }
+      expire_overdue_need_declarations: { Args: never; Returns: number }
       extract_and_create_hashtags: {
         Args: { p_content: string; p_post_id: string }
         Returns: undefined
@@ -9909,6 +12520,14 @@ export type Database = {
       flag_content: {
         Args: { content_id: string; content_type: string; reason: string }
         Returns: undefined
+      }
+      forward_group_message: {
+        Args: {
+          p_note?: string
+          p_source_message_id: string
+          p_target_conversation_id: string
+        }
+        Returns: string
       }
       generate_event_slug: {
         Args: { event_year?: number; title: string }
@@ -9995,6 +12614,10 @@ export type Database = {
           reason: string
         }[]
       }
+      get_chat_connection_context: {
+        Args: { _other_user_id: string }
+        Returns: Json
+      }
       get_connection_requests: {
         Args: { user_id: string }
         Returns: {
@@ -10050,6 +12673,16 @@ export type Database = {
           sender_username: string
         }[]
       }
+      get_current_admin_status: {
+        Args: never
+        Returns: {
+          email: string
+          is_admin: boolean
+          is_super_admin: boolean
+          role_level: string
+          user_id: string
+        }[]
+      }
       get_current_user_profile: {
         Args: never
         Returns: {
@@ -10058,6 +12691,33 @@ export type Database = {
         }[]
       }
       get_dashboard_preferences: { Args: { p_user_id: string }; Returns: Json }
+      get_dia_daily_brief: {
+        Args: { p_user_id?: string }
+        Returns: {
+          body: string
+          c_module: string
+          cta_label: string
+          cta_route: string
+          id: string
+          is_fallback: boolean
+          position: number
+          reasoning: string
+          signal_type: string
+          target_entity_id: string
+          target_entity_type: string
+          title: string
+        }[]
+      }
+      get_email_digest_recipients: {
+        Args: never
+        Returns: {
+          conversation_count: number
+          email: string
+          full_name: string
+          unread_total: number
+          user_id: string
+        }[]
+      }
       get_engagement_rate: { Args: never; Returns: number }
       get_engine_loop_metrics:
         | { Args: never; Returns: Json }
@@ -10240,21 +12900,51 @@ export type Database = {
               user_has_liked: boolean
             }[]
           }
-      get_group_conversations_for_user: {
-        Args: never
+      get_five_cs_pulse: {
+        Args: { p_scope?: string; p_time_range?: string; p_user_id?: string }
         Returns: {
-          avatar_url: string
-          conversation_id: string
-          conversation_type: string
-          created_at: string
-          created_by: string
-          description: string
-          last_message_at: string
-          participant_count: number
-          title: string
-          unread_count: number
+          c_module: string
+          delta_vs_prior_period: number
+          event_count: number
+          unique_users: number
         }[]
       }
+      get_group_conversations_for_user:
+        | {
+            Args: never
+            Returns: {
+              avatar_url: string
+              conversation_id: string
+              conversation_type: string
+              created_at: string
+              created_by: string
+              description: string
+              last_message_at: string
+              participant_count: number
+              title: string
+              unread_count: number
+            }[]
+          }
+        | {
+            Args: { p_include_archived?: boolean }
+            Returns: {
+              avatar_url: string
+              conversation_id: string
+              conversation_type: string
+              created_at: string
+              created_by: string
+              description: string
+              is_archived: boolean
+              is_muted: boolean
+              is_pinned: boolean
+              last_message_at: string
+              last_message_preview: string
+              last_sender_name: string
+              participant_count: number
+              title: string
+              unread_count: number
+            }[]
+          }
       get_group_details: {
         Args: { p_group_id: string; p_user_id: string }
         Returns: {
@@ -10423,6 +13113,32 @@ export type Database = {
           username: string
         }[]
       }
+      get_inbox_for_user: {
+        Args: {
+          p_include_archived?: boolean
+          p_limit?: number
+          p_offset?: number
+        }
+        Returns: {
+          bucket: string
+          conversation_id: string
+          group_avatar_url: string
+          group_title: string
+          is_archived: boolean
+          is_group: boolean
+          is_muted: boolean
+          is_pinned: boolean
+          last_message_at: string
+          last_message_preview: string
+          last_sender_name: string
+          other_user_avatar_url: string
+          other_user_full_name: string
+          other_user_id: string
+          other_user_username: string
+          participant_count: number
+          unread_count: number
+        }[]
+      }
       get_leaderboard: {
         Args: {
           board_type?: string
@@ -10437,6 +13153,27 @@ export type Database = {
           rank: number
           score: number
           user_id: string
+        }[]
+      }
+      get_manifest_for_user: {
+        Args: { target_user_id: string }
+        Returns: {
+          availability: Database["public"]["Enums"]["stance_availability"]
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          description: string
+          display_order: number
+          headline: string
+          is_published: boolean
+          last_reviewed_at: string
+          manifest_created_at: string
+          manifest_id: string
+          manifest_updated_at: string
+          stance_created_at: string
+          stance_id: string
+          stance_updated_at: string
+          tags: string[]
+          title: string
+          visibility: Database["public"]["Enums"]["stance_visibility"]
         }[]
       }
       get_message_reactions: {
@@ -10478,6 +13215,42 @@ export type Database = {
               username: string
             }[]
           }
+      get_my_speaker_follows: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          notify_email: boolean
+          speaker_avatar_url: string
+          speaker_full_name: string
+          speaker_id: string
+          speaker_organization: string
+          speaker_role_title: string
+          speaker_slug: string
+        }[]
+      }
+      get_need_declarations_for_user: {
+        Args: { target_user_id: string }
+        Returns: {
+          closed_at: string
+          context: string
+          created_at: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          ends_at: string
+          expires_at: string
+          id: string
+          published_at: string
+          related_stance_id: string
+          scope: Database["public"]["Enums"]["need_scope"]
+          starts_at: string
+          status: Database["public"]["Enums"]["need_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["stance_visibility"]
+        }[]
+      }
       get_newsletter_followers: {
         Args: { newsletter_user_id: string }
         Returns: {
@@ -10692,6 +13465,19 @@ export type Database = {
           username: string
         }[]
       }
+      get_pulse_breakdown: {
+        Args: {
+          p_c_module: string
+          p_scope?: string
+          p_time_range?: string
+          p_user_id?: string
+        }
+        Returns: {
+          display_label: string
+          event_count: number
+          event_type: string
+        }[]
+      }
       get_random_featured_insight: {
         Args: never
         Returns: {
@@ -10704,6 +13490,49 @@ export type Database = {
         }[]
       }
       get_reshare_count: { Args: { p_post_id: string }; Returns: number }
+      get_roadmap_subscribers: {
+        Args: { _edition_year?: number }
+        Returns: {
+          edition_year: number
+          email: string
+          id: string
+          source: string
+          subscribed_at: string
+        }[]
+      }
+      get_room_for_viewer: {
+        Args: never
+        Returns: {
+          curation_date: string
+          curation_id: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          kind: Database["public"]["Enums"]["match_kind"]
+          reasoning: string
+          reasoning_source: Database["public"]["Enums"]["reasoning_source"]
+          score: number
+          subject_need_context: string
+          subject_need_id: string
+          subject_need_scope: Database["public"]["Enums"]["need_scope"]
+          subject_need_title: string
+          subject_stance_id: string
+          subject_stance_title: string
+          subject_user_id: string
+          viewer_need_id: string
+          viewer_need_title: string
+          viewer_stance_id: string
+          viewer_stance_title: string
+        }[]
+      }
+      get_room_readiness: {
+        Args: never
+        Returns: {
+          active_need_count: number
+          active_stance_count: number
+          curation_count_today: number
+          has_manifest: boolean
+          manifest_published: boolean
+        }[]
+      }
       get_safe_profile_fields: {
         Args: { profile_id: string; viewer_id: string }
         Returns: {
@@ -10773,6 +13602,14 @@ export type Database = {
           similarity_score: number
           user_id: string
         }[]
+      }
+      get_speaker_follower_count: {
+        Args: { _speaker_id: string }
+        Returns: number
+      }
+      get_speaker_update_recipient_count: {
+        Args: { _speaker_id: string }
+        Returns: number
       }
       get_suggested_connections: {
         Args: { p_limit?: number; p_user_id: string }
@@ -10856,20 +13693,30 @@ export type Database = {
       get_total_posts: { Args: never; Returns: number }
       get_total_unread_count: { Args: { p_user_id: string }; Returns: number }
       get_total_users: { Args: never; Returns: number }
-      get_trending_hashtags: {
-        Args: { p_days?: number; p_limit?: number }
-        Returns: {
-          display_name: string
-          follower_count: number
-          id: string
-          name: string
-          recent_uses: number
-          tag: string
-          trending_score: number
-          type: string
-          usage_count: number
-        }[]
-      }
+      get_trending_hashtags:
+        | {
+            Args: { p_days?: number; p_limit?: number }
+            Returns: {
+              display_name: string
+              follower_count: number
+              id: string
+              name: string
+              recent_uses: number
+              tag: string
+              trending_score: number
+              type: string
+              usage_count: number
+            }[]
+          }
+        | {
+            Args: { p_limit?: number; p_time_range?: string }
+            Returns: {
+              hashtag: string
+              is_followed: boolean
+              post_count: number
+              unique_authors: number
+            }[]
+          }
       get_trending_stories: {
         Args: { p_limit?: number }
         Returns: {
@@ -10885,6 +13732,7 @@ export type Database = {
         Args: {
           p_author_id?: string
           p_event_id?: string
+          p_hashtag?: string
           p_limit?: number
           p_offset?: number
           p_ranking_mode?: string
@@ -11102,6 +13950,7 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_admin_email: { Args: { email_address: string }; Returns: boolean }
       is_admin_user: { Args: { _user_id: string }; Returns: boolean }
+      is_blocked_between: { Args: { _a: string; _b: string }; Returns: boolean }
       is_blocked_from_space: {
         Args: { _space_id: string; _user_id: string }
         Returns: boolean
@@ -11148,9 +13997,25 @@ export type Database = {
         Returns: boolean
       }
       is_prelaunch_locked: { Args: never; Returns: boolean }
+      is_sponsor_manager: {
+        Args: { _sponsor_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_user_blocked: {
         Args: { p_other_user_id: string; p_user_id: string }
         Returns: boolean
+      }
+      is_valid_admin_email: {
+        Args: { check_email: string }
+        Returns: {
+          is_super_admin: boolean
+          is_valid: boolean
+          role_level: string
+        }[]
+      }
+      leave_group_conversation: {
+        Args: { p_conversation_id: string }
+        Returns: undefined
       }
       log_connection_event: {
         Args: { p_connection: string; p_event_type: string; p_payload?: Json }
@@ -11179,13 +14044,23 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
-      mark_conversation_read: {
-        Args: { p_conversation_id: string; p_user_id: string }
-        Returns: undefined
-      }
+      mark_conversation_read:
+        | { Args: { _conversation_id: string }; Returns: undefined }
+        | {
+            Args: { p_conversation_id: string; p_user_id: string }
+            Returns: undefined
+          }
       mark_notifications_read: {
         Args: { p_notification_ids: string[]; p_user_id: string }
         Returns: undefined
+      }
+      offer_fulfillment: {
+        Args: {
+          p_message?: string
+          p_need_id: string
+          p_room_curation_id?: string
+        }
+        Returns: string
       }
       owns_organization: {
         Args: { _org_id: string; _user_id: string }
@@ -11200,6 +14075,53 @@ export type Database = {
         Returns: boolean
       }
       promote_from_waitlist: { Args: { p_event: string }; Returns: string }
+      publish_manifest: {
+        Args: never
+        Returns: {
+          created_at: string
+          headline: string | null
+          id: string
+          is_published: boolean
+          last_reviewed_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "contribution_manifests"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      publish_need_declaration: {
+        Args: { declaration_id: string }
+        Returns: {
+          closed_at: string | null
+          context: string | null
+          created_at: string
+          currency: Database["public"]["Enums"]["contribution_currency"]
+          ends_at: string | null
+          expires_at: string | null
+          id: string
+          published_at: string | null
+          related_stance_id: string | null
+          scope: Database["public"]["Enums"]["need_scope"]
+          starts_at: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["stance_visibility"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "need_declarations"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      purge_stale_curations: { Args: never; Returns: number }
       reactivate_personal_hashtag: {
         Args: { p_hashtag_id: string; p_user_id: string }
         Returns: {
@@ -11218,6 +14140,17 @@ export type Database = {
       recent_engagement_score_for_user: {
         Args: { p_target_user: string }
         Returns: number
+      }
+      record_brief_interaction: {
+        Args: {
+          p_card_id: string
+          p_interaction_type: Database["public"]["Enums"]["brief_interaction_type"]
+        }
+        Returns: string
+      }
+      record_group_mentions: {
+        Args: { p_message_id: string; p_user_ids: string[] }
+        Returns: undefined
       }
       reject_html: { Args: { _txt: string }; Returns: boolean }
       remove_connection: {
@@ -11265,6 +14198,7 @@ export type Database = {
           success: boolean
         }[]
       }
+      roadmap_speakers_slugify: { Args: { input: string }; Returns: string }
       rpc_adin_recommend_opportunities:
         | {
             Args: never
@@ -11570,6 +14504,16 @@ export type Database = {
           usage_count: number
         }[]
       }
+      search_inbox_messages: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          conversation_id: string
+          created_at: string
+          is_group: boolean
+          message_id: string
+          snippet: string
+        }[]
+      }
       search_opportunities: {
         Args: {
           p_cursor?: string
@@ -11633,6 +14577,30 @@ export type Database = {
         }
         Returns: string
       }
+      set_conversation_bucket: {
+        Args: { _bucket: string; _conversation_id: string }
+        Returns: undefined
+      }
+      set_group_conversation_archive: {
+        Args: { p_archived: boolean; p_conversation_id: string }
+        Returns: undefined
+      }
+      set_group_conversation_mute: {
+        Args: { p_conversation_id: string; p_muted: boolean }
+        Returns: undefined
+      }
+      set_group_conversation_pin: {
+        Args: { p_conversation_id: string; p_pinned: boolean }
+        Returns: undefined
+      }
+      set_group_mute: {
+        Args: { p_conversation_id: string; p_muted: boolean }
+        Returns: undefined
+      }
+      set_group_participant_role: {
+        Args: { p_conversation_id: string; p_role: string; p_user_id: string }
+        Returns: undefined
+      }
       soft_delete_group_message: {
         Args: { p_message_id: string }
         Returns: undefined
@@ -11645,10 +14613,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      tag_overlap_count: { Args: { a: string[]; b: string[] }; Returns: number }
       toggle_hashtag_follow: {
         Args: { p_hashtag_id: string; p_user_id: string }
         Returns: boolean
       }
+      toggle_trend_follow: { Args: { p_hashtag: string }; Returns: boolean }
+      track_ad_click: { Args: { campaign_id: string }; Returns: undefined }
+      track_ad_impression: { Args: { campaign_id: string }; Returns: undefined }
       track_post_engagement: {
         Args: {
           p_engagement_type: string
@@ -11673,15 +14645,32 @@ export type Database = {
         Args: { placement_id: string }
         Returns: undefined
       }
+      transfer_group_ownership: {
+        Args: { p_conversation_id: string; p_new_owner_id: string }
+        Returns: undefined
+      }
       trigger_adin_prompt: {
         Args: { event_type: string; target_user_id: string }
         Returns: undefined
       }
       unblock_user: { Args: { p_blocked_user_id: string }; Returns: undefined }
+      unsend_group_message: {
+        Args: { p_message_id: string }
+        Returns: undefined
+      }
+      unsend_message: { Args: { p_message_id: string }; Returns: undefined }
+      unsubscribe_speaker_follow_by_token: {
+        Args: { _token: string }
+        Returns: {
+          ok: boolean
+          speaker_name: string
+        }[]
+      }
       update_adin_last_active: {
         Args: { target_user_id: string }
         Returns: undefined
       }
+      update_admin_session_activity: { Args: never; Returns: undefined }
       update_all_influence_scores: { Args: never; Returns: undefined }
       update_application_status: {
         Args: {
@@ -11716,6 +14705,11 @@ export type Database = {
         Args: { p_context?: Json; p_user_id: string; p_view_state: string }
         Returns: undefined
       }
+      update_my_speaker_follow_notify: {
+        Args: { _follow_id: string; _notify_email: boolean }
+        Returns: boolean
+      }
+      update_presence: { Args: never; Returns: undefined }
       update_profile_about: {
         Args: { p_bio: string; p_user_id: string }
         Returns: Json
@@ -11787,6 +14781,15 @@ export type Database = {
       }
     }
     Enums: {
+      ad_campaign_status:
+        | "draft"
+        | "pending_review"
+        | "active"
+        | "paused"
+        | "ended"
+        | "rejected"
+      advertiser_status: "pending" | "approved" | "suspended" | "rejected"
+      advertiser_tier: "starter" | "growth" | "scale"
       app_role: "user" | "moderator" | "admin"
       application_status:
         | "pending"
@@ -11796,6 +14799,14 @@ export type Database = {
         | "rejected"
         | "withdrawn"
       attachment_type: "space" | "task" | "update"
+      brief_interaction_type:
+        | "viewed"
+        | "clicked"
+        | "dismissed"
+        | "not_interested"
+        | "saved"
+        | "why_this_opened"
+      contribution_currency: "expertise" | "network" | "resources" | "capital"
       contribution_need_priority: "normal" | "high"
       contribution_need_status: "open" | "in_progress" | "fulfilled" | "closed"
       contribution_need_type:
@@ -11830,8 +14841,28 @@ export type Database = {
         | "need"
         | "story"
         | "community_post"
+      match_kind:
+        | "their_stance_my_need"
+        | "their_need_my_stance"
+        | "mutual"
+        | "tag_affinity"
+      module_status_state: "live" | "in_design" | "in_beta" | "coming_soon"
+      need_scope:
+        | "one_off"
+        | "few_hours"
+        | "short_project"
+        | "extended"
+        | "open_ended"
+      need_status:
+        | "draft"
+        | "open"
+        | "matched"
+        | "fulfilled"
+        | "closed"
+        | "expired"
       opportunity_status: "draft" | "active" | "paused" | "closed" | "archived"
       opportunity_visibility: "public" | "network_only" | "private"
+      reasoning_source: "sql" | "dia"
       reserved_category:
         | "country"
         | "public_figure"
@@ -11842,7 +14873,21 @@ export type Database = {
         | "trademark"
       rsvp_status: "going" | "maybe" | "not_going" | "pending" | "waitlist"
       space_update_type: "manual_update" | "milestone" | "auto_task_event"
+      stance_availability:
+        | "open_ongoing"
+        | "monthly_hours"
+        | "quarterly"
+        | "project_based"
+        | "limited_capacity"
+      stance_visibility: "public" | "connections_only" | "private"
       task_status: "open" | "in_progress" | "done"
+      user_report_reason:
+        | "spam"
+        | "harassment"
+        | "impersonation"
+        | "inappropriate_content"
+        | "other"
+      user_report_status: "open" | "reviewing" | "resolved" | "dismissed"
       verification_status:
         | "pending_verification"
         | "soft_verified"
@@ -11974,6 +15019,16 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ad_campaign_status: [
+        "draft",
+        "pending_review",
+        "active",
+        "paused",
+        "ended",
+        "rejected",
+      ],
+      advertiser_status: ["pending", "approved", "suspended", "rejected"],
+      advertiser_tier: ["starter", "growth", "scale"],
       app_role: ["user", "moderator", "admin"],
       application_status: [
         "pending",
@@ -11984,6 +15039,15 @@ export const Constants = {
         "withdrawn",
       ],
       attachment_type: ["space", "task", "update"],
+      brief_interaction_type: [
+        "viewed",
+        "clicked",
+        "dismissed",
+        "not_interested",
+        "saved",
+        "why_this_opened",
+      ],
+      contribution_currency: ["expertise", "network", "resources", "capital"],
       contribution_need_priority: ["normal", "high"],
       contribution_need_status: ["open", "in_progress", "fulfilled", "closed"],
       contribution_need_type: [
@@ -12016,8 +15080,31 @@ export const Constants = {
       hashtag_status: ["active", "archived", "suspended", "reserved"],
       hashtag_type: ["community", "personal"],
       linked_entity_type: ["event", "space", "need", "story", "community_post"],
+      match_kind: [
+        "their_stance_my_need",
+        "their_need_my_stance",
+        "mutual",
+        "tag_affinity",
+      ],
+      module_status_state: ["live", "in_design", "in_beta", "coming_soon"],
+      need_scope: [
+        "one_off",
+        "few_hours",
+        "short_project",
+        "extended",
+        "open_ended",
+      ],
+      need_status: [
+        "draft",
+        "open",
+        "matched",
+        "fulfilled",
+        "closed",
+        "expired",
+      ],
       opportunity_status: ["draft", "active", "paused", "closed", "archived"],
       opportunity_visibility: ["public", "network_only", "private"],
+      reasoning_source: ["sql", "dia"],
       reserved_category: [
         "country",
         "public_figure",
@@ -12029,7 +15116,23 @@ export const Constants = {
       ],
       rsvp_status: ["going", "maybe", "not_going", "pending", "waitlist"],
       space_update_type: ["manual_update", "milestone", "auto_task_event"],
+      stance_availability: [
+        "open_ongoing",
+        "monthly_hours",
+        "quarterly",
+        "project_based",
+        "limited_capacity",
+      ],
+      stance_visibility: ["public", "connections_only", "private"],
       task_status: ["open", "in_progress", "done"],
+      user_report_reason: [
+        "spam",
+        "harassment",
+        "impersonation",
+        "inappropriate_content",
+        "other",
+      ],
+      user_report_status: ["open", "reviewing", "resolved", "dismissed"],
       verification_status: [
         "pending_verification",
         "soft_verified",
