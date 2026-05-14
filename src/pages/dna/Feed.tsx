@@ -256,8 +256,8 @@ const DnaFeed = () => {
       <div
         className="max-w-7xl mx-auto flex gap-5 px-4"
         style={{
-          paddingTop: '1.5rem',
-          height: 'calc(100dvh - var(--total-header-height, 7.5rem) - 1.5rem)',
+          paddingTop: '2rem',
+          height: 'calc(100dvh - var(--total-header-height, 128px) - 2rem)',
           overflow: 'hidden',
         }}
       >
