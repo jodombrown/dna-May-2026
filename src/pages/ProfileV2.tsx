@@ -40,6 +40,7 @@ import { ProfileRecentPosts } from '@/components/profile-v2/ProfileRecentPosts';
 
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
+import { ProfileAsanteSection } from '@/components/contribute/recognition/ProfileAsanteSection';
 
 // SEO component for public profiles
 import { PublicProfileSEO } from '@/components/public-profile';
