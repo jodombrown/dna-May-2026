@@ -6,16 +6,17 @@
  */
 
 import React from 'react';
-import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseSection, PulseStatus } from '@/types/pulse';
 import type { MoreButtonState } from '@/hooks/usePulseNavigation';
+
+type IconComponent = React.ComponentType<{ className?: string; strokeWidth?: number | string }>;
 
 interface PulseDockItemProps {
   item: {
     key: string;
     label: string;
-    icon: LucideIcon;
+    icon: IconComponent;
     href: string | null;
     isCenter?: boolean;
     isTrigger?: boolean;
