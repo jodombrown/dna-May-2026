@@ -6,7 +6,6 @@ export type PublicNavItem = {
 };
 
 export const publicNavItems: PublicNavItem[] = [
-  { name: 'ROADMAP', path: '/roadmap', featured: true, badge: 'New' },
   { name: 'Connect', path: '/connect' },
   { name: 'Convene', path: '/convene' },
   { name: 'Collaborate', path: '/collaborate' },
