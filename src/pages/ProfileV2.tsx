@@ -439,7 +439,9 @@ const ProfileV2: React.FC = () => {
               isOwner={permissions.is_owner}
             />
 
-            {/* Mutual Connections (Non-Owner Only) */}
+            {/* Asante received — Phase 4 Group 1 */}
+            <ProfileAsanteSection profileId={profile.id} />
+
             {!permissions.is_owner && user?.id && profile?.id && (
               <MutualConnectionsWidget
                 userId={profile.id}
