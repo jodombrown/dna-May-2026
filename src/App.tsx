@@ -86,7 +86,7 @@ const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
-const Roadmap = lazy(() => import("./pages/Roadmap"));
+// const Roadmap = lazy(() => import("./pages/Roadmap"));
 const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
 const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage"));
 const LocalEventsPage = lazy(() => import("./pages/LocalEventsPage"));
