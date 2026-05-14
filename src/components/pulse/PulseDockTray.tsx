@@ -8,11 +8,12 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Gift, Megaphone, Sparkles, MessageCircle, MessageSquarePlus, Bell, Settings, User, X } from 'lucide-react';
+import { MessageCircle, MessageSquarePlus, Bell, Settings, User, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseNavigationData } from '@/hooks/usePulseNavigation';
 import type { PulseSection } from '@/types/pulse';
 import { PulseTrayItem } from './PulseTrayItem';
+import { AdinkrahenIcon, MpatapoIcon, MateMasieIcon } from '@/components/icons/adinkra';
 
 interface PulseDockTrayProps {
   open: boolean;
@@ -21,9 +22,9 @@ interface PulseDockTrayProps {
 }
 
 const PULSE_ITEMS = [
-  { key: 'contribute', label: 'Contribute', icon: Gift, href: '/dna/contribute' },
-  { key: 'convey', label: 'Convey', icon: Megaphone, href: '/dna/convey' },
-  { key: 'dia', label: 'DIA', icon: Sparkles, href: '/dna/dia' },
+  { key: 'contribute', label: 'Contribute', icon: AdinkrahenIcon, href: '/dna/contribute' },
+  { key: 'convey', label: 'Convey', icon: MpatapoIcon, href: '/dna/convey' },
+  { key: 'dia', label: 'DIA', icon: MateMasieIcon, href: '/dna/dia' },
   { key: 'messages', label: 'Messages', icon: MessageCircle, href: '/dna/messages' },
 ] as const;
 
