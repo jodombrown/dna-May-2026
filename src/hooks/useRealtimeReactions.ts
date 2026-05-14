@@ -38,13 +38,13 @@ export const useRealtimeReactions = ({
   onLikeUpdate,
 }: UseRealtimeReactionsProps) => {
 
-  const handleReactionChange = useCallback((payload: { new?: RealtimeReactionPayload; old?: RealtimeReactionPayload }, event: 'INSERT' | 'DELETE') => {
-    const data = payload.new || payload.old;
+  const handleReactionChange = useCallback((payload: RealtimePostgresChangesPayload<RealtimeReactionPayload>, event: 'INSERT' | 'DELETE') => {
+    const data = (('new' in payload && payload.new) || ('old' in payload && payload.old)) as RealtimeReactionPayload | undefined;
     if (data) onReactionUpdate?.(data, event);
   }, [onReactionUpdate]);
 
-  const handleLikeChange = useCallback((payload: { new?: RealtimeLikePayload; old?: RealtimeLikePayload }, event: 'INSERT' | 'DELETE') => {
-    const data = payload.new || payload.old;
+  const handleLikeChange = useCallback((payload: RealtimePostgresChangesPayload<RealtimeLikePayload>, event: 'INSERT' | 'DELETE') => {
+    const data = (('new' in payload && payload.new) || ('old' in payload && payload.old)) as RealtimeLikePayload | undefined;
     if (data) onLikeUpdate?.(data, event);
   }, [onLikeUpdate]);
 
