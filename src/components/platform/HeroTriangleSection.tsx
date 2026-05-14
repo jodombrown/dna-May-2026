@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Users, Handshake, Heart, Calendar, Newspaper, ArrowDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
+import {
+  SankofaIcon,
+  NkonsonkonsonIcon,
+  FuntunfunefuIcon,
+  AdinkrahenIcon,
+  MpatapoIcon,
+} from '@/components/icons/adinkra';
 import MainPageFeedbackPanel from '@/components/MainPageFeedbackPanel';
 
 const HeroTriangleSection = () => {
