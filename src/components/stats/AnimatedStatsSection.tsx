@@ -52,8 +52,8 @@ const AnimatedStatsSection = () => {
             label="People of African Descent"
             description="Living outside Africa, projected to comprise 25% of global population"
             bgGradient="bg-gradient-to-br from-dna-emerald/80 to-dna-forest/80"
-            source="African Union, 2024"
-            sourceUrl="https://au.int/en/diaspora"
+            source="African Union Diaspora Division"
+            sourceUrl="https://au.int/diaspora-division"
           />
           
           <AnimatedStat
@@ -72,8 +72,8 @@ const AnimatedStatsSection = () => {
             label="Highly Educated"
             description="Hold bachelor's degree or higher, 2x the U.S. national average"
             bgGradient="bg-gradient-to-br from-dna-mint/80 to-dna-emerald/80"
-            source="Pew Research Center, 2022"
-            sourceUrl="https://www.pewresearch.org/global/fact-sheet/sub-saharan-african-immigrants-in-the-u-s/"
+            source="Pew Research Center, 2018"
+            sourceUrl="https://www.pewresearch.org/global/2018/04/24/sub-saharan-african-immigrants-in-the-u-s-are-often-more-educated-than-those-in-top-european-destinations/"
           />
         </div>
       </div>
