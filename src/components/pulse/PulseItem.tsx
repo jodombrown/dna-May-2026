@@ -9,23 +9,23 @@ import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Users,
-  Calendar,
-  Layers,
-  Gift,
-  Megaphone,
-  type LucideIcon,
-} from 'lucide-react';
+  SankofaIcon,
+  NkonsonkonsonIcon,
+  FuntunfunefuIcon,
+  AdinkrahenIcon,
+  MpatapoIcon,
+  type AdinkraIconComponent,
+} from '@/components/icons/adinkra';
 import { cn } from '@/lib/utils';
 import type { PulseSection, PulseConfig, PulseStatus } from '@/types/pulse';
 import { PulsePreviewCard } from './PulsePreviewCard';
 
-const ICONS: Record<string, LucideIcon> = {
-  Users,
-  Calendar,
-  Layers,
-  Gift,
-  Megaphone,
+const ICONS: Record<string, AdinkraIconComponent> = {
+  Users: SankofaIcon,
+  Calendar: NkonsonkonsonIcon,
+  Layers: FuntunfunefuIcon,
+  Gift: AdinkrahenIcon,
+  Megaphone: MpatapoIcon,
 };
 
 interface PulseItemProps {
