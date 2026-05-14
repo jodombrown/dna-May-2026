@@ -66,7 +66,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
   const [isPressed, setIsPressed] = useState(false);
   const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  const Icon = ICONS[config.icon] || Users;
+  const Icon = ICONS[config.icon] || SankofaIcon;
   const status: PulseStatus = data?.status || 'dormant';
   const count = data?.count || 0;
   const microText = data?.micro_text || '';
