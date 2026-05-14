@@ -11,7 +11,6 @@
  * Zero "like" or "heart". Zero window.location.href. Zero `any`.
  */
 
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, HelpCircle, MessageCircle, Bookmark, BookmarkCheck, Share2, Eye, Loader2 } from 'lucide-react';
@@ -239,7 +238,7 @@ export function ConveyStoryPostCard({ story }: ConveyCardProps) {
       {/* Cover Image */}
       {story.media_url && (
         <div onClick={eng.handleClick} className="relative aspect-[16/9] overflow-hidden cursor-pointer">
-          <OptimizedImage src={story.media_url} alt="" imageSize="cover-card" width={480} height={270} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <img src={story.media_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           {/* Gradient overlay bottom 30% */}
           <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-black/60 to-transparent" />
           {/* Story badge */}
@@ -330,7 +329,7 @@ export function ConveyUpdatePostCard({ story }: ConveyCardProps) {
         {/* Optional image */}
         {story.media_url && (
           <div onClick={eng.handleClick} className="rounded-lg overflow-hidden cursor-pointer">
-            <OptimizedImage src={story.media_url} alt="" imageSize="cover-card" width={480} height={256} className="w-full h-auto max-h-64 object-cover" />
+            <img src={story.media_url} alt="" className="w-full h-auto max-h-64 object-cover" />
           </div>
         )}
 

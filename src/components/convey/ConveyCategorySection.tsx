@@ -1,4 +1,3 @@
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -140,12 +139,9 @@ export function ConveyMiniCard({ story }: { story: UniversalFeedItem }) {
     >
       {story.media_url && (
         <div className="w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden shrink-0 bg-muted">
-          <OptimizedImage
-            src={story.media_url}
-            alt=""
-            imageSize="thumb"
-            width={64}
-            height={64}
+          <img 
+            src={story.media_url} 
+            alt="" 
             className="w-full h-full object-cover"
           />
         </div>

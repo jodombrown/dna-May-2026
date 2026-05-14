@@ -23,7 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
-import dnaLogo from '@/assets/dna-logo.webp';
+import dnaLogo from '@/assets/dna-logo.png';
 import africaIcon from '@/assets/africa-icon.png';
 import { IntroductionToneSelector } from './IntroductionToneSelector';
 import { IntroductionInsightChips } from './IntroductionInsightChips';

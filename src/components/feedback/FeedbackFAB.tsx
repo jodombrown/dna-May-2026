@@ -14,20 +14,16 @@ interface FeedbackFABProps {
 export function FeedbackFAB({ className, onOpen }: FeedbackFABProps) {
   const { user } = useAuth();
   const location = useLocation();
+  const { isOptedIn, isLoading } = useFeedbackMembership();
   const { isMobile } = useMobile();
 
-  // PERF: bail BEFORE invoking useFeedbackMembership() (which hits 2 Supabase
-  // queries) on every /dna/* render for users where the FAB will never show
-  // (mobile users, unauthed users, non-DNA routes).
+  // Only show on authenticated /dna/* routes
   const isDnaRoute = location.pathname.startsWith('/dna');
-  if (!user || !isDnaRoute || isMobile) return null;
 
-  return <FeedbackFABInner className={className} onOpen={onOpen} />;
-}
-
-function FeedbackFABInner({ className, onOpen }: FeedbackFABProps) {
-  const { isOptedIn, isLoading } = useFeedbackMembership();
-  if (isLoading || !isOptedIn) return null;
+  // Don't show if not authenticated, not on DNA routes, or opted out
+  if (!user || !isDnaRoute || isLoading || !isOptedIn || isMobile) {
+    return null;
+  }
 
   return (
     <button

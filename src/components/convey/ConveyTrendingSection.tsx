@@ -1,4 +1,3 @@
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, MessageCircle, Eye, ChevronRight, Flame } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -53,12 +52,9 @@ const TrendingCard = ({
       {/* Background Image */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/30 to-secondary/40">
         {story.image_url && (
-          <OptimizedImage
-            src={story.image_url}
-            alt={story.title}
-            imageSize="cover-card"
-            width={400}
-            height={240}
+          <img 
+            src={story.image_url} 
+            alt={story.title} 
             className="w-full h-full object-cover"
           />
         )}

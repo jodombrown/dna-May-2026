@@ -93,7 +93,7 @@ const ConnectSection = () => {
         <div className={`bg-gradient-to-r ${professional.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg font-serif">{professional.categoryTitle}</h3>
-            <Sankofa className="w-5 h-5 text-white" />
+            <Network className="w-5 h-5" />
           </div>
           <p className="text-sm text-white/80">{professional.categorySubtitle}</p>
         </div>

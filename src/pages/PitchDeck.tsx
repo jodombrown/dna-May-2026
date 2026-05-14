@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { config } from '@/lib/config';
 import { AnimatedNumber } from '@/components/AnimatedNumber';
 import { FlipCard } from '@/components/FlipCard';
-import dnaLogo from '@/assets/dna-logo.webp';
+import dnaLogo from '@/assets/dna-logo.png';
 
 const PitchDeck = () => {
   const { toast } = useToast();

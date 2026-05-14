@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
 import { cn } from '@/lib/utils';
-import dnaLogo from '@/assets/dna-logo.webp';
+import dnaLogo from '@/assets/dna-logo.png';
 import { MateMasie } from '@/components/icons/adinkra';
 
 import { Home, MessageCircle, MessageSquarePlus, Bell, User, LogOut, Menu, ChevronDown, Target, Users2, Lightbulb, TestTube, Shield, Plus, Search } from 'lucide-react';

@@ -1,4 +1,3 @@
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import React, { useState, useEffect } from 'react';
 import { Globe, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -59,13 +58,11 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
           {/* Video thumbnail with play overlay */}
           <div className="relative w-full h-32 overflow-hidden group">
             {videoThumbnail ? (
-              <OptimizedImage
-                src={videoThumbnail}
-                alt={preview.title || 'Video preview'}
-                imageSize="cover-card"
-                width={320}
-                height={128}
+              <img 
+                src={videoThumbnail} 
+                alt={preview.title || 'Video preview'} 
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -125,13 +122,11 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
     >
       {preview.image && (
         <div className="w-full h-32 overflow-hidden">
-          <OptimizedImage
-            src={preview.image}
-            alt={preview.title || 'Link preview'}
-            imageSize="cover-card"
-            width={320}
-            height={128}
+          <img 
+            src={preview.image} 
+            alt={preview.title || 'Link preview'} 
             className="w-full h-full object-cover"
+            loading="lazy"
           />
         </div>
       )}

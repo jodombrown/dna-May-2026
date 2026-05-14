@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { User, MessageCircle } from 'lucide-react';
-import dnaLogo from '@/assets/dna-logo.webp';
+import dnaLogo from '@/assets/dna-logo.png';
 import africaIcon from '@/assets/africa-icon.png';
 import { MateMasie } from '@/components/icons/adinkra';
 

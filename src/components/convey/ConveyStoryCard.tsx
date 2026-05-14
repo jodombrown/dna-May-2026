@@ -1,4 +1,3 @@
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Eye, Bookmark, BookmarkCheck, Share2, Clock, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -172,12 +171,9 @@ export function ConveyStoryCard({
         {/* Thumbnail */}
         {story.media_url && (
           <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
-            <OptimizedImage
-              src={story.media_url}
-              alt=""
-              imageSize="thumb"
-              width={80}
-              height={80}
+            <img 
+              src={story.media_url} 
+              alt="" 
               className="w-full h-full object-cover"
             />
           </div>
@@ -214,13 +210,9 @@ export function ConveyStoryCard({
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/40">
           {story.media_url && (
-            <OptimizedImage
-              src={story.media_url}
-              alt=""
-              imageSize="cover-hero"
-              width={800}
-              height={320}
-              priority
+            <img 
+              src={story.media_url} 
+              alt="" 
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           )}
@@ -293,12 +285,9 @@ export function ConveyStoryCard({
           onClick={handleClick}
           className="relative aspect-[16/9] overflow-hidden cursor-pointer"
         >
-          <OptimizedImage
-            src={story.media_url}
-            alt=""
-            imageSize="cover-card"
-            width={480}
-            height={270}
+          <img 
+            src={story.media_url} 
+            alt="" 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <Badge className={cn("absolute top-3 left-3", storyType.bg, storyType.text)}>

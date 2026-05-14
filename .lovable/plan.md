@@ -1,79 +1,49 @@
-# Contribute Phase 4 — Deliverable 1 verification: BLOCKED
+## Problem
 
-Per the sprint's hard rule ("If any verification fails, stop and report. Do not proceed"), I ran the read-only verification and stopped. Two blockers, both require your decision before I touch a single UI file.
+The DNA logo currently sits in a different place on `/dna/*` pages than on the landing page. Comparing the two headers:
 
----
+**Landing page (`UnifiedHeader.tsx`)**
+- Container: `max-w-7xl mx-auto px-2 sm:px-6 lg:px-8`
+- Row: `h-16` (64px)
+- Logo wrapper: `-ml-8` (pulls logo 32px left)
+- Logo: `h-[80px] w-auto` (overflows row vertically by ~8px top/bottom — intentional)
 
-## Blocker 1 — Migration `20260514_contribute_phase4.sql` is NOT applied
+Net effect on a 420px viewport: logo's left edge lands at roughly **-24px from container edge**, and its vertical center sits on the 64px row's centerline.
 
-Live DB shows:
+**Mobile `/dna/*` (`DnaMobileHeader.tsx`)**
+- Row: `h-20` (80px), `pl-2 pr-2` (8px each side), no `-ml-*`
+- Logo: `h-[80px] w-auto`
 
-| Object | Expected | Found |
-|---|---|---|
-| table `need_fulfillments` | exists | **missing** |
-| RPC `offer_fulfillment` | callable | **missing** |
-| RPC `confirm_fulfillment` | callable | **missing** |
-| trigger fn `issue_mutual_asante_on_confirm` | exists | **missing** |
-| `room_curations.engaged_at`, `engaged_thread_id` | exists | **missing** |
+Net effect: logo's left edge lands at **+8px from screen edge**, and its vertical center sits on the 80px row's centerline.
 
-Nothing in Deliverables 2.3, 3, or 4 can be wired without these. Deliverable 2.1/2.2 (route kill, archive ContributeDiscovery) are the only items that don't depend on the migration.
+So when the user navigates from `/` into `/dna/feed`, the logo visibly shifts ~32px right and ~8px down. The mobile fallback header (`MobileHeader.tsx`) does the same thing.
 
-## Blocker 2 — `contribution_acknowledgments` columns do NOT match the trigger spec
+## Fix
 
-Sprint spec says the Asante trigger writes columns:
-`giver_id, receiver_id, need_id, fulfillment_id, currency, kind, created_at`
+Make the mobile DNA headers reproduce the landing-page logo geometry exactly. Touch only logo-positioning code; do not move the bubble, bell, or avatar around beyond what's required to share the row.
 
-Actual live schema:
+### 1. `src/components/mobile/DnaMobileHeader.tsx`
+- Wrap the row in the same container the landing page uses: `max-w-7xl mx-auto px-2 sm:px-6 lg:px-8`.
+- Change the row height from `h-20` to `h-16` so the logo sits on the same baseline as the landing page (the 80px logo will overflow the row vertically, matching the landing page exactly).
+- Wrap the logo in a `-ml-8` flex container with `flex-shrink-0`, identical to `UnifiedHeader` lines 245-257.
+- Keep the bubble as `flex-1 min-w-0` and the right cluster as `flex items-center gap-1.5 flex-shrink-0` so they still share the row cleanly.
+- Update the `max-h-20`/`isVisible` collapse animation to `max-h-16` so the show/hide transition still matches the new row height.
+- Keep `width={142} height={80}` on the `<img>` so CLS stays at zero.
 
-```
-id, fulfillment_id, from_profile_id, to_profile_id,
-message (NOT NULL), rating, is_public, created_at
-```
+### 2. `src/components/mobile/MobileHeader.tsx`
+- Apply the same container + `-ml-8` wrapper + `h-16` row treatment around the existing `<img className="h-[80px] w-auto" />` so any non-DNA mobile route that still uses this header lines up too.
 
-Differences:
-- `giver_id` → table has `from_profile_id`
-- `receiver_id` → table has `to_profile_id`
-- `need_id` — **does not exist**
-- `currency` — **does not exist**
-- `kind` — **does not exist**
-- `message` is `NOT NULL` (trigger must supply a value)
-- Extra columns: `rating`, `is_public`
+### 3. Verification (no source changes, just confirm)
+- `src/components/header/Logo.tsx` and the four other `dnaLogo` usages already render at `h-[80px] w-auto`. Logo size is consistent; only the surrounding container differs, and that's what this plan fixes.
+- The `useMobileHeaderHeight`/`useSetCSSHeaderHeight` hook measures the rendered element, so dropping the row from 80→64px will automatically reflow the content offset below — no hardcoded `pt-*` to chase.
 
-The spec said: "If column names differ, stop and report the actual schema. Do not invent columns, do not guess." Reporting.
+## Out of scope
 
----
+- Desktop `UnifiedHeader` itself (it's the reference, do not change it).
+- Bubble width / composer behavior / right cluster icons.
+- Bottom nav, PulseBar, second-row tabs on each hub.
+- Any other `dna-logo` instance (DesignSystem, PitchDeck, IntroductionModal, IntroductionMessageCard) — those are in-content uses, not the persistent header.
 
-## Decision needed before I proceed
+## Manual check after implementation
 
-Pick one path:
-
-### Option A — Adapt the migration to the existing table (recommended)
-Rewrite the Phase 4 migration so the trigger inserts into the *real* columns:
-- map `giver_id`→`from_profile_id`, `receiver_id`→`to_profile_id`
-- drop `need_id`, `currency`, `kind` from the insert (or store derived data in `message`)
-- supply a default `message` like `"Asante for fulfilling: <need title>"`
-- ignore `rating`/`is_public` (defaults)
-
-Lowest risk. Keeps existing acknowledgments data intact. Asante moment still works; we lose the `currency` and `kind` discriminator at the row level (would have to derive from `need_fulfillments` join).
-
-### Option B — Extend `contribution_acknowledgments` schema
-Add `need_id uuid`, `currency contribution_currency`, `kind text` (and rename or alias the profile columns). Migration grows; existing rows backfilled with defaults. Higher blast radius but matches the spec verbatim.
-
-### Option C — New table `asante_acknowledgments`
-Leave legacy `contribution_acknowledgments` alone, create a clean canonical table for the Phase 4 loop. Cleanest separation, but doubles the surfaces the profile "Asante received" section has to read from.
-
----
-
-## What I will do once you pick
-
-1. Author the corrected Phase 4 migration (need_fulfillments + RLS + indexes + RPCs + trigger fitted to the chosen Option A/B/C + room_curations columns) and submit it via the migration tool for your approval.
-2. After approval and apply, re-run the 6 verification queries.
-3. Proceed through 4.1 → 4.2 → 4.3 exactly as the prompt specifies.
-
-## Side findings (read-only, not fixed)
-
-- `ContributeDiscovery.tsx` is referenced only by itself in source — orphan confirmed, safe to archive in 2.2.
-- `FulfillmentTracker` lives at `src/components/contribute/FulfillmentTracker.tsx` and reads `contribution_fulfillments` directly (no separate service). Will re-point in 2.3 once `need_fulfillments` exists.
-- `OpportunityDetail` / `Opportunities` pages are still lazy-imported in `App.tsx`. Several services (`platformNotificationGenerator`, `notificationSystemService`, `diaNudgeEngine`) and components (`RoomEmptyStates`, `FiveCImpactRadar`, `NeedsRenderer`, `ManifestRenderer`) still reference `contribution_fulfillments` — broader than 2.3 scope; will flag in the final report, not fix inline.
-
-Reply with **A**, **B**, or **C** and I will draft the corrected migration immediately.
+Load `/` then click into `/dna/feed`, `/dna/convey`, `/dna/collaborate`, `/dna/connect`, `/dna/convene`, `/dna/contribute` at 375 / 390 / 420 / 430px. The logo's bounding box should not shift by a single pixel between landing and any `/dna/*` route.

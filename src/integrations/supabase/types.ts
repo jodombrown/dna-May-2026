@@ -1771,7 +1771,7 @@ export type Database = {
             foreignKeyName: "contribution_acknowledgments_fulfillment_id_fkey"
             columns: ["fulfillment_id"]
             isOneToOne: false
-            referencedRelation: "need_fulfillments"
+            referencedRelation: "contribution_fulfillments"
             referencedColumns: ["id"]
           },
           {
@@ -2803,75 +2803,6 @@ export type Database = {
           smart_replies_enabled?: boolean
           summaries_enabled?: boolean
           updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      dia_nudges: {
-        Row: {
-          acted_on_at: string | null
-          action: Json
-          body: string | null
-          c_module: string
-          channel: string
-          created_at: string
-          delivered_at: string | null
-          dismissed_at: string | null
-          emitted_at: string
-          entity_id: string | null
-          entity_kind: string | null
-          expires_at: string
-          headline: string
-          id: string
-          nudge_type: string
-          payload: Json
-          priority: number
-          seen_at: string | null
-          status: string
-          user_id: string
-        }
-        Insert: {
-          acted_on_at?: string | null
-          action?: Json
-          body?: string | null
-          c_module: string
-          channel?: string
-          created_at?: string
-          delivered_at?: string | null
-          dismissed_at?: string | null
-          emitted_at?: string
-          entity_id?: string | null
-          entity_kind?: string | null
-          expires_at?: string
-          headline: string
-          id?: string
-          nudge_type: string
-          payload?: Json
-          priority?: number
-          seen_at?: string | null
-          status?: string
-          user_id: string
-        }
-        Update: {
-          acted_on_at?: string | null
-          action?: Json
-          body?: string | null
-          c_module?: string
-          channel?: string
-          created_at?: string
-          delivered_at?: string | null
-          dismissed_at?: string | null
-          emitted_at?: string
-          entity_id?: string | null
-          entity_kind?: string | null
-          expires_at?: string
-          headline?: string
-          id?: string
-          nudge_type?: string
-          payload?: Json
-          priority?: number
-          seen_at?: string | null
-          status?: string
           user_id?: string
         }
         Relationships: []
@@ -6290,72 +6221,6 @@ export type Database = {
             columns: ["related_stance_id"]
             isOneToOne: false
             referencedRelation: "currency_stances"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      need_fulfillments: {
-        Row: {
-          cancelled_at: string | null
-          cancelled_by: string | null
-          confirmed_at: string | null
-          created_at: string
-          fulfilled_at: string | null
-          fulfiller_id: string
-          fulfiller_message: string | null
-          id: string
-          need_id: string
-          requester_id: string
-          room_curation_id: string | null
-          status: string
-          thread_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          fulfilled_at?: string | null
-          fulfiller_id: string
-          fulfiller_message?: string | null
-          id?: string
-          need_id: string
-          requester_id: string
-          room_curation_id?: string | null
-          status?: string
-          thread_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          fulfilled_at?: string | null
-          fulfiller_id?: string
-          fulfiller_message?: string | null
-          id?: string
-          need_id?: string
-          requester_id?: string
-          room_curation_id?: string | null
-          status?: string
-          thread_id?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "need_fulfillments_need_id_fkey"
-            columns: ["need_id"]
-            isOneToOne: false
-            referencedRelation: "need_declarations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "need_fulfillments_room_curation_id_fkey"
-            columns: ["room_curation_id"]
-            isOneToOne: false
-            referencedRelation: "room_curations"
             referencedColumns: ["id"]
           },
         ]
@@ -10192,8 +10057,6 @@ export type Database = {
           curation_date: string
           currency: Database["public"]["Enums"]["contribution_currency"]
           dismissed_at: string | null
-          engaged_at: string | null
-          engaged_thread_id: string | null
           id: string
           kind: Database["public"]["Enums"]["match_kind"]
           reasoning: string
@@ -10211,8 +10074,6 @@ export type Database = {
           curation_date?: string
           currency: Database["public"]["Enums"]["contribution_currency"]
           dismissed_at?: string | null
-          engaged_at?: string | null
-          engaged_thread_id?: string | null
           id?: string
           kind: Database["public"]["Enums"]["match_kind"]
           reasoning: string
@@ -10230,8 +10091,6 @@ export type Database = {
           curation_date?: string
           currency?: Database["public"]["Enums"]["contribution_currency"]
           dismissed_at?: string | null
-          engaged_at?: string | null
-          engaged_thread_id?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["match_kind"]
           reasoning?: string
@@ -12290,10 +12149,6 @@ export type Database = {
         }
         Returns: string
       }
-      confirm_fulfillment: {
-        Args: { p_fulfillment_id: string }
-        Returns: undefined
-      }
       cosine_similarity: { Args: { vec1: Json; vec2: Json }; Returns: number }
       create_acknowledgment: {
         Args: {
@@ -14053,14 +13908,6 @@ export type Database = {
       mark_notifications_read: {
         Args: { p_notification_ids: string[]; p_user_id: string }
         Returns: undefined
-      }
-      offer_fulfillment: {
-        Args: {
-          p_message?: string
-          p_need_id: string
-          p_room_curation_id?: string
-        }
-        Returns: string
       }
       owns_organization: {
         Args: { _org_id: string; _user_id: string }

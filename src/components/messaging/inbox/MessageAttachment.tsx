@@ -1,4 +1,3 @@
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -136,14 +135,11 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
             showHeartbeat && "animate-image-heartbeat"
           )}
         >
-          <OptimizedImage
-            src={attachment.url}
-            alt={attachment.filename || 'Image'}
-            imageSize="cover-card"
-            width={280}
-            height={280}
+          <img 
+            src={attachment.url} 
+            alt={attachment.filename || 'Image'} 
             className="w-full h-auto object-cover rounded-lg hover:opacity-90 transition-opacity"
-            priority
+            loading="eager"
           />
         </button>
         <ImageLightbox

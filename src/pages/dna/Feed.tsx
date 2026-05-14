@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { supabase } from '@/integrations/supabase/client';
 import { PenSquare, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen, Compass, Bookmark } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -37,56 +36,6 @@ import { useLocation } from 'react-router-dom';
 
 // Scroll position storage key
 const FEED_SCROLL_KEY = 'dna_feed_scroll_position';
-
-const RealtimeDiagnostics = () => {
-  const [channels, setChannels] = useState<string[]>(() =>
-    supabase.getChannels().map((c) => c.topic),
-  );
-  const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-
-    const sync = () => setChannels(supabase.getChannels().map((c) => c.topic));
-    sync();
-    const intervalId = window.setInterval(sync, 1000);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
-
-  if (!import.meta.env.DEV) return null;
-
-  // Count duplicate topics so leaks are obvious
-  const topicCounts = channels.reduce<Record<string, number>>((acc, t) => {
-    acc[t] = (acc[t] ?? 0) + 1;
-    return acc;
-  }, {});
-
-  return (
-    <div className="fixed bottom-20 right-3 z-50 max-w-[360px] rounded-dna-lg border border-border bg-card text-xs text-foreground shadow-dna-2 md:bottom-3">
-      <button
-        type="button"
-        onClick={() => setExpanded((v) => !v)}
-        className="block w-full px-3 py-2 text-left hover:bg-muted/50"
-      >
-        Realtime channels: <span className="font-medium">{channels.length}</span>
-        <span className="ml-2 text-muted-foreground">{expanded ? '(hide)' : '(show)'}</span>
-      </button>
-      {expanded && (
-        <ul className="max-h-64 overflow-auto border-t border-border px-3 py-2 font-mono text-[10px] leading-relaxed">
-          {Object.entries(topicCounts)
-            .sort(([, a], [, b]) => b - a)
-            .map(([topic, count]) => (
-              <li key={topic} className={count > 1 ? 'text-destructive' : ''}>
-                {count > 1 ? `[x${count}] ` : ''}
-                {topic}
-              </li>
-            ))}
-        </ul>
-      )}
-    </div>
-  );
-};
 
 const DnaFeed = () => {
   const { user } = useAuth();
@@ -289,7 +238,6 @@ const DnaFeed = () => {
             isOpen={showSearchDialog}
             onClose={() => setShowSearchDialog(false)}
           />
-          <RealtimeDiagnostics />
         </div>
       </>
     );
@@ -518,7 +466,6 @@ const DnaFeed = () => {
         isOpen={showSearchDialog}
         onClose={() => setShowSearchDialog(false)}
       />
-      <RealtimeDiagnostics />
     </div>
   );
 };

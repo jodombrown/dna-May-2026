@@ -17,7 +17,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
-import { subscribeUserNotifications } from '@/lib/realtime/userNotificationsChannel';
+import { supabase } from '@/integrations/supabase/client';
 import {
   unifiedNotificationService,
   type UnifiedNotification,
@@ -110,15 +110,35 @@ export function useUnifiedNotifications(
     refetchInterval: 60000,
   });
 
-  // Phase 2B: piggyback on the shared user-notifications channel.
+  // Real-time subscription for platform notifications
   useEffect(() => {
     if (!user?.id) return;
-    const userId = user.id;
-    const off = subscribeUserNotifications(userId, () => {
-      queryClient.invalidateQueries({ queryKey: [QK_UNIFIED_NOTIFICATIONS] });
-      queryClient.invalidateQueries({ queryKey: [QK_UNIFIED_UNREAD] });
-    });
-    return off;
+
+    const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const channelName = `unified_notifs_${user.id}_${instanceId}`;
+
+    const channel = supabase
+      .channel(channelName)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          queryClient.invalidateQueries({
+            queryKey: [QK_UNIFIED_NOTIFICATIONS],
+          });
+          queryClient.invalidateQueries({ queryKey: [QK_UNIFIED_UNREAD] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user?.id, queryClient]);
 
   // Grouped notifications

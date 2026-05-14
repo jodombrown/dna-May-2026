@@ -8,7 +8,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SlidersHorizontal } from 'lucide-react';
-import dnaLogo from '@/assets/dna-logo.webp';
+import dnaLogo from '@/assets/dna-logo.png';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
 import { useAuth } from '@/contexts/AuthContext';

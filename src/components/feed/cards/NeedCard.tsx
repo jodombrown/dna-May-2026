@@ -4,7 +4,6 @@
  * Displays contribution needs and offers in the feed.
  */
 
-import { OptimizedImage } from '@/components/ui/optimized-image';
 import React from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { Card } from '@/components/ui/card';
@@ -58,12 +57,9 @@ export const NeedCard: React.FC<NeedCardProps> = ({ item, currentUserId, onUpdat
         </div>
 
         {item.media_url && (
-          <OptimizedImage
-            src={item.media_url}
-            alt="Need"
-            imageSize="cover-card"
-            width={480}
-            height={192}
+          <img 
+            src={item.media_url} 
+            alt="Need" 
             className="w-full h-48 object-cover rounded-lg"
           />
         )}

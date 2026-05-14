@@ -7,21 +7,6 @@ import { config } from '@/lib/config';
 const SUPABASE_URL = config.SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = config.SUPABASE_ANON_KEY;
 
-type DnaRealtimeChannelSnapshot = {
-  topic: string;
-  state: string;
-};
-
-declare global {
-  interface Window {
-    __dnaRealtime?: {
-      count: () => number;
-      list: () => DnaRealtimeChannelSnapshot[];
-      print: () => DnaRealtimeChannelSnapshot[];
-    };
-  }
-}
-
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
@@ -48,18 +33,3 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     },
   },
 });
-
-if (import.meta.env.DEV && typeof window !== 'undefined') {
-  window.__dnaRealtime = {
-    count: () => supabase.getChannels().length,
-    list: () => supabase.getChannels().map((channel) => ({
-      topic: channel.topic,
-      state: String(channel.state),
-    })),
-    print: () => {
-      const channels = window.__dnaRealtime?.list() ?? [];
-      console.table(channels);
-      return channels;
-    },
-  };
-}

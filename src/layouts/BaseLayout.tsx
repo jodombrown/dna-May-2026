@@ -4,28 +4,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 import { PulseBar, PulseDock } from '@/components/pulse';
 import { initDIAPeriodicChecks } from '@/services/dia/diaPeriodicCheck';
 import { FEATURE_FLAGS } from '@/config/featureFlags';
-import { useAutoRegisterPush } from '@/hooks/messaging/useAutoRegisterPush';
+import { AlphaWelcomeBanner } from '@/components/alpha/AlphaWelcomeBanner';
+import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
+import { ProfileCompletionGuide } from '@/components/onboarding/ProfileCompletionGuide';
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
+import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
+import { useAutoRegisterPush } from '@/hooks/messaging/useAutoRegisterPush';
 
-// PERF: lazy-load every global overlay so they don't block /dna/* first paint.
-const AccountDrawer = React.lazy(() =>
-  import('@/components/navigation/AccountDrawer').then((m) => ({ default: m.AccountDrawer })),
-);
-const FeedbackDrawer = React.lazy(() =>
-  import('@/components/feedback/FeedbackDrawer').then((m) => ({ default: m.FeedbackDrawer })),
-);
-const ProfileCompletionGuide = React.lazy(() =>
-  import('@/components/onboarding/ProfileCompletionGuide').then((m) => ({ default: m.ProfileCompletionGuide })),
-);
-const AlphaWelcomeBanner = React.lazy(() =>
-  import('@/components/alpha/AlphaWelcomeBanner').then((m) => ({ default: m.AlphaWelcomeBanner })),
-);
-const AlphaTestGuide = React.lazy(() =>
-  import('@/components/alpha/AlphaTestGuide').then((m) => ({ default: m.AlphaTestGuide })),
-);
+// Phase 16 - lazy global: morning brief banner only on /dna/feed for authed users.
 const MorningBriefBanner = React.lazy(() =>
   import('@/components/pulse/MorningBriefBanner').then((m) => ({ default: m.MorningBriefBanner })),
 );
@@ -122,24 +112,34 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
     <>
       <UnifiedHeader />
-      <React.Suspense fallback={null}>
-        <AccountDrawer />
-      </React.Suspense>
+      <AccountDrawer />
       <PulseBar />
       <div
         className={cn(
           "min-h-dvh w-full max-w-full",
           getAuthGradient(),
+          // Add bottom padding on mobile to account for PulseDock
           "pb-20 lg:pb-0",
           "transition-colors duration-300 ease-in-out",
           "overflow-x-hidden"
         )}
+        style={{
+          // Dynamic top padding from measured header heights
+          // Skip mobile padding on feed/connect — they manage their own fixed headers
+          paddingTop: hasCustomMobileHeader
+            ? undefined  // mobile: managed by useMobileHeaderHeight; desktop handled below
+            : undefined, // set below for all cases
+        }}
         data-view-state={viewState}
         data-layout-type={layoutConfig.type}
       >
+        {/* Spacer div that reads CSS vars for top padding */}
         <div
           aria-hidden
           style={{
+            // Always reserve space for header + pulse bar to prevent columns
+            // rendering behind the PulseBar before the measurement hook runs.
+            // Mobile pages with custom headers hide this spacer via the className.
             height: 'calc(var(--roadmap-banner-height, 0px) + var(--unified-header-height, 56px) + var(--pulse-bar-height, 56px))',
           }}
           className={cn(
@@ -152,33 +152,25 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       <FeedbackFAB onOpen={() => setIsFeedbackDrawerOpen(true)} />
       <PulseDock />
 
-      {/* DIA Morning brief - gated to /dna/feed */}
+      {/* Phase 16 - DIA Morning brief (gated to /dna/feed inside the component) */}
       {user && location.pathname.startsWith('/dna/feed') && (
         <React.Suspense fallback={null}>
           <MorningBriefBanner />
         </React.Suspense>
       )}
 
-      {/* Profile Completion Guide - desktop only inside the component, but lazy-load anyway */}
-      {user && (
-        <React.Suspense fallback={null}>
-          <ProfileCompletionGuide />
-        </React.Suspense>
-      )}
+      {/* Profile Completion Guide - Sprint 12B */}
+      {user && <ProfileCompletionGuide />}
 
-      {/* Feedback Drawer - only mount when actually opened */}
-      {isFeedbackDrawerOpen && (
-        <React.Suspense fallback={null}>
-          <FeedbackDrawer
-            isOpen={isFeedbackDrawerOpen}
-            onClose={() => setIsFeedbackDrawerOpen(false)}
-          />
-        </React.Suspense>
-      )}
+      {/* Feedback Drawer - accessible from banner, test guide, and chevron FAB */}
+      <FeedbackDrawer
+        isOpen={isFeedbackDrawerOpen}
+        onClose={() => setIsFeedbackDrawerOpen(false)}
+      />
 
       {/* Alpha Testing Infrastructure */}
-      {FEATURE_FLAGS.isAlphaTest && user && isTestGuideOpen && (
-        <React.Suspense fallback={null}>
+      {FEATURE_FLAGS.isAlphaTest && user && (
+        <>
           <AlphaTestGuide
             isOpen={isTestGuideOpen}
             onClose={() => setIsTestGuideOpen(false)}
@@ -187,7 +179,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
               setIsFeedbackDrawerOpen(true);
             }}
           />
-        </React.Suspense>
+        </>
       )}
     </>
   );

@@ -460,16 +460,12 @@ export function usePulseBar() {
   useEffect(() => {
     if (!user?.id) return;
 
-    // Phase 2B consolidation: 4 channels → 1.
-    // All four subscriptions invalidate the same query, so a single channel
-    // with multiple .on('postgres_changes') handlers is sufficient and stays
-    // within the <10 channel/page Performance Foundation budget.
     const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    const invalidate = () =>
-      queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] });
+    const channels: ReturnType<typeof supabase.channel>[] = [];
 
-    const channel = supabase
-      .channel(`pulse-${user.id}-${instanceId}`)
+    // Connection requests subscription
+    const connectChannel = supabase
+      .channel(`pulse-connect-${user.id}-${instanceId}`)
       .on(
         'postgres_changes',
         {
@@ -478,8 +474,14 @@ export function usePulseBar() {
           table: 'connections',
           filter: `recipient_id=eq.${user.id}`,
         },
-        invalidate
+        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
       )
+      .subscribe();
+    channels.push(connectChannel);
+
+    // Event attendees subscription
+    const conveneChannel = supabase
+      .channel(`pulse-convene-${user.id}-${instanceId}`)
       .on(
         'postgres_changes',
         {
@@ -488,8 +490,14 @@ export function usePulseBar() {
           table: 'event_attendees',
           filter: `user_id=eq.${user.id}`,
         },
-        invalidate
+        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
       )
+      .subscribe();
+    channels.push(conveneChannel);
+
+    // Space members subscription
+    const collaborateChannel = supabase
+      .channel(`pulse-collaborate-${user.id}-${instanceId}`)
       .on(
         'postgres_changes',
         {
@@ -498,28 +506,52 @@ export function usePulseBar() {
           table: 'space_members',
           filter: `user_id=eq.${user.id}`,
         },
-        invalidate
+        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
       )
+      .subscribe();
+    channels.push(collaborateChannel);
+
+    // Contribution offers subscription
+    const contributeChannel = supabase
+      .channel(`pulse-contribute-${user.id}-${instanceId}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'contribution_offers',
-          filter: `created_by=eq.${user.id}`,
         },
-        invalidate
+        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
       )
       .subscribe();
+    channels.push(contributeChannel);
 
-    // NOTE: post_likes / post_comments realtime subscriptions removed.
-    // They fired on every like/comment across the entire platform and
-    // invalidated the pulse query (5 fetch fns) on every /dna/* route,
-    // causing visible navigation lag. Pulse is ambient data — the 10min
-    // refetchInterval + staleTime is sufficient for engagement counts.
+    // Posts subscription for engagement updates
+    const conveyChannel = supabase
+      .channel(`pulse-convey-${user.id}-${instanceId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'post_likes',
+        },
+        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'post_comments',
+        },
+        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
+      )
+      .subscribe();
+    channels.push(conveyChannel);
 
     return () => {
-      supabase.removeChannel(channel);
+      channels.forEach((channel) => supabase.removeChannel(channel));
     };
   }, [user?.id, queryClient]);
 

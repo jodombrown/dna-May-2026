@@ -79,7 +79,7 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
           <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5 flex-wrap">
             <Activity className="h-3.5 w-3.5 text-dna-gold" />
             {pulseItems.map((item, i) => (
-              <span key={item.to} className="contents">
+              <React.Fragment key={item.to}>
                 {i > 0 && <span className="text-muted-foreground/60">·</span>}
                 <button
                   type="button"
@@ -89,7 +89,7 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
                 >
                   {item.label}
                 </button>
-              </span>
+              </React.Fragment>
             ))}
           </p>
         )}

@@ -85,7 +85,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
-// Sprint A: legacy /convene marketing page archived → /convene now redirects to /dna/convene
+const Convene = lazy(() => import("./pages/Convene"));
 const Roadmap = lazy(() => import("./pages/Roadmap"));
 const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
 const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage"));
@@ -99,7 +99,7 @@ const Demo = lazy(() => import("./pages/Demo"));
 const ConnectExample = lazy(() => import("./pages/_archived/ConnectExample"));
 const CollaborateExample = lazy(() => import("./pages/_archived/CollaborationsExample"));
 const ContributeExample = lazy(() => import("./pages/_archived/ContributeExample"));
-// Sprint A: ConveyExample marketing page archived → /convey now redirects to /dna/convey
+const ConveyExample = lazy(() => import("./pages/_archived/ConveyExample"));
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
@@ -136,7 +136,7 @@ const EventSettingsPage = lazy(() => import("./components/convene/management/set
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
-// Sprint A: ComingSoonCollaborate orphan removed (violated "5 C's modules are OPEN" rule).
+const ComingSoonCollaborate = lazy(() => import("./pages/dna/collaborate/ComingSoonCollaborate"));
 const SpacesIndex = lazy(() => import("./pages/dna/collaborate/SpacesIndex"));
 const CollaborateSpaceDetail = lazy(() => import("./pages/dna/collaborate/SpaceDetail"));
 const SpaceBoard = lazy(() => import("./pages/dna/collaborate/SpaceBoard"));
@@ -146,7 +146,7 @@ const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 
 // Contribute M1-M2 pages
 const ContributeHub = lazy(() => import("./pages/dna/contribute/ContributeHub"));
-// Sprint A: ComingSoonContribute orphan removed (violated "5 C's modules are OPEN" rule).
+const ComingSoonContribute = lazy(() => import("./pages/dna/contribute/ComingSoonContribute"));
 const NeedsIndex = lazy(() => import("./pages/dna/contribute/NeedsIndex"));
 const NeedDetail = lazy(() => import("./pages/dna/contribute/NeedDetail"));
 const OpportunityDetail = lazy(() => import("./pages/dna/contribute/OpportunityDetail"));
@@ -420,7 +420,7 @@ function App() {
                   <Connect />
                 </OnboardingGuard>
               }>
-                <Route index element={<ConnectDiscover />} />
+                <Route index element={<Navigate to="/dna/connect/discover" replace />} />
                 <Route path="discover" element={<ConnectDiscover />} />
                 <Route path="network" element={<ConnectNetwork />} />
                 {/* Legacy route - now using /dna/messages as canonical */}
@@ -740,14 +740,13 @@ function App() {
 
               {/* Public marketing pages - Five C's examples */}
               <Route path="/connect" element={<ConnectExample />} />
-              {/* Sprint A: legacy /convene + /convey marketing pages archived; redirect to canonical hubs */}
-              <Route path="/convene" element={<Navigate to="/dna/convene" replace />} />
+              <Route path="/convene" element={<Convene />} />
               <Route path="/convene/category/:category" element={<ConveneCategoryPage />} />
               <Route path="/convene/featured-calendars" element={<FeaturedCalendarsPage />} />
               <Route path="/convene/local-events" element={<LocalEventsPage />} />
               <Route path="/collaborate" element={<CollaborateExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/convey" element={<Navigate to="/dna/convey" replace />} />
+              <Route path="/convey" element={<ConveyExample />} />
               
               {/* New Admin Portal Routes */}
               <Route path="/admin-login" element={<AdminLogin />} />

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Bell, Calendar, Users, LayoutGrid, Handshake, Megaphone, Heart, MessageSquare, Share2, Bookmark, Check, X } from 'lucide-react';
-import dnaLogo from '@/assets/dna-logo.webp';
+import dnaLogo from '@/assets/dna-logo.png';
 import { MateMasie } from '@/components/icons/adinkra';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (

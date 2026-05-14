@@ -3,6 +3,7 @@ import MessageOverlay from '@/components/messaging/MessageOverlay';
 import { messageService } from '@/services/messageService';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { usePresenceHeartbeat } from '@/hooks/usePresence';
 import { ConversationOriginType, OriginMetadata } from '@/types/messaging';
 import { logger } from '@/lib/logger';
 
@@ -54,8 +55,8 @@ export const MessageProvider: React.FC<MessageProviderProps> = ({ children }) =>
   const [currentRecipientId, setCurrentRecipientId] = useState<string | undefined>();
   const [currentConversationId, setCurrentConversationId] = useState<string | undefined>();
 
-  // NOTE: presence heartbeat is mounted once at the app root via <PresenceHeartbeat />
-  // in App.tsx. Do not re-mount it here - the singleton presence channel is ref-counted.
+  // Keep user's online presence updated (heartbeat)
+  usePresenceHeartbeat();
 
   const openMessageOverlay = async (recipientIdOrParams: string | OpenMessageOverlayParams) => {
     if (!user) {
