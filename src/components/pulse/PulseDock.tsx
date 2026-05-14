@@ -31,7 +31,7 @@ import { PulseDockTray } from './PulseDockTray';
 interface PrimaryItemBase {
   key: string;
   label: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number | string }>;
   href: string | null;
   isCenter?: boolean;
   isTrigger?: boolean;
