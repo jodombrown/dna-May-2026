@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useMemo } from "react";
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface RealtimeReactionPayload {
@@ -37,13 +38,13 @@ export const useRealtimeReactions = ({
   onLikeUpdate,
 }: UseRealtimeReactionsProps) => {
 
-  const handleReactionChange = useCallback((payload: { new?: RealtimeReactionPayload; old?: RealtimeReactionPayload }, event: 'INSERT' | 'DELETE') => {
-    const data = payload.new || payload.old;
+  const handleReactionChange = useCallback((payload: RealtimePostgresChangesPayload<RealtimeReactionPayload>, event: 'INSERT' | 'DELETE') => {
+    const data = (('new' in payload && payload.new) || ('old' in payload && payload.old)) as RealtimeReactionPayload | undefined;
     if (data) onReactionUpdate?.(data, event);
   }, [onReactionUpdate]);
 
-  const handleLikeChange = useCallback((payload: { new?: RealtimeLikePayload; old?: RealtimeLikePayload }, event: 'INSERT' | 'DELETE') => {
-    const data = payload.new || payload.old;
+  const handleLikeChange = useCallback((payload: RealtimePostgresChangesPayload<RealtimeLikePayload>, event: 'INSERT' | 'DELETE') => {
+    const data = (('new' in payload && payload.new) || ('old' in payload && payload.old)) as RealtimeLikePayload | undefined;
     if (data) onLikeUpdate?.(data, event);
   }, [onLikeUpdate]);
 
@@ -62,40 +63,40 @@ export const useRealtimeReactions = ({
 
     const reactionsChannel = supabase
       .channel(`realtime-reactions-${channelId}`)
-      .on("postgres_changes", {
+      .on<RealtimeReactionPayload>("postgres_changes", {
         event: "INSERT",
         schema: "public",
         table: "post_reactions",
         filter,
-      }, (payload: { new?: RealtimeReactionPayload; old?: RealtimeReactionPayload }) => {
+      }, (payload: RealtimePostgresChangesPayload<RealtimeReactionPayload>) => {
         handleReactionChange(payload, 'INSERT');
       })
-      .on("postgres_changes", {
+      .on<RealtimeReactionPayload>("postgres_changes", {
         event: "DELETE",
         schema: "public",
         table: "post_reactions",
         filter,
-      }, (payload: { new?: RealtimeReactionPayload; old?: RealtimeReactionPayload }) => {
+      }, (payload: RealtimePostgresChangesPayload<RealtimeReactionPayload>) => {
         handleReactionChange(payload, 'DELETE');
       })
       .subscribe();
 
     const likesChannel = supabase
       .channel(`realtime-likes-${channelId}`)
-      .on("postgres_changes", {
+      .on<RealtimeLikePayload>("postgres_changes", {
         event: "INSERT",
         schema: "public",
         table: "post_likes",
         filter,
-      }, (payload: { new?: RealtimeLikePayload; old?: RealtimeLikePayload }) => {
+      }, (payload: RealtimePostgresChangesPayload<RealtimeLikePayload>) => {
         handleLikeChange(payload, 'INSERT');
       })
-      .on("postgres_changes", {
+      .on<RealtimeLikePayload>("postgres_changes", {
         event: "DELETE",
         schema: "public",
         table: "post_likes",
         filter,
-      }, (payload: { new?: RealtimeLikePayload; old?: RealtimeLikePayload }) => {
+      }, (payload: RealtimePostgresChangesPayload<RealtimeLikePayload>) => {
         handleLikeChange(payload, 'DELETE');
       })
       .subscribe();
