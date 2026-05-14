@@ -119,8 +119,8 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
           aria-hidden
           style={{
             height: hasCustomMobileHeader
-              ? 'var(--total-header-height, 0px)'  // desktop only; mobile pages set pt=0
-              : 'var(--total-header-height, 56px)',
+              ? 'var(--total-header-height, 128px)'  // desktop only; mobile pages set pt=0
+              : 'var(--total-header-height, 128px)',
           }}
           className={cn(
             hasCustomMobileHeader ? 'hidden sm:block' : 'block',
