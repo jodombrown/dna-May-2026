@@ -19,7 +19,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ year, events, isActive, onC
     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
       <div className="flex items-center gap-1 text-xs">
         <MousePointer2 className="w-3 h-3" />
-        <span className={isActive ? 'text-white/70' : 'text-gray-500'}>Click to explore</span>
+        <span className={isActive ? 'text-white/70' : 'text-neutral-500'}>Click to explore</span>
       </div>
     </div>
     
@@ -48,7 +48,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ year, events, isActive, onC
       
       {/* Interactive hint */}
       <div className={`mt-3 text-xs opacity-70 flex items-center gap-1 ${
-        isActive ? 'text-white' : 'text-gray-600'
+        isActive ? 'text-white' : 'text-neutral-600'
       }`}>
         <span>📖</span>
         <span>Click to read the full story</span>

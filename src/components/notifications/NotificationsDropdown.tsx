@@ -118,14 +118,14 @@ export function NotificationsDropdown({ onClose }: NotificationsDropdownProps) {
       case 'mention':
         return 'bg-blue-500';
       case 'reshare':
-        return 'bg-purple-500';
+        return 'bg-copper-500';
       case 'profile_view':
         return 'bg-amber-500';
       case 'post_comment':
       case 'comment_reply':
         return 'bg-sky-500';
       case 'new_message':
-        return 'bg-indigo-500';
+        return 'bg-copper-500';
       case 'event_invite':
       case 'event_reminder':
         return 'bg-orange-500';

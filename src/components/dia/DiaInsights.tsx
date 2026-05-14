@@ -3,19 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Lightbulb,
-  TrendingUp,
-  Zap,
-  Globe,
-  Loader2,
-  ArrowRight,
-  Sparkles,
-  Building2,
-  Palette,
-  Heart,
-  GraduationCap
-} from 'lucide-react';
+import { Lightbulb, TrendingUp, Globe, Loader2, ArrowRight, Building2, Palette, Heart, GraduationCap } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DiaInsightsProps {
   limit?: number;
@@ -37,8 +26,8 @@ interface Insight {
 
 const categoryIcons: Record<string, React.ReactNode> = {
   fintech: <TrendingUp className="h-5 w-5" />,
-  energy: <Zap className="h-5 w-5" />,
-  tech: <Sparkles className="h-5 w-5" />,
+  energy: <MateMasie className="h-5 w-5" />,
+  tech: <MateMasie className="h-5 w-5" />,
   agriculture: <Globe className="h-5 w-5" />,
   'real-estate': <Building2 className="h-5 w-5" />,
   creative: <Palette className="h-5 w-5" />,
@@ -50,13 +39,13 @@ const categoryIcons: Record<string, React.ReactNode> = {
 const categoryColors: Record<string, string> = {
   fintech: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
   energy: 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20',
-  tech: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  tech: 'bg-copper-500/10 text-copper-600 border-copper-500/20',
   agriculture: 'bg-green-500/10 text-green-600 border-green-500/20',
   'real-estate': 'bg-orange-500/10 text-orange-600 border-orange-500/20',
-  creative: 'bg-pink-500/10 text-pink-600 border-pink-500/20',
+  creative: 'bg-copper-500/10 text-copper-600 border-copper-500/20',
   healthcare: 'bg-red-500/10 text-red-600 border-red-500/20',
-  education: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20',
-  default: 'bg-gray-500/10 text-gray-600 border-gray-500/20',
+  education: 'bg-copper-500/10 text-copper-600 border-copper-500/20',
+  default: 'bg-neutral-500/10 text-neutral-600 border-neutral-500/20',
 };
 
 const regionLabels: Record<string, string> = {

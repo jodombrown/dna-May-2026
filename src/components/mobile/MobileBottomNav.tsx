@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Home, Users, Plus, Calendar, Menu, Sparkles } from 'lucide-react';
+import { Home, Plus, Menu } from 'lucide-react';
+import { Sankofa, Nkonsonkonson, FuntunfunefuDenkyemfunefu, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
 import { haptic } from '@/utils/haptics';
 import { Badge } from '@/components/ui/badge';
 import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   Sheet,
   SheetContent,
@@ -18,16 +20,7 @@ import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { 
-  MessageSquare, 
-  Settings, 
-  Bell,
-  Handshake,
-  Heart,
-  BookOpen,
-  LogOut,
-  LayoutDashboard
-} from 'lucide-react';
+import { MessageSquare, Settings, Bell, LogOut, LayoutDashboard } from 'lucide-react';
 
 const MobileBottomNav: React.FC = () => {
   const navigate = useNavigate();
@@ -50,7 +43,7 @@ const MobileBottomNav: React.FC = () => {
     { 
       label: 'Connect', 
       pillar: 'connect',
-      icon: Users, 
+      icon: Sankofa, 
       path: '/dna/connect', 
       type: 'nav' as const,
       description: 'Build network'
@@ -58,7 +51,7 @@ const MobileBottomNav: React.FC = () => {
     { 
       label: 'Convene', 
       pillar: 'convene',
-      icon: Calendar, 
+      icon: Nkonsonkonson, 
       path: '/dna/convene', 
       type: 'nav' as const,
       description: 'Join events'
@@ -73,7 +66,7 @@ const MobileBottomNav: React.FC = () => {
     { 
       label: 'Collaborate', 
       pillar: 'collaborate',
-      icon: Handshake, 
+      icon: FuntunfunefuDenkyemfunefu, 
       path: '/dna/collaborate', 
       type: 'nav' as const,
       description: 'Work together'
@@ -89,7 +82,7 @@ const MobileBottomNav: React.FC = () => {
   const moreMenuItems = [
     {
       label: 'DIA',
-      icon: Sparkles,
+      icon: MateMasie,
       path: '/dna/dia',
       description: 'AI-powered insights',
       highlight: true,
@@ -104,14 +97,14 @@ const MobileBottomNav: React.FC = () => {
     { 
       label: 'Contribute', 
       pillar: 'contribute',
-      icon: Heart, 
+      icon: Adinkrahene, 
       path: '/dna/contribute',
       description: 'Give back & support'
     },
     { 
       label: 'Convey', 
       pillar: 'convey',
-      icon: BookOpen, 
+      icon: Mpatapo, 
       path: '/dna/convey',
       description: 'Share your story'
     },
@@ -165,7 +158,7 @@ const MobileBottomNav: React.FC = () => {
                   : "text-muted-foreground hover:text-primary"
               )}
             >
-              <item.icon className="w-5 h-5" strokeWidth={isActive(item.path) ? 2.5 : 2} />
+              <item.icon className={cn(item.pillar ? 'w-6 h-6' : 'w-5 h-5')} strokeWidth={isActive(item.path) ? (item.pillar ? 2 : 2.5) : (item.pillar ? 1.75 : 2)} />
               <span className="text-xs font-medium">{item.label}</span>
               
               {/* Active indicator */}
@@ -250,8 +243,8 @@ const MobileBottomNav: React.FC = () => {
               >
                 <div className="relative">
                   <item.icon className={cn(
-                    "w-5 h-5",
-                    item.highlight ? "text-emerald-600" : "text-muted-foreground"
+                    (item as any).pillar || (item as any).highlight ? 'w-6 h-6' : 'w-5 h-5',
+                    item.highlight ? 'text-emerald-600' : 'text-muted-foreground'
                   )} />
                   {item.badge && item.badge > 0 && (
                     <Badge 

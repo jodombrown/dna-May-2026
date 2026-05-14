@@ -24,13 +24,13 @@ const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, onClose
               onClick={onClose}
               className="h-6 w-6 rounded-full hover:bg-dna-emerald/10"
             >
-              <X className="h-4 w-4 text-gray-500 hover:text-dna-emerald" />
+              <X className="h-4 w-4 text-neutral-500 hover:text-dna-emerald" />
             </Button>
           </div>
         </DialogHeader>
         
         <ScrollArea className="p-6 max-h-[70vh]">
-          <div className="space-y-6 text-sm text-gray-700 leading-relaxed">
+          <div className="space-y-6 text-sm text-neutral-700 leading-relaxed">
             <div>
               <h3 className="text-lg font-semibold text-dna-forest mb-3">1. Information We Collect</h3>
               <p className="mb-3">
@@ -106,7 +106,7 @@ const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, onClose
             </div>
 
             <div className="border-t pt-4 mt-6">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-neutral-500">
                 Last updated: {new Date().toLocaleDateString('en-US', { 
                   year: 'numeric', 
                   month: 'long', 

@@ -41,7 +41,7 @@ const UserJourney = () => {
             <h4 className="font-medium text-dna-forest mb-2">{stage.stage}</h4>
             <div className="grid grid-cols-2 gap-2 text-sm">
               {stage.actions.map((action, actionIndex) => (
-                <div key={actionIndex} className="text-gray-600">
+                <div key={actionIndex} className="text-neutral-600">
                   • {action}
                 </div>
               ))}

@@ -8,27 +8,10 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
 import { cn } from '@/lib/utils';
-import dnaLogo from '@/assets/dna-logo.png';
+import dnaLogo from '@/assets/dna-logo.webp';
+import { MateMasie } from '@/components/icons/adinkra';
 
-import {
-  Home,
-  MessageCircle,
-  MessageSquarePlus,
-  Bell,
-  User,
-  LogOut,
-  Menu,
-  ChevronDown,
-  Zap,
-  Target,
-  Users2,
-  Lightbulb,
-  TestTube,
-  Rocket,
-  Shield,
-  Plus,
-  Search
-} from 'lucide-react';
+import { Home, MessageCircle, MessageSquarePlus, Bell, User, LogOut, Menu, ChevronDown, Target, Users2, Lightbulb, TestTube, Shield, Plus, Search } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -101,13 +84,24 @@ const UnifiedHeader = () => {
   const setActiveView = dashboard?.setActiveView ?? (() => {});
   const activeView = dashboard?.activeView ?? 'dashboard';
   
-  // Hide UnifiedHeader on mobile for Connect routes (has its own header)
+  // Hide UnifiedHeader on mobile for routes that ship their own mobile header
   // Also hide when header visibility is set to hidden (e.g., during mobile chat)
   // IMPORTANT: This check must be AFTER all hooks to prevent "fewer hooks" error
-  const isConnectRoute = location.pathname.includes('/dna/connect');
+  const path = location.pathname;
+  // On mobile, hubs that ship their own DnaMobileHeader hide UnifiedHeader
+  // entirely so the Shield/avatar/bell chrome never double-renders and the
+  // header layout stays uniform across modules.
+  const hasOwnMobileHeader =
+    path.includes('/dna/connect') ||
+    path === '/dna/contribute' ||
+    path.startsWith('/dna/contribute?') ||
+    path === '/dna/convey' ||
+    path === '/dna/collaborate' ||
+    path.includes('/dna/feed') ||
+    path.includes('/dna/convene');
   const { isHeaderHidden } = useHeaderVisibility();
-  
-  if (isMobile && (isConnectRoute || isHeaderHidden)) {
+
+  if (isMobile && (hasOwnMobileHeader || isHeaderHidden)) {
     return null;
   }
 
@@ -116,7 +110,10 @@ const UnifiedHeader = () => {
   // Show skeleton/minimal header during initial load to prevent flash
   if (loading) {
     return (
-      <header className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50 shadow-sm">
+      <header
+        className="bg-background border-b border-border fixed left-0 right-0 z-50 shadow-sm motion-safe:transition-[top] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ top: 'var(--roadmap-banner-height, 0px)' }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
@@ -165,7 +162,7 @@ const UnifiedHeader = () => {
                     </div>
                     <ScrollArea className="flex-1 overflow-y-auto">
                       <nav className="flex flex-col space-y-1 p-4 sm:p-6 pb-20">
-                        <div className="text-gray-500 text-sm">Loading...</div>
+                        <div className="text-neutral-500 text-sm">Loading...</div>
                       </nav>
                     </ScrollArea>
                   </div>
@@ -210,12 +207,12 @@ const UnifiedHeader = () => {
 
   // Phase icons mapping
   const phaseIcons = {
-    1: Zap,
+    1: MateMasie,
     2: Lightbulb,
     3: Target,
     4: TestTube,
     5: Users2,
-    6: Rocket,
+    6: MateMasie,
   };
 
   const handleAuthNavigation = (view: string) => {
@@ -239,7 +236,8 @@ const UnifiedHeader = () => {
       <header 
         ref={headerRef}
         data-unified-header
-        className="bg-background border-b border-border fixed top-0 left-0 right-0 z-50 shadow-sm"
+        className="bg-background border-b border-border fixed left-0 right-0 z-50 shadow-sm motion-safe:transition-[top] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ top: 'var(--roadmap-banner-height, 0px)' }}
       >
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -259,7 +257,6 @@ const UnifiedHeader = () => {
               </NavLink>
               
             </div>
-
 
             {/* Right section - Navigation and Profile */}
             <div className="flex items-center space-x-4">
@@ -402,7 +399,7 @@ const UnifiedHeader = () => {
                     {/* About Us Dropdown */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="text-gray-700 hover:text-dna-forest transition-colors font-medium">
+                        <Button variant="ghost" className="text-neutral-700 hover:text-dna-forest transition-colors font-medium">
                           About Us
                           <ChevronDown className="w-4 h-4 ml-1" />
                         </Button>
@@ -428,7 +425,7 @@ const UnifiedHeader = () => {
                           "transition-colors font-medium inline-flex items-center gap-2",
                           item.featured
                             ? "text-dna-emerald hover:text-dna-emerald-dark font-heritage tracking-[0.04em]"
-                            : "text-gray-700 hover:text-dna-forest"
+                            : "text-neutral-700 hover:text-dna-forest"
                         )}
                       >
                         {item.name}
@@ -463,7 +460,6 @@ const UnifiedHeader = () => {
                   )}
                 </>
               )}
-
 
               {/* Mobile Menu - Show only when not authenticated */}
               {!isAuthenticated && (
@@ -502,7 +498,7 @@ const UnifiedHeader = () => {
                           <>
                             {/* About Us Section with submenu */}
                             <div className="border-b pb-4 mb-4">
-                              <p className="text-sm text-gray-600 mb-2 font-medium px-4">About</p>
+                              <p className="text-sm text-neutral-600 mb-2 font-medium px-4">About</p>
                               {aboutUsDropdown.map((item) => (
                                 <Button
                                   key={item.name}
@@ -518,7 +514,7 @@ const UnifiedHeader = () => {
                             {/* Featured items (e.g. ROADMAP) */}
                             {filteredNavItems.some((i) => i.featured) && (
                               <div className="border-b pb-4 mb-4">
-                                <p className="text-sm text-gray-600 mb-2 font-medium px-4">Featured</p>
+                                <p className="text-sm text-neutral-600 mb-2 font-medium px-4">Featured</p>
                                 {filteredNavItems.filter((i) => i.featured).map((item) => (
                                   <Button
                                     key={item.name}
@@ -539,7 +535,7 @@ const UnifiedHeader = () => {
 
                             {/* The 5 C's Section */}
                             <div className="border-b pb-4 mb-4">
-                              <p className="text-sm text-gray-600 mb-2 font-medium px-4">The 5 C's</p>
+                              <p className="text-sm text-neutral-600 mb-2 font-medium px-4">The 5 C's</p>
                               {filteredNavItems.filter((i) => !i.featured).map((item) => (
                                 <Button
                                   key={item.name}

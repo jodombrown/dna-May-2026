@@ -205,7 +205,7 @@ const ContributionModerationQueue = () => {
 
                             <div>
                               <label className="text-sm font-medium">Description</label>
-                              <p className="text-sm bg-gray-50 p-3 rounded mt-1">
+                              <p className="text-sm bg-neutral-50 p-3 rounded mt-1">
                                 {selectedRequest.description}
                               </p>
                             </div>
@@ -276,7 +276,7 @@ const ContributionModerationQueue = () => {
       {/* Processed Requests */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <Flag className="h-5 w-5 text-gray-500" />
+          <Flag className="h-5 w-5 text-neutral-500" />
           <h3 className="text-lg font-semibold">Recently Processed ({processedRequests.length})</h3>
         </div>
         

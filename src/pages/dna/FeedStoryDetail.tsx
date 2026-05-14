@@ -190,7 +190,7 @@ export default function FeedStoryDetail() {
             titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }}
         >
-          <h1 className="text-2xl md:text-3xl font-semibold text-primary leading-tight transition-opacity duration-200 group-hover:opacity-80">
+          <h1 className="text-2xl md:text-h1 font-serif text-primary leading-tight transition-opacity duration-200 group-hover:opacity-80">
             {story.title}
           </h1>
           <ArrowRight className="mt-1 h-5 w-5 flex-shrink-0 text-primary/80 transition-transform duration-200 group-hover:translate-x-1" />
@@ -249,7 +249,7 @@ export default function FeedStoryDetail() {
                 <button
                   key={idx}
                   type="button"
-                  className="group relative h-56 w-[82%] min-w-[280px] snap-start overflow-hidden rounded-2xl bg-muted/30 text-left shadow-sm sm:h-64 sm:w-[420px]"
+                  className="group relative h-56 w-[82%] min-w-[280px] snap-start overflow-hidden rounded-lg bg-muted/30 text-left shadow-sm sm:h-64 sm:w-[420px]"
                   onClick={() => openImagePreview(url)}
                 >
                   <img

@@ -22,7 +22,7 @@ const ArrayFieldManager: React.FC<ArrayFieldManagerProps> = ({
   items,
   newItem,
   placeholder,
-  badgeColor = "text-gray-700 border-gray-300",
+  badgeColor = "text-neutral-700 border-neutral-300",
   onNewItemChange,
   onAddItem,
   onRemoveItem,

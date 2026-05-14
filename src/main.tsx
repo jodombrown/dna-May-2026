@@ -3,6 +3,9 @@ import React from "react";
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { initOfflineQueue } from './lib/initOfflineQueue'
+
+initOfflineQueue()
 
 // Ensure root element exists
 if (!document.getElementById("root")) {

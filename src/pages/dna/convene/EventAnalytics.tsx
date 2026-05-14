@@ -4,8 +4,9 @@ import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import { useEventAnalytics } from '@/hooks/useEventAnalytics';
+import { useEventAnalytics, useOrganizerAnalytics } from '@/hooks/useEventAnalytics';
 import { EventAnalyticsCard } from '@/components/convene/analytics/EventAnalyticsCard';
+import { AttendancePredictionCard } from '@/components/convene/analytics/AttendancePredictionCard';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -32,6 +33,12 @@ const EventAnalytics = () => {
 
   // Fetch analytics
   const { data: analytics, isLoading: analyticsLoading, error } = useEventAnalytics(id);
+
+  // Organizer historical baseline powers the DIA forecast for upcoming events.
+  const { data: organizerAnalytics } = useOrganizerAnalytics(
+    event?.organizer_id,
+    180,
+  );
 
   if (eventLoading || analyticsLoading) {
     return (
@@ -106,6 +113,19 @@ const EventAnalytics = () => {
               Back to Event
             </Button>
           </div>
+
+          {!analytics.event_has_passed && event.start_time && (
+            <AttendancePredictionCard
+              input={{
+                eventStartIso: event.start_time,
+                goingNow: analytics.rsvp_stats.going,
+                totalRsvpsNow: analytics.rsvp_stats.total,
+                rsvpTimeline: analytics.rsvp_timeline,
+                organizerHistoricalShowUpRate: organizerAnalytics?.avg_show_up_rate,
+                organizerAvgGoingPerEvent: organizerAnalytics?.avg_going_per_event,
+              }}
+            />
+          )}
 
           <EventAnalyticsCard analytics={analytics} eventTitle={event.title} />
         </div>

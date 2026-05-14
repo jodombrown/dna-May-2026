@@ -12,7 +12,7 @@ const ContributionStep: React.FC<ContributionStepProps> = ({ data, updateData })
     <div className="space-y-6">
       <div className="text-center">
         <h3 className="text-lg font-semibold text-dna-forest mb-2">Community Agreement</h3>
-        <p className="text-gray-600">Welcome to the DNA community</p>
+        <p className="text-neutral-600">Welcome to the DNA community</p>
       </div>
 
       {/* Community Values */}
@@ -51,7 +51,7 @@ const ContributionStep: React.FC<ContributionStepProps> = ({ data, updateData })
           <p className="font-medium text-dna-forest mb-1">
             I agree to the DNA terms, values, and privacy policy *
           </p>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             By checking this box, I commit to upholding the DNA community values and agree to the 
             <span className="text-dna-emerald hover:underline mx-1 cursor-pointer">Terms of Service</span>
             and

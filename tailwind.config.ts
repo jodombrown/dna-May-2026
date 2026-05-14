@@ -31,8 +31,19 @@ export default {
 				sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
 				serif: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
 				heritage: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+				display: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
 				ui: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
 				mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
+			},
+			fontSize: {
+				// DNA canonical type scale (see mem://style/typography-scale)
+				display: ['2rem', { lineHeight: '1.15', fontWeight: '600' }],      // 32px - marketing hero
+				h1: ['1.5rem', { lineHeight: '1.25', fontWeight: '600' }],          // 24px - page titles
+				h2: ['1.25rem', { lineHeight: '1.3', fontWeight: '600' }],          // 20px - section headers
+				h3: ['1rem', { lineHeight: '1.4', fontWeight: '600' }],             // 16px - card titles
+				body: ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],       // 14px - default body
+				meta: ['0.8125rem', { lineHeight: '1.45', fontWeight: '400' }],     // 13px - captions
+				micro: ['0.6875rem', { lineHeight: '1.4', fontWeight: '600', letterSpacing: '0.05em' }], // 11px eyebrows
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -242,12 +253,75 @@ export default {
 					white: 'hsl(var(--sudan-white))',
 					black: 'hsl(var(--sudan-black))',
 					green: 'hsl(var(--sudan-green))'
-				}
+				},
+				// ─── PHASE 3 TOKEN LOCK-IN — full 11-rung scales ───
+				emerald: {
+					50: 'hsl(var(--emerald-50))',
+					100: 'hsl(var(--emerald-100))',
+					200: 'hsl(var(--emerald-200))',
+					300: 'hsl(var(--emerald-300))',
+					400: 'hsl(var(--emerald-400))',
+					500: 'hsl(var(--emerald-500))',
+					600: 'hsl(var(--emerald-600))',
+					700: 'hsl(var(--emerald-700))',
+					800: 'hsl(var(--emerald-800))',
+					900: 'hsl(var(--emerald-900))',
+					950: 'hsl(var(--emerald-950))',
+				},
+				forest: {
+					50: 'hsl(var(--forest-50))',
+					100: 'hsl(var(--forest-100))',
+					200: 'hsl(var(--forest-200))',
+					300: 'hsl(var(--forest-300))',
+					400: 'hsl(var(--forest-400))',
+					500: 'hsl(var(--forest-500))',
+					600: 'hsl(var(--forest-600))',
+					700: 'hsl(var(--forest-700))',
+					800: 'hsl(var(--forest-800))',
+					900: 'hsl(var(--forest-900))',
+					950: 'hsl(var(--forest-950))',
+				},
+				copper: {
+					50: 'hsl(var(--copper-50))',
+					100: 'hsl(var(--copper-100))',
+					200: 'hsl(var(--copper-200))',
+					300: 'hsl(var(--copper-300))',
+					400: 'hsl(var(--copper-400))',
+					500: 'hsl(var(--copper-500))',
+					600: 'hsl(var(--copper-600))',
+					700: 'hsl(var(--copper-700))',
+					800: 'hsl(var(--copper-800))',
+					900: 'hsl(var(--copper-900))',
+					950: 'hsl(var(--copper-950))',
+				},
+				neutral: {
+					50: 'hsl(var(--neutral-50))',
+					100: 'hsl(var(--neutral-100))',
+					200: 'hsl(var(--neutral-200))',
+					300: 'hsl(var(--neutral-300))',
+					400: 'hsl(var(--neutral-400))',
+					500: 'hsl(var(--neutral-500))',
+					600: 'hsl(var(--neutral-600))',
+					700: 'hsl(var(--neutral-700))',
+					800: 'hsl(var(--neutral-800))',
+					900: 'hsl(var(--neutral-900))',
+					950: 'hsl(var(--neutral-950))',
+				},
+				// Five C's tokens
+				c: {
+					connect: 'hsl(var(--c-connect))',
+					convene: 'hsl(var(--c-convene))',
+					collaborate: 'hsl(var(--c-collaborate))',
+					contribute: 'hsl(var(--c-contribute))',
+					convey: 'hsl(var(--c-convey))',
+					dia: 'hsl(var(--c-dia))',
+				},
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)',
+				lg: 'var(--radius)',                       /* 8px */
+				md: 'calc(var(--radius) - 2px)',           /* 6px */
+				sm: 'calc(var(--radius) - 4px)',           /* 4px */
+				xl: 'calc(var(--radius) + 4px)',           /* 12px — large CTAs / hero media only */
 				'dna-sm': 'var(--radius-sm, 6px)',
 				'dna-md': 'var(--radius-md, 10px)',
 				'dna-lg': 'var(--radius-lg, 12px)',

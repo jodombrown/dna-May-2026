@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Maximize2, History } from 'lucide-react';
+import { Maximize2, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import DiaSearch from './DiaSearch';
 import DiaHistory from './DiaHistory';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DiaPanelProps {
   className?: string;
@@ -27,7 +28,7 @@ export function DiaPanel({ className, showHistory = true }: DiaPanelProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-emerald-500/10">
-              <Sparkles className="h-5 w-5 text-emerald-600" />
+              <MateMasie className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
               <h2 className="text-lg font-semibold">DIA</h2>

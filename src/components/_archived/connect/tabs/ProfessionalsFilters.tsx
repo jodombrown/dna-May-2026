@@ -13,7 +13,7 @@ const ProfessionalsFilters: React.FC<ProfessionalsFiltersProps> = ({
 }) => {
   return (
     <div className="flex justify-between items-center">
-      <p className="text-gray-600">
+      <p className="text-neutral-600">
         Showing {professionalsCount} professionals {searchTerm && `matching "${searchTerm}"`}
       </p>
       <div className="flex gap-2">

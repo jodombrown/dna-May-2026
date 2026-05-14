@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, TrendingUp, Calendar } from 'lucide-react';
+import { TrendingUp, Calendar } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface RightWidgetsProps {
   variant?: 'default' | 'connect' | 'convene' | 'convey';
@@ -32,7 +33,7 @@ export function RightWidgets({ variant = 'default' }: RightWidgetsProps) {
       {/* Quick Actions */}
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-muted-foreground" />
+          <MateMasie className="w-4 h-4 text-muted-foreground" />
           <h3 className="font-semibold text-sm">Quick Actions</h3>
         </div>
         <div className="space-y-2">

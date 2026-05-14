@@ -26,7 +26,7 @@ const MobileProfileView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Profile Header */}
       <div className="bg-white p-6 border-b">
         <div className="flex items-center space-x-4 mb-4">
@@ -39,10 +39,10 @@ const MobileProfileView = () => {
             <h1 className="text-xl font-bold text-dna-forest">
               {profile?.full_name || user?.email?.split('@')[0] || 'User'}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               {profile?.profession || profile?.headline || 'DNA Member'}
             </p>
-            <div className="flex items-center mt-1 text-gray-500">
+            <div className="flex items-center mt-1 text-neutral-500">
               <MapPin className="w-4 h-4 mr-1" />
               <span className="text-sm">
                 {profile?.location || 'Location not set'}
@@ -73,19 +73,19 @@ const MobileProfileView = () => {
           <Card>
             <CardContent className="p-3 text-center">
               <p className="text-lg font-bold text-dna-forest">128</p>
-              <p className="text-xs text-gray-600">Connections</p>
+              <p className="text-xs text-neutral-600">Connections</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-3 text-center">
               <p className="text-lg font-bold text-dna-forest">45</p>
-              <p className="text-xs text-gray-600">Followers</p>
+              <p className="text-xs text-neutral-600">Followers</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-3 text-center">
               <p className="text-lg font-bold text-dna-forest">12</p>
-              <p className="text-xs text-gray-600">Projects</p>
+              <p className="text-xs text-neutral-600">Projects</p>
             </CardContent>
           </Card>
         </div>
@@ -97,7 +97,7 @@ const MobileProfileView = () => {
           <CardTitle className="text-lg text-dna-forest">About</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-700 text-sm leading-relaxed">
+          <p className="text-neutral-700 text-sm leading-relaxed">
             {profile?.bio || 'Full profile editing coming soon...'}
           </p>
         </CardContent>
@@ -121,8 +121,8 @@ const MobileProfileView = () => {
                 <p className="font-medium text-dna-forest">
                   {profile?.profession || profile?.headline || 'Professional Title'}
                 </p>
-                <p className="text-sm text-gray-600">Current Position</p>
-                <p className="text-xs text-gray-500">2020 - Present</p>
+                <p className="text-sm text-neutral-600">Current Position</p>
+                <p className="text-xs text-neutral-500">2020 - Present</p>
               </div>
             </div>
           </div>
@@ -174,8 +174,8 @@ const MobileProfileView = () => {
             </div>
             <div className="flex-1">
               <p className="font-medium text-dna-forest">University Degree</p>
-              <p className="text-sm text-gray-600">Institution Name</p>
-              <p className="text-xs text-gray-500">Graduation Year</p>
+              <p className="text-sm text-neutral-600">Institution Name</p>
+              <p className="text-xs text-neutral-500">Graduation Year</p>
             </div>
           </div>
         </CardContent>

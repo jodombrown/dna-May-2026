@@ -175,7 +175,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
         />
         
         {isLoading && (
-          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-gray-400" />
+          <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-neutral-400" />
         )}
         
         {!isLoading && searchTerm && (
@@ -187,7 +187,7 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
       {isOpen && results.length > 0 && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-white border border-neutral-200 rounded-md shadow-lg max-h-60 overflow-y-auto"
         >
           {results.map((result, index) => {
             // Format display for dropdown
@@ -200,16 +200,16 @@ const LocationAutocomplete: React.FC<LocationAutocompleteProps> = ({
               <button
                 key={result.place_id || index}
                 type="button"
-                className="w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0"
+                className="w-full px-3 py-2 text-left hover:bg-neutral-50 focus:bg-neutral-50 focus:outline-none border-b border-neutral-100 last:border-b-0"
                 onClick={() => handleResultSelect(result)}
               >
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-3 w-3 text-dna-emerald flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-gray-900 truncate">
+                    <div className="text-sm font-medium text-neutral-900 truncate">
                       {city}
                     </div>
-                    <div className="text-xs text-gray-500 truncate">
+                    <div className="text-xs text-neutral-500 truncate">
                       {region && `${region}, `}{country}
                     </div>
                   </div>

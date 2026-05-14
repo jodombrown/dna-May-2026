@@ -9,7 +9,7 @@ import { UniversalFeed } from '@/components/feed/UniversalFeed';
 import { PinnedPostsSection } from './PinnedPostsSection';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Sparkles } from 'lucide-react';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileActivityFeedProps {
   profileUserId: string;
@@ -32,7 +32,7 @@ export const ProfileActivityFeed: React.FC<ProfileActivityFeedProps> = ({
 
   const emptyAction = isOwnProfile ? (
     <Button variant="outline" className="mt-4">
-      <Sparkles className="w-4 h-4 mr-2" />
+      <Sankofa className="w-4 h-4 mr-2" />
       Create Your First Post
     </Button>
   ) : undefined;

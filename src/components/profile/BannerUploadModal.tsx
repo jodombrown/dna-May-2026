@@ -290,7 +290,7 @@ export function BannerUploadModal({
                     className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedGradient === key 
                         ? 'border-dna-emerald ring-2 ring-dna-emerald/20' 
-                        : 'border-warm-gray-200 hover:border-warm-gray-300'
+                        : 'border-warm-neutral-200 hover:border-warm-neutral-300'
                     }`}
                     style={{ background: gradient.css }}
                   >
@@ -318,7 +318,7 @@ export function BannerUploadModal({
                     className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedGradient === key 
                         ? 'border-dna-emerald ring-2 ring-dna-emerald/20' 
-                        : 'border-warm-gray-200 hover:border-warm-gray-300'
+                        : 'border-warm-neutral-200 hover:border-warm-neutral-300'
                     }`}
                     style={{ background: gradient.css }}
                   >
@@ -348,12 +348,12 @@ export function BannerUploadModal({
                 />
                 <label
                   htmlFor="banner-upload"
-                  className="cursor-pointer flex flex-col items-center gap-4 p-8 border-2 border-dashed border-warm-gray-300 rounded-lg hover:border-dna-emerald transition-colors w-full"
+                  className="cursor-pointer flex flex-col items-center gap-4 p-8 border-2 border-dashed border-warm-neutral-300 rounded-lg hover:border-dna-emerald transition-colors w-full"
                 >
-                  <Upload className="h-12 w-12 text-warm-gray-400" />
+                  <Upload className="h-12 w-12 text-warm-neutral-400" />
                   <div className="text-center">
                     <p className="font-medium">Click to upload</p>
-                    <p className="text-sm text-warm-gray-600 mt-1">
+                    <p className="text-sm text-warm-neutral-600 mt-1">
                       Min 1200×400px • Max 10MB • JPG, PNG, WebP
                     </p>
                   </div>
@@ -362,7 +362,7 @@ export function BannerUploadModal({
             ) : (
               <div className="space-y-4">
                 {/* Cropper */}
-                <div className="relative h-64 sm:h-80 bg-warm-gray-100 rounded-lg overflow-hidden">
+                <div className="relative h-64 sm:h-80 bg-warm-neutral-100 rounded-lg overflow-hidden">
                   <Cropper
                     image={imageSrc}
                     crop={crop}
@@ -411,10 +411,10 @@ export function BannerUploadModal({
           </TabsContent>
         </Tabs>
 
-        <div className="flex items-center justify-between p-4 bg-warm-gray-50 rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-warm-neutral-50 rounded-lg">
           <div>
             <Label htmlFor="overlay" className="font-medium">Add Dark Overlay</Label>
-            <p className="text-sm text-warm-gray-600">Better text contrast</p>
+            <p className="text-sm text-warm-neutral-600">Better text contrast</p>
           </div>
           <Switch id="overlay" checked={overlay} onCheckedChange={setOverlay} />
         </div>

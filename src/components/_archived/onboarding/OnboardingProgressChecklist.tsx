@@ -19,7 +19,7 @@ const OnboardingProgressChecklist: React.FC<Props> = ({
           className={`w-5 h-5 rounded-full inline-flex justify-center items-center mr-2
             ${stepStatus[step]
               ? "bg-dna-emerald text-white"
-              : "bg-gray-200 text-gray-500"}`}
+              : "bg-neutral-200 text-neutral-500"}`}
         >
           {stepStatus[step]
             ? "✓"

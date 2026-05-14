@@ -82,11 +82,11 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, onAvatarC
       <Label>Profile Image</Label>
       <div className="flex items-center gap-4">
         <div className="relative">
-          <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-gray-200">
+          <div className="w-20 h-20 rounded-full overflow-hidden bg-neutral-100 flex items-center justify-center border-2 border-neutral-200">
             {previewUrl ? (
               <img src={previewUrl} alt="Profile preview" className="w-full h-full object-cover" />
             ) : (
-              <div className="text-gray-400 text-sm text-center">
+              <div className="text-neutral-400 text-sm text-center">
                 <Upload className="w-6 h-6 mx-auto mb-1" />
                 <span className="text-xs">No image</span>
               </div>
@@ -125,7 +125,7 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, onAvatarC
               {uploading ? 'Uploading...' : 'Upload Photo'}
             </div>
           </Label>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-neutral-500">
             JPEG, PNG, WebP, or GIF. Max 5MB.
           </p>
         </div>

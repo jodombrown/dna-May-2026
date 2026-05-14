@@ -7,19 +7,10 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { config } from '@/lib/config';
-import { 
-  Mail, 
-  Users, 
-  Sparkles, 
-  Globe, 
-  Heart, 
-  Calendar, 
-  MessageCircle,
-  ArrowRight,
-  CheckCircle2
-} from 'lucide-react';
+import { Mail, Users, Globe, Heart, Calendar, MessageCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
 import { Link } from 'react-router-dom';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const Waitlist = () => {
   const [formData, setFormData] = useState({
@@ -160,7 +151,7 @@ const Waitlist = () => {
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl" />
           </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-12">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               {/* Left: Content */}
               <div className="text-center lg:text-left">
@@ -206,7 +197,7 @@ const Waitlist = () => {
 
               {/* Right: Form */}
               <div className="lg:pl-8">
-                <div className="bg-card rounded-2xl shadow-xl border border-border p-6 sm:p-8">
+                <div className="bg-card rounded-lg shadow-xl border border-border p-6 sm:p-8">
                   {isSuccess ? (
                     /* Success State */
                     <div className="text-center py-8">
@@ -244,7 +235,7 @@ const Waitlist = () => {
                     <>
                       <div className="text-center mb-6">
                         <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center mb-4">
-                          <Sparkles className="h-8 w-8 text-primary-foreground" />
+                          <MateMasie className="h-8 w-8 text-primary-foreground" />
                         </div>
                         <h2 className="text-2xl font-bold text-foreground">
                           Join the Waitlist

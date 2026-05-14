@@ -3,13 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Sparkles, TrendingUp } from 'lucide-react';
+import { Calendar, MapPin, Users, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/lib/logger';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 interface RecommendedEvent {
   id: string;
@@ -62,7 +63,7 @@ export const EventRecommendations = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Nkonsonkonson className="h-5 w-5 text-primary" />
             Recommended For You
           </CardTitle>
         </CardHeader>
@@ -80,7 +81,7 @@ export const EventRecommendations = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Nkonsonkonson className="h-5 w-5 text-primary" />
             Recommended For You
           </CardTitle>
         </CardHeader>
@@ -103,7 +104,7 @@ export const EventRecommendations = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Nkonsonkonson className="h-5 w-5 text-primary" />
             Recommended For You
           </CardTitle>
         </CardHeader>
@@ -123,7 +124,7 @@ export const EventRecommendations = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" />
+          <Nkonsonkonson className="h-6 w-6 text-primary" />
           Recommended For You
         </h2>
         <Badge variant="secondary" className="flex items-center gap-1">

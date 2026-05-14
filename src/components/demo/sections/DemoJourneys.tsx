@@ -99,15 +99,15 @@ export const DemoJourneys = forwardRef<HTMLElement, DemoJourneysProps>(
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-24 bg-background"
+        className="min-h-screen py-16 md:py-12 bg-background"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
           {/* Header */}
           <div ref={headerRef}>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6 } as const}
+              initial={{ opacity: 0 }}
+              animate={headerVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2 } as const}
             >
               <KenteBorder width="80px" height="3px" className="mb-8" />
             </motion.div>
@@ -115,18 +115,18 @@ export const DemoJourneys = forwardRef<HTMLElement, DemoJourneysProps>(
             <motion.h2 
               className="font-cormorant font-semibold text-foreground mb-4 text-center"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.1 } as const}
+              initial={{ opacity: 0 }}
+              animate={headerVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.1 } as const}
             >
               See It <span className="text-dna-emerald">In Action</span>
             </motion.h2>
 
             <motion.p 
               className="font-outfit text-muted-foreground max-w-2xl mx-auto leading-relaxed text-base md:text-lg mb-12 text-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.2 } as const}
+              initial={{ opacity: 0 }}
+              animate={headerVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.2 } as const}
             >
               Real journeys through DNA. Each story shows how the Five C's work together 
               to transform an idea into impact.
@@ -137,9 +137,9 @@ export const DemoJourneys = forwardRef<HTMLElement, DemoJourneysProps>(
             {/* Journey Tabs */}
             <motion.div 
               className="flex overflow-x-auto gap-2 pb-4 mb-8 scrollbar-hide"
-              initial={{ opacity: 0, y: 20 }}
-              animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.3 } as const}
+              initial={{ opacity: 0 }}
+              animate={contentVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.3 } as const}
             >
               {JOURNEYS.map((j, index) => (
                 <button
@@ -160,9 +160,9 @@ export const DemoJourneys = forwardRef<HTMLElement, DemoJourneysProps>(
             {/* Active Journey Card */}
             <motion.div 
               className="bg-background border border-border rounded-xl p-6 md:p-8 shadow-sm"
-              initial={{ opacity: 0, y: 30 }}
-              animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.4 } as const}
+              initial={{ opacity: 0 }}
+              animate={contentVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.4 } as const}
             >
               {/* Header */}
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -212,7 +212,7 @@ export const DemoJourneys = forwardRef<HTMLElement, DemoJourneysProps>(
                       className="relative pb-6 last:pb-0"
                       initial={{ opacity: 0, x: -20 }}
                       animate={contentVisible ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                      transition={{ duration: 0.5, delay: 0.5 + index * 0.1 } as const}
+                      transition={{ duration: 0.2, delay: 0.5 + index * 0.1 } as const}
                     >
                       {/* Dot */}
                       <div className={cn("absolute -left-[25px] w-4 h-4 rounded-full", styles.dot)} />

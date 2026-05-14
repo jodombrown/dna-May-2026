@@ -62,25 +62,37 @@ const MessageRequestBanner: React.FC<MessageRequestBannerProps> = ({
     }
   };
 
-  // Stubbed - message request feature not yet implemented
+  // Accept = move bucket to primary; Decline = move to spam (silent decline).
   const acceptMutation = useMutation({
     mutationFn: async () => {
-      toast({ title: 'Message request feature coming soon' });
-      onAccept?.();
-      return true;
+      await messageService.setConversationBucket(conversationId, 'primary');
     },
-    onSuccess: () => {},
-    onError: () => {},
+    onSuccess: () => {
+      toast({ title: 'Request accepted', description: 'Conversation moved to Primary' });
+      queryClient.invalidateQueries({ queryKey: ['inbox'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['message-requests'] });
+      onAccept?.();
+    },
+    onError: () => {
+      toast({ title: 'Could not accept request', variant: 'destructive' });
+    },
   });
 
   const declineMutation = useMutation({
     mutationFn: async () => {
-      toast({ title: 'Message request feature coming soon' });
-      onDecline?.();
-      return true;
+      await messageService.setConversationBucket(conversationId, 'spam');
     },
-    onSuccess: () => {},
-    onError: () => {},
+    onSuccess: () => {
+      toast({ title: 'Request declined' });
+      queryClient.invalidateQueries({ queryKey: ['inbox'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['message-requests'] });
+      onDecline?.();
+    },
+    onError: () => {
+      toast({ title: 'Could not decline request', variant: 'destructive' });
+    },
   });
 
   const isPending = acceptMutation.isPending || declineMutation.isPending;

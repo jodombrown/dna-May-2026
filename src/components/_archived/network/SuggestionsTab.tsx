@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { DiscoveryCard } from '@/components/discover/DiscoveryCard';
+import { Sankofa } from '@/components/icons/adinkra';
 
 const SuggestionsTab: React.FC = () => {
   const { user } = useAuth();
@@ -81,7 +82,7 @@ const SuggestionsTab: React.FC = () => {
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <Sparkles className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+          <Sankofa className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">No new suggestions right now</h3>
           <p className="text-muted-foreground">
             We'll notify you when we find great matches for you

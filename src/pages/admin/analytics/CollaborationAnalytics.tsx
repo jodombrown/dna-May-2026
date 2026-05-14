@@ -319,7 +319,7 @@ export default function CollaborationAnalytics() {
       case 'at-risk':
         return <Badge className="bg-orange-500/10 text-orange-600 border-orange-500">At-Risk</Badge>;
       case 'inactive':
-        return <Badge className="bg-gray-500/10 text-gray-600 border-gray-500">Inactive</Badge>;
+        return <Badge className="bg-neutral-500/10 text-neutral-600 border-neutral-500">Inactive</Badge>;
       default:
         return <Badge variant="outline">{health}</Badge>;
     }
@@ -381,9 +381,9 @@ export default function CollaborationAnalytics() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-purple-600" />
+              <Users className="h-5 w-5 text-copper-600" />
               <div>
-                <div className="text-2xl font-bold text-purple-600">{stats.totalCollaborators}</div>
+                <div className="text-2xl font-bold text-copper-600">{stats.totalCollaborators}</div>
                 <p className="text-xs text-muted-foreground">Total Collaborators</p>
               </div>
             </div>

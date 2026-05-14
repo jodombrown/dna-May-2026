@@ -1,3 +1,5 @@
+// Token exception: arbitrary radius retained for Radix passthrough.
+// Reviewed Phase 5. Do not normalize without design review.
 import * as React from "react"
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
 

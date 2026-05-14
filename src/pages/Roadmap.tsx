@@ -16,21 +16,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {
-  ArrowRight,
-  Calendar,
-  ChevronDown,
-  Loader2,
-  MapPin,
-  Mail,
-  Users,
-  Handshake,
-  HeartHandshake,
-  Megaphone,
-  Sparkles,
-  CheckCircle2,
-  Building2,
-} from 'lucide-react';
+import { ArrowRight, Calendar, ChevronDown, Loader2, MapPin, Mail, Users, Handshake, HeartHandshake, Megaphone, CheckCircle2, Building2 } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
@@ -132,7 +119,7 @@ const MOBILIZATION_BULLETS = [
     body: 'You will help shape the public story of what the diaspora committed to, and amplify it to your own networks.',
   },
   {
-    icon: Sparkles,
+    icon: MateMasie,
     pillar: 'Convene',
     body: 'You will help us host. The room is built by you and for you, not performed at you.',
   },
@@ -648,7 +635,7 @@ const Roadmap: React.FC = () => {
           aria-labelledby="about-heading"
           className="bg-background"
         >
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-12">
             <motion.div {...fadeIn}>
               <SectionHeading
                 eyebrow="What ROADMAP Is"
@@ -698,7 +685,7 @@ const Roadmap: React.FC = () => {
           intensity="subtle"
           className="bg-dna-sand-light/60"
         >
-          <section aria-labelledby="days-heading" className="py-16 lg:py-24">
+          <section aria-labelledby="days-heading" className="py-16 lg:py-12">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div {...fadeIn}>
                 <SectionHeading
@@ -730,7 +717,7 @@ const Roadmap: React.FC = () => {
 
         {/* ───────── 4. INAUGURAL DETAILS ───────── */}
         <section aria-labelledby="venue-heading" className="bg-background">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-12">
             <motion.div {...fadeIn}>
               <SectionHeading
                 eyebrow="Inaugural Details"
@@ -849,7 +836,7 @@ const Roadmap: React.FC = () => {
         >
           <section
             aria-labelledby="mobilization-heading"
-            className="py-16 lg:py-24"
+            className="py-16 lg:py-12"
           >
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div {...fadeIn}>
@@ -890,7 +877,7 @@ const Roadmap: React.FC = () => {
 
         {/* ───────── 6. WHO'S IN THE ROOM ───────── */}
         <section aria-labelledby="audience-heading" className="bg-background">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-12">
             <motion.div {...fadeIn}>
               <SectionHeading
                 eyebrow="Who's in the Room"
@@ -927,7 +914,7 @@ const Roadmap: React.FC = () => {
 
         {/* ───────── 7. PARTNERS ───────── */}
         <section aria-labelledby="partners-heading" className="bg-dna-sand-light/40">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-12">
             <motion.div {...fadeIn}>
               <SectionHeading eyebrow="Partners & Sponsors" title="Built with serious partners." />
               <h2 id="partners-heading" className="sr-only">
@@ -967,7 +954,7 @@ const Roadmap: React.FC = () => {
 
         {/* ───────── 8. SPEAKERS ───────── */}
         <section aria-labelledby="speakers-heading" className="bg-background">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-12">
             <motion.div {...fadeIn}>
               <SectionHeading eyebrow="Speakers" title="The voices in the room." />
               <h2 id="speakers-heading" className="sr-only">
@@ -1000,7 +987,7 @@ const Roadmap: React.FC = () => {
           intensity="subtle"
           className="bg-dna-sand-light/60"
         >
-          <section aria-labelledby="faq-heading" className="py-16 lg:py-24">
+          <section aria-labelledby="faq-heading" className="py-16 lg:py-12">
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div {...fadeIn}>
                 <SectionHeading
@@ -1037,7 +1024,7 @@ const Roadmap: React.FC = () => {
           aria-labelledby="cta-heading"
           className="bg-dna-forest text-white"
         >
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 text-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-12 text-center">
             <motion.div {...fadeIn}>
               <Badge className="bg-white/15 text-white hover:bg-white/15 mb-5 font-ui text-[11px] font-semibold uppercase tracking-[0.18em] px-3 py-1.5 border-0">
                 Powered by DNA

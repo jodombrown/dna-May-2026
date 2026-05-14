@@ -46,7 +46,7 @@ const PersonalizedStep: React.FC<PersonalizedStepProps> = ({ data, updateData })
           <h2 className="text-xl font-semibold text-dna-forest mb-2">
             Professional Journey
           </h2>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             Tell us about your expertise and how you'd like to make an impact.
           </p>
         </div>
@@ -109,7 +109,7 @@ const PersonalizedStep: React.FC<PersonalizedStepProps> = ({ data, updateData })
           <h2 className="text-xl font-semibold text-dna-forest mb-2">
             Venture Details
           </h2>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             Share information about your venture and collaboration needs.
           </p>
         </div>
@@ -200,7 +200,7 @@ const PersonalizedStep: React.FC<PersonalizedStepProps> = ({ data, updateData })
           <h2 className="text-xl font-semibold text-dna-forest mb-2">
             How You Want to Support
           </h2>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             Tell us about the ways you'd like to contribute to the community.
           </p>
         </div>
@@ -258,7 +258,7 @@ const PersonalizedStep: React.FC<PersonalizedStepProps> = ({ data, updateData })
 
   return (
     <div className="text-center">
-      <p className="text-gray-600">Please select a user type to continue.</p>
+      <p className="text-neutral-600">Please select a user type to continue.</p>
     </div>
   );
 };

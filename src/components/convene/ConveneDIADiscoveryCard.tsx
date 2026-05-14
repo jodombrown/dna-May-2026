@@ -21,9 +21,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { isDismissed, dismissDIACard } from '@/services/diaCardService';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import {
-  X, Sparkles, MapPin, Calendar, Users, Target, Heart,
-} from 'lucide-react';
+import { X, MapPin, Calendar, Users, Target, Heart } from 'lucide-react';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 // ── Types ──────────────────────────────────────────
 
@@ -302,7 +301,7 @@ export function ConveneDIADiscoveryCard({
             className="flex items-center justify-center w-6 h-6 rounded-full"
             style={{ backgroundColor: `${ACCENT}20` }}
           >
-            <Sparkles className="w-3 h-3" style={{ color: ACCENT }} />
+            <Nkonsonkonson className="w-3 h-3" style={{ color: ACCENT }} />
           </div>
           <span
             className="text-[10px] font-bold tracking-widest"

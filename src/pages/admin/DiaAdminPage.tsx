@@ -3,18 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Sparkles,
-  TrendingUp,
-  DollarSign,
-  Users,
-  Zap,
-  Search,
-  Calendar,
-  Loader2,
-  AlertCircle
-} from 'lucide-react';
+import { TrendingUp, DollarSign, Users, Search, Calendar, Loader2, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DailyStat {
   date: string;
@@ -139,7 +130,7 @@ export default function DiaAdminPage() {
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="p-2 sm:p-3 rounded-lg bg-emerald-500/10">
-          <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
+          <MateMasie className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
         </div>
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">DIA Admin Dashboard</h1>
@@ -188,7 +179,7 @@ export default function DiaAdminPage() {
                 <p className="text-xs text-muted-foreground">avg this week</p>
               </div>
               <div className="p-3 rounded-full bg-yellow-500/10">
-                <Zap className="h-5 w-5 text-yellow-600" />
+                <MateMasie className="h-5 w-5 text-yellow-600" />
               </div>
             </div>
           </CardContent>

@@ -14,11 +14,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Sparkles, X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MODE_HANDLERS } from './modeHandlers';
 import type { IntentSuggestion } from '@/services/diaIntentDetectionService';
 import type { ComposerMode } from '@/hooks/useUniversalComposer';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DIAIntentBarProps {
   suggestion: IntentSuggestion | null;
@@ -76,7 +77,7 @@ export const DIAIntentBar = ({
       <div
         className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-[#B87333]/15"
       >
-        <Sparkles className="h-4 w-4 text-[#B87333]" />
+        <MateMasie className="h-4 w-4 text-[#B87333]" />
       </div>
 
       {/* Message */}

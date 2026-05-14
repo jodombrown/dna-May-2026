@@ -213,10 +213,10 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
     <div className="space-y-6">
       {/* Heritage Countries */}
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1.5">
+        <label className="text-sm font-medium text-neutral-700 mb-2 flex items-center gap-1.5">
           <Globe className="w-4 h-4" />
           Heritage Countries
-          <span className="text-xs text-gray-400 font-normal">(up to 5)</span>
+          <span className="text-xs text-neutral-400 font-normal">(up to 5)</span>
         </label>
 
         {/* Selected countries */}
@@ -230,7 +230,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
               >
                 <span>{getFlagEmoji(country.countryCode)}</span>
                 <span className="text-xs">{country.countryName}</span>
-                <span className="text-[10px] text-gray-400">({country.relationship})</span>
+                <span className="text-[10px] text-neutral-400">({country.relationship})</span>
                 {country.isPrimary && (
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 )}
@@ -266,7 +266,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
                   if (countries.length === 0) return null;
                   return (
                     <div key={region}>
-                      <p className="text-[10px] uppercase tracking-wider text-gray-400 font-medium px-3 py-1.5 bg-gray-50 sticky top-0">
+                      <p className="text-[10px] uppercase tracking-wider text-neutral-400 font-medium px-3 py-1.5 bg-neutral-50 sticky top-0">
                         {AFRICAN_REGION_LABELS[region as AfricanRegion]}
                       </p>
                       {countries.map((country) => {
@@ -294,7 +294,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
                   );
                 })}
                 <button
-                  className="w-full text-xs text-gray-400 py-2 hover:bg-gray-50"
+                  className="w-full text-xs text-neutral-400 py-2 hover:bg-neutral-50"
                   onClick={() => setShowCountryPicker(false)}
                 >
                   Close
@@ -307,7 +307,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
 
       {/* Diaspora Generation */}
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-2 block">
+        <label className="text-sm font-medium text-neutral-700 mb-2 block">
           Diaspora Generation
         </label>
         <div className="grid grid-cols-2 gap-2">
@@ -321,7 +321,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
                   className={`text-left p-3 rounded-lg border-2 transition-all ${
                     isSelected
                       ? 'border-emerald-500 bg-emerald-50'
-                      : 'border-gray-100 hover:border-gray-200 bg-white'
+                      : 'border-neutral-100 hover:border-neutral-200 bg-white'
                   }`}
                   onClick={() =>
                     onUpdate({
@@ -330,10 +330,10 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
                     })
                   }
                 >
-                  <p className={`text-xs font-medium ${isSelected ? 'text-emerald-800' : 'text-gray-700'}`}>
+                  <p className={`text-xs font-medium ${isSelected ? 'text-emerald-800' : 'text-neutral-700'}`}>
                     {shortLabel}
                   </p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">{description}</p>
+                  <p className="text-[10px] text-neutral-400 mt-0.5">{description}</p>
                 </button>
               );
             }
@@ -343,7 +343,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
 
       {/* Languages */}
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1.5">
+        <label className="text-sm font-medium text-neutral-700 mb-2 flex items-center gap-1.5">
           <Languages className="w-4 h-4" />
           Languages
         </label>
@@ -354,7 +354,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
             {heritage.languages.map((lang) => (
               <div
                 key={lang.language}
-                className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"
+                className="flex items-center gap-2 p-2 bg-neutral-50 rounded-lg"
               >
                 <span className="text-sm font-medium flex-1">{lang.language}</span>
                 <select
@@ -373,7 +373,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
                   <option value="learning">Learning</option>
                 </select>
                 <button
-                  className="text-gray-400 hover:text-red-500 transition-colors"
+                  className="text-neutral-400 hover:text-red-500 transition-colors"
                   onClick={() => removeLanguage(lang.language)}
                 >
                   <X className="w-3.5 h-3.5" />
@@ -408,7 +408,7 @@ export const HeritageOnboardingStep: React.FC<HeritageOnboardingStepProps> = ({
                 </button>
               ))}
               <button
-                className="w-full text-xs text-gray-400 py-2 hover:bg-gray-50"
+                className="w-full text-xs text-neutral-400 py-2 hover:bg-neutral-50"
                 onClick={() => setShowLanguagePicker(false)}
               >
                 Close

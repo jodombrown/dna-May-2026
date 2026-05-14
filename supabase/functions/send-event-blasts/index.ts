@@ -39,6 +39,47 @@ serve(async (req) => {
   try {
     const { eventId } = await req.json().catch(() => ({ eventId: null }));
 
+    // Require authentication. Allow either:
+    //  - Internal/cron callers presenting the service-role key
+    //  - Authenticated admin users
+    //  - Authenticated organizers of the target event (eventId required)
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const isServiceRole = !!token && !!serviceRoleKey && token === serviceRoleKey;
+
+    if (!isServiceRole) {
+      if (!token) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 });
+      }
+      const { data: userRes, error: userErr } = await supabase.auth.getUser(token);
+      if (userErr || !userRes?.user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 });
+      }
+      const callerId = userRes.user.id;
+      const { data: isAdmin } = await supabase.rpc('has_role', { _user_id: callerId, _role: 'admin' });
+
+      if (!isAdmin) {
+        if (!eventId) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 });
+        }
+        const { data: ev } = await supabase
+          .from('events')
+          .select('organizer_id, created_by')
+          .eq('id', eventId)
+          .maybeSingle();
+        const ownerId = (ev as { organizer_id?: string; created_by?: string } | null)?.organizer_id
+          ?? (ev as { organizer_id?: string; created_by?: string } | null)?.created_by;
+        if (!ownerId || ownerId !== callerId) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 });
+        }
+      }
+    }
+
     let blasts: Blast[] = [];
     const nowIso = new Date().toISOString();
 
@@ -52,6 +93,17 @@ serve(async (req) => {
       if (error) throw error;
       blasts = data as Blast[];
     } else {
+      // Listing all due blasts is restricted to internal/admin callers
+      if (!isServiceRole) {
+        const { data: userRes2 } = await supabase.auth.getUser(token);
+        const { data: isAdmin2 } = await supabase.rpc('has_role', {
+          _user_id: userRes2?.user?.id, _role: 'admin',
+        });
+        if (!isAdmin2) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 });
+        }
+      }
       const { data, error } = await supabase
         .from('event_blasts')
         .select('id, event_id, subject, body_markdown, segment, scheduled_for, sent_at')

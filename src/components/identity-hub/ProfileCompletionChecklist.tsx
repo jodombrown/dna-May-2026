@@ -8,10 +8,11 @@
  */
 
 import React, { useState } from 'react';
-import { Check, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import type { CompletionChecklistItem, UserTier } from '@/types/profileIdentityHub';
 import { PROFILE_LAYOUT, PROFILE_TIER_GATES } from '@/types/profileIdentityHub';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileCompletionChecklistProps {
   completionPercentage: number;
@@ -61,7 +62,7 @@ export const ProfileCompletionChecklist: React.FC<ProfileCompletionChecklistProp
           >
             Profile Strength
           </h3>
-          <p className="text-xs text-gray-500 mt-0.5">{completionLabel}</p>
+          <p className="text-xs text-neutral-500 mt-0.5">{completionLabel}</p>
         </div>
         <div className="text-right">
           <span className="text-2xl font-bold" style={{ color: progressColor }}>
@@ -80,27 +81,27 @@ export const ProfileCompletionChecklist: React.FC<ProfileCompletionChecklistProp
       {/* Next actions (always show top 3 incomplete) */}
       {incompleteItems.length > 0 && (
         <div className="space-y-2 mb-3">
-          <p className="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+          <p className="text-[10px] uppercase tracking-wider text-neutral-400 font-medium">
             Next steps
           </p>
           {incompleteItems.slice(0, 3).map((item) => (
             <button
               key={item.id}
-              className="w-full flex items-start gap-2.5 p-2 rounded-lg hover:bg-gray-50 transition-colors text-left group"
+              className="w-full flex items-start gap-2.5 p-2 rounded-lg hover:bg-neutral-50 transition-colors text-left group"
               onClick={() => onNavigateToSection?.(item.section)}
             >
-              <div className="w-5 h-5 rounded-full border-2 border-gray-200 flex-shrink-0 mt-0.5 group-hover:border-[#4A8D77] transition-colors" />
+              <div className="w-5 h-5 rounded-full border-2 border-neutral-200 flex-shrink-0 mt-0.5 group-hover:border-[#4A8D77] transition-colors" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                <p className="text-sm font-medium text-neutral-700 group-hover:text-neutral-900">
                   {item.label}
                 </p>
                 {isDiaPowered && item.diaMessage && (
-                  <p className="text-xs text-gray-400 mt-0.5 flex items-start gap-1">
-                    <Sparkles className="w-3 h-3 mt-0.5 flex-shrink-0 text-amber-400" />
+                  <p className="text-xs text-neutral-400 mt-0.5 flex items-start gap-1">
+                    <Sankofa className="w-3 h-3 mt-0.5 flex-shrink-0 text-amber-400" />
                     <span>{item.diaMessage}</span>
                   </p>
                 )}
-                <p className="text-[10px] text-gray-300 mt-0.5">
+                <p className="text-[10px] text-neutral-300 mt-0.5">
                   +{item.weight} points
                 </p>
               </div>
@@ -112,7 +113,7 @@ export const ProfileCompletionChecklist: React.FC<ProfileCompletionChecklistProp
       {/* Expand/collapse for full list */}
       {(incompleteItems.length > 3 || completedItems.length > 0) && (
         <button
-          className="w-full flex items-center justify-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors py-1"
+          className="w-full flex items-center justify-center gap-1 text-xs text-neutral-400 hover:text-neutral-600 transition-colors py-1"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? (
@@ -131,12 +132,12 @@ export const ProfileCompletionChecklist: React.FC<ProfileCompletionChecklistProp
 
       {/* Expanded view */}
       {isExpanded && (
-        <div className="mt-3 pt-3 border-t border-gray-100 space-y-1.5">
+        <div className="mt-3 pt-3 border-t border-neutral-100 space-y-1.5">
           {/* Completed items */}
           {completedItems.map((item) => (
             <div
               key={item.id}
-              className="flex items-center gap-2.5 p-1.5 text-sm text-gray-400"
+              className="flex items-center gap-2.5 p-1.5 text-sm text-neutral-400"
             >
               <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
                 <Check className="w-3 h-3 text-emerald-600" />
@@ -150,12 +151,12 @@ export const ProfileCompletionChecklist: React.FC<ProfileCompletionChecklistProp
           {incompleteItems.slice(3).map((item) => (
             <button
               key={item.id}
-              className="w-full flex items-center gap-2.5 p-1.5 text-sm text-gray-500 hover:bg-gray-50 rounded transition-colors text-left"
+              className="w-full flex items-center gap-2.5 p-1.5 text-sm text-neutral-500 hover:bg-neutral-50 rounded transition-colors text-left"
               onClick={() => onNavigateToSection?.(item.section)}
             >
-              <div className="w-5 h-5 rounded-full border-2 border-gray-200 flex-shrink-0" />
+              <div className="w-5 h-5 rounded-full border-2 border-neutral-200 flex-shrink-0" />
               <span>{item.label}</span>
-              <span className="text-[10px] text-gray-300 ml-auto">+{item.weight}</span>
+              <span className="text-[10px] text-neutral-300 ml-auto">+{item.weight}</span>
             </button>
           ))}
         </div>
@@ -165,7 +166,7 @@ export const ProfileCompletionChecklist: React.FC<ProfileCompletionChecklistProp
       {tier === 'free' && !isDiaPowered && (
         <div className="mt-3 p-2 bg-amber-50 rounded-lg text-center">
           <p className="text-[10px] text-amber-700">
-            <Sparkles className="w-3 h-3 inline mr-1" />
+            <Sankofa className="w-3 h-3 inline mr-1" />
             Upgrade to Pro for DIA-powered profile optimization tips
           </p>
         </div>

@@ -26,7 +26,7 @@ const DnaDiscover = () => {
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
         <Compass className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold">Discover</h1>
+        <h1 className="text-h2 font-serif">Discover</h1>
       </div>
       <Card className="p-6">
         <p className="text-muted-foreground">Discovery feed coming soon...</p>

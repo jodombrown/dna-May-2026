@@ -20,8 +20,8 @@ const EventCategoriesSection: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-2xl font-bold text-gray-900">Browse by Category</h3>
-        <p className="text-gray-600">Find events that match your interests</p>
+        <h3 className="text-2xl font-bold text-neutral-900">Browse by Category</h3>
+        <p className="text-neutral-600">Find events that match your interests</p>
       </div>
 
       <div className="relative px-12">
@@ -45,11 +45,11 @@ const EventCategoriesSection: React.FC = () => {
                          onClick={() => handleCategoryClick(category)}
                        >
                         <CardContent className="p-8 text-center">
-                          <div className={`w-16 h-16 ${category.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                          <div className={`w-16 h-16 ${category.color} rounded-lg flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
                             <span className="text-3xl">{category.icon}</span>
                           </div>
-                          <h4 className="font-semibold text-gray-900 text-base mb-2">{category.name}</h4>
-                          <p className="text-sm text-gray-500">{category.count}</p>
+                          <h4 className="font-semibold text-neutral-900 text-base mb-2">{category.name}</h4>
+                          <p className="text-sm text-neutral-500">{category.count}</p>
                         </CardContent>
                       </Card>
                     </TooltipTrigger>

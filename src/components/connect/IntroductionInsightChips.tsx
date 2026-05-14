@@ -9,7 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
-import { Sparkles } from 'lucide-react';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface Insight {
   id: string;
@@ -124,7 +124,7 @@ export function IntroductionInsightChips({
   return (
     <div className="mb-3">
       <div className="flex items-center gap-1 mb-1.5 justify-center">
-        <Sparkles className="w-3 h-3 text-[hsl(var(--dna-gold))]" />
+        <Sankofa className="w-3 h-3 text-[hsl(var(--dna-gold))]" />
         <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
           Why connect them
         </span>

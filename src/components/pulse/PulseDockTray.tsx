@@ -6,14 +6,16 @@
  * DIA, Messages, and utility items (Notifications, Settings, Profile).
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, MessageSquarePlus, Bell, Settings, User, X } from 'lucide-react';
+import { MessageCircle, MessageSquarePlus, Bell, Settings, User, X, Inbox, Sunrise } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseNavigationData } from '@/hooks/usePulseNavigation';
 import type { PulseSection } from '@/types/pulse';
 import { PulseTrayItem } from './PulseTrayItem';
-import { AdinkrahenIcon, MpatapoIcon, MateMasieIcon } from '@/components/icons/adinkra';
+import { MateMasie, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
+import { InboxDigestSheet } from './InboxDigestSheet';
+import { DailyPulseSheet } from './DailyPulseSheet';
 
 interface PulseDockTrayProps {
   open: boolean;
@@ -22,10 +24,12 @@ interface PulseDockTrayProps {
 }
 
 const PULSE_ITEMS = [
-  { key: 'contribute', label: 'Contribute', icon: AdinkrahenIcon, href: '/dna/contribute' },
-  { key: 'convey', label: 'Convey', icon: MpatapoIcon, href: '/dna/convey' },
-  { key: 'dia', label: 'DIA', icon: MateMasieIcon, href: '/dna/dia' },
+  { key: 'contribute', label: 'Contribute', icon: Adinkrahene, href: '/dna/contribute' },
+  { key: 'convey', label: 'Convey', icon: Mpatapo, href: '/dna/convey' },
+  { key: 'dia', label: 'DIA', icon: MateMasie, href: '/dna/dia' },
   { key: 'messages', label: 'Messages', icon: MessageCircle, href: '/dna/messages' },
+  { key: 'digest', label: 'Digest', icon: Inbox, href: '__digest__' },
+  { key: 'pulse', label: 'Daily Pulse', icon: Sunrise, href: '__pulse__' },
 ] as const;
 
 const UTILITY_ITEMS = [
@@ -37,8 +41,18 @@ const UTILITY_ITEMS = [
 
 export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
   const navigate = useNavigate();
+  const [digestOpen, setDigestOpen] = useState(false);
+  const [pulseOpen, setPulseOpen] = useState(false);
 
   const handleNavigation = (href: string) => {
+    if (href === '__digest__') {
+      setDigestOpen(true);
+      return;
+    }
+    if (href === '__pulse__') {
+      setPulseOpen(true);
+      return;
+    }
     onClose();
     // Small delay so the tray animates away before navigation
     setTimeout(() => navigate(href), 150);
@@ -61,6 +75,15 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
               ? `${pulseNav.messages.unreadCount} unread`
               : 'No new messages',
         };
+      case 'digest':
+        return {
+          count: pulseNav.messages.unreadCount,
+          status: pulseNav.messages.unreadCount > 0 ? 'active' : 'dormant',
+          micro_text:
+            pulseNav.messages.unreadCount > 0 ? 'Triage now' : 'All caught up',
+        };
+      case 'pulse':
+        return { status: 'active', count: 0, micro_text: 'Across the 5 Cs' };
       case 'notifications':
         return {
           count: pulseNav.notifications.unreadCount,
@@ -98,13 +121,13 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
       >
         {/* Drag Handle */}
         <div className="flex justify-center py-3">
-          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          <div className="w-10 h-1 bg-neutral-300 rounded-full" />
         </div>
 
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-3 right-4 p-2 text-neutral-400 hover:text-neutral-600 transition-colors"
           aria-label="Close menu"
         >
           <X className="w-5 h-5" />
@@ -126,7 +149,7 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-100 mx-4" />
+        <div className="border-t border-neutral-100 mx-4" />
 
         {/* Utility Items */}
         <div className="px-4 py-4">
@@ -143,6 +166,20 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
           </div>
         </div>
       </div>
+
+      {/* Phase 15 - Cross-thread inbox digest */}
+      <InboxDigestSheet
+        open={digestOpen}
+        onOpenChange={setDigestOpen}
+        onBeforeNavigate={onClose}
+      />
+
+      {/* Phase 18 - Cross-module daily pulse */}
+      <DailyPulseSheet
+        open={pulseOpen}
+        onOpenChange={setPulseOpen}
+        onBeforeNavigate={onClose}
+      />
     </>
   );
 }

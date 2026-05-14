@@ -7,7 +7,7 @@ import { config } from '@/lib/config';
 const EventPresenterSection: React.FC = () => {
   return (
     <div className="space-y-4">
-      <h3 className={`${TYPOGRAPHY.h4} text-gray-900`}>Presented by</h3>
+      <h3 className={`${TYPOGRAPHY.h4} text-neutral-900`}>Presented by</h3>
       <div className="flex items-center gap-3">
         <Button
           variant="ghost"
@@ -21,8 +21,8 @@ const EventPresenterSection: React.FC = () => {
           />
           </Button>
         <div>
-          <div className={`${TYPOGRAPHY.h5} text-gray-900`}>Diaspora Network of Africa</div>
-          <div className={`${TYPOGRAPHY.bodySmall} text-gray-600`}>#1 Professional Networking and Impact Investment Platform for the African Diaspora</div>
+          <div className={`${TYPOGRAPHY.h5} text-neutral-900`}>Diaspora Network of Africa</div>
+          <div className={`${TYPOGRAPHY.bodySmall} text-neutral-600`}>#1 Professional Networking and Impact Investment Platform for the African Diaspora</div>
         </div>
       </div>
     </div>

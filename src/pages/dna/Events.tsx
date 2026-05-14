@@ -26,7 +26,7 @@ const DnaEvents = () => {
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
         <Calendar className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold">Events</h1>
+        <h1 className="text-h2 font-serif">Events</h1>
       </div>
       <Card className="p-6">
         <p className="text-muted-foreground">Events feed coming soon...</p>

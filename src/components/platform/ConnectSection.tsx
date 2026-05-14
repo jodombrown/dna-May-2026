@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, MapPin, Briefcase, ArrowRight, Network } from 'lucide-react';
+import { Sankofa } from '@/components/icons/adinkra';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -87,8 +88,8 @@ const ConnectSection = () => {
   };
 
   const renderCard = (professional: typeof professionals[0]) => (
-    <div className={`bg-gradient-to-br ${professional.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-      <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+    <div className={`bg-gradient-to-br ${professional.gradient} rounded-xl p-1.5 shadow-2xl h-full w-full`}>
+      <div className="bg-white rounded-xl overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${professional.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg font-serif">{professional.categoryTitle}</h3>
@@ -105,10 +106,10 @@ const ConnectSection = () => {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-lg text-gray-900 mb-1">{professional.name}</h4>
-              <p className="text-sm font-medium text-gray-700 mb-1">{professional.title}</p>
-              <p className="text-xs text-gray-600 mb-2 line-clamp-2">{professional.bio}</p>
-              <div className="flex items-center gap-1.5 text-sm text-gray-600">
+              <h4 className="font-bold text-lg text-neutral-900 mb-1">{professional.name}</h4>
+              <p className="text-sm font-medium text-neutral-700 mb-1">{professional.title}</p>
+              <p className="text-xs text-neutral-600 mb-2 line-clamp-2">{professional.bio}</p>
+              <div className="flex items-center gap-1.5 text-sm text-neutral-600">
                 <MapPin className="w-3.5 h-3.5" />
                 <span>{professional.location}</span>
               </div>
@@ -116,7 +117,7 @@ const ConnectSection = () => {
           </div>
 
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Interests</p>
+            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Interests</p>
             <div className="flex flex-wrap gap-2">
               {professional.interests.map((interest, idx) => (
                 <Badge key={idx} variant="secondary" className="bg-dna-emerald/10 text-dna-forest">
@@ -129,11 +130,11 @@ const ConnectSection = () => {
           <div className="bg-dna-forest/5 rounded-xl p-4 border-2 border-dna-forest/20">
             <div className="flex items-center gap-2 mb-2">
               <Users className="w-4 h-4 text-dna-forest" />
-              <span className="text-sm font-semibold text-gray-900">
+              <span className="text-sm font-semibold text-neutral-900">
                 {professional.mutualConnections} mutual connections
               </span>
             </div>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-neutral-600">
               Connected through shared communities and interests
             </p>
           </div>
@@ -144,7 +145,7 @@ const ConnectSection = () => {
             Connect Now
           </Button>
 
-          <p className="text-xs text-center text-gray-500">
+          <p className="text-xs text-center text-neutral-500">
             After connecting, see their upcoming events →
           </p>
         </div>
@@ -160,14 +161,14 @@ const ConnectSection = () => {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-forest to-dna-emerald rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+                <Sankofa className="w-7 h-7 text-white" />
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Connect</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-neutral-900">Connect</h2>
             </div>
-            <p className="text-xl font-semibold text-gray-900 mb-3">
+            <p className="text-xl font-semibold text-neutral-900 mb-3">
               Build Relationships That Move Africa Forward
             </p>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg text-neutral-600 mb-6">
               Connect with verified diaspora changemakers who share your commitment to Africa's progress. Whether you need a co-founder, investor, mentor, or collaborator, strategic relationships are the foundation of impact. Your network becomes the movement's strength.
             </p>
 
@@ -177,8 +178,8 @@ const ConnectSection = () => {
                   <Users className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Quality Over Quantity</h3>
-                  <p className="text-sm text-gray-600">Verified members committed to action, not just conversation</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Quality Over Quantity</h3>
+                  <p className="text-sm text-neutral-600">Verified members committed to action, not just conversation</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -186,8 +187,8 @@ const ConnectSection = () => {
                   <Network className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Purpose-Driven Matching</h3>
-                  <p className="text-sm text-gray-600">Find the right people based on shared goals, not random networking</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Purpose-Driven Matching</h3>
+                  <p className="text-sm text-neutral-600">Find the right people based on shared goals, not random networking</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -195,8 +196,8 @@ const ConnectSection = () => {
                   <Briefcase className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Individual Success = Collective Power</h3>
-                  <p className="text-sm text-gray-600">Your connections accelerate your goals while strengthening the entire network</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Individual Success = Collective Power</h3>
+                  <p className="text-sm text-neutral-600">Your connections accelerate your goals while strengthening the entire network</p>
                 </div>
               </div>
             </div>

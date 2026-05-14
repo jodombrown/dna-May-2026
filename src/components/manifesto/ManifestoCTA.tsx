@@ -10,9 +10,9 @@ export function ManifestoCTA() {
     <motion.div
       ref={ref}
       className="flex justify-center mt-12 md:mt-16"
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.3, delay: 0.2 }}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+      transition={{ duration: 0.2, delay: 0.2 }}
     >
       <Link to="/waitlist">
         <button className="bg-[#4A8D77] text-white text-xl md:text-2xl font-bold px-8 py-4 rounded-lg hover:bg-[#2D5A4A] transition-colors animate-pulse">

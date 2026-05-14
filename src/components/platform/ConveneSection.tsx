@@ -1,9 +1,10 @@
 import React from 'react';
-import { Calendar, MapPin, Users, ArrowRight, Clock, Globe, Sparkles, Video } from 'lucide-react';
+import { Calendar, MapPin, Users, ArrowRight, Clock, Globe, Video } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SwipeableCardStack from './SwipeableCardStack';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 const ConveneSection = () => {
   const navigate = useNavigate();
@@ -91,12 +92,12 @@ const ConveneSection = () => {
   };
 
   const renderCard = (event: typeof events[0]) => (
-    <div className={`bg-gradient-to-br ${event.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-      <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+    <div className={`bg-gradient-to-br ${event.gradient} rounded-xl p-1.5 shadow-2xl h-full w-full`}>
+      <div className="bg-white rounded-xl overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${event.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg font-serif">{event.categoryTitle}</h3>
-            <Calendar className="w-5 h-5" />
+            <Nkonsonkonson className="w-6 h-6" />
           </div>
           <p className="text-sm text-white/80">{event.categorySubtitle}</p>
         </div>
@@ -107,25 +108,25 @@ const ConveneSection = () => {
               <Badge className="bg-dna-copper text-white text-xs">{event.type}</Badge>
               {event.featured && (
                 <div className="flex items-center gap-1 text-dna-gold">
-                  <Sparkles className="w-3 h-3" />
+                  <Nkonsonkonson className="w-3 h-3" />
                   <span className="text-xs font-bold">Featured</span>
                 </div>
               )}
             </div>
-            <h4 className="font-bold text-xl text-gray-900 mb-2">{event.title}</h4>
-            <p className="text-xs text-gray-600 line-clamp-2 mb-3">{event.description}</p>
+            <h4 className="font-bold text-xl text-neutral-900 mb-2">{event.title}</h4>
+            <p className="text-xs text-neutral-600 line-clamp-2 mb-3">{event.description}</p>
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-neutral-700">
               <Calendar className="w-4 h-4 text-dna-copper flex-shrink-0" />
               <span className="text-sm font-medium">{event.date}</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-neutral-700">
               <Clock className="w-4 h-4 text-dna-copper flex-shrink-0" />
               <span className="text-sm font-medium">{event.time}</span>
             </div>
-            <div className="flex items-center gap-3 text-gray-700">
+            <div className="flex items-center gap-3 text-neutral-700">
               {event.format === 'Hybrid' ? (
                 <Globe className="w-4 h-4 text-dna-copper flex-shrink-0" />
               ) : event.format === 'Virtual' ? (
@@ -141,11 +142,11 @@ const ConveneSection = () => {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-dna-copper" />
-                <span className="text-sm font-semibold text-gray-900">{event.attendees}</span>
+                <span className="text-sm font-semibold text-neutral-900">{event.attendees}</span>
               </div>
               <Badge variant="secondary" className="text-xs">{event.format}</Badge>
             </div>
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-neutral-600">
               Hosted by {event.host}
             </p>
           </div>
@@ -156,7 +157,7 @@ const ConveneSection = () => {
             RSVP Now
           </Button>
 
-          <p className="text-xs text-center text-gray-500">
+          <p className="text-xs text-center text-neutral-500">
             After RSVP, create your own event →
           </p>
         </div>
@@ -165,7 +166,7 @@ const ConveneSection = () => {
   );
 
   return (
-    <section id="convene-section" className="py-16 px-12 sm:px-10 lg:px-8 bg-gray-50">
+    <section id="convene-section" className="py-16 px-12 sm:px-10 lg:px-8 bg-neutral-50">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
           {/* Left: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
@@ -180,25 +181,25 @@ const ConveneSection = () => {
           <div className="order-1 lg:order-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-white" />
+                <Nkonsonkonson className="w-7 h-7 text-white" />
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Convene</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-neutral-900">Convene</h2>
             </div>
-            <p className="text-xl font-semibold text-gray-900 mb-3">
+            <p className="text-xl font-semibold text-neutral-900 mb-3">
               Where Strategy Meets Action
             </p>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg text-neutral-600 mb-6">
               Join convenings designed for decision-making, not just discussion. Whether virtual or in-person, intimate or large-scale, these are spaces where ideas become initiatives, conversations become commitments, and attendees leave with next steps. Your participation accelerates both your goals and the movement.
             </p>
 
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-dna-copper/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Sparkles className="w-4 h-4 text-dna-copper" />
+                  <Nkonsonkonson className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Intentional Gathering Design</h3>
-                  <p className="text-sm text-gray-600">Every convening has clear objectives, structured agendas, and tangible outcomes</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Intentional Gathering Design</h3>
+                  <p className="text-sm text-neutral-600">Every convening has clear objectives, structured agendas, and tangible outcomes</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -206,8 +207,8 @@ const ConveneSection = () => {
                   <Users className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Commitment Culture</h3>
-                  <p className="text-sm text-gray-600">Attendees arrive prepared, participate actively, and leave with action items</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Commitment Culture</h3>
+                  <p className="text-sm text-neutral-600">Attendees arrive prepared, participate actively, and leave with action items</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -215,8 +216,8 @@ const ConveneSection = () => {
                   <Calendar className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Momentum Through Frequency</h3>
-                  <p className="text-sm text-gray-600">Regular convenings create sustained progress, not one-time inspiration</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Momentum Through Frequency</h3>
+                  <p className="text-sm text-neutral-600">Regular convenings create sustained progress, not one-time inspiration</p>
                 </div>
               </div>
             </div>

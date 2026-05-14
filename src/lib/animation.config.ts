@@ -57,7 +57,7 @@ export const INTERACTIVE_CLASSES = {
   link: 'transition-colors duration-150 hover:text-dna-emerald',
   
   // Icon button (ghost style with hover background)
-  iconButton: 'transition-all duration-150 hover:bg-gray-100 active:scale-95',
+  iconButton: 'transition-all duration-150 hover:bg-neutral-100 active:scale-95',
 } as const;
 
 /**

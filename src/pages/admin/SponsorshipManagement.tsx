@@ -40,7 +40,7 @@ const STATUS_OPTIONS = [
 
 const tierColors: Record<string, string> = {
   gold: 'bg-amber-100 text-amber-800',
-  silver: 'bg-slate-100 text-slate-700',
+  silver: 'bg-neutral-100 text-neutral-700',
   bronze: 'bg-orange-100 text-orange-800',
   community: 'bg-emerald-100 text-emerald-800',
 };

@@ -9,8 +9,9 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { DIAInsightCard } from '@/components/dia/DIAInsightCard';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   getDIACards,
   dismissDIACard,
@@ -67,7 +68,7 @@ export function DIAHubSection({
     return (
       <div className={cn('rounded-xl border border-border bg-card p-4', className)}>
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-primary" />
+          <MateMasie className="w-4 h-4 text-primary" />
           <span className="font-semibold text-sm">DIA Insights</span>
         </div>
         <div className="flex items-center justify-center py-4">
@@ -87,7 +88,7 @@ export function DIAHubSection({
       {/* Section header */}
       <div className="flex items-center gap-2">
         <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10">
-          <Sparkles className="w-3.5 h-3.5 text-primary" />
+          <MateMasie className="w-3.5 h-3.5 text-primary" />
         </div>
         <span className="font-semibold text-sm text-foreground">DIA Insights</span>
         <span className="text-[10px] text-muted-foreground px-1.5 py-0.5 rounded-full bg-muted">

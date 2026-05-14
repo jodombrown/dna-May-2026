@@ -11,11 +11,12 @@ import { FeedCardBase } from './FeedCardBase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, Rocket, Heart, MessageCircle, Share2, Bookmark, Lock, Globe } from 'lucide-react';
+import { Users, Heart, MessageCircle, Share2, Bookmark, Lock, Globe } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { cn } from '@/lib/utils';
+import { FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
 
 interface SpaceCardProps {
   item: UniversalFeedItem;
@@ -24,11 +25,11 @@ interface SpaceCardProps {
 }
 
 const spaceTypeConfig = {
-  startup: { icon: '🚀', label: 'Startup', color: 'bg-purple-100 text-purple-700' },
+  startup: { icon: '🚀', label: 'Startup', color: 'bg-copper-100 text-copper-700' },
   community: { icon: '🌍', label: 'Community', color: 'bg-green-100 text-green-700' },
-  creative: { icon: '🎨', label: 'Creative', color: 'bg-pink-100 text-pink-700' },
+  creative: { icon: '🎨', label: 'Creative', color: 'bg-copper-100 text-copper-700' },
   mentorship: { icon: '🎓', label: 'Mentorship', color: 'bg-blue-100 text-blue-700' },
-  default: { icon: '📁', label: 'Project', color: 'bg-gray-100 text-gray-700' },
+  default: { icon: '📁', label: 'Project', color: 'bg-neutral-100 text-neutral-700' },
 };
 
 export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpdate }) => {
@@ -45,7 +46,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({ item, currentUserId, onUpd
       {/* Header with Badge */}
       <div className="flex items-center gap-2 mb-3">
         <Badge variant="outline" className={cn('text-xs font-medium', config.color)}>
-          <Rocket className="h-3 w-3 mr-1" />
+          <FuntunfunefuDenkyemfunefu className="h-3 w-3 mr-1" />
           SPACE · {config.label}
         </Badge>
         {visibility === 'private' && (

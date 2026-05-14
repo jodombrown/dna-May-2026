@@ -264,7 +264,7 @@ export const eventCategories = [
     name: 'Arts & Culture', 
     icon: '🎨', 
     count: '67 Events', 
-    color: 'bg-purple-500',
+    color: 'bg-copper-500',
     description: 'Art exhibitions, cultural festivals, music concerts, film screenings, and creative showcases'
   },
   { 
@@ -304,7 +304,7 @@ export const eventCategories = [
     name: 'Fintech & Banking', 
     icon: '💳', 
     count: '73 Events', 
-    color: 'bg-indigo-500',
+    color: 'bg-copper-500',
     description: 'Fintech conferences, digital banking forums, blockchain events, and financial technology workshops'
   },
   { 
@@ -320,7 +320,7 @@ export const eventCategories = [
     name: 'Media & Entertainment', 
     icon: '🎭', 
     count: '58 Events', 
-    color: 'bg-pink-500',
+    color: 'bg-copper-500',
     description: 'Film festivals, media conferences, entertainment industry events, and creative content workshops'
   },
   { 
@@ -344,7 +344,7 @@ export const eventCategories = [
     name: 'Governance & Policy', 
     icon: '🏛️', 
     count: '29 Events', 
-    color: 'bg-violet-500',
+    color: 'bg-copper-500',
     description: 'Policy conferences, governance forums, public sector events, and civic engagement workshops'
   },
   { 
@@ -489,12 +489,12 @@ export const localEvents = [
   { city: 'New York', country: 'United States', count: 38, flag: '🇺🇸', color: 'bg-red-700' },
   { city: 'Toronto', country: 'Canada', count: 28, flag: '🇨🇦', color: 'bg-red-500' },
   { city: 'Paris', country: 'France', count: 22, flag: '🇫🇷', color: 'bg-blue-700' },
-  { city: 'Berlin', country: 'Germany', count: 19, flag: '🇩🇪', color: 'bg-gray-700' },
+  { city: 'Berlin', country: 'Germany', count: 19, flag: '🇩🇪', color: 'bg-neutral-700' },
   { city: 'Dubai', count: 31, flag: '🇦🇪', color: 'bg-emerald-600' },
   { city: 'Johannesburg', count: 26, flag: '🇿🇦', color: 'bg-orange-600' },
   { city: 'Cairo', count: 17, flag: '🇪🇬', color: 'bg-yellow-700' },
   { city: 'Addis Ababa', count: 14, flag: '🇪🇹', color: 'bg-green-700' },
   { city: 'Kigali', count: 11, flag: '🇷🇼', color: 'bg-blue-500' },
   { city: 'Dakar', count: 16, flag: '🇸🇳', color: 'bg-green-500' },
-  { city: 'Atlanta', count: 35, flag: '🇺🇸', color: 'bg-purple-600' }
+  { city: 'Atlanta', count: 35, flag: '🇺🇸', color: 'bg-copper-600' }
 ];

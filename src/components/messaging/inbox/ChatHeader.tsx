@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ConversationActionsMenu } from './ConversationActionsMenu';
+import { useUserPresence } from '@/hooks/messaging/useUserPresence';
+import { formatDistanceToNowStrict } from 'date-fns';
 
 interface ChatHeaderProps {
   otherUser: {
@@ -36,6 +38,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   onDeleteConversation,
 }) => {
   const navigate = useNavigate();
+  const { online, lastSeenAt, showPresence } = useUserPresence(otherUser.id);
+
+  const subtitle = !showPresence
+    ? 'tap for info'
+    : online
+      ? 'Active now'
+      : lastSeenAt
+        ? `Last seen ${formatDistanceToNowStrict(new Date(lastSeenAt), { addSuffix: true })}`
+        : 'tap for info';
 
   return (
     <div className="flex items-center gap-2 px-2 py-1.5 border-b border-primary/20 bg-gradient-to-r from-primary to-primary/90 flex-shrink-0">
@@ -49,18 +60,26 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         onClick={() => navigate(`/dna/${otherUser.username}`)}
         className="flex items-center gap-2.5 flex-1 min-w-0"
       >
-        <Avatar className="h-9 w-9 border-2 border-white/25 shadow-sm">
-          <AvatarImage src={otherUser.avatar_url} />
-          <AvatarFallback className="bg-white/20 text-primary-foreground font-semibold text-sm">
-            {otherUser.full_name?.charAt(0) || '?'}
-          </AvatarFallback>
-        </Avatar>
+        <div className="relative">
+          <Avatar className="h-9 w-9 border-2 border-white/25 shadow-sm">
+            <AvatarImage src={otherUser.avatar_url} />
+            <AvatarFallback className="bg-white/20 text-primary-foreground font-semibold text-sm">
+              {otherUser.full_name?.charAt(0) || '?'}
+            </AvatarFallback>
+          </Avatar>
+          {online && (
+            <span
+              aria-label="Online"
+              className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-primary"
+            />
+          )}
+        </div>
         <div className="text-left min-w-0 flex-1">
           <h2 className="font-semibold text-primary-foreground text-sm leading-tight truncate">
             {otherUser.full_name}
           </h2>
           <p className="text-[11px] text-primary-foreground/70 truncate">
-            tap for info
+            {subtitle}
           </p>
         </div>
       </button>

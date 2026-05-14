@@ -1,3 +1,4 @@
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -17,11 +18,36 @@ interface AttachmentData {
 interface MessageAttachmentProps {
   attachment: AttachmentData;
   isOwn: boolean;
+  /** Phase 11 - search highlight integration */
+  searchQuery?: string;
 }
+
+const renderHighlighted = (text: string, query?: string): React.ReactNode => {
+  const q = (query ?? '').trim();
+  if (!q) return text;
+  const lower = text.toLowerCase();
+  const needle = q.toLowerCase();
+  const out: React.ReactNode[] = [];
+  let i = 0;
+  let key = 0;
+  while (i < text.length) {
+    const idx = lower.indexOf(needle, i);
+    if (idx === -1) { out.push(text.slice(i)); break; }
+    if (idx > i) out.push(text.slice(i, idx));
+    out.push(
+      <mark key={`hl-${key++}`} className="bg-primary/25 text-foreground rounded-sm px-0.5">
+        {text.slice(idx, idx + needle.length)}
+      </mark>,
+    );
+    i = idx + needle.length;
+  }
+  return <>{out}</>;
+};
 
 export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
   attachment,
   isOwn,
+  searchQuery,
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [videoLightboxOpen, setVideoLightboxOpen] = useState(false);
@@ -110,11 +136,14 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
             showHeartbeat && "animate-image-heartbeat"
           )}
         >
-          <img 
-            src={attachment.url} 
-            alt={attachment.filename || 'Image'} 
+          <OptimizedImage
+            src={attachment.url}
+            alt={attachment.filename || 'Image'}
+            imageSize="cover-card"
+            width={280}
+            height={280}
             className="w-full h-auto object-cover rounded-lg hover:opacity-90 transition-opacity"
-            loading="eager"
+            priority
           />
         </button>
         <ImageLightbox
@@ -154,7 +183,7 @@ export const MessageAttachment: React.FC<MessageAttachmentProps> = ({
           "text-sm font-medium truncate",
           isOwn ? "text-primary-foreground" : "text-foreground"
         )}>
-          {attachment.filename || 'File'}
+          {renderHighlighted(attachment.filename || 'File', searchQuery)}
         </p>
         {attachment.filesize && (
           <p className={cn(

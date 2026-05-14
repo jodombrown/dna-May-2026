@@ -40,7 +40,8 @@ import { ProfileRecentPosts } from '@/components/profile-v2/ProfileRecentPosts';
 
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
-import { ProfileAsanteSection } from '@/components/contribute/recognition/ProfileAsanteSection';
+import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
+import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
 
 // SEO component for public profiles
 import { PublicProfileSEO } from '@/components/public-profile';
@@ -349,6 +350,17 @@ const ProfileV2: React.FC = () => {
               onUpdate={handleUpdateAbout}
             />
 
+            <section className="py-2 space-y-4">
+              <ManifestRenderer
+                targetUserId={profile.id}
+                viewerUserId={user?.id ?? null}
+              />
+              <NeedsRenderer
+                targetUserId={profile.id}
+                viewerUserId={user?.id ?? null}
+              />
+            </section>
+
             {/* Enhancement 2: Diaspora Footprint — Five C's Activity Bar */}
             <DiasporaFootprint userId={profile.id} />
 
@@ -440,9 +452,7 @@ const ProfileV2: React.FC = () => {
               isOwner={permissions.is_owner}
             />
 
-            {/* Asante received — Phase 4 Group 1 */}
-            <ProfileAsanteSection profileId={profile.id} />
-
+            {/* Mutual Connections (Non-Owner Only) */}
             {!permissions.is_owner && user?.id && profile?.id && (
               <MutualConnectionsWidget
                 userId={profile.id}

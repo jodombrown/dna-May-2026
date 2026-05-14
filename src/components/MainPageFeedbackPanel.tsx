@@ -128,15 +128,15 @@ Feedback Type: ${formData.feedbackType || 'General'}
               Your Voice Matters
             </Badge>
           </div>
-          <SheetTitle className="text-2xl text-gray-900">Share Your Feedback & Vision</SheetTitle>
-          <SheetDescription className="text-base text-gray-600">
+          <SheetTitle className="text-2xl text-neutral-900">Share Your Feedback & Vision</SheetTitle>
+          <SheetDescription className="text-base text-neutral-600">
             Help us build the DNA platform that truly serves the African Diaspora. Your insights, suggestions, and perspectives are invaluable in shaping our journey forward.
           </SheetDescription>
         </SheetHeader>
 
         <div className="space-y-8">
           <div className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
               <Star className="w-5 h-5 text-dna-emerald" />
               Why Your Feedback Is Critical
             </h3>
@@ -145,19 +145,19 @@ Feedback Type: ${formData.feedbackType || 'General'}
                 <div className="w-6 h-6 bg-dna-emerald text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
                   1
                 </div>
-                <p className="text-gray-700">Help us understand what resonates most with diaspora professionals like you</p>
+                <p className="text-neutral-700">Help us understand what resonates most with diaspora professionals like you</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
                   2
                 </div>
-                <p className="text-gray-700">Guide our platform development priorities and feature roadmap</p>
+                <p className="text-neutral-700">Guide our platform development priorities and feature roadmap</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-dna-forest text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
                   3
                 </div>
-                <p className="text-gray-700">Ensure we're building something that truly adds value to your professional journey</p>
+                <p className="text-neutral-700">Ensure we're building something that truly adds value to your professional journey</p>
               </div>
             </div>
           </div>
@@ -165,7 +165,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="firstName" className="text-sm font-medium text-neutral-700">
                   First Name *
                 </Label>
                 <Input
@@ -179,7 +179,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
                 />
               </div>
               <div>
-                <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="lastName" className="text-sm font-medium text-neutral-700">
                   Last Name *
                 </Label>
                 <Input
@@ -195,7 +195,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
             </div>
             
             <div>
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="email" className="text-sm font-medium text-neutral-700">
                 Email Address *
               </Label>
               <Input
@@ -211,7 +211,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label htmlFor="organization" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="organization" className="text-sm font-medium text-neutral-700">
                   Organization/Company
                 </Label>
                 <Input
@@ -235,7 +235,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
             </div>
 
             <div>
-              <Label htmlFor="connectionToAfrica" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="connectionToAfrica" className="text-sm font-medium text-neutral-700">
                 Your Connection to Africa
               </Label>
               <Input
@@ -249,7 +249,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
             </div>
 
             <div>
-              <Label htmlFor="linkedin" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="linkedin" className="text-sm font-medium text-neutral-700">
                 LinkedIn Profile (Optional)
               </Label>
               <Input
@@ -263,7 +263,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
             </div>
 
             <div>
-              <Label htmlFor="overallExperience" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="overallExperience" className="text-sm font-medium text-neutral-700">
                 How would you describe your overall experience with the DNA platform concept?
               </Label>
               <Textarea
@@ -277,7 +277,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
             </div>
 
             <div>
-              <Label htmlFor="mostValuableFeature" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="mostValuableFeature" className="text-sm font-medium text-neutral-700">
                 Which pillar or feature concept resonates most with you? (Connect, Collaborate, Contribute)
               </Label>
               <Textarea
@@ -291,7 +291,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
             </div>
 
             <div>
-              <Label htmlFor="improvementAreas" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="improvementAreas" className="text-sm font-medium text-neutral-700">
                 What areas do you think need improvement or clarification?
               </Label>
               <Textarea
@@ -305,7 +305,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
             </div>
 
             <div>
-              <Label htmlFor="suggestions" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="suggestions" className="text-sm font-medium text-neutral-700">
                 Additional Suggestions & Ideas
               </Label>
               <Textarea
@@ -316,7 +316,7 @@ Feedback Type: ${formData.feedbackType || 'General'}
                 rows={4}
                 maxLength={1000}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-neutral-500 mt-1">
                 {formData.suggestions.length}/1000 characters
               </p>
             </div>

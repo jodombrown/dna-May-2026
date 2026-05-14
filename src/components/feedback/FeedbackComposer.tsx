@@ -407,8 +407,8 @@ export function FeedbackComposer({
                     }}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl bg-muted/50 hover:bg-muted active:bg-muted transition-colors"
                   >
-                    <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                      <VideoIcon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                    <div className="w-12 h-12 rounded-full bg-copper-100 dark:bg-copper-900/30 flex items-center justify-center">
+                      <VideoIcon className="h-6 w-6 text-copper-600 dark:text-copper-400" />
                     </div>
                     <span className="text-sm font-medium">Video</span>
                   </button>
@@ -464,7 +464,7 @@ export function FeedbackComposer({
               className={cn(
                 "min-h-[44px] max-h-[120px] resize-none tracking-normal",
                 "text-base md:text-sm",
-                "bg-muted/50 border-0 focus-visible:ring-1 rounded-2xl py-3 px-4"
+                "bg-muted/50 border-0 focus-visible:ring-1 rounded-lg py-3 px-4"
               )}
             />
             {/* Mention Autocomplete */}

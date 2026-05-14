@@ -35,19 +35,19 @@ export const BANNER_GRADIENTS = {
   savanna: {
     name: 'Savanna Sunset',
     css: 'linear-gradient(180deg, hsl(25, 90%, 55%) 0%, hsl(45, 85%, 50%) 40%, hsl(200, 40%, 30%) 100%)',
-    tailwind: 'bg-gradient-to-b from-orange-500 via-yellow-500 to-slate-700',
+    tailwind: 'bg-gradient-to-b from-orange-500 via-yellow-500 to-neutral-700',
     category: 'african'
   },
   baobab: {
     name: 'Baobab Dusk',
     css: 'linear-gradient(135deg, hsl(280, 40%, 35%) 0%, hsl(25, 70%, 45%) 100%)',
-    tailwind: 'bg-gradient-to-br from-purple-800 to-orange-600',
+    tailwind: 'bg-gradient-to-br from-copper-800 to-orange-600',
     category: 'african'
   },
   kilimanjaro: {
     name: 'Kilimanjaro',
     css: 'linear-gradient(180deg, hsl(200, 30%, 85%) 0%, hsl(200, 50%, 60%) 40%, hsl(151, 50%, 35%) 100%)',
-    tailwind: 'bg-gradient-to-b from-slate-200 via-sky-400 to-emerald-700',
+    tailwind: 'bg-gradient-to-b from-neutral-200 via-sky-400 to-emerald-700',
     category: 'african'
   },
   
@@ -79,7 +79,7 @@ export const BANNER_GRADIENTS = {
   night: {
     name: 'Night Sky',
     css: 'linear-gradient(135deg, hsl(230, 30%, 20%) 0%, hsl(250, 40%, 15%) 100%)',
-    tailwind: 'bg-gradient-to-br from-slate-700 to-slate-900',
+    tailwind: 'bg-gradient-to-br from-neutral-700 to-neutral-900',
     category: 'classic'
   },
   gold: {

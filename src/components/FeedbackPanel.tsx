@@ -163,15 +163,15 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
               Platform Preview
             </Badge>
           </div>
-          <SheetTitle className="text-2xl text-gray-900">{content.title}</SheetTitle>
-          <SheetDescription className="text-base text-gray-600">
+          <SheetTitle className="text-2xl text-neutral-900">{content.title}</SheetTitle>
+          <SheetDescription className="text-base text-neutral-600">
             {content.description}
           </SheetDescription>
         </SheetHeader>
 
         <div className="space-y-8">
           <div className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-dna-emerald" />
               How We Envision This Working
             </h3>
@@ -181,24 +181,24 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
                   <div className="w-6 h-6 bg-dna-emerald text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
                     {index + 1}
                   </div>
-                  <p className="text-gray-700">{item}</p>
+                  <p className="text-neutral-700">{item}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">
               Help Us Build Better
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-neutral-600 mb-6">
               We're always looking for suggestions and ideas on how to improve. Share your thoughts with us as we build this platform together.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="firstName" className="text-sm font-medium text-neutral-700">
                     First Name *
                   </Label>
                   <Input
@@ -212,7 +212,7 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="lastName" className="text-sm font-medium text-neutral-700">
                     Last Name *
                   </Label>
                   <Input
@@ -228,7 +228,7 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
               </div>
               
               <div>
-                <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="email" className="text-sm font-medium text-neutral-700">
                   Email *
                 </Label>
                 <Input
@@ -243,7 +243,7 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
               </div>
               
               <div>
-                <Label htmlFor="linkedin" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="linkedin" className="text-sm font-medium text-neutral-700">
                   LinkedIn Profile (Optional)
                 </Label>
                 <Input
@@ -257,7 +257,7 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
               </div>
 
               <div>
-                <Label htmlFor="recommendations" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="recommendations" className="text-sm font-medium text-neutral-700">
                   Your Recommendations & Suggestions
                 </Label>
                 <Textarea
@@ -268,7 +268,7 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
                   rows={4}
                   maxLength={1000}
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-neutral-500 mt-1">
                   {formData.recommendations.length}/1000 characters
                 </p>
               </div>

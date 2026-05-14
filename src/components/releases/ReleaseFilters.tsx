@@ -69,7 +69,7 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
           <Input
             type="text"
             placeholder="Search releases..."
@@ -80,7 +80,7 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
           {searchValue && (
             <button
               onClick={handleClearSearch}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
             >
               <X className="w-4 h-4" />
             </button>
@@ -88,7 +88,7 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg">
+        <div className="flex items-center gap-1 p-1 bg-neutral-100 rounded-lg">
           {FILTER_TABS.map((tab) => (
             <button
               key={tab.value}
@@ -96,8 +96,8 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
               className={cn(
                 'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                 activeFilter === tab.value
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-white text-neutral-900 shadow-sm'
+                  : 'text-neutral-600 hover:text-neutral-900'
               )}
             >
               {tab.label}
@@ -108,7 +108,7 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
 
       {/* Category Filters */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm font-medium text-gray-600 mr-2">Category:</span>
+        <span className="text-sm font-medium text-neutral-600 mr-2">Category:</span>
 
         {/* All categories button */}
         <button
@@ -116,8 +116,8 @@ export const ReleaseFilters: React.FC<ReleaseFiltersProps> = ({
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-full transition-all',
             !activeCategory
-              ? 'bg-gray-900 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-neutral-900 text-white'
+              : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
           )}
         >
           All
@@ -156,7 +156,7 @@ export const ReleaseFiltersCompact: React.FC<ReleaseFiltersProps> = ({
   };
 
   return (
-    <div className={cn('flex items-center gap-1 p-1 bg-gray-100 rounded-lg overflow-x-auto', className)}>
+    <div className={cn('flex items-center gap-1 p-1 bg-neutral-100 rounded-lg overflow-x-auto', className)}>
       {FILTER_TABS.map((tab) => (
         <button
           key={tab.value}
@@ -164,8 +164,8 @@ export const ReleaseFiltersCompact: React.FC<ReleaseFiltersProps> = ({
           className={cn(
             'px-3 py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap',
             activeFilter === tab.value
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white text-neutral-900 shadow-sm'
+              : 'text-neutral-600 hover:text-neutral-900'
           )}
         >
           {tab.label}

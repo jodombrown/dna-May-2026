@@ -18,8 +18,8 @@ export const FeatureList: React.FC<FeatureListProps> = ({
   }
 
   return (
-    <div className={cn('rounded-lg border border-gray-200 bg-gray-50/50 p-6', className)}>
-      <h3 className="font-serif text-lg font-semibold text-gray-900 mb-4">
+    <div className={cn('rounded-lg border border-neutral-200 bg-neutral-50/50 p-6', className)}>
+      <h3 className="font-serif text-lg font-semibold text-neutral-900 mb-4">
         {title}
       </h3>
       <ul className="space-y-3">
@@ -28,7 +28,7 @@ export const FeatureList: React.FC<FeatureListProps> = ({
             <span className="flex-shrink-0 mt-0.5">
               <Check className="w-5 h-5 text-dna-emerald" />
             </span>
-            <span className="text-gray-700 leading-relaxed">{feature}</span>
+            <span className="text-neutral-700 leading-relaxed">{feature}</span>
           </li>
         ))}
       </ul>
@@ -54,7 +54,7 @@ export const FeatureListCompact: React.FC<Omit<FeatureListProps, 'title'>> = ({
           <span className="flex-shrink-0 mt-1 text-dna-emerald">
             <Circle className="w-1.5 h-1.5 fill-current" />
           </span>
-          <span className="text-gray-600">{feature}</span>
+          <span className="text-neutral-600">{feature}</span>
         </li>
       ))}
     </ul>
@@ -76,7 +76,7 @@ export const FeatureListNumbered: React.FC<FeatureListProps> = ({
   return (
     <div className={className}>
       {title && (
-        <h3 className="font-serif text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="font-serif text-lg font-semibold text-neutral-900 mb-4">
           {title}
         </h3>
       )}
@@ -86,7 +86,7 @@ export const FeatureListNumbered: React.FC<FeatureListProps> = ({
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-dna-emerald/10 text-dna-emerald text-sm font-semibold flex items-center justify-center">
               {index + 1}
             </span>
-            <span className="text-gray-700 leading-relaxed pt-0.5">{feature}</span>
+            <span className="text-neutral-700 leading-relaxed pt-0.5">{feature}</span>
           </li>
         ))}
       </ol>

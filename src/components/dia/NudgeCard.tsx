@@ -2,16 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Sparkles,
-  Users,
-  TrendingUp,
-  Award,
-  Bell,
-  UserPlus,
-  FileText,
-  Target,
-} from "lucide-react";
+import { Users, TrendingUp, Award, Bell, UserPlus, FileText, Target } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 type Nudge = {
   id: string;
@@ -52,12 +44,12 @@ const NUDGE_TYPE_CONFIG: Record<string, { label: string; icon: React.ElementType
   contribution_impact: {
     label: 'Impact Update',
     icon: Award,
-    color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+    color: 'bg-copper-100 text-copper-800 dark:bg-copper-900 dark:text-copper-200',
   },
   // Existing nudge types
   kickstart: {
     label: 'Getting Started',
-    icon: Sparkles,
+    icon: MateMasie,
     color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
   },
   first_connections: {
@@ -87,18 +79,18 @@ const NUDGE_TYPE_CONFIG: Record<string, { label: string; icon: React.ElementType
   },
   profile_incomplete: {
     label: 'Complete Profile',
-    icon: Sparkles,
+    icon: MateMasie,
     color: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
   },
   popular_post: {
     label: 'Content',
     icon: TrendingUp,
-    color: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
+    color: 'bg-copper-100 text-copper-800 dark:bg-copper-900 dark:text-copper-200',
   },
   weak_connection: {
     label: 'Reconnect',
     icon: Users,
-    color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    color: 'bg-neutral-100 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200',
   },
 };
 
@@ -107,7 +99,7 @@ const PRIORITY_STYLES: Record<string, string> = {
   high: 'border-l-4 border-l-red-500',
   normal: 'border-l-4 border-l-blue-500',
   medium: 'border-l-4 border-l-blue-500',
-  low: 'border-l-4 border-l-gray-300',
+  low: 'border-l-4 border-l-neutral-300',
 };
 
 export default function NudgeCard({ nudge, onAccept, onDismiss, onSnooze }: Props) {
@@ -129,7 +121,7 @@ export default function NudgeCard({ nudge, onAccept, onDismiss, onSnooze }: Prop
   const config = NUDGE_TYPE_CONFIG[nudge.nudge_type || ''] || {
     label: nudge.nudge_type || 'Notification',
     icon: Bell,
-    color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    color: 'bg-neutral-100 text-neutral-800 dark:bg-neutral-900 dark:text-neutral-200',
   };
 
   const Icon = config.icon;

@@ -26,7 +26,7 @@ const DnaNetwork = () => {
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
         <Users className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold">Network</h1>
+        <h1 className="text-h2 font-serif">Network</h1>
       </div>
       <Card className="p-6">
         <p className="text-muted-foreground">Network feed coming soon...</p>

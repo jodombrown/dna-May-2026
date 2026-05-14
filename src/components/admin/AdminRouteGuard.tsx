@@ -150,12 +150,12 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
             <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
           </div>
-          <p className="text-slate-500">Verifying admin access...</p>
+          <p className="text-neutral-500">Verifying admin access...</p>
         </div>
       </div>
     );
@@ -164,13 +164,13 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <div className="text-center space-y-4 max-w-md px-4">
           <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center mx-auto">
             <AlertTriangle className="w-6 h-6 text-red-600" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-900">Access Error</h2>
-          <p className="text-slate-500">{error}</p>
+          <h2 className="text-xl font-semibold text-neutral-900">Access Error</h2>
+          <p className="text-neutral-500">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="text-emerald-600 hover:text-emerald-700 font-medium"
@@ -190,13 +190,13 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
   // Check role-based access
   if (!hasRequiredRole(adminStatus.roleLevel, adminStatus.isSuperAdmin, requiredRole)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <div className="text-center space-y-4 max-w-md px-4">
           <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mx-auto">
             <Shield className="w-6 h-6 text-amber-600" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-900">Insufficient Permissions</h2>
-          <p className="text-slate-500">
+          <h2 className="text-xl font-semibold text-neutral-900">Insufficient Permissions</h2>
+          <p className="text-neutral-500">
             You don't have the required permissions to access this section.
             {requiredRole && requiredRole.length > 0 && (
               <span className="block mt-2 text-sm">
@@ -204,7 +204,7 @@ export const AdminRouteGuard: React.FC<AdminRouteGuardProps> = ({
               </span>
             )}
           </p>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-neutral-400">
             Your role: {adminStatus.roleLevel?.replace('_', ' ') || 'Unknown'}
           </p>
         </div>

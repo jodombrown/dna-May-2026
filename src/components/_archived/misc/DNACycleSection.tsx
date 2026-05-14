@@ -4,12 +4,12 @@ import { Users, Handshake, Heart, ArrowRight, ArrowDown } from 'lucide-react';
 
 const DNACycleSection = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-dna-forest to-dna-emerald text-white">
+    <section className="py-12 bg-gradient-to-br from-dna-forest to-dna-emerald text-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
           The DNA Cycle in Action
         </h2>
-        <p className="text-lg sm:text-xl text-gray-100 mb-12 max-w-3xl mx-auto">
+        <p className="text-lg sm:text-xl text-neutral-100 mb-12 max-w-3xl mx-auto">
           See how connecting leads to collaboration, which amplifies contribution, 
           creating a self-reinforcing cycle of impact across Africa.
         </p>
@@ -23,7 +23,7 @@ const DNACycleSection = () => {
                 <Users className="w-10 h-10 text-white" />
               </div>
               <span className="text-lg font-semibold">Connect</span>
-              <p className="text-sm text-gray-200 text-center max-w-xs">
+              <p className="text-sm text-neutral-200 text-center max-w-xs">
                 Build meaningful professional relationships across the diaspora
               </p>
             </div>
@@ -35,7 +35,7 @@ const DNACycleSection = () => {
                 <Handshake className="w-10 h-10 text-white" />
               </div>
               <span className="text-lg font-semibold">Collaborate</span>
-              <p className="text-sm text-gray-200 text-center max-w-xs">
+              <p className="text-sm text-neutral-200 text-center max-w-xs">
                 Work together on meaningful projects that drive African development
               </p>
             </div>
@@ -47,7 +47,7 @@ const DNACycleSection = () => {
                 <Heart className="w-10 h-10 text-white" />
               </div>
               <span className="text-lg font-semibold">Contribute</span>
-              <p className="text-sm text-gray-200 text-center max-w-xs">
+              <p className="text-sm text-neutral-200 text-center max-w-xs">
                 Invest capital, share skills, or contribute time to create lasting impact
               </p>
             </div>
@@ -82,7 +82,7 @@ const DNACycleSection = () => {
           </div>
           
           <div className="mt-8 md:mt-0">
-            <p className="text-base sm:text-lg text-gray-200 mb-8">
+            <p className="text-base sm:text-lg text-neutral-200 mb-8">
               Each successful contribution creates new opportunities to connect, 
               leading to deeper collaborations and greater impact.
             </p>

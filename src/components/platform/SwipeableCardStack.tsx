@@ -169,11 +169,11 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
           className={`p-3 rounded-full bg-white shadow-lg transition-all ${
             currentIndex === 0 
               ? 'opacity-30 cursor-not-allowed' 
-              : 'hover:bg-gray-50 active:scale-95'
+              : 'hover:bg-neutral-50 active:scale-95'
           }`}
           aria-label="Previous card"
         >
-          <ChevronLeft className="w-6 h-6 text-gray-700" />
+          <ChevronLeft className="w-6 h-6 text-neutral-700" />
         </button>
 
         {/* Indicator Dots */}
@@ -185,7 +185,7 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
               className={`transition-all rounded-full ${
                 index === currentIndex
                   ? 'w-8 h-2 bg-dna-emerald'
-                  : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+                  : 'w-2 h-2 bg-neutral-300 hover:bg-neutral-400'
               }`}
               aria-label={`Go to card ${index + 1}`}
             />
@@ -198,17 +198,17 @@ const SwipeableCardStack = ({ cards, onCardClick }: SwipeableCardStackProps) => 
           className={`p-3 rounded-full bg-white shadow-lg transition-all ${
             currentIndex === cards.length - 1
               ? 'opacity-30 cursor-not-allowed'
-              : 'hover:bg-gray-50 active:scale-95'
+              : 'hover:bg-neutral-50 active:scale-95'
           }`}
           aria-label="Next card"
         >
-          <ChevronRight className="w-6 h-6 text-gray-700" />
+          <ChevronRight className="w-6 h-6 text-neutral-700" />
         </button>
       </div>
 
       {/* Swipe Hint */}
       <div className="text-center mt-4">
-        <p className="text-sm text-gray-500">← Swipe to explore →</p>
+        <p className="text-sm text-neutral-500">← Swipe to explore →</p>
       </div>
     </div>
   );

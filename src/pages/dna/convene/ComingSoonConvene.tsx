@@ -1,14 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, Users, Globe, Video, MapPin, Ticket,
-  ArrowRight, Bell, Sparkles, Heart
-} from 'lucide-react';
+import { Calendar, Users, Globe, Video, MapPin, Ticket, ArrowRight, Bell, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 const features = [
   {
@@ -50,11 +48,11 @@ export default function ComingSoonConvene() {
         <div className="absolute inset-0 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-amber/5" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--dna-emerald)/0.15),transparent_50%)]" />
         
-        <div className="container max-w-5xl mx-auto px-4 py-12 md:py-20 relative">
+        <div className="container max-w-5xl mx-auto px-4 py-12 md:py-12 relative">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
             className="text-center space-y-6"
           >
             <Badge variant="outline" className="bg-dna-amber/10 text-dna-amber border-dna-amber/30 px-4 py-1">
@@ -81,9 +79,9 @@ export default function ComingSoonConvene() {
       {/* Features Grid */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {features.map((feature, idx) => (
@@ -107,12 +105,12 @@ export default function ComingSoonConvene() {
       {/* How It Connects */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, delay: 0.3 }}
           className="text-center mb-8"
         >
-          <h2 className="text-2xl font-bold text-foreground mb-3">
+          <h2 className="text-h2 font-serif text-foreground mb-3">
             How Convene Connects to the Five C's
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
@@ -121,9 +119,9 @@ export default function ComingSoonConvene() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, delay: 0.4 }}
           className="space-y-4"
         >
           {flowItems.map((item, idx) => (
@@ -143,15 +141,15 @@ export default function ComingSoonConvene() {
       {/* CTA Section */}
       <section className="container max-w-5xl mx-auto px-4 py-12">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, delay: 0.5 }}
         >
           <Card className="bg-gradient-to-br from-dna-emerald/10 to-dna-amber/5 border-dna-emerald/20">
             <CardContent className="p-8 text-center space-y-6">
               <div className="flex justify-center">
                 <div className="p-3 rounded-full bg-dna-emerald/20">
-                  <Sparkles className="h-6 w-6 text-dna-emerald" />
+                  <Nkonsonkonson className="h-6 w-6 text-dna-emerald" />
                 </div>
               </div>
               

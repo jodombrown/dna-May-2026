@@ -290,9 +290,9 @@ export default function UserManagement() {
     const colors: Record<AppRole, string> = {
       admin: 'bg-red-500 text-white',
       moderator: 'bg-blue-500 text-white',
-      user: 'bg-gray-500 text-white',
+      user: 'bg-neutral-500 text-white',
     };
-    return <Badge className={colors[role] || 'bg-gray-500 text-white'}>{role}</Badge>;
+    return <Badge className={colors[role] || 'bg-neutral-500 text-white'}>{role}</Badge>;
   };
 
   return (

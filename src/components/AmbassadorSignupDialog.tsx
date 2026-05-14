@@ -119,8 +119,8 @@ Availability: ${formData.availability || 'Not provided'}
               Ambassador Program
             </Badge>
           </div>
-          <SheetTitle className="text-2xl text-gray-900">Become a DNA Ambassador</SheetTitle>
-          <SheetDescription className="text-base text-gray-600">
+          <SheetTitle className="text-2xl text-neutral-900">Become a DNA Ambassador</SheetTitle>
+          <SheetDescription className="text-base text-neutral-600">
             Join our ambassador program to help build and grow the DNA community across the African diaspora. 
             Ambassadors play a crucial role in connecting communities, driving engagement, and shaping our platform's future.
           </SheetDescription>
@@ -128,7 +128,7 @@ Availability: ${formData.availability || 'Not provided'}
 
         <div className="space-y-8">
           <div className="bg-gradient-to-r from-dna-emerald/5 to-dna-copper/5 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
               <Star className="w-5 h-5 text-dna-emerald" />
               What DNA Ambassadors Do
             </h3>
@@ -137,19 +137,19 @@ Availability: ${formData.availability || 'Not provided'}
                 <div className="w-6 h-6 bg-dna-emerald text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
                   1
                 </div>
-                <p className="text-gray-700">Help grow DNA communities in your region or professional area</p>
+                <p className="text-neutral-700">Help grow DNA communities in your region or professional area</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-dna-copper text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
                   2
                 </div>
-                <p className="text-gray-700">Facilitate connections between diaspora professionals and organizations</p>
+                <p className="text-neutral-700">Facilitate connections between diaspora professionals and organizations</p>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 bg-dna-forest text-white rounded-full flex items-center justify-center text-sm font-medium mt-0.5">
                   3
                 </div>
-                <p className="text-gray-700">Provide feedback and insights to help shape platform development</p>
+                <p className="text-neutral-700">Provide feedback and insights to help shape platform development</p>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@ Availability: ${formData.availability || 'Not provided'}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="firstName" className="text-sm font-medium text-neutral-700">
                   First Name *
                 </Label>
                 <Input
@@ -171,7 +171,7 @@ Availability: ${formData.availability || 'Not provided'}
                 />
               </div>
               <div>
-                <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="lastName" className="text-sm font-medium text-neutral-700">
                   Last Name *
                 </Label>
                 <Input
@@ -187,7 +187,7 @@ Availability: ${formData.availability || 'Not provided'}
             </div>
             
             <div>
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="email" className="text-sm font-medium text-neutral-700">
                 Email Address *
               </Label>
               <Input
@@ -203,7 +203,7 @@ Availability: ${formData.availability || 'Not provided'}
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label htmlFor="organization" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="organization" className="text-sm font-medium text-neutral-700">
                   Organization/Company
                 </Label>
                 <Input
@@ -227,7 +227,7 @@ Availability: ${formData.availability || 'Not provided'}
             </div>
 
             <div>
-              <Label htmlFor="connectionToAfrica" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="connectionToAfrica" className="text-sm font-medium text-neutral-700">
                 Your Connection to Africa
               </Label>
               <Input
@@ -241,7 +241,7 @@ Availability: ${formData.availability || 'Not provided'}
             </div>
 
             <div>
-              <Label htmlFor="linkedin" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="linkedin" className="text-sm font-medium text-neutral-700">
                 LinkedIn Profile (Optional)
               </Label>
               <Input
@@ -255,7 +255,7 @@ Availability: ${formData.availability || 'Not provided'}
             </div>
 
             <div>
-              <Label htmlFor="experience" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="experience" className="text-sm font-medium text-neutral-700">
                 Relevant Experience & Background
               </Label>
               <Textarea
@@ -269,7 +269,7 @@ Availability: ${formData.availability || 'Not provided'}
             </div>
 
             <div>
-              <Label htmlFor="motivation" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="motivation" className="text-sm font-medium text-neutral-700">
                 Why do you want to become a DNA Ambassador?
               </Label>
               <Textarea
@@ -283,7 +283,7 @@ Availability: ${formData.availability || 'Not provided'}
             </div>
 
             <div>
-              <Label htmlFor="skills" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="skills" className="text-sm font-medium text-neutral-700">
                 Skills & Expertise You Can Contribute
               </Label>
               <Textarea
@@ -297,7 +297,7 @@ Availability: ${formData.availability || 'Not provided'}
             </div>
 
             <div>
-              <Label htmlFor="availability" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="availability" className="text-sm font-medium text-neutral-700">
                 Time Commitment & Availability
               </Label>
               <Textarea

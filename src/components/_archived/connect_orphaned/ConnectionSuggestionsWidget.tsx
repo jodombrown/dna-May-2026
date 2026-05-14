@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Globe, MapPin, Lightbulb, UserPlus, Sparkles, Users, Heart, Flag, X } from 'lucide-react';
+import { Globe, MapPin, Lightbulb, UserPlus, Users, Heart, Flag, X } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import { ActivityIndicator } from '@/components/profile/ActivityIndicator';
 import { TYPOGRAPHY } from '@/lib/typography.config';
 import { connectionService } from '@/services/connectionService';
 import { ConnectionRecommendation } from '@/types/connections';
+import { Sankofa } from '@/components/icons/adinkra';
 import {
   Tooltip,
   TooltipContent,
@@ -38,7 +39,7 @@ interface Profile {
 
 // Icon mapping for match reasons
 const getReasonIcon = (reason: string) => {
-  if (reason.includes('skill')) return Sparkles;
+  if (reason.includes('skill')) return Sankofa;
   if (reason.includes('interest')) return Heart;
   if (reason.includes('heritage') || reason.includes('Heritage')) return Flag;
   if (reason.includes('mutual') || reason.includes('connection')) return Users;
@@ -133,7 +134,7 @@ export const ConnectionSuggestionsWidget = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Sankofa className="h-5 w-5 text-primary" />
             DIA Suggestions
           </CardTitle>
         </CardHeader>
@@ -149,7 +150,7 @@ export const ConnectionSuggestionsWidget = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Sankofa className="h-5 w-5 text-primary" />
             DIA Suggestions
           </CardTitle>
         </CardHeader>
@@ -167,7 +168,7 @@ export const ConnectionSuggestionsWidget = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Sankofa className="h-5 w-5 text-primary" />
             DIA Suggestions
             <Badge variant="outline" className="ml-auto text-xs font-normal">
               AI Powered

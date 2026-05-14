@@ -3,9 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { ProfileMissingFields } from './ProfileMissingFields';
 import { useAuth } from '@/contexts/AuthContext';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileCompletionModalProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export const ProfileCompletionModal: React.FC<ProfileCompletionModalProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-dna-copper" />
+            <Sankofa className="h-5 w-5 text-dna-copper" />
             Unlock {featureName}
           </DialogTitle>
         </DialogHeader>
@@ -45,7 +46,7 @@ export const ProfileCompletionModal: React.FC<ProfileCompletionModalProps> = ({
         <div className="space-y-4 py-4">
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-dna-copper/20 text-dna-copper text-sm font-medium">
-              <Sparkles className="h-4 w-4" />
+              <Sankofa className="h-4 w-4" />
               {pointsNeeded}% to unlock
             </div>
             <p className="text-muted-foreground">

@@ -28,7 +28,7 @@ const CATEGORY_CONFIG: Record<FeedbackCategory, { label: string; icon: React.Rea
   love: {
     label: 'Love',
     icon: <Heart className="h-4 w-4" />,
-    color: 'text-pink-600 bg-pink-50 border-pink-200 dark:bg-pink-950/30 dark:border-pink-800 dark:text-pink-400',
+    color: 'text-copper-600 bg-copper-50 border-copper-200 dark:bg-copper-950/30 dark:border-copper-800 dark:text-copper-400',
   },
 };
 
@@ -88,7 +88,7 @@ export default function AlphaFeedbackDashboard() {
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3">
+        <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-4 py-3">
           <p className="text-2xl font-bold text-foreground">{stats?.total ?? 0}</p>
           <p className="text-xs text-muted-foreground">Total</p>
         </div>
@@ -121,7 +121,7 @@ export default function AlphaFeedbackDashboard() {
               'px-2.5 py-1 rounded-md text-xs font-medium transition-colors',
               categoryFilter === 'all'
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
             )}
           >
             All
@@ -134,7 +134,7 @@ export default function AlphaFeedbackDashboard() {
                 'px-2.5 py-1 rounded-md text-xs font-medium transition-colors',
                 categoryFilter === cat
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
               )}
             >
               {CATEGORY_CONFIG[cat].label}
@@ -150,7 +150,7 @@ export default function AlphaFeedbackDashboard() {
               'px-2.5 py-1 rounded-md text-xs font-medium transition-colors',
               areaFilter === 'all'
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
             )}
           >
             All
@@ -163,7 +163,7 @@ export default function AlphaFeedbackDashboard() {
                 'px-2.5 py-1 rounded-md text-xs font-medium capitalize transition-colors',
                 areaFilter === area
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
               )}
             >
               {area}

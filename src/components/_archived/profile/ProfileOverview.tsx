@@ -37,26 +37,26 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ profile }) => {
         <CardContent className="space-y-3">
           {profile.country_of_origin && (
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-gray-500" />
+              <MapPin className="w-4 h-4 text-neutral-500" />
               <span className="text-sm">From {profile.country_of_origin}</span>
             </div>
           )}
           {profile.current_country && (
             <div className="flex items-center gap-2">
-              <Globe2 className="w-4 h-4 text-gray-500" />
+              <Globe2 className="w-4 h-4 text-neutral-500" />
               <span className="text-sm">Based in {profile.current_country}</span>
             </div>
           )}
           {profile.years_in_diaspora && (
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gray-500" />
+              <Calendar className="w-4 h-4 text-neutral-500" />
               <span className="text-sm">{profile.years_in_diaspora} years in diaspora</span>
             </div>
           )}
           {profile.languages && (
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Languages</p>
-              <p className="text-sm text-gray-600">{profile.languages}</p>
+              <p className="text-sm font-medium text-neutral-700 mb-1">Languages</p>
+              <p className="text-sm text-neutral-600">{profile.languages}</p>
             </div>
           )}
         </CardContent>
@@ -75,20 +75,20 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ profile }) => {
             <div>
               <p className="text-sm font-medium text-dna-copper">{profile.profession}</p>
               {profile.company && (
-                <p className="text-sm text-gray-600">at {profile.company}</p>
+                <p className="text-sm text-neutral-600">at {profile.company}</p>
               )}
             </div>
           )}
           {profile.years_experience && (
             <div className="flex items-center gap-2">
-              <Award className="w-4 h-4 text-gray-500" />
+              <Award className="w-4 h-4 text-neutral-500" />
               <span className="text-sm">{profile.years_experience} years experience</span>
             </div>
           )}
           {profile.education && (
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-1">Education</p>
-              <p className="text-sm text-gray-600">{profile.education}</p>
+              <p className="text-sm font-medium text-neutral-700 mb-1">Education</p>
+              <p className="text-sm text-neutral-600">{profile.education}</p>
             </div>
           )}
           <div className="flex flex-wrap gap-2">
@@ -117,7 +117,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ profile }) => {
         <CardContent className="space-y-4">
           {skillsList.length > 0 && (
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">Skills</p>
+              <p className="text-sm font-medium text-neutral-700 mb-2">Skills</p>
               <div className="flex flex-wrap gap-1">
                 {skillsList.slice(0, 5).map((skill: string, index: number) => (
                   <Badge key={index} variant="outline" className="text-xs text-dna-forest border-dna-forest">
@@ -134,7 +134,7 @@ const ProfileOverview: React.FC<ProfileOverviewProps> = ({ profile }) => {
           )}
           {interestsList.length > 0 && (
             <div>
-              <p className="text-sm font-medium text-gray-700 mb-2">Interests</p>
+              <p className="text-sm font-medium text-neutral-700 mb-2">Interests</p>
               <div className="flex flex-wrap gap-1">
                 {interestsList.slice(0, 4).map((interest: string, index: number) => (
                   <Badge key={index} variant="outline" className="text-xs text-dna-copper border-dna-copper">

@@ -3,20 +3,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { EventListItem } from '@/types/events';
-import { 
-  Calendar, 
-  MapPin, 
-  Video, 
-  Users, 
-  Clock,
-  Globe,
-  CheckCircle2,
-  HelpCircle,
-  Sparkles
-} from 'lucide-react';
+import { Calendar, MapPin, Video, Users, Clock, Globe, CheckCircle2, HelpCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 interface EventCardProps {
   event: EventListItem;
@@ -96,7 +87,7 @@ export function EventCard({ event, onRSVP }: EventCardProps) {
         {(event as any).is_curated ? (
           <div className="flex items-center gap-2 mb-4">
             <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-              <Sparkles className="h-3 w-3 mr-1" />
+              <Nkonsonkonson className="h-3 w-3 mr-1" />
               Curated by DNA
             </Badge>
           </div>

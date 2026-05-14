@@ -3,14 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Edit, 
-  Plus, 
-  Rocket, 
-  Users, 
-  Calendar,
-  ExternalLink
-} from 'lucide-react';
+import { Edit, Plus, Users, Calendar, ExternalLink } from 'lucide-react';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProjectItem {
   id: string;
@@ -66,7 +60,7 @@ const LinkedInProjectsSection: React.FC<ProjectsSectionProps> = ({
           </Button>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-neutral-500 text-center py-8">
             Showcase your projects and initiatives that make an impact
           </p>
         </CardContent>
@@ -93,21 +87,21 @@ const LinkedInProjectsSection: React.FC<ProjectsSectionProps> = ({
         {/* Active Projects */}
         {projects.length > 0 && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Active Projects</h4>
+            <h4 className="font-semibold text-neutral-900 mb-4">Active Projects</h4>
             <div className="space-y-4">
               {projects.map((project) => (
                 <div key={project.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex gap-3 flex-1">
                       <div className="w-10 h-10 bg-dna-emerald/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Rocket className="w-5 h-5 text-dna-emerald" />
+                        <Sankofa className="w-5 h-5 text-dna-emerald" />
                       </div>
                       <div className="flex-1">
-                        <h5 className="font-semibold text-lg text-gray-900">{project.title}</h5>
+                        <h5 className="font-semibold text-lg text-neutral-900">{project.title}</h5>
                         {project.description && (
-                          <p className="text-gray-700 mt-1">{project.description}</p>
+                          <p className="text-neutral-700 mt-1">{project.description}</p>
                         )}
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-4 mt-2 text-sm text-neutral-600">
                           {project.impact_area && (
                             <Badge variant="outline" className="text-dna-crimson border-dna-crimson">
                               {project.impact_area}
@@ -134,20 +128,20 @@ const LinkedInProjectsSection: React.FC<ProjectsSectionProps> = ({
         {/* Initiatives */}
         {initiatives.length > 0 && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Initiatives</h4>
+            <h4 className="font-semibold text-neutral-900 mb-4">Initiatives</h4>
             <div className="space-y-4">
               {initiatives.map((initiative) => (
                 <div key={initiative.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <div className="flex gap-3">
                     <div className="w-10 h-10 bg-dna-gold/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Rocket className="w-5 h-5 text-dna-gold" />
+                      <Sankofa className="w-5 h-5 text-dna-gold" />
                     </div>
                     <div className="flex-1">
-                      <h5 className="font-semibold text-lg text-gray-900">{initiative.title}</h5>
+                      <h5 className="font-semibold text-lg text-neutral-900">{initiative.title}</h5>
                       {initiative.description && (
-                        <p className="text-gray-700 mt-1">{initiative.description}</p>
+                        <p className="text-neutral-700 mt-1">{initiative.description}</p>
                       )}
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-4 mt-2 text-sm text-neutral-600">
                         {initiative.impact_area && (
                           <Badge variant="outline" className="text-dna-crimson border-dna-crimson">
                             {initiative.impact_area}
@@ -169,9 +163,9 @@ const LinkedInProjectsSection: React.FC<ProjectsSectionProps> = ({
         {/* Innovation Pathways */}
         {profile.innovation_pathways && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-3">Innovation Pathways</h4>
+            <h4 className="font-semibold text-neutral-900 mb-3">Innovation Pathways</h4>
             <div className="bg-dna-mint/5 rounded-lg p-4 border-l-4 border-dna-mint">
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
                 {profile.innovation_pathways}
               </p>
             </div>
@@ -181,9 +175,9 @@ const LinkedInProjectsSection: React.FC<ProjectsSectionProps> = ({
         {/* Past Contributions */}
         {profile.past_contributions && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-3">Past Contributions</h4>
+            <h4 className="font-semibold text-neutral-900 mb-3">Past Contributions</h4>
             <div className="bg-dna-copper/5 rounded-lg p-4 border-l-4 border-dna-copper">
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+              <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
                 {profile.past_contributions}
               </p>
             </div>

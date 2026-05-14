@@ -15,6 +15,7 @@ import React from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   Select,
   SelectContent,
@@ -24,10 +25,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { useNotificationPreferences } from '@/hooks/useNotificationSystem';
-import {
-  Bell, BellOff, Moon, Mail, Smartphone, Sparkles,
-  Users, Calendar, Briefcase, Target, BookOpen, Shield, MessageSquare,
-} from 'lucide-react';
+import { Bell, BellOff, Moon, Mail, Smartphone, Users, Calendar, Briefcase, Target, BookOpen, Shield, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NotificationCategory, NotificationChannel } from '@/types/notificationSystem';
 
@@ -77,7 +75,7 @@ const CATEGORY_CONFIG: {
     key: NotificationCategory.INTELLIGENCE,
     label: 'DIA Insights',
     description: 'Nudges, digests, recommendations',
-    icon: <Sparkles className="h-4 w-4" />,
+    icon: <MateMasie className="h-4 w-4" />,
     color: '#C4942A',
   },
   {
@@ -307,7 +305,7 @@ export function NotificationPreferencesPanel() {
         <h4 className="text-sm font-medium">DIA Intelligence</h4>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Sparkles className="h-4 w-4 text-muted-foreground" />
+            <MateMasie className="h-4 w-4 text-muted-foreground" />
             <Label className="text-sm">Insight frequency</Label>
           </div>
           <Select

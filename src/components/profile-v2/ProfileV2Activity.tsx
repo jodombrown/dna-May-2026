@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, Calendar, Activity, BookOpen, ChevronRight, Sparkles, PenSquare } from 'lucide-react';
+import { Users, Calendar, Activity, BookOpen, ChevronRight, PenSquare } from 'lucide-react';
 import { ProfileV2Activity as ActivityType, ProfileV2Visibility } from '@/types/profileV2';
 import { useNavigate } from 'react-router-dom';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileV2ActivityProps {
   activity: ActivityType;
@@ -148,7 +149,7 @@ const ProfileV2Activity: React.FC<ProfileV2ActivityProps> = ({
         {!hasActivity && isOwner && (
           <div className="text-center py-6 px-4">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
-              <Sparkles className="w-6 h-6 text-primary" />
+              <Sankofa className="w-6 h-6 text-primary" />
             </div>
             <p className="text-sm font-medium text-foreground mb-1">Start your DNA journey</p>
             <p className="text-xs text-muted-foreground">

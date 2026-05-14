@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { UserPlus, MessageSquarePlus, TrendingUp, Sparkles } from 'lucide-react';
+import { UserPlus, MessageSquarePlus, TrendingUp, Compass } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // Exclude 'for_you' from tabs EmptyFeedState handles - it has its own component
@@ -38,7 +38,7 @@ export const EmptyFeedState = ({ tab }: EmptyFeedStateProps) => {
           actions: [
             {
               label: "Create Your First Post",
-              icon: <Sparkles className="h-4 w-4 mr-2" />,
+              icon: <MessageSquarePlus className="h-4 w-4 mr-2" />,
               onClick: () => {
                 // Scroll to composer at top of page
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -70,7 +70,7 @@ export const EmptyFeedState = ({ tab }: EmptyFeedStateProps) => {
 
       default: // 'all'
         return {
-          icon: <Sparkles className="h-12 w-12 text-dna-copper mb-4" />,
+          icon: <Compass className="h-12 w-12 text-dna-copper mb-4" />,
           title: "Welcome to DNA!",
           description: "Connect with the diaspora community, share your story, and discover opportunities.",
           actions: [

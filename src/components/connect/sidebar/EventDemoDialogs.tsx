@@ -42,13 +42,13 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               Welcome to DNA's event registration experience! This demo showcases how seamless event discovery and registration will be on our platform.
             </p>
             <div className="space-y-3">
               <div>
-                <h4 className="font-semibold text-gray-900">What you're experiencing:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">What you're experiencing:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Comprehensive event details and venue information</li>
                   <li>• Direct connection to event hosts and organizers</li>  
                   <li>• Integration with DNA's professional network</li>
@@ -56,8 +56,8 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">In our live platform, you'll have:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">In our live platform, you'll have:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Real-time event registration and payment processing</li>
                   <li>• Calendar integration and event reminders</li>
                   <li>• Networking opportunities with other attendees</li>
@@ -77,13 +77,13 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
             <DialogTitle>View All Events - Coming Soon</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               The comprehensive events directory will be your gateway to discovering impactful opportunities across the African diaspora.
             </p>
             <div className="space-y-3">
               <div>
-                <h4 className="font-semibold text-gray-900">What you'll find:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">What you'll find:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Curated events from verified community leaders</li>
                   <li>• Advanced filtering by sector, region, and impact focus</li>
                   <li>• Networking events, conferences, and workshops</li>
@@ -92,8 +92,8 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">Enhanced features:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">Enhanced features:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Personalized recommendations based on your interests</li>
                   <li>• Calendar integration and smart notifications</li>
                   <li>• Pre-event networking with other attendees</li>
@@ -119,13 +119,13 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
             <DialogTitle>Contact the Host - Demo Feature</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               This feature allows you to reach out directly to event organizers for questions, partnership opportunities, or special requests.
             </p>
             <div className="space-y-3">
               <div>
-                <h4 className="font-semibold text-gray-900">How it works:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">How it works:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Send direct messages through our secure platform</li>
                   <li>• Share your professional background and interests</li>
                   <li>• Request speaking opportunities or sponsorship info</li>
@@ -133,8 +133,8 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">Why contact hosts:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">Why contact hosts:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Network before the event begins</li>
                   <li>• Explore collaboration opportunities</li>
                   <li>• Get insider insights about the agenda</li>
@@ -159,13 +159,13 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
             <DialogTitle>Report Event - Community Safety</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               Help us maintain a safe and professional environment by reporting events that violate our community standards.
             </p>
             <div className="space-y-3">
               <div>
-                <h4 className="font-semibold text-gray-900">When to report:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">When to report:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Misleading or fraudulent event information</li>
                   <li>• Inappropriate content or discrimination</li>
                   <li>• Spam or unrelated commercial promotion</li>
@@ -173,8 +173,8 @@ const EventDemoDialogs: React.FC<EventDemoDialogsProps> = ({
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">What happens next:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">What happens next:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Our team reviews all reports within 24 hours</li>
                   <li>• We investigate and take appropriate action</li>
                   <li>• You'll receive updates on the resolution</li>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Mpatapo } from '@/components/icons/adinkra';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,20 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  MoreVertical,
-  Pin,
-  PinOff,
-  Sparkles,
-  Trash2,
-  CircleDot,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  AlertTriangle,
-  Flag,
-  Loader2,
-} from 'lucide-react';
+import { MoreVertical, Pin, PinOff, Trash2, CircleDot, CheckCircle2, XCircle, Clock, AlertTriangle, Flag, Loader2 } from 'lucide-react';
 import { feedbackService } from '@/services/feedbackService';
 import type {
   FeedbackMessage,
@@ -56,10 +44,10 @@ interface FeedbackAdminControlsProps {
 
 const STATUS_OPTIONS: { value: FeedbackStatus; label: string; icon: React.ReactNode }[] = [
   { value: 'open', label: 'Open', icon: <CircleDot className="h-4 w-4 text-blue-500" /> },
-  { value: 'acknowledged', label: 'Acknowledged', icon: <CircleDot className="h-4 w-4 text-purple-500" /> },
+  { value: 'acknowledged', label: 'Acknowledged', icon: <CircleDot className="h-4 w-4 text-copper-500" /> },
   { value: 'in_progress', label: 'In Progress', icon: <Clock className="h-4 w-4 text-yellow-500" /> },
   { value: 'resolved', label: 'Resolved', icon: <CheckCircle2 className="h-4 w-4 text-green-500" /> },
-  { value: 'closed', label: 'Closed', icon: <XCircle className="h-4 w-4 text-gray-500" /> },
+  { value: 'closed', label: 'Closed', icon: <XCircle className="h-4 w-4 text-neutral-500" /> },
 ];
 
 const CATEGORY_OPTIONS: { value: FeedbackCategory; label: string }[] = [
@@ -71,7 +59,7 @@ const CATEGORY_OPTIONS: { value: FeedbackCategory; label: string }[] = [
 ];
 
 const PRIORITY_OPTIONS: { value: FeedbackPriority; label: string; icon: React.ReactNode }[] = [
-  { value: 'low', label: 'Low', icon: <Flag className="h-4 w-4 text-slate-400" /> },
+  { value: 'low', label: 'Low', icon: <Flag className="h-4 w-4 text-neutral-400" /> },
   { value: 'medium', label: 'Medium', icon: <Flag className="h-4 w-4 text-blue-500" /> },
   { value: 'high', label: 'High', icon: <Flag className="h-4 w-4 text-orange-500" /> },
   { value: 'critical', label: 'Critical', icon: <AlertTriangle className="h-4 w-4 text-red-500" /> },
@@ -286,7 +274,7 @@ export function FeedbackAdminControls({ message, channelId }: FeedbackAdminContr
 
           {/* Highlight */}
           <DropdownMenuItem onClick={handleToggleHighlight}>
-            <Sparkles className="h-4 w-4 mr-2" />
+            <Mpatapo className="h-4 w-4 mr-2" />
             {message.is_highlighted ? 'Remove Highlight' : 'Highlight'}
           </DropdownMenuItem>
 

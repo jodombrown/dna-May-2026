@@ -55,7 +55,7 @@ const TargetMetrics = () => {
             <div key={index} className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-dna-forest">{metric.metric}</span>
-                <span className="text-sm text-gray-600">{metric.timeframe}</span>
+                <span className="text-sm text-neutral-600">{metric.timeframe}</span>
               </div>
               <Progress value={progress} className="h-3" />
               <div className="flex justify-between text-sm">
@@ -81,10 +81,10 @@ const TargetMetrics = () => {
       </div>
 
       {/* Growth Insights */}
-      <div className="mt-6 pt-4 border-t border-gray-200">
+      <div className="mt-6 pt-4 border-t border-neutral-200">
         <div className="text-center p-4 bg-dna-forest/5 rounded-lg">
           <div className="text-xl font-bold text-dna-forest">12.5%</div>
-          <div className="text-sm text-gray-600">Monthly User Growth Rate</div>
+          <div className="text-sm text-neutral-600">Monthly User Growth Rate</div>
         </div>
       </div>
     </div>

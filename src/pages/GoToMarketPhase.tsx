@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Megaphone, Globe, TrendingUp, BarChart3, CheckCircle, Lightbulb, Rocket, ArrowRight } from 'lucide-react';
+import { Megaphone, Globe, TrendingUp, BarChart3, CheckCircle, Lightbulb, ArrowRight } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
@@ -10,6 +10,7 @@ import AmbassadorSignupDialog from '@/components/AmbassadorSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useNavigate } from 'react-router-dom';
 import PhaseHero from '@/components/phases/PhaseHero';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const objectives = [
   {
@@ -128,8 +129,8 @@ const GoToMarketPhase = () => {
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Global DNA Movement</h2>
-            <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Global DNA Movement</h2>
+            <p className="text-lg text-neutral-600 max-w-4xl mx-auto leading-relaxed">
               This is where DNA becomes a global movement for the African diaspora. Our go-to-market strategy focuses on 
               authentic community building, strategic partnerships, and sustainable growth that honors our mission. We're not 
               just launching a platform - we're catalyzing a movement that strengthens diaspora connections and accelerates Africa's development through collective action.
@@ -137,28 +138,28 @@ const GoToMarketPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-2xl border border-dna-emerald/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-lg border border-dna-emerald/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Megaphone className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Strategic Launch</h3>
-              <p className="text-gray-600 leading-relaxed">Coordinated global launch across key diaspora markets with culturally-relevant messaging and community-driven growth strategies.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Strategic Launch</h3>
+              <p className="text-neutral-600 leading-relaxed">Coordinated global launch across key diaspora markets with culturally-relevant messaging and community-driven growth strategies.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl border border-dna-copper/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-lg border border-dna-copper/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Globe className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Global Expansion</h3>
-              <p className="text-gray-600 leading-relaxed">International expansion through local partnerships, regional adaptation, and community leadership across diaspora hubs worldwide.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Global Expansion</h3>
+              <p className="text-neutral-600 leading-relaxed">International expansion through local partnerships, regional adaptation, and community leadership across diaspora hubs worldwide.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-2xl border border-dna-gold/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-lg border border-dna-gold/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-lg flex items-center justify-center mx-auto mb-6">
                 <TrendingUp className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Sustainable Growth</h3>
-              <p className="text-gray-600 leading-relaxed">Building sustainable revenue streams and growth mechanisms that support long-term platform viability and community impact.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Sustainable Growth</h3>
+              <p className="text-neutral-600 leading-relaxed">Building sustainable revenue streams and growth mechanisms that support long-term platform viability and community impact.</p>
             </div>
           </div>
         </div>
@@ -171,12 +172,12 @@ const GoToMarketPhase = () => {
       {/* Launch Community CTA */}
       <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/20">
         <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30">
+          <div className="bg-white rounded-lg shadow-xl p-8 md:p-12 border border-dna-mint/30">
             <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
               Be Part of the DNA Movement
             </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-neutral-600 mb-8 leading-relaxed">
               Join our launch community to be among the first to experience DNA when we go live globally. Help us spread 
               the word, invite your networks, and become a catalyst for strengthening diaspora connections worldwide. 
               Together, we can create a movement that transforms how the African diaspora connects, collaborates, and contributes to Africa's development.

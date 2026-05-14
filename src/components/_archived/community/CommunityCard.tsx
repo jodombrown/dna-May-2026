@@ -61,7 +61,7 @@ const CommunityCard: React.FC<CommunityCardProps> = ({
 
       <CardContent className="space-y-4">
         {community.description && (
-          <p className="text-gray-600 text-sm line-clamp-3">
+          <p className="text-neutral-600 text-sm line-clamp-3">
             {community.description}
           </p>
         )}
@@ -82,7 +82,7 @@ const CommunityCard: React.FC<CommunityCardProps> = ({
         )}
 
         <div className="flex items-center justify-between pt-2 border-t">
-          <div className="flex items-center gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-4 text-sm text-neutral-600">
             <div className="flex items-center gap-1">
               <Users className="w-4 h-4" />
               <span>{community.member_count} members</span>

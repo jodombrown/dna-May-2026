@@ -134,7 +134,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           </CardTitle>
           <div className="flex items-center gap-2">
             {resultCount > 0 && (
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-neutral-600">
                 {resultCount.toLocaleString()} results
               </span>
             )}

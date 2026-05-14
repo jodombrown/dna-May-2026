@@ -53,7 +53,7 @@ const LeaderboardsByRegion = () => {
       case 1:
         return <Trophy className="h-6 w-6 text-yellow-500" />;
       case 2:
-        return <Medal className="h-6 w-6 text-gray-400" />;
+        return <Medal className="h-6 w-6 text-neutral-400" />;
       case 3:
         return <Award className="h-6 w-6 text-amber-600" />;
       default:
@@ -63,7 +63,7 @@ const LeaderboardsByRegion = () => {
 
   const getRankBadge = (rank: number) => {
     if (rank <= 3) {
-      const colors = ['bg-yellow-500', 'bg-gray-400', 'bg-amber-600'];
+      const colors = ['bg-yellow-500', 'bg-neutral-400', 'bg-amber-600'];
       return <Badge className={`${colors[rank - 1]} text-white`}>#{rank}</Badge>;
     }
     return <Badge variant="outline">#{rank}</Badge>;
@@ -235,7 +235,7 @@ const LeaderboardsByRegion = () => {
 
         <Card className="p-4">
           <div className="text-center">
-            <p className="text-2xl font-bold text-purple-600">
+            <p className="text-2xl font-bold text-copper-600">
               {leaderboardData.length > 0 
                 ? Math.round(leaderboardData.reduce((sum, user) => sum + user.score, 0) / leaderboardData.length).toLocaleString()
                 : '0'

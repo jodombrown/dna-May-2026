@@ -26,7 +26,7 @@ const DnaImpact = () => {
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-6">
         <Target className="w-6 h-6 text-primary" />
-        <h1 className="text-2xl font-bold">Impact</h1>
+        <h1 className="text-h2 font-serif">Impact</h1>
       </div>
       <Card className="p-6">
         <p className="text-muted-foreground">Impact metrics coming soon...</p>

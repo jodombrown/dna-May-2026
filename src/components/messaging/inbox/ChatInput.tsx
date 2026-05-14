@@ -35,6 +35,10 @@ interface ChatInputProps {
   placeholder?: string;
   replyingTo?: ReplyToData | null;
   onCancelReply?: () => void;
+  /** Phase 12 - external seed (e.g. DIA smart reply chip). Bumping `seedNonce`
+   *  with non-empty `seedText` injects text into the composer. */
+  seedText?: string;
+  seedNonce?: number;
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({
@@ -45,10 +49,22 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   placeholder = "Type a message...",
   replyingTo,
   onCancelReply,
+  seedText,
+  seedNonce,
 }) => {
   const [message, setMessage] = useState('');
   const [attachment, setAttachment] = useState<MessageAttachment | null>(null);
   const [isVoiceRecorderActive, setIsVoiceRecorderActive] = useState(false);
+
+  // Phase 12 - inject DIA suggestion into composer when seedNonce changes
+  useEffect(() => {
+    if (seedNonce && seedText) {
+      setMessage((prev) => (prev ? `${prev} ${seedText}` : seedText));
+      setTimeout(() => textareaRef.current?.focus(), 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seedNonce]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { uploadImage, uploading } = useImageUpload();
@@ -158,14 +174,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="border-t border-border/20 bg-muted/30 dark:bg-zinc-900/80 flex-shrink-0">
+    <div className="border-t border-border/20 bg-muted/30 dark:bg-neutral-900/80 flex-shrink-0">
       {/* Reply Preview Bar */}
       {replyingTo && onCancelReply && (
-        <ReplyPreviewBar
-          senderName={replyingTo.senderName}
-          content={replyingTo.content}
-          onCancel={onCancelReply}
-        />
+        <ReplyPreviewBar replyingTo={replyingTo} onCancel={onCancelReply} />
       )}
 
       {/* Link Preview - shown before sending */}
@@ -267,7 +279,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 className={cn(
                   "min-h-[38px] max-h-[100px] resize-none overflow-y-hidden",
                   "text-[15px] md:text-sm",
-                  "bg-background border-border/50 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-2xl py-2 px-3"
+                  "bg-background border-border/50 focus-visible:ring-1 focus-visible:ring-primary/40 rounded-lg py-2 px-3"
                 )}
               />
             </div>

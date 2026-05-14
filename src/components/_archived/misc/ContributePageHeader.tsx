@@ -10,8 +10,8 @@ const ContributePageHeader: React.FC = () => {
         <div className="flex items-center justify-between h-12">
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="text-lg sm:text-xl font-bold text-gray-900">Contribute to Africa</h1>
-              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">Make a lasting impact</p>
+              <h1 className="text-lg sm:text-xl font-bold text-neutral-900">Contribute to Africa</h1>
+              <p className="text-xs sm:text-sm text-neutral-600 hidden sm:block">Make a lasting impact</p>
             </div>
           </div>
           <Badge className="bg-dna-gold text-white text-xs sm:text-sm">

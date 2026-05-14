@@ -5,9 +5,10 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle, Sparkles, Zap, Target, Globe } from 'lucide-react';
+import { AlertCircle, CheckCircle, Target, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
+import { Sankofa } from '@/components/icons/adinkra';
 
 // Field priority ranking by impact
 const FIELD_PRIORITY: Record<string, number> = {
@@ -87,7 +88,7 @@ export const ProfileCompletionWidget = () => {
       key: 'skills',
       label: 'Add 3+ skills to join project opportunities',
       impact: 'high',
-      icon: Zap,
+      icon: Sankofa,
       estimatedTime: 2,
       unlocks: 'Project collaboration'
     });
@@ -98,7 +99,7 @@ export const ProfileCompletionWidget = () => {
       key: 'diaspora_status',
       label: 'Share your diaspora status to find your community',
       impact: 'high',
-      icon: Sparkles,
+      icon: Sankofa,
       estimatedTime: 1,
       unlocks: 'Community matching'
     });
@@ -178,7 +179,7 @@ export const ProfileCompletionWidget = () => {
     <Card className="border-l-4 border-l-dna-copper">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Sparkles className="h-5 w-5 text-dna-copper" />
+          <Sankofa className="h-5 w-5 text-dna-copper" />
           Enhance Your Profile
         </CardTitle>
         <p className="text-sm text-muted-foreground mt-1">
@@ -210,7 +211,7 @@ export const ProfileCompletionWidget = () => {
         {quickWins.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-amber-500" />
+              <Sankofa className="h-4 w-4 text-amber-500" />
               <p className="text-sm font-semibold">Quick Wins</p>
               <Badge variant="secondary" className="text-xs">
                 &lt;2 min each
@@ -301,7 +302,7 @@ export const ProfileCompletionWidget = () => {
           className="w-full"
           variant="default"
         >
-          <Sparkles className="h-4 w-4 mr-2" />
+          <Sankofa className="h-4 w-4 mr-2" />
           Complete Profile →
         </Button>
       </CardContent>

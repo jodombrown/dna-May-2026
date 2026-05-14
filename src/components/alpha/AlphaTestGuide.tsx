@@ -186,10 +186,10 @@ const MODULE_COLORS: Record<string, string> = {
   CONVENE: 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300',
   COLLABORATE: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
   CONTRIBUTE: 'bg-copper-100 text-copper-800 dark:bg-amber-900/40 dark:text-amber-300',
-  CONVEY: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300',
+  CONVEY: 'bg-copper-100 text-copper-800 dark:bg-copper-900/40 dark:text-copper-300',
   DIA: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
   MESSAGING: 'bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300',
-  OVERALL: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+  OVERALL: 'bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-300',
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -248,18 +248,18 @@ export function AlphaTestGuide({ isOpen, onClose, onOpenFeedback }: AlphaTestGui
         className={cn(
           'fixed z-[61]',
           'inset-y-0 right-0 w-full sm:w-[480px]',
-          'bg-white dark:bg-gray-900',
-          'shadow-2xl border-l border-gray-200 dark:border-gray-700',
+          'bg-white dark:bg-neutral-900',
+          'shadow-2xl border-l border-neutral-200 dark:border-neutral-700',
           'flex flex-col overflow-hidden'
         )}
       >
         {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+        <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-semibold text-foreground">Alpha Test Guide</h2>
             <button
               onClick={onClose}
-              className="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-1 rounded-md text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
               aria-label="Close test guide"
             >
               <X className="h-5 w-5" />
@@ -274,7 +274,7 @@ export function AlphaTestGuide({ isOpen, onClose, onOpenFeedback }: AlphaTestGui
               </span>
               <span className="font-medium text-foreground">{progressPercent}%</span>
             </div>
-            <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-2 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
@@ -316,7 +316,7 @@ export function AlphaTestGuide({ isOpen, onClose, onOpenFeedback }: AlphaTestGui
                   'rounded-xl border transition-colors',
                   isCompleted
                     ? 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-800 dark:bg-emerald-950/20'
-                    : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800/50'
+                    : 'border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800/50'
                 )}
               >
                 {/* Scenario Header */}
@@ -359,7 +359,7 @@ export function AlphaTestGuide({ isOpen, onClose, onOpenFeedback }: AlphaTestGui
                     {isCompleted ? (
                       <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                     ) : (
-                      <Circle className="h-5 w-5 text-gray-300 dark:text-gray-600" />
+                      <Circle className="h-5 w-5 text-neutral-300 dark:text-neutral-600" />
                     )}
                   </button>
                 </button>
@@ -394,8 +394,8 @@ export function AlphaTestGuide({ isOpen, onClose, onOpenFeedback }: AlphaTestGui
                       }}
                       className={cn(
                         'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium',
-                        'bg-gray-100 text-gray-700 hover:bg-gray-200',
-                        'dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
+                        'bg-neutral-100 text-neutral-700 hover:bg-neutral-200',
+                        'dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-600',
                         'transition-colors'
                       )}
                     >

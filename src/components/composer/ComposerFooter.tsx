@@ -16,6 +16,10 @@ interface ComposerFooterProps {
   isSubmitting: boolean;
   isValid: boolean;
   validationMessage?: string | null;
+  /** Only show validation message after the user has tried to submit */
+  hasAttemptedSubmit?: boolean;
+  /** Optional slot rendered between Cancel and Submit (e.g. draft status). */
+  leftSlot?: React.ReactNode;
   onCancel: () => void;
   onSubmit: () => void;
 }
@@ -25,6 +29,8 @@ export const ComposerFooter = ({
   isSubmitting,
   isValid,
   validationMessage,
+  hasAttemptedSubmit = false,
+  leftSlot,
   onCancel,
   onSubmit,
 }: ComposerFooterProps) => {
@@ -32,18 +38,21 @@ export const ComposerFooter = ({
   const accentClass = `${handler.accentClass} ${handler.hoverClass}`;
 
   return (
-    <div className="space-y-2 pt-4 border-t">
-      {/* Validation message */}
-      {!isValid && validationMessage && (
+    <div className="space-y-2 pt-3 sm:pt-4 border-t">
+      {/* Validation message - only after submit attempt */}
+      {hasAttemptedSubmit && !isValid && validationMessage && (
         <p className="text-sm text-amber-600 dark:text-amber-400 text-center">
           {validationMessage}
         </p>
       )}
 
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={onCancel} disabled={isSubmitting} className="min-h-[44px]">
-          Cancel
-        </Button>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 min-w-0">
+          <Button variant="ghost" onClick={onCancel} disabled={isSubmitting} className="min-h-[44px]">
+            Cancel
+          </Button>
+          {leftSlot}
+        </div>
 
         <Button
           onClick={onSubmit}

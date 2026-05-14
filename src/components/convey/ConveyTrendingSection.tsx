@@ -1,3 +1,4 @@
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, MessageCircle, Eye, ChevronRight, Flame } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -44,7 +45,7 @@ const TrendingCard = ({
     <div 
       onClick={handleClick}
       className={cn(
-        "relative group cursor-pointer rounded-2xl overflow-hidden",
+        "relative group cursor-pointer rounded-lg overflow-hidden",
         "transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
         isHero ? "col-span-2 row-span-1 md:row-span-2 min-h-[240px] md:min-h-[400px]" : "min-h-[160px] md:min-h-[200px]"
       )}
@@ -52,9 +53,12 @@ const TrendingCard = ({
       {/* Background Image */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/30 to-secondary/40">
         {story.image_url && (
-          <img 
-            src={story.image_url} 
-            alt={story.title} 
+          <OptimizedImage
+            src={story.image_url}
+            alt={story.title}
+            imageSize="cover-card"
+            width={400}
+            height={240}
             className="w-full h-full object-cover"
           />
         )}
@@ -138,7 +142,7 @@ const TrendingCard = ({
 // Loading skeleton
 const TrendingSkeleton = ({ isHero = false }: { isHero?: boolean }) => (
   <div className={cn(
-    "rounded-2xl bg-muted animate-pulse",
+    "rounded-lg bg-muted animate-pulse",
     isHero ? "col-span-2 row-span-1 md:row-span-2 min-h-[240px] md:min-h-[400px]" : "min-h-[160px] md:min-h-[200px]"
   )} />
 );

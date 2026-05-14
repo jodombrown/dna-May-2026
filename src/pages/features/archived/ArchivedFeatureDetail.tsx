@@ -31,10 +31,10 @@ const ArchivedFeatureDetail: React.FC = () => {
   // Handle not found
   if (!isLoading && !release) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Feature not found</h1>
-          <p className="text-gray-600 mb-6">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">Feature not found</h1>
+          <p className="text-neutral-600 mb-6">
             This archived feature doesn&apos;t exist or has been removed.
           </p>
           <Button onClick={() => navigate('/features/archived')} variant="outline">
@@ -49,10 +49,10 @@ const ArchivedFeatureDetail: React.FC = () => {
   // Handle error
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Unable to load feature</h1>
-          <p className="text-gray-600 mb-6">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">Unable to load feature</h1>
+          <p className="text-neutral-600 mb-6">
             Please try refreshing the page.
           </p>
           <Button onClick={() => navigate('/features/archived')} variant="outline">
@@ -85,13 +85,13 @@ const ArchivedFeatureDetail: React.FC = () => {
         </Helmet>
       )}
 
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-neutral-50">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-white border-b border-neutral-200">
           <div className="container max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <Link
               to="/features/archived"
-              className="inline-flex items-center gap-2 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center gap-2 py-4 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Archived Features
@@ -113,9 +113,9 @@ const ArchivedFeatureDetail: React.FC = () => {
         {release && (
           <article className="container max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {/* Archived Notice */}
-            <Alert className="mb-6 bg-slate-100 border-slate-300">
-              <Archive className="h-4 w-4 text-slate-600" />
-              <AlertDescription className="text-slate-700">
+            <Alert className="mb-6 bg-neutral-100 border-neutral-300">
+              <Archive className="h-4 w-4 text-neutral-600" />
+              <AlertDescription className="text-neutral-700">
                 <strong>Archived Feature:</strong> This feature was released on {releaseDate}.
                 The functionality may have been updated since this announcement.{' '}
                 <Link to={`/releases/${release.slug}`} className="underline hover:no-underline">
@@ -129,11 +129,11 @@ const ArchivedFeatureDetail: React.FC = () => {
               <StatusBadge stage="archived" />
               <CategoryTag category={release.category} />
               {release.version && (
-                <span className="text-sm font-medium text-gray-500">
+                <span className="text-sm font-medium text-neutral-500">
                   v{release.version}
                 </span>
               )}
-              <span className="text-sm text-gray-500">{releaseDate}</span>
+              <span className="text-sm text-neutral-500">{releaseDate}</span>
             </div>
 
             {/* Hero */}
@@ -146,16 +146,16 @@ const ArchivedFeatureDetail: React.FC = () => {
                 className="absolute inset-0"
               />
               {/* Archived overlay */}
-              <div className="absolute inset-0 bg-slate-900/10" />
+              <div className="absolute inset-0 bg-neutral-900/10" />
             </div>
 
             {/* Title */}
             <header className="mb-8">
-              <h1 className="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="font-serif text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
                 {release.title}
               </h1>
               {release.subtitle && (
-                <p className="text-xl text-gray-600 italic">
+                <p className="text-xl text-neutral-600 italic">
                   {release.subtitle}
                 </p>
               )}
@@ -163,7 +163,7 @@ const ArchivedFeatureDetail: React.FC = () => {
 
             {/* Description */}
             <div className="prose prose-lg max-w-none mb-10">
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <p className="text-neutral-700 leading-relaxed whitespace-pre-wrap">
                 {release.description}
               </p>
             </div>
@@ -178,11 +178,11 @@ const ArchivedFeatureDetail: React.FC = () => {
             )}
 
             {/* Current Documentation Link */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-10">
-              <h3 className="font-semibold text-gray-900 mb-2">
+            <div className="bg-white rounded-lg border border-neutral-200 p-6 mb-10">
+              <h3 className="font-semibold text-neutral-900 mb-2">
                 Looking for current documentation?
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-neutral-600 mb-4">
                 This is an archived release. For the latest information about this feature,
                 visit the current release page or documentation.
               </p>
@@ -202,10 +202,10 @@ const ArchivedFeatureDetail: React.FC = () => {
             </div>
 
             {/* Navigation */}
-            <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+            <div className="flex items-center justify-between pt-6 border-t border-neutral-200">
               <Link
                 to="/features/archived"
-                className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900"
               >
                 <ArrowLeft className="w-4 h-4" />
                 All Archived Features

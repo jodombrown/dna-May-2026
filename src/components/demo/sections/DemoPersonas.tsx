@@ -62,15 +62,15 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-20 bg-dna-pearl"
+        className="min-h-screen py-16 md:py-12 bg-dna-pearl"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
           <div ref={animationRef}>
             {/* Kente Border */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2 } as const}
             >
               <KenteBorder width="80px" height="3px" className="mb-8" />
             </motion.div>
@@ -79,9 +79,9 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
             <motion.h2 
               className="font-cormorant font-semibold text-center text-foreground mb-4"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.1 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.1 } as const}
             >
               The <span className="text-dna-emerald">DNA Community</span>
             </motion.h2>
@@ -89,9 +89,9 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
             {/* Supporting Text */}
             <motion.p 
               className="font-outfit text-muted-foreground text-center max-w-2xl mx-auto mb-12 leading-relaxed text-base md:text-lg"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.2 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.2 } as const}
             >
               DNA serves the full spectrum of diaspora engagement, from early-career professionals 
               to seasoned investors, from event organizers to returnees.
@@ -103,9 +103,9 @@ export const DemoPersonas = forwardRef<HTMLElement, DemoPersonasProps>(
                 <motion.div 
                   key={persona.name}
                   className="bg-background border border-border rounded-xl p-6 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.1 } as const}
+                  initial={{ opacity: 0 }}
+                  animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                  transition={{ duration: 0.2, delay: 0.3 + index * 0.1 } as const}
                 >
                   {/* Persona Name */}
                   <h3 className="font-cormorant font-semibold text-lg text-dna-emerald mb-3">

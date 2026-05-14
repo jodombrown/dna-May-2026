@@ -112,19 +112,19 @@ const SimpleEmailForm = () => {
   return (
     <section className="py-16">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl border border-dna-mint/20 p-8 md:p-12">
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-dna-mint/20 p-8 md:p-12">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-dna-forest mb-4">
               Ready to Join the Movement?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
               Be the first to connect with Africa's diaspora professionals when we launch our revolutionary platform
             </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6" data-email-form>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-2">
                   Full Name *
                 </label>
                 <Input
@@ -141,7 +141,7 @@ const SimpleEmailForm = () => {
               </div>
               
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
                   Email Address *
                 </label>
                 <Input
@@ -159,7 +159,7 @@ const SimpleEmailForm = () => {
             </div>
 
             <div>
-              <label htmlFor="linkedin_url" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="linkedin_url" className="block text-sm font-medium text-neutral-700 mb-2">
                 LinkedIn URL (Optional)
               </label>
               <Input
@@ -175,7 +175,7 @@ const SimpleEmailForm = () => {
             </div>
 
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="message" className="block text-sm font-medium text-neutral-700 mb-2">
                 Message (Optional)
               </label>
               <Textarea
@@ -200,7 +200,7 @@ const SimpleEmailForm = () => {
             </Button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-neutral-500 mt-6">
             We respect your privacy. Your information will only be used to notify you about our platform launch. 
             During the Prototyping and Building Phase, emails will come from our mother company{' '}
             <a 

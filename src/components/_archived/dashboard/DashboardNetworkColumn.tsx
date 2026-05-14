@@ -4,7 +4,7 @@ import { connectionService } from '@/services/connectionService';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UserPlus, Clock, Loader2, Sparkles } from 'lucide-react';
+import { Users, UserPlus, Clock, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import ConnectionCard from '@/components/network/ConnectionCard';
@@ -13,6 +13,7 @@ import NetworkSearch from '@/components/network/NetworkSearch';
 import SuggestionsTab from '@/components/network/SuggestionsTab';
 import { Profile } from '@/services/profilesService';
 import { ProfileViewersWidget } from '@/components/analytics/ProfileViewersWidget';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface DashboardNetworkColumnProps {
   profile: Profile;
@@ -115,7 +116,7 @@ export default function DashboardNetworkColumn({ profile, isOwnProfile }: Dashbo
             {pendingRequests?.length ? ` (${pendingRequests.length})` : ''}
           </TabsTrigger>
           <TabsTrigger value="suggestions" className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
+            <Sankofa className="w-4 h-4" />
             <span className="hidden sm:inline">Suggestions</span>
           </TabsTrigger>
         </TabsList>

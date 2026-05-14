@@ -148,7 +148,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
       role="article"
       onClick={handleViewProfile}
       className={cn(
-        'relative bg-card border border-border rounded-2xl p-4 cursor-pointer',
+        'relative bg-card border border-border rounded-lg p-4 cursor-pointer',
         'hover:shadow-md hover:border-dna-emerald/30 transition-all duration-200',
         'flex flex-col gap-3 min-h-[220px]'
       )}

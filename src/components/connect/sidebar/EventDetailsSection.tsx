@@ -48,7 +48,7 @@ const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({ event }) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3 text-gray-700">
+      <div className="flex items-center gap-3 text-neutral-700">
         <Calendar className="w-5 h-5 text-dna-emerald" />
         <div>
           <div className="font-medium">
@@ -59,7 +59,7 @@ const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({ event }) => {
               day: 'numeric'
             })}
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-neutral-500">
             {eventDate.toLocaleTimeString('en-US', {
               hour: 'numeric',
               minute: '2-digit',
@@ -69,19 +69,19 @@ const EventDetailsSection: React.FC<EventDetailsSectionProps> = ({ event }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 text-gray-700">
+      <div className="flex items-center gap-3 text-neutral-700">
         <MapPin className="w-5 h-5 text-dna-emerald" />
         <div>
           <div className="font-medium">{event.location}</div>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 text-gray-700">
+      <div className="flex items-center gap-3 text-neutral-700">
         <Users className="w-5 h-5 text-dna-emerald" />
         <div>
           <div className="font-medium">{event.attendee_count} attending</div>
           {event.max_attendees && (
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-neutral-500">
               {event.max_attendees - event.attendee_count} spots remaining
             </div>
           )}

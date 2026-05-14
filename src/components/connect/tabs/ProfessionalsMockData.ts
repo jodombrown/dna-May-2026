@@ -1,3 +1,4 @@
+import { Sankofa } from '@/components/icons/adinkra';
 export const mockProfessionals = [
   {
     id: '1',
@@ -402,7 +403,7 @@ export const mockProfessionals = [
     avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&crop=face',
     followers: 6780,
     connections: 1567,
-    skills: ['Rocket Engineering', 'Satellite Technology', 'Space Systems'],
+    skills: ['Sankofa Engineering', 'Satellite Technology', 'Space Systems'],
     bio: 'Nigerian aerospace engineer working on satellite technology to connect remote African communities.',
     connectionStatus: 'pending',
     recentActivity: 'Led deployment of internet satellites over rural Nigeria',

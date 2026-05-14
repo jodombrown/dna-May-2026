@@ -18,7 +18,7 @@ const SearchResultsSummary: React.FC<SearchResultsSummaryProps> = ({
   if (!searchTerm && !hasActiveFilters) return null;
 
   return (
-    <div className="text-center text-sm text-gray-600 max-w-4xl mx-auto">
+    <div className="text-center text-sm text-neutral-600 max-w-4xl mx-auto">
       {searchTerm && (
         <span>
           Showing results for "<strong>{searchTerm}</strong>"

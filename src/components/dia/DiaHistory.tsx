@@ -3,15 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  History,
-  Search,
-  Clock,
-  Zap,
-  ArrowRight,
-  Loader2
-} from 'lucide-react';
+import { History, Search, Clock, ArrowRight, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DiaHistoryProps {
   compact?: boolean;
@@ -161,7 +155,7 @@ export function DiaHistory({
                     </span>
                     {entry.cache_hit && (
                       <span className="flex items-center gap-1 text-emerald-600">
-                        <Zap className="h-3 w-3" />
+                        <MateMasie className="h-3 w-3" />
                         Cached
                       </span>
                     )}

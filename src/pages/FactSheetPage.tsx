@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Share2, Users, Target, Sparkles, TrendingUp, Globe, Heart, MapPin, Landmark, Building2, ArrowUpRight, ExternalLink } from 'lucide-react';
+import { Download, Share2, Users, Target, TrendingUp, Globe, Heart, MapPin, Landmark, Building2, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { config } from '@/lib/config';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const FactSheetPage = () => {
   const { toast } = useToast();
@@ -129,7 +130,7 @@ const FactSheetPage = () => {
         {/* Executive Summary */}
         <Card className="fact-sheet-section p-8 mb-8 bg-card border-2">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-            <Sparkles className="h-8 w-8 text-dna-copper" />
+            <MateMasie className="h-8 w-8 text-dna-copper" />
             Executive Summary
           </h2>
           <div className="space-y-4 text-lg text-foreground/90">
@@ -261,7 +262,7 @@ const FactSheetPage = () => {
           {/* The Spiral Effect */}
           <Card className="p-8 mt-8 bg-gradient-to-br from-dna-forest/10 via-dna-emerald/10 to-dna-copper/10 border-2 border-dna-copper/30">
             <h3 className="text-2xl font-bold mb-4 text-dna-forest flex items-center gap-2">
-              <Sparkles className="h-7 w-7 text-dna-copper" />
+              <MateMasie className="h-7 w-7 text-dna-copper" />
               The Spiral Effect
             </h3>
             <p className="text-lg text-foreground/90 mb-4">
@@ -569,7 +570,7 @@ const FactSheetPage = () => {
 
             <Card className="p-6 text-center bg-gradient-to-br from-dna-gold/5 to-dna-copper/5 border-2 hover:border-dna-gold/50 transition-all">
               <div className="mb-4">
-                <Sparkles className="h-12 w-12 mx-auto text-dna-gold" />
+                <MateMasie className="h-12 w-12 mx-auto text-dna-gold" />
               </div>
               <h3 className="text-xl font-bold mb-2 text-dna-forest">For Investors</h3>
               <p className="text-sm text-muted-foreground mb-4">

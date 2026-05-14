@@ -20,7 +20,7 @@ export const ActivityIndicator: React.FC<ActivityIndicatorProps> = ({
   const colorClasses = {
     green: 'bg-green-500',
     yellow: 'bg-yellow-500',
-    gray: 'bg-gray-400',
+    gray: 'bg-neutral-400',
   };
 
   return (

@@ -98,6 +98,13 @@ export interface ConversationListItem {
   is_muted?: boolean;
   is_pinned?: boolean;
   is_archived?: boolean;
+  bucket?: ConversationBucket;
+  has_unread_mention?: boolean;
+  /** Group messaging fields (Phase 20) */
+  is_group?: boolean;
+  group_title?: string;
+  group_avatar_url?: string | null;
+  participant_count?: number;
 }
 
 // =====================================================
@@ -259,7 +266,17 @@ export interface CanMessageResult {
 /**
  * Inbox tab filter type following LinkedIn pattern
  */
-export type InboxTab = 'focused' | 'other' | 'requests' | 'archived';
+export type InboxTab = 'primary' | 'requests' | 'spam' | 'archived';
+
+/**
+ * Inbox filter chip - layered on top of the active tab
+ */
+export type InboxFilterChip = 'all' | 'unread' | 'mentions';
+
+/**
+ * Per-side bucket on a conversation (mirrors conversations.bucket_for_a/b)
+ */
+export type ConversationBucket = 'primary' | 'requests' | 'spam';
 
 /**
  * Inbox filter configuration

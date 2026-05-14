@@ -137,7 +137,7 @@ export function MediaGalleryDrawer({ open, onOpenChange, conversationId }: Media
 
       {lightboxImages && (
         <MediaLightbox
-          images={lightboxImages}
+          items={lightboxImages}
           initialIndex={lightboxIndex}
           onClose={() => setLightboxImages(null)}
         />

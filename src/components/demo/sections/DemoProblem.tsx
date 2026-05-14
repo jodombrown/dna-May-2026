@@ -40,15 +40,15 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-20 flex items-center bg-dna-pearl"
+        className="min-h-screen py-16 md:py-12 flex items-center bg-dna-pearl"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
           <div ref={animationRef}>
             {/* Kente Border */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 } as const}
+              transition={{ duration: 0.2 } as const}
             >
               <KenteBorder width="80px" height="3px" centered={false} className="mb-8" />
             </motion.div>
@@ -57,9 +57,9 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
             <motion.h2 
               className="font-cormorant font-semibold text-foreground mb-6"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.1 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.1 } as const}
             >
               Scattered Potential. <span className="text-dna-terra">Fragmented Power.</span>
             </motion.h2>
@@ -67,9 +67,9 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
             {/* Supporting Text */}
             <motion.p 
               className="font-outfit text-muted-foreground max-w-2xl mb-12 leading-relaxed text-base md:text-lg"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.2 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.2 } as const}
             >
               Today, diaspora potential is trapped in disconnected silos. Ideas die in DMs. 
               Connections fade after events. Projects stall without accountability. 
@@ -82,9 +82,9 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
                 <motion.div 
                   key={index}
                   className="bg-background border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-                  transition={{ duration: 0.5, delay: 0.3 + index * 0.15 } as const}
+                  initial={{ opacity: 0 }}
+                  animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                  transition={{ duration: 0.2, delay: 0.3 + index * 0.15 } as const}
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-lg bg-dna-terra/10 flex items-center justify-center flex-shrink-0">
@@ -106,9 +106,9 @@ export const DemoProblem = forwardRef<HTMLElement, DemoProblemProps>(
             {/* Quote */}
             <motion.blockquote 
               className="mt-12 border-l-4 border-dna-emerald pl-6"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.7 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.7 } as const}
             >
               <p className="font-outfit italic text-foreground text-base md:text-lg">
                 "The diaspora has more PhDs, more capital, more expertise than ever before. 

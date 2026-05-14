@@ -368,7 +368,7 @@ export default function SpaceManagement() {
       case 'completed':
         return <Badge className="bg-blue-500/10 text-blue-600 border-blue-500"><CheckCircle className="h-3 w-3 mr-1" />Completed</Badge>;
       case 'archived':
-        return <Badge className="bg-gray-500/10 text-gray-600 border-gray-500"><Archive className="h-3 w-3 mr-1" />Archived</Badge>;
+        return <Badge className="bg-neutral-500/10 text-neutral-600 border-neutral-500"><Archive className="h-3 w-3 mr-1" />Archived</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -383,7 +383,7 @@ export default function SpaceManagement() {
       case 'at-risk':
         return <Badge className="bg-orange-500/10 text-orange-600 border-orange-500"><AlertTriangle className="h-3 w-3 mr-1" />At-Risk</Badge>;
       case 'inactive':
-        return <Badge className="bg-gray-500/10 text-gray-600 border-gray-500"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>;
+        return <Badge className="bg-neutral-500/10 text-neutral-600 border-neutral-500"><XCircle className="h-3 w-3 mr-1" />Inactive</Badge>;
       default:
         return <Badge variant="outline">{health}</Badge>;
     }

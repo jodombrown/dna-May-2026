@@ -90,7 +90,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="stay-notified-name" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="stay-notified-name" className="block text-sm font-medium text-neutral-700 mb-2">
           Full Name *
         </label>
         <Input
@@ -105,7 +105,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
       </div>
       
       <div>
-        <label htmlFor="stay-notified-email" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="stay-notified-email" className="block text-sm font-medium text-neutral-700 mb-2">
           Email Address *
         </label>
         <Input
@@ -120,7 +120,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
       </div>
 
       <div>
-        <label htmlFor="stay-notified-linkedin" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="stay-notified-linkedin" className="block text-sm font-medium text-neutral-700 mb-2">
           LinkedIn URL (Optional)
         </label>
         <Input
@@ -134,7 +134,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({ onClose }) => {
       </div>
 
       <div>
-        <label htmlFor="stay-notified-message" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="stay-notified-message" className="block text-sm font-medium text-neutral-700 mb-2">
           Message (Optional)
         </label>
         <Textarea

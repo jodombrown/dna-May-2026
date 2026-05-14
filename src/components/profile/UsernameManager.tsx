@@ -165,7 +165,7 @@ const UsernameManager: React.FC<UsernameManagerProps> = ({
           />
           
           {checking && (
-            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-gray-500" />
+            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-neutral-500" />
           )}
           
           {!checking && username.length >= 3 && username !== currentUsername && (

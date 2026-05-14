@@ -16,10 +16,10 @@ const EventHostSection: React.FC<EventHostSectionProps> = ({ event, onCreatorCli
 
   return (
     <div className="space-y-4">
-      <h3 className={`${TYPOGRAPHY.h4} text-gray-900`}>Hosted By</h3>
+      <h3 className={`${TYPOGRAPHY.h4} text-neutral-900`}>Hosted By</h3>
       <Button
         variant="ghost"
-        className="w-full justify-start p-3 h-auto min-h-[44px] hover:bg-gray-50"
+        className="w-full justify-start p-3 h-auto min-h-[44px] hover:bg-neutral-50"
         onClick={() => onCreatorClick?.(event.creator_profile!.id)}
       >
         <div className="flex items-center gap-3 w-full">
@@ -30,10 +30,10 @@ const EventHostSection: React.FC<EventHostSectionProps> = ({ event, onCreatorCli
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 text-left">
-            <div className={`${TYPOGRAPHY.h5} text-gray-900`}>{event.creator_profile.full_name || 'Event Host'}</div>
-            <div className={`${TYPOGRAPHY.bodySmall} text-gray-600`}>Event Host</div>
+            <div className={`${TYPOGRAPHY.h5} text-neutral-900`}>{event.creator_profile.full_name || 'Event Host'}</div>
+            <div className={`${TYPOGRAPHY.bodySmall} text-neutral-600`}>Event Host</div>
           </div>
-          <ExternalLink className="w-4 h-4 text-gray-400" />
+          <ExternalLink className="w-4 h-4 text-neutral-400" />
         </div>
       </Button>
     </div>

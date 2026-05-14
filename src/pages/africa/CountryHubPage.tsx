@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const CountryHero = ({ metadata }: any) => (
   <div
-    className="h-[50vh] min-h-[300px] bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center relative"
+    className="h-[50vh] min-h-[300px] bg-gradient-to-b from-neutral-800 to-neutral-900 flex items-center justify-center relative"
     style={{
       backgroundImage: metadata?.hero_image_url ? `linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url(${metadata.hero_image_url})` : undefined,
       backgroundSize: 'cover',
@@ -23,32 +23,32 @@ const CountryMetrics = ({ metrics }: any) => (
     <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
       <div>
         <div className="text-2xl md:text-3xl font-bold text-emerald-600">{metrics?.members_connected?.toLocaleString() || 0}</div>
-        <div className="text-sm text-gray-500">Members</div>
+        <div className="text-sm text-neutral-500">Members</div>
       </div>
       <div>
         <div className="text-2xl md:text-3xl font-bold text-emerald-600">{metrics?.events_hosted?.toLocaleString() || 0}</div>
-        <div className="text-sm text-gray-500">Events</div>
+        <div className="text-sm text-neutral-500">Events</div>
       </div>
       <div>
         <div className="text-2xl md:text-3xl font-bold text-emerald-600">{metrics?.projects_active?.toLocaleString() || 0}</div>
-        <div className="text-sm text-gray-500">Projects</div>
+        <div className="text-sm text-neutral-500">Projects</div>
       </div>
       <div>
         <div className="text-2xl md:text-3xl font-bold text-emerald-600">
           {metrics?.contributions_total ? `$${(metrics.contributions_total / 1000000).toFixed(1)}M` : '$0'}
         </div>
-        <div className="text-sm text-gray-500">Contributed</div>
+        <div className="text-sm text-neutral-500">Contributed</div>
       </div>
     </div>
   </div>
 );
 
 const CountryNarrative = ({ metadata }: any) => (
-  <div className="bg-gray-50 py-8">
+  <div className="bg-neutral-50 py-8">
     <div className="max-w-4xl mx-auto px-4 text-center">
-      <p className="text-lg text-gray-700 leading-relaxed">{metadata?.description_short}</p>
+      <p className="text-lg text-neutral-700 leading-relaxed">{metadata?.description_short}</p>
       {metadata?.description_full && metadata.description_full !== metadata.description_short && (
-        <p className="text-gray-600 mt-4 leading-relaxed">{metadata.description_full}</p>
+        <p className="text-neutral-600 mt-4 leading-relaxed">{metadata.description_full}</p>
       )}
     </div>
   </div>
@@ -68,7 +68,7 @@ const MemberCard = ({ member }: any) => {
   return (
     <a
       href={`/u/${username}`}
-      className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-lg hover:-translate-y-1 transition-all block"
+      className="bg-white rounded-lg border border-neutral-200 p-5 hover:shadow-lg hover:-translate-y-1 transition-all block"
     >
       <div className="text-center">
         {member.avatar_url ? (
@@ -82,10 +82,10 @@ const MemberCard = ({ member }: any) => {
             {initials}
           </div>
         )}
-        <h3 className="font-semibold text-gray-900">{member.display_name}</h3>
-        <p className="text-sm text-gray-600 line-clamp-2 mt-1">{member.headline}</p>
+        <h3 className="font-semibold text-neutral-900">{member.display_name}</h3>
+        <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{member.headline}</p>
         {member.location && (
-          <p className="text-xs text-gray-400 mt-1">{member.location}</p>
+          <p className="text-xs text-neutral-400 mt-1">{member.location}</p>
         )}
         {member.expertise_areas?.length > 0 && (
           <div className="flex flex-wrap gap-1 justify-center mt-2">
@@ -104,7 +104,7 @@ const MemberCard = ({ member }: any) => {
 const FeedSection = ({ type, feed, hubName }: any) => {
   const config: Record<string, { emoji: string; title: string; bgClass: string }> = {
     connect: { emoji: '🔗', title: 'CONNECT IN', bgClass: 'bg-white' },
-    convene: { emoji: '📅', title: 'CONVENE IN', bgClass: 'bg-gray-50' },
+    convene: { emoji: '📅', title: 'CONVENE IN', bgClass: 'bg-neutral-50' },
     collaborate: { emoji: '🤝', title: 'COLLABORATE IN', bgClass: 'bg-white' },
   };
   const { emoji, title, bgClass } = config[type] || { emoji: '📋', title: type.toUpperCase(), bgClass: 'bg-white' };
@@ -120,15 +120,15 @@ const FeedSection = ({ type, feed, hubName }: any) => {
             {type === 'connect'
               ? feed.items.map((member: any) => <MemberCard key={member.id} member={member} />)
               : feed.items.map((item: any) => (
-                  <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition-shadow">
-                    <h3 className="font-semibold text-gray-900">{item.title || item.display_name}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{item.description_short || item.headline}</p>
+                  <div key={item.id} className="bg-white rounded-lg border border-neutral-200 p-5 hover:shadow-md transition-shadow">
+                    <h3 className="font-semibold text-neutral-900">{item.title || item.display_name}</h3>
+                    <p className="text-sm text-neutral-600 mt-1">{item.description_short || item.headline}</p>
                   </div>
                 ))
             }
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-neutral-400">
             No {type} items yet. Be the first to add one!
           </div>
         )}
@@ -138,7 +138,7 @@ const FeedSection = ({ type, feed, hubName }: any) => {
 };
 
 const BackToRegion = ({ regionSlug, regionName }: any) => (
-  <div className="bg-gray-100 py-3">
+  <div className="bg-neutral-100 py-3">
     <div className="max-w-6xl mx-auto px-4">
       <a href={`/africa/${regionSlug}`} className="text-emerald-600 hover:underline text-sm">
         ← Back to {regionName || 'Region'}
@@ -149,9 +149,9 @@ const BackToRegion = ({ regionSlug, regionName }: any) => (
 
 const HubSkeleton = () => (
   <div className="animate-pulse">
-    <div className="h-[50vh] bg-gray-200" />
-    <div className="h-24 bg-gray-100" />
-    <div className="h-32 bg-gray-50" />
+    <div className="h-[50vh] bg-neutral-200" />
+    <div className="h-24 bg-neutral-100" />
+    <div className="h-32 bg-neutral-50" />
     <div className="h-64 bg-white" />
   </div>
 );
@@ -160,7 +160,7 @@ const HubError = ({ error }: any) => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
       <h1 className="text-2xl font-bold text-red-600 mb-2">Error Loading Country</h1>
-      <p className="text-gray-500">{error?.message || 'Something went wrong'}</p>
+      <p className="text-neutral-500">{error?.message || 'Something went wrong'}</p>
       <a href="/" className="text-emerald-600 hover:underline mt-4 inline-block">
         ← Back to Africa
       </a>

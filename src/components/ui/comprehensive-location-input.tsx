@@ -25,7 +25,7 @@ const ComprehensiveLocationInput: React.FC<ComprehensiveLocationInputProps> = ({
   return (
     <div className="space-y-2">
       {showLabel && label && (
-        <label htmlFor={id} className="text-sm font-medium text-gray-700">
+        <label htmlFor={id} className="text-sm font-medium text-neutral-700">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>

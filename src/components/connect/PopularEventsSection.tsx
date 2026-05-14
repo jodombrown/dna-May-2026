@@ -26,10 +26,10 @@ const PopularEventsSection: React.FC<PopularEventsSectionProps> = ({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900">
+          <h3 className="text-2xl font-bold text-neutral-900">
             Popular Events ({events.length})
           </h3>
-          <p className="text-gray-600">Trending events in your network</p>
+          <p className="text-neutral-600">Trending events in your network</p>
         </div>
         <Button 
           variant="ghost" 

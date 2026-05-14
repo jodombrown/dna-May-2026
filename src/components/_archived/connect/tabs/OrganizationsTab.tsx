@@ -47,7 +47,7 @@ const OrganizationsTab: React.FC<OrganizationsTabProps> = ({ searchTerm }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <p className="text-gray-600">
+        <p className="text-neutral-600">
           Showing {organizations.length} organizations {searchTerm && `matching "${searchTerm}"`}
         </p>
         <div className="flex gap-2">
@@ -74,7 +74,7 @@ const OrganizationsTab: React.FC<OrganizationsTabProps> = ({ searchTerm }) => {
                       <Badge variant="outline" className="mb-2">
                         {org.type}
                       </Badge>
-                      <div className="flex items-center gap-1 text-sm text-gray-600">
+                      <div className="flex items-center gap-1 text-sm text-neutral-600">
                         <MapPin className="w-4 h-4" />
                         <span>{org.location}</span>
                       </div>
@@ -94,10 +94,10 @@ const OrganizationsTab: React.FC<OrganizationsTabProps> = ({ searchTerm }) => {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <p className="text-gray-700">{org.description}</p>
+              <p className="text-neutral-700">{org.description}</p>
               
               <div>
-                <div className="text-sm font-medium text-gray-700 mb-2">Focus Areas</div>
+                <div className="text-sm font-medium text-neutral-700 mb-2">Focus Areas</div>
                 <div className="flex flex-wrap gap-2">
                   {org.focusAreas.map((area, index) => (
                     <Badge key={index} className="bg-dna-emerald/20 text-dna-emerald">

@@ -18,8 +18,8 @@ const LocalEventsSection: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-2xl font-bold text-gray-900">Explore Local Events</h3>
-        <p className="text-gray-600">See what's happening in major cities and diaspora hubs</p>
+        <h3 className="text-2xl font-bold text-neutral-900">Explore Local Events</h3>
+        <p className="text-neutral-600">See what's happening in major cities and diaspora hubs</p>
       </div>
 
       <div className="relative px-12">
@@ -46,21 +46,21 @@ const LocalEventsSection: React.FC = () => {
                            <div className="flex flex-col items-center space-y-4">
                              {/* Flag and Country Visual */}
                              <div className="relative">
-                               <div className="w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                               <div className="w-14 h-14 bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-sm">
                                  <span className="text-2xl">{location.flag}</span>
                                </div>
                              </div>
                              
                              {/* City and Country Names */}
                              <div className="text-center space-y-1">
-                               <h4 className="font-semibold text-gray-900 text-sm">{location.city}</h4>
-                               <p className="text-xs text-gray-600">{location.country}</p>
+                               <h4 className="font-semibold text-neutral-900 text-sm">{location.city}</h4>
+                               <p className="text-xs text-neutral-600">{location.country}</p>
                              </div>
                              
                              {/* Event Count with Icon */}
-                             <div className="flex items-center gap-1 px-3 py-1 bg-gray-50 rounded-full">
+                             <div className="flex items-center gap-1 px-3 py-1 bg-neutral-50 rounded-full">
                                <Calendar className="w-3 h-3 text-dna-emerald" />
-                               <p className="text-xs font-medium text-gray-700">{location.count} Events</p>
+                               <p className="text-xs font-medium text-neutral-700">{location.count} Events</p>
                              </div>
                            </div>
                          </CardContent>

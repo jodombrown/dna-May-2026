@@ -24,6 +24,9 @@ export const MentionAutocomplete = ({
     startPos: number;
   } | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const selectedIndexRef = useRef(0);
+  const suggestionsRef = useRef<MentionSuggestion[]>([]);
+  const lastQueryRef = useRef<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Detect @ trigger and extract query
@@ -59,7 +62,13 @@ export const MentionAutocomplete = ({
       query: afterAt,
       startPos: lastAtIndex,
     });
-    setSelectedIndex(0);
+    // Only reset selection when the query actually changes, so caret moves
+    // inside the same query (clicks, arrow-left/right) don't fight navigation.
+    if (lastQueryRef.current !== afterAt) {
+      setSelectedIndex(0);
+      selectedIndexRef.current = 0;
+      lastQueryRef.current = afterAt;
+    }
   }, [text, cursorPosition]);
 
   const { data: suggestions = [] } = useMentionAutocomplete(
@@ -67,28 +76,47 @@ export const MentionAutocomplete = ({
     !!mentionTrigger
   );
 
-  // Handle keyboard navigation
+  // Keep refs in sync so the (capture-phase) keydown handler always sees the
+  // latest selection without needing to re-bind on every keystroke.
+  useEffect(() => { selectedIndexRef.current = selectedIndex; }, [selectedIndex]);
+  useEffect(() => { suggestionsRef.current = suggestions; }, [suggestions]);
+
+  // Handle keyboard navigation. Bound to the textarea (not document) so that
+  // it always wins against other global listeners and stays in sync with the
+  // caret. Capture phase ensures we run before the textarea's own handlers.
   useEffect(() => {
-    if (!mentionTrigger || suggestions.length === 0) return;
+    if (!mentionTrigger) return;
+    const ta = textareaRef.current;
+    if (!ta) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      const list = suggestionsRef.current;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        setMentionTrigger(null);
+        return;
+      }
+      if (list.length === 0) return;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelectedIndex(prev => (prev + 1) % suggestions.length);
+        e.stopPropagation();
+        setSelectedIndex((prev) => (prev + 1) % list.length);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedIndex(prev => (prev - 1 + suggestions.length) % suggestions.length);
-      } else if (e.key === 'Enter' && suggestions.length > 0) {
+        e.stopPropagation();
+        setSelectedIndex((prev) => (prev - 1 + list.length) % list.length);
+      } else if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault();
-        handleSelectMention(suggestions[selectedIndex]);
-      } else if (e.key === 'Escape') {
-        setMentionTrigger(null);
+        e.stopPropagation();
+        const pick = list[selectedIndexRef.current] ?? list[0];
+        if (pick) handleSelectMention(pick);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [mentionTrigger, suggestions, selectedIndex]);
+    ta.addEventListener('keydown', handleKeyDown, true);
+    return () => ta.removeEventListener('keydown', handleKeyDown, true);
+  }, [mentionTrigger, textareaRef]);
 
   const handleSelectMention = (mention: MentionSuggestion) => {
     if (!mentionTrigger) return;

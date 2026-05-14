@@ -9,8 +9,8 @@ const PrototypeNotice: React.FC = () => {
         <div className="flex items-start gap-3">
           <Info className="w-5 h-5 text-dna-emerald mt-0.5 flex-shrink-0" />
           <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Platform Preview - Prototype Stage</h3>
-            <p className="text-sm text-gray-700">
+            <h3 className="font-semibold text-neutral-900 mb-1">Platform Preview - Prototype Stage</h3>
+            <p className="text-sm text-neutral-700">
               Welcome to a preview of our Connect experience! What you see below represents our vision for how diaspora professionals will discover and network with each other once the DNA platform is fully built. This prototype demonstrates the seamless connection capabilities we're developing to unite the African diaspora globally.
             </p>
           </div>

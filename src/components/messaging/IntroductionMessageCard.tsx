@@ -11,9 +11,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { User, MessageCircle, Sparkles } from 'lucide-react';
-import dnaLogo from '@/assets/dna-logo.png';
+import { User, MessageCircle } from 'lucide-react';
+import dnaLogo from '@/assets/dna-logo.webp';
 import africaIcon from '@/assets/africa-icon.png';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const KENTE_PATTERN = `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C4942A' stroke-width='1'%3E%3Cpath d='M0 20h40M20 0v40M0 0h40v40H0z'/%3E%3Crect x='5' y='5' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3Crect x='25' y='25' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E")`;
 
@@ -70,7 +71,7 @@ export function IntroductionMessageCard({
   return (
     <div className="w-full max-w-sm mx-auto my-2">
       <div
-        className="rounded-2xl overflow-hidden shadow-lg border border-border/30"
+        className="rounded-lg overflow-hidden shadow-lg border border-border/30"
         style={{
           backgroundImage: KENTE_PATTERN,
           backgroundColor: 'hsl(var(--background))',
@@ -88,11 +89,11 @@ export function IntroductionMessageCard({
             <div className="flex flex-col items-center pt-5 pb-2">
               <img src={dnaLogo} alt="DNA" className="h-10 w-auto mb-2" />
               <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--dna-gold))]" />
+                <MateMasie className="w-3.5 h-3.5 text-[hsl(var(--dna-gold))]" />
                 <span className="text-sm font-bold text-foreground font-display">
                   You've been introduced!
                 </span>
-                <Sparkles className="w-3.5 h-3.5 text-[hsl(var(--dna-gold))]" />
+                <MateMasie className="w-3.5 h-3.5 text-[hsl(var(--dna-gold))]" />
               </div>
             </div>
 

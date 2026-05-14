@@ -172,7 +172,7 @@ const ProfileContributionsSectionImpl: React.FC<ProfileContributionsSectionProps
       case 'offer':
         return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
       case 'badge':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+        return 'bg-copper-100 text-copper-800 dark:bg-copper-900 dark:text-copper-200';
     }
   };
 

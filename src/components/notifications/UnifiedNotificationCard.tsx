@@ -6,7 +6,7 @@
  * with visually distinct treatment.
  *
  * DIA notifications feature:
- * - Sparkles icon with module accent color
+ * - MateMasie icon with module accent color
  * - "DIA * MODULE" label in accent color
  * - Left accent border (3px)
  * - Subtle background tint at 3% opacity
@@ -23,37 +23,10 @@ import { formatDistanceToNow } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import {
-  UserPlus,
-  Heart,
-  MessageCircle,
-  Mail,
-  Calendar,
-  Users,
-  Bell,
-  SmilePlus,
-  AtSign,
-  Repeat2,
-  Eye,
-  Sparkles,
-  X,
-  UserCheck,
-  AlertCircle,
-  Target,
-  Clock,
-  TrendingUp,
-  CheckCircle,
-  Star,
-  Share2,
-  BookOpen,
-  User,
-  Award,
-  MessageSquare,
-  CalendarCheck,
-  Lightbulb,
-} from 'lucide-react';
+import { UserPlus, Heart, MessageCircle, Mail, Calendar, Users, Bell, SmilePlus, AtSign, Repeat2, Eye, X, UserCheck, AlertCircle, Target, Clock, TrendingUp, CheckCircle, Star, Share2, BookOpen, User, Award, MessageSquare, CalendarCheck, Lightbulb } from 'lucide-react';
 import type { UnifiedNotification } from '@/services/unifiedNotificationService';
 import type { DIACardCategory } from '@/services/diaCardService';
+import { MateMasie } from '@/components/icons/adinkra';
 
 // ============================================================
 // ICON REGISTRIES
@@ -73,7 +46,7 @@ const PLATFORM_ICON_MAP: Record<string, React.ReactNode> = {
   event_invite: <Calendar className="h-4 w-4" />,
   event_reminder: <Calendar className="h-4 w-4" />,
   group_invite: <Users className="h-4 w-4" />,
-  feedback_status_change: <Sparkles className="h-4 w-4" />,
+  feedback_status_change: <MateMasie className="h-4 w-4" />,
   system: <Bell className="h-4 w-4" />,
 };
 
@@ -93,7 +66,7 @@ const DIA_ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   Award,
   MessageSquare,
   Users,
-  Sparkles,
+  MateMasie,
   Lightbulb,
 };
 
@@ -103,11 +76,11 @@ const PLATFORM_ICON_BG: Record<string, string> = {
   post_like: 'bg-rose-500',
   reaction: 'bg-rose-500',
   mention: 'bg-blue-500',
-  reshare: 'bg-purple-500',
+  reshare: 'bg-copper-500',
   profile_view: 'bg-amber-500',
   post_comment: 'bg-sky-500',
   comment_reply: 'bg-sky-500',
-  new_message: 'bg-indigo-500',
+  new_message: 'bg-copper-500',
   event_invite: 'bg-[#C4942A]',
   event_reminder: 'bg-[#C4942A]',
   group_invite: 'bg-[#2D5A3D]',
@@ -319,7 +292,7 @@ function DiaNotificationCard({
           className="flex items-center justify-center w-5 h-5 rounded-full"
           style={{ backgroundColor: `${accentColor}20` }}
         >
-          <Sparkles className="w-2.5 h-2.5" style={{ color: accentColor }} />
+          <MateMasie className="w-2.5 h-2.5" style={{ color: accentColor }} />
         </div>
         <span
           className="text-[10px] font-bold tracking-widest"

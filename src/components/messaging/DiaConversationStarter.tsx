@@ -6,8 +6,9 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Sparkles, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DiaConversationStarterProps {
   otherUserId: string;
@@ -100,7 +101,7 @@ export function DiaConversationStarter({
       )}
       onClick={onClick}
     >
-    <Sparkles className="h-3 w-3 text-primary flex-shrink-0" />
+    <MateMasie className="h-3 w-3 text-primary flex-shrink-0" />
       <span className="text-[11px] text-primary truncate">
         💡 {suggestion}
       </span>

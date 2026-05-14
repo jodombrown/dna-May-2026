@@ -4,22 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  BookOpen, Heart, Lightbulb, Users, PenSquare, Sparkles,
-  Newspaper, Camera, Megaphone, Target, ChevronDown,
-  Flame, Star, Filter
-} from 'lucide-react';
+import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter } from 'lucide-react';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
-import { Badge } from '@/components/ui/badge';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 import { useMobile } from '@/hooks/useMobile';
 import { STORY_TYPE_CONFIG, type StoryType } from '@/types/storyTypes';
 import { cn } from '@/lib/utils';
+import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
+import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { useInfiniteUniversalFeed } from '@/hooks/useInfiniteUniversalFeed';
 import { ConveyTrendingSection } from '@/components/convey/ConveyTrendingSection';
 import { ConveyEditorialCard } from '@/components/convey/ConveyEditorialCards';
-import { ConveyCategorySection, ConveyDiscussionPrompt, ConveyMiniCard } from '@/components/convey/ConveyCategorySection';
+import { ConveyCategorySection, ConveyMiniCard } from '@/components/convey/ConveyCategorySection';
 import { DiaContextual } from '@/components/dia';
 
 // ─── CONVEY Editorial Tabs ───────────────────────────────────────────
@@ -52,7 +50,7 @@ function tabToFeedParams(tab: ConveyTab, userId?: string) {
 
 // Category pills for story type filtering
 const categoryPills = [
-  { id: 'all' as const, label: 'All', icon: Sparkles },
+  { id: 'all' as const, label: 'All', icon: Mpatapo },
   { id: 'impact' as StoryType, label: 'Impact', icon: Target },
   { id: 'update' as StoryType, label: 'Updates', icon: Megaphone },
   { id: 'spotlight' as StoryType, label: 'Spotlights', icon: Star },
@@ -145,7 +143,9 @@ export default function ConveyStoryHub() {
   const [selectedCategory, setSelectedCategory] = useState<StoryType | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const composer = useUniversalComposer();
-  const { isMobile, isTablet } = useMobile();
+  const { isMobile } = useMobile();
+  const mobileHeaderRef = useRef<HTMLDivElement>(null);
+  const mobileHeaderPadding = useMobileHeaderHeight(mobileHeaderRef);
 
   // Derive feed params from editorial tab
   const feedParams = tabToFeedParams(activeTab, user?.id);
@@ -165,42 +165,61 @@ export default function ConveyStoryHub() {
     rankingMode: 'latest',
   });
 
-  // Filter stories by category
+  // Filter stories by category. Defensive: enforce post_type === 'story'
+  // AND a non-empty story_type. Anything else is logged once and excluded.
   const filteredStories = useMemo(() => {
-    let result = stories;
+    const valid: typeof stories = [];
+    const rejected: Array<{ id: string; reason: string; post_type?: string; story_type?: string | null }> = [];
+    for (const s of stories) {
+      const isStoryPost = (s as { post_type?: string }).post_type === 'story';
+      if (!isStoryPost) {
+        rejected.push({ id: s.post_id, reason: 'post_type!=story', post_type: (s as { post_type?: string }).post_type, story_type: s.story_type ?? null });
+        continue;
+      }
+      if (!s.story_type) {
+        rejected.push({ id: s.post_id, reason: 'missing story_type', post_type: 'story', story_type: null });
+        continue;
+      }
+      valid.push(s);
+    }
+    if (rejected.length > 0 && import.meta.env.DEV) {
+      console.warn('[ConveyStoryHub] excluded non-story items from story grid', rejected);
+    }
+    let result = valid;
     if (selectedCategory !== 'all') {
       result = result.filter((s) => s.story_type === selectedCategory);
     }
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (s) =>
-          s.content?.toLowerCase().includes(query) ||
-          s.author_display_name?.toLowerCase().includes(query)
-      );
+    const q = searchQuery.trim().toLowerCase();
+    if (q.length > 0) {
+      result = result.filter((s) => {
+        const title = (s.title ?? '').toLowerCase();
+        const subtitle = (s.subtitle ?? '').toLowerCase();
+        const content = (s.content ?? '').toLowerCase();
+        return title.includes(q) || subtitle.includes(q) || content.includes(q);
+      });
     }
     return result;
   }, [stories, selectedCategory, searchQuery]);
 
-  // Get trending stories (top engaged)
+  // Get trending stories (top engaged) — restricted to validated story items.
   const trendingStories = useMemo(() => {
-    return [...stories]
+    return [...filteredStories]
       .sort((a, b) => (b.like_count || 0) - (a.like_count || 0))
       .slice(0, 4);
-  }, [stories]);
+  }, [filteredStories]);
 
-  // Group by story_type for sections
-  const impactStories = stories.filter((s) => s.story_type === 'impact').slice(0, 3);
-  const spotlightStories = stories.filter((s) => s.story_type === 'spotlight').slice(0, 4);
-  const updateStories = stories.filter((s) => s.story_type === 'update').slice(0, 4);
+  // Group by story_type for sections (validated set only)
+  const impactStories = filteredStories.filter((s) => s.story_type === 'impact').slice(0, 3);
+  const spotlightStories = filteredStories.filter((s) => s.story_type === 'spotlight').slice(0, 4);
+  const updateStories = filteredStories.filter((s) => s.story_type === 'update').slice(0, 4);
 
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-background to-muted/20">
-        <div className="p-4 rounded-2xl bg-dna-gold/10 mb-6">
+        <div className="p-4 rounded-lg bg-dna-gold/10 mb-6">
           <BookOpen className="h-12 w-12 text-dna-gold" />
         </div>
-        <h1 className="text-3xl font-bold mb-3">Stories from the Diaspora</h1>
+        <h1 className="text-h1 font-serif mb-3">Stories from the Diaspora</h1>
         <p className="text-muted-foreground mb-8 max-w-md">
           Discover inspiring narratives, share your journey, and connect through the power of storytelling.
         </p>
@@ -391,7 +410,7 @@ export default function ConveyStoryHub() {
           {/* Curated tab header */}
           {activeTab === 'curated' && (
             <p className="text-xs text-muted-foreground italic flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3 text-dna-forest" />
+              <Mpatapo className="h-3 w-3 text-dna-forest" />
               Selected by DIA based on your diaspora profile and engagement
             </p>
           )}
@@ -399,7 +418,7 @@ export default function ConveyStoryHub() {
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-64 rounded-2xl bg-muted animate-pulse" />
+                <div key={i} className="h-64 rounded-lg bg-muted animate-pulse" />
               ))}
             </div>
           ) : filteredStories.length === 0 ? (
@@ -531,7 +550,25 @@ export default function ConveyStoryHub() {
 
   return (
     <>
-      <div className="min-h-screen bg-background pb-bottom-nav md:pb-0">
+      {isMobile && (
+        <div
+          ref={mobileHeaderRef}
+          className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border md:hidden"
+        >
+          <DnaMobileHeader
+            bubble={{
+              kind: 'search',
+              placeholder: 'Search stories...',
+              value: searchQuery,
+              onChange: setSearchQuery,
+            }}
+          />
+        </div>
+      )}
+      <div
+        className="min-h-screen bg-background pb-bottom-nav md:pb-0"
+        style={isMobile ? { paddingTop: mobileHeaderPadding || 56 } : undefined}
+      >
         <LayoutController
           leftColumn={leftColumn}
           centerColumn={centerColumn}

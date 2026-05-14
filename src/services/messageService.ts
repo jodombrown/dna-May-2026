@@ -176,8 +176,74 @@ async getConversationDetails(conversationId: string): Promise<ConversationListIt
   },
 
   /**
-   * Get all conversations for the current user
+   * Unified inbox via SECURITY DEFINER RPC `get_inbox_for_user`.
+   * Returns both 1:1 and group conversations in one query, with last message
+   * preview, unread count, and per-user pin/mute/archive flags.
    */
+  async getInbox(
+    limit: number = 100,
+    offset: number = 0,
+    includeArchived: boolean = false,
+  ): Promise<ConversationListItem[]> {
+    const { data, error } = await supabase.rpc('get_inbox_for_user', {
+      p_limit: limit,
+      p_offset: offset,
+      p_include_archived: includeArchived,
+    });
+    if (error) throw error;
+    type InboxRow = {
+      conversation_id: string;
+      is_group: boolean;
+      other_user_id: string | null;
+      other_user_username: string | null;
+      other_user_full_name: string | null;
+      other_user_avatar_url: string | null;
+      group_title: string | null;
+      group_avatar_url: string | null;
+      participant_count: number | null;
+      last_message_preview: string | null;
+      last_message_at: string | null;
+      last_sender_name: string | null;
+      unread_count: number | null;
+      is_pinned: boolean | null;
+      is_muted: boolean | null;
+      is_archived: boolean | null;
+      bucket: string | null;
+    };
+    const rows = (data as InboxRow[] | null) ?? [];
+    return rows.map<ConversationListItem>((r) => {
+      const bucket =
+        r.bucket === 'requests' || r.bucket === 'spam' || r.bucket === 'primary'
+          ? r.bucket
+          : 'primary';
+      return {
+        conversation_id: r.conversation_id,
+        conversation_type: r.is_group ? 'group' : 'direct',
+        other_user_id: r.other_user_id ?? '',
+        other_user_username: r.other_user_username ?? '',
+        other_user_full_name: r.is_group
+          ? r.group_title ?? 'Group'
+          : r.other_user_full_name ?? 'Unknown User',
+        other_user_avatar_url: r.is_group
+          ? r.group_avatar_url ?? ''
+          : r.other_user_avatar_url ?? '',
+        last_message_content: r.last_message_preview,
+        last_message_preview: r.last_message_preview ?? undefined,
+        last_message_at: r.last_message_at,
+        unread_count: r.unread_count ?? 0,
+        is_muted: !!r.is_muted,
+        is_pinned: !!r.is_pinned,
+        is_archived: !!r.is_archived,
+        bucket,
+        is_group: r.is_group,
+        group_title: r.is_group ? r.group_title ?? 'Group' : undefined,
+        group_avatar_url: r.is_group ? r.group_avatar_url ?? undefined : undefined,
+        participant_count: r.is_group ? Number(r.participant_count) || 0 : undefined,
+      } as ConversationListItem;
+    });
+  },
+
+
 async getConversations(
     limit: number = 50,
     _offset: number = 0,
@@ -189,7 +255,7 @@ async getConversations(
     // Get all conversations where user is participant with all state fields
     const { data: conversations, error } = await supabase
       .from('conversations')
-      .select('id, user_a, user_b, last_message_at, is_archived_by_a, is_archived_by_b, is_muted_by_a, is_muted_by_b, is_pinned_by_a, is_pinned_by_b, deleted_by_a, deleted_by_b')
+      .select('id, user_a, user_b, last_message_at, is_archived_by_a, is_archived_by_b, is_muted_by_a, is_muted_by_b, is_pinned_by_a, is_pinned_by_b, deleted_by_a, deleted_by_b, bucket_for_a, bucket_for_b')
       .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
       .order('last_message_at', { ascending: false, nullsFirst: false })
       .limit(limit);
@@ -266,6 +332,8 @@ async getConversations(
         unreadCount = count || 0;
       }
 
+      const rawBucket = isUserA ? (conv as { bucket_for_a?: string }).bucket_for_a : (conv as { bucket_for_b?: string }).bucket_for_b;
+      const bucket = (rawBucket === 'requests' || rawBucket === 'spam' || rawBucket === 'primary') ? rawBucket : 'primary';
       result.push({
         conversation_id: conv.id,
         other_user_id: otherUserId,
@@ -278,6 +346,7 @@ async getConversations(
         is_muted: isUserA ? (conv.is_muted_by_a ?? false) : (conv.is_muted_by_b ?? false),
         is_pinned: isUserA ? (conv.is_pinned_by_a ?? false) : (conv.is_pinned_by_b ?? false),
         is_archived: isUserA ? (conv.is_archived_by_a ?? false) : (conv.is_archived_by_b ?? false),
+        bucket,
       });
     }
 
@@ -306,7 +375,7 @@ async getConversations(
     // Note: deleted_at may not exist if migration hasn't been applied yet
     const { data: messages, error } = await supabase
       .from('messages')
-      .select('id, conversation_id, sender_id, content, read, created_at, payload')
+      .select('id, conversation_id, sender_id, content, read, created_at, payload, edited_at, deleted_at, forwarded_from_message_id')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true })
       .limit(limit);
@@ -335,7 +404,9 @@ async getConversations(
       message_id: m.id,
       content: m.content,
       created_at: m.created_at,
-      is_deleted: false, // Default to false - soft delete handled separately if column exists
+      is_deleted: !!(m as { deleted_at?: string | null }).deleted_at,
+      edited_at: (m as { edited_at?: string | null }).edited_at ?? null,
+      forwarded_from_message_id: (m as { forwarded_from_message_id?: string | null }).forwarded_from_message_id ?? null,
       sender_id: m.sender_id,
       sender_username: profileMap.get(m.sender_id)?.username || '',
       sender_full_name: profileMap.get(m.sender_id)?.full_name || 'Unknown',
@@ -354,7 +425,8 @@ async getConversations(
     attachment?: MessageAttachmentData,
     linkPreview?: LinkPreviewData,
     replyTo?: ReplyToData,
-    entityReference?: EntityReferenceData
+    entityReference?: EntityReferenceData,
+    clientId?: string,
   ): Promise<Message> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -373,12 +445,13 @@ async getConversations(
     } : null;
 
     // Insert message with properly typed payload
-    const insertData: MessageInsert = {
+    const insertData: MessageInsert & { client_id?: string } = {
       conversation_id: conversationId,
       sender_id: user.id,
       content: content?.trim() || '',
       read: false,
       payload: payload as Json | null,
+      ...(clientId ? { client_id: clientId } : {}),
     };
 
     const { data, error } = await supabase
@@ -477,21 +550,24 @@ async getConversations(
    */
   async markAsRead(conversationId: string): Promise<void> {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return; // Silently return if not authenticated
-    }
+    if (!user) return;
 
-    // Only update existing participant records - don't try to insert
-    // (legacy conversations use the old 'conversations' table without conversation_participants)
-    const { error: updateError } = await supabase
-      .from('conversation_participants')
-      .update({ last_read_at: new Date().toISOString() })
-      .eq('conversation_id', conversationId)
-      .eq('user_id', user.id);
+    // Prefer the RPC: bumps last_read_at AND fills read_at on per-recipient receipts
+    const { error: rpcError } = await supabase.rpc('mark_conversation_read', {
+      _conversation_id: conversationId,
+    });
 
-    // Silently ignore errors - this handles legacy conversations gracefully
-    if (updateError) {
-      logger.debug('messageService', 'markAsRead skipped for legacy conversation', conversationId);
+    if (rpcError) {
+      // Fallback for legacy conversations
+      const { error: updateError } = await supabase
+        .from('conversation_participants')
+        .update({ last_read_at: new Date().toISOString() })
+        .eq('conversation_id', conversationId)
+        .eq('user_id', user.id);
+
+      if (updateError) {
+        logger.debug('messageService', 'markAsRead skipped for legacy conversation', conversationId);
+      }
     }
   },
 
@@ -544,6 +620,129 @@ async getConversations(
       .eq('sender_id', user.id);
 
     if (error) throw error;
+  },
+
+  /**
+   * Edit a message's text content. Allowed within 15 minutes by sender only.
+   */
+  async editMessage(messageId: string, newContent: string): Promise<void> {
+    const trimmed = (newContent || '').trim();
+    if (!trimmed) throw new Error('Message cannot be empty');
+    const { error } = await supabase.rpc('edit_message', {
+      p_message_id: messageId,
+      p_new_content: trimmed,
+    });
+    if (error) throw error;
+  },
+
+  /**
+   * Unsend (soft delete) a message. Sender only.
+   */
+  async unsendMessage(messageId: string): Promise<void> {
+    const { error } = await supabase.rpc('unsend_message', {
+      p_message_id: messageId,
+    });
+    if (error) throw error;
+  },
+
+  /**
+   * Forward a message into another conversation. Re-sends the content
+   * and attachment with a forwarded_from_message_id reference.
+   */
+  async forwardMessage(
+    sourceMessageId: string,
+    targetConversationId: string,
+    optionalNote?: string,
+  ): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data: source, error: srcErr } = await supabase
+      .from('messages')
+      .select('content, payload')
+      .eq('id', sourceMessageId)
+      .single();
+    if (srcErr) throw srcErr;
+
+    const sourcePayload = (source?.payload ?? {}) as MessagePayload | null;
+    const payload: MessagePayload & Record<string, unknown> = {
+      ...(sourcePayload || {}),
+      attachment: sourcePayload?.attachment,
+      linkPreview: sourcePayload?.linkPreview,
+      entityReference: sourcePayload?.entityReference,
+      replyTo: undefined,
+    };
+
+    const insertData: MessageInsert & { forwarded_from_message_id?: string } = {
+      conversation_id: targetConversationId,
+      sender_id: user.id,
+      content: source?.content || '',
+      read: false,
+      payload: payload as Json,
+      forwarded_from_message_id: sourceMessageId,
+    };
+
+    const { error: insertErr } = await supabase.from('messages').insert(insertData);
+    if (insertErr) throw insertErr;
+
+    if (optionalNote && optionalNote.trim()) {
+      await this.sendMessage(targetConversationId, optionalNote.trim());
+    } else {
+      await supabase
+        .from('conversations')
+        .update({ last_message_at: new Date().toISOString() })
+        .eq('id', targetConversationId);
+    }
+  },
+
+  /**
+   * Toggle a star on a message for the current user.
+   */
+  async toggleStar(messageId: string, conversationId: string): Promise<{ starred: boolean }> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data: existing } = await supabase
+      .from('starred_messages')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('message_id', messageId)
+      .maybeSingle();
+
+    if (existing) {
+      const { error } = await supabase
+        .from('starred_messages')
+        .delete()
+        .eq('id', existing.id);
+      if (error) throw error;
+      return { starred: false };
+    }
+
+    const { error } = await supabase.from('starred_messages').insert({
+      user_id: user.id,
+      message_id: messageId,
+      conversation_id: conversationId,
+    });
+    if (error) throw error;
+    return { starred: true };
+  },
+
+  /**
+   * Get starred message ids for the current user (optionally scoped to a conversation).
+   */
+  async getStarredMessageIds(conversationId?: string): Promise<string[]> {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    let q = supabase
+      .from('starred_messages')
+      .select('message_id')
+      .eq('user_id', user.id);
+    if (conversationId) q = q.eq('conversation_id', conversationId);
+
+    const { data, error } = await q;
+    if (error) throw error;
+    return (data ?? []).map((r) => r.message_id as string);
   },
 
   /**
@@ -846,6 +1045,24 @@ async getConversations(
       .update({ [updateField]: true })
       .eq('id', conversationId);
 
+    if (error) throw error;
+  },
+
+  /**
+   * Set the current user's bucket on a conversation (primary | requests | spam).
+   * Powers Accept / Ignore in the Requests tab.
+   */
+  async setConversationBucket(
+    conversationId: string,
+    bucket: 'primary' | 'requests' | 'spam'
+  ): Promise<void> {
+    const { error } = await (supabase.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>
+    ) => Promise<{ error: unknown }>)('set_conversation_bucket', {
+      _conversation_id: conversationId,
+      _bucket: bucket,
+    });
     if (error) throw error;
   },
 

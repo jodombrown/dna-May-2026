@@ -50,7 +50,7 @@ export default function LocationTypeahead({
       case 'local': return 'text-blue-600';
       case 'regional': return 'text-green-600';
       case 'international': return 'text-orange-600';
-      case 'global': return 'text-purple-600';
+      case 'global': return 'text-copper-600';
     }
   };
 

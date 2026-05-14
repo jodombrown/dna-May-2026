@@ -8,28 +8,13 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Check,
-  ChevronDown,
-  ChevronUp,
-  X,
-  Camera,
-  FileText,
-  MapPin,
-  User,
-  Wrench,
-  Layers,
-  Users,
-  Calendar,
-  Rocket,
-  Eye,
-  Megaphone,
-} from 'lucide-react';
+import { Check, ChevronDown, ChevronUp, X, Camera, FileText, MapPin, User, Wrench, Layers, Users, Calendar, Eye, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useProfileCompletion, type ProfileStep } from '@/hooks/useProfileCompletion';
 import { useMobile } from '@/hooks/useMobile';
+import { Sankofa } from '@/components/icons/adinkra';
 
 const STEP_ICONS: Record<string, typeof Camera> = {
   photo: Camera,
@@ -40,7 +25,7 @@ const STEP_ICONS: Record<string, typeof Camera> = {
   sectors: Layers,
   first_connection: Users,
   first_event: Calendar,
-  first_space: Rocket,
+  first_space: Sankofa,
   first_opportunity: Eye,
   first_post: Megaphone,
 };
@@ -114,7 +99,7 @@ export function ProfileCompletionGuide() {
         className={cn(
           'fixed bottom-6 right-6 z-30',
           'flex items-center gap-2 px-4 py-2',
-          'bg-white border border-gray-200 rounded-full shadow-lg',
+          'bg-white border border-neutral-200 rounded-full shadow-lg',
           'hover:shadow-xl transition-all duration-200',
           'text-sm font-medium'
         )}
@@ -125,12 +110,12 @@ export function ProfileCompletionGuide() {
             background: `conic-gradient(#2F5233 ${completionPercentage * 3.6}deg, #e5e7eb ${completionPercentage * 3.6}deg)`,
           }}
         >
-          <span className="h-4 w-4 rounded-full bg-white flex items-center justify-center text-[10px] text-gray-700">
+          <span className="h-4 w-4 rounded-full bg-white flex items-center justify-center text-[10px] text-neutral-700">
             {completionPercentage}
           </span>
         </div>
         Profile: {completionPercentage}%
-        <ChevronUp className="h-3 w-3 text-gray-400" />
+        <ChevronUp className="h-3 w-3 text-neutral-400" />
       </button>
     );
   }
@@ -145,13 +130,13 @@ export function ProfileCompletionGuide() {
       className={cn(
         'fixed bottom-6 right-6 z-30',
         'w-80 max-h-[70vh]',
-        'bg-white border border-gray-200 rounded-xl shadow-xl',
+        'bg-white border border-neutral-200 rounded-xl shadow-xl',
         'flex flex-col',
         'animate-slide-up'
       )}
     >
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 flex-shrink-0">
+      <div className="p-4 border-b border-neutral-100 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-semibold text-foreground">
             Your DNA Profile
@@ -159,17 +144,17 @@ export function ProfileCompletionGuide() {
           <div className="flex items-center gap-1">
             <button
               onClick={handleToggleMinimize}
-              className="p-1 rounded hover:bg-gray-100 transition-colors"
+              className="p-1 rounded hover:bg-neutral-100 transition-colors"
               aria-label="Minimize"
             >
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+              <ChevronDown className="h-4 w-4 text-neutral-400" />
             </button>
             <button
               onClick={handleDismiss}
-              className="p-1 rounded hover:bg-gray-100 transition-colors"
+              className="p-1 rounded hover:bg-neutral-100 transition-colors"
               aria-label="Dismiss"
             >
-              <X className="h-4 w-4 text-gray-400" />
+              <X className="h-4 w-4 text-neutral-400" />
             </button>
           </div>
         </div>
@@ -249,8 +234,8 @@ function StepGroup({ label, steps, onStepClick }: StepGroupProps) {
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors',
                 step.isComplete
-                  ? 'bg-gray-50 opacity-60 cursor-default'
-                  : 'hover:bg-gray-50 cursor-pointer'
+                  ? 'bg-neutral-50 opacity-60 cursor-default'
+                  : 'hover:bg-neutral-50 cursor-pointer'
               )}
             >
               <div
@@ -258,7 +243,7 @@ function StepGroup({ label, steps, onStepClick }: StepGroupProps) {
                   'h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0',
                   step.isComplete
                     ? 'bg-dna-emerald text-white'
-                    : 'bg-gray-100 text-gray-400'
+                    : 'bg-neutral-100 text-neutral-400'
                 )}
               >
                 {step.isComplete ? (

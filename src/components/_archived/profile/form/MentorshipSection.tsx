@@ -48,7 +48,7 @@ const MentorshipSection: React.FC<MentorshipSectionProps> = ({
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label>Available for Mentoring</Label>
-            <p className="text-sm text-gray-600">Let other diaspora members know you're available to mentor</p>
+            <p className="text-sm text-neutral-600">Let other diaspora members know you're available to mentor</p>
           </div>
           <Switch
             checked={formData.availability_for_mentoring}
@@ -59,7 +59,7 @@ const MentorshipSection: React.FC<MentorshipSectionProps> = ({
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label>Looking for Opportunities</Label>
-            <p className="text-sm text-gray-600">Show that you're open to new opportunities</p>
+            <p className="text-sm text-neutral-600">Show that you're open to new opportunities</p>
           </div>
           <Switch
             checked={formData.looking_for_opportunities}
@@ -70,7 +70,7 @@ const MentorshipSection: React.FC<MentorshipSectionProps> = ({
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label>Public Profile</Label>
-            <p className="text-sm text-gray-600">Make your profile visible to other diaspora members</p>
+            <p className="text-sm text-neutral-600">Make your profile visible to other diaspora members</p>
           </div>
           <Switch
             checked={formData.is_public}

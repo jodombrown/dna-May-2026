@@ -117,8 +117,8 @@ const CustomerDiscoveryPhase = () => {
       <section className="py-16 bg-white">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">What is Customer Discovery?</h2>
-            <p className="text-lg text-gray-600 max-w-5xl mx-auto leading-relaxed">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">What is Customer Discovery?</h2>
+            <p className="text-lg text-neutral-600 max-w-5xl mx-auto leading-relaxed">
               This phase is about understanding our community before building. We're measuring genuine interest from the African diaspora, 
               validating our assumptions about their networking and collaboration needs, and building relationships with early adopters who will help shape DNA's future. 
               Rather than building first and hoping for users, we're listening first and building with purpose to strengthen global diaspora connections.
@@ -126,28 +126,28 @@ const CustomerDiscoveryPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 px-4 lg:px-16">
-            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-2xl border border-dna-emerald/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-lg border border-dna-emerald/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Heart className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Interest Validation</h3>
-              <p className="text-gray-600 leading-relaxed">Measuring authentic engagement from diaspora communities through strategic outreach, landing page optimization, and early bird membership validation.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Interest Validation</h3>
+              <p className="text-neutral-600 leading-relaxed">Measuring authentic engagement from diaspora communities through strategic outreach, landing page optimization, and early bird membership validation.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl border border-dna-copper/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-lg border border-dna-copper/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Community Building</h3>
-              <p className="text-gray-600 leading-relaxed">Creating the DNA Founders Circle as our core community of early supporters, platform ambassadors, and diaspora thought leaders.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Community Building</h3>
+              <p className="text-neutral-600 leading-relaxed">Creating the DNA Founders Circle as our core community of early supporters, platform ambassadors, and diaspora thought leaders.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-2xl border border-dna-gold/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-lg border border-dna-gold/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-lg flex items-center justify-center mx-auto mb-6">
                 <MessageSquare className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Problem Validation</h3>
-              <p className="text-gray-600 leading-relaxed">Deep-dive interviews to validate our understanding of diaspora challenges and refine our solution approach for maximum community impact.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Problem Validation</h3>
+              <p className="text-neutral-600 leading-relaxed">Deep-dive interviews to validate our understanding of diaspora challenges and refine our solution approach for maximum community impact.</p>
             </div>
           </div>
         </div>
@@ -160,12 +160,12 @@ const CustomerDiscoveryPhase = () => {
       {/* Community Engagement CTA */}
       <section className="py-16 bg-gradient-to-r from-dna-emerald/10 via-dna-mint/20 to-dna-copper/10">
         <div className="w-full text-center px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30 max-w-5xl mx-auto">
+          <div className="bg-white rounded-lg shadow-xl p-8 md:p-12 border border-dna-mint/30 max-w-5xl mx-auto">
             <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
               Join the DNA Founders Circle
             </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-neutral-600 mb-8 leading-relaxed">
               Be part of our founding community and help shape the future of diaspora networking. 
               Get exclusive access to our development process, early features, and direct input on platform decisions that will strengthen African diaspora connections globally.
             </p>

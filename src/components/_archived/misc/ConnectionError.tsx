@@ -29,12 +29,12 @@ const ConnectionError: React.FC<ConnectionErrorProps> = ({
           <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
             <WifiOff className="w-8 h-8 text-red-600" />
           </div>
-          <CardTitle className="text-xl font-bold text-gray-900">
+          <CardTitle className="text-xl font-bold text-neutral-900">
             {title}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-4">
-          <p className="text-gray-600 text-sm leading-relaxed">
+          <p className="text-neutral-600 text-sm leading-relaxed">
             {description}
           </p>
           
@@ -56,7 +56,7 @@ const ConnectionError: React.FC<ConnectionErrorProps> = ({
             </Button>
           </div>
           
-          <div className="mt-6 text-xs text-gray-500 space-y-1">
+          <div className="mt-6 text-xs text-neutral-500 space-y-1">
             <p>If the problem persists:</p>
             <ul className="text-left space-y-1 pl-4">
               <li>• Check your internet connection</li>

@@ -49,7 +49,7 @@ export const REACTION_EMOJIS: Record<ReactionType, { emoji: ReactionEmoji; label
   like: { emoji: '👍', label: 'Like', color: 'text-blue-500' },
   love: { emoji: '❤️', label: 'Love', color: 'text-red-500' },
   celebrate: { emoji: '🎉', label: 'Celebrate', color: 'text-yellow-500' },
-  insightful: { emoji: '💡', label: 'Insightful', color: 'text-purple-500' },
+  insightful: { emoji: '💡', label: 'Insightful', color: 'text-copper-500' },
   support: { emoji: '🙌', label: 'Support', color: 'text-green-500' },
   curious: { emoji: '🤔', label: 'Curious', color: 'text-orange-500' },
 };

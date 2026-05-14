@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Sankofa } from '@/components/icons/adinkra';
 import {
   Tooltip,
   TooltipContent,
@@ -17,23 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  MapPin,
-  UserPlus,
-  Check,
-  MessageSquare,
-  Users,
-  MoreHorizontal,
-  Bookmark,
-  Share2,
-  UserCheck,
-  ExternalLink,
-  Sparkles,
-  Zap,
-  ChevronDown,
-  Eye,
-  Clock,
-} from 'lucide-react';
+import { MapPin, UserPlus, Check, MessageSquare, Users, MoreHorizontal, Bookmark, Share2, UserCheck, ExternalLink, ChevronDown, Eye, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -50,16 +35,16 @@ import { getFlag } from '@/lib/countryFlags';
 // Sector color mapping
 const SECTOR_COLORS: Record<string, string> = {
   TECHNOLOGY: 'bg-blue-100 text-blue-700 border-blue-200',
-  EDUCATION: 'bg-purple-100 text-purple-700 border-purple-200',
+  EDUCATION: 'bg-copper-100 text-copper-700 border-copper-200',
   AGRICULTURE: 'bg-green-100 text-green-700 border-green-200',
   HEALTHCARE: 'bg-rose-100 text-rose-700 border-rose-200',
   FINANCE: 'bg-amber-100 text-amber-700 border-amber-200',
-  MEDIA: 'bg-pink-100 text-pink-700 border-pink-200',
-  ARTS: 'bg-indigo-100 text-indigo-700 border-indigo-200',
-  GOVERNMENT: 'bg-slate-100 text-slate-700 border-slate-200',
+  MEDIA: 'bg-copper-100 text-copper-700 border-copper-200',
+  ARTS: 'bg-copper-100 text-copper-700 border-copper-200',
+  GOVERNMENT: 'bg-neutral-100 text-neutral-700 border-neutral-200',
   NONPROFIT: 'bg-teal-100 text-teal-700 border-teal-200',
   ENERGY: 'bg-orange-100 text-orange-700 border-orange-200',
-  DEFAULT: 'bg-gray-100 text-gray-700 border-gray-200',
+  DEFAULT: 'bg-neutral-100 text-neutral-700 border-neutral-200',
 };
 
 // Available-for label mapping
@@ -314,13 +299,13 @@ export function EnhancedMemberCard({
                               : 'bg-gradient-to-r from-amber-50 to-amber-100 text-amber-700 border-amber-300 shadow-sm shadow-amber-100'
                           )}
                         >
-                          <Zap className="h-3 w-3" />
+                          <Sankofa className="h-3 w-3" />
                           {member.match_score}% Match
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs bg-popover border border-border">
                         <div className="flex items-start gap-2">
-                          <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                          <Sankofa className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                           <div>
                             <p className="text-sm font-medium">DIA Match Score</p>
                             <p className="text-xs text-muted-foreground mt-0.5">{matchTooltipContent}</p>
@@ -389,7 +374,7 @@ export function EnhancedMemberCard({
                 {/* Match reasons */}
                 {matchReasons.length > 0 && !isCompact && (
                   <div className="flex items-start gap-1.5 mb-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                    <Sankofa className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                     <p className="text-xs text-muted-foreground leading-snug">
                       {matchReasons.slice(0, 2).map((reason, index) => (
                         <span key={index}>

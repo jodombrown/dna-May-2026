@@ -95,6 +95,7 @@ export interface FeedFilters {
   authorId?: string;
   spaceId?: string;
   eventId?: string;
+  hashtag?: string;
   postType?: FeedItemType;
   limit?: number;
   offset?: number;

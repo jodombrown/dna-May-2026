@@ -10,7 +10,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
   const getEnhancedDescription = (eventTitle: string) => {
     if (eventTitle === "African Tech Summit 2025") {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Experience three days of inspiring keynotes, interactive workshops, and unparalleled networking opportunities 
             that bring together the brightest minds in African technology innovation.
@@ -29,7 +29,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('investment') || eventTitle.toLowerCase().includes('diaspora')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Discover high-impact investment opportunities across African markets while connecting with fellow diaspora investors 
             and successful entrepreneurs who are driving economic growth on the continent.
@@ -48,7 +48,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('women')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Empower your leadership journey through intensive workshops focused on executive presence, strategic thinking, 
             and navigating complex organizational dynamics in technology and business environments.
@@ -67,7 +67,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('health') || eventTitle.toLowerCase().includes('medical')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Explore cutting-edge digital health solutions, telemedicine platforms, and medical device innovations 
             that are revolutionizing healthcare delivery across African communities.
@@ -86,7 +86,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('energy') || eventTitle.toLowerCase().includes('climate')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Dive deep into renewable energy projects, sustainable development initiatives, and climate adaptation strategies 
             that are creating economic opportunities while addressing environmental challenges.
@@ -105,7 +105,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('agri') || eventTitle.toLowerCase().includes('food')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Discover precision agriculture technologies, supply chain innovations, and digital platforms that are 
             transforming food systems and improving livelihoods for smallholder farmers.
@@ -124,7 +124,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('creative') || eventTitle.toLowerCase().includes('art')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Celebrate the vibrant creativity of the African diaspora through networking opportunities with artists, 
             designers, filmmakers, and cultural entrepreneurs who are shaping global narratives.
@@ -143,7 +143,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('youth') || eventTitle.toLowerCase().includes('leadership')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Develop essential leadership skills through interactive workshops focused on communication, 
             strategic thinking, and building high-performance teams in diverse environments.
@@ -162,7 +162,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     if (eventTitle.toLowerCase().includes('financial') || eventTitle.toLowerCase().includes('fintech')) {
       return (
-        <div className="space-y-3 text-gray-600">
+        <div className="space-y-3 text-neutral-600">
           <p>
             Explore groundbreaking fintech solutions, digital payment systems, and mobile banking innovations 
             that are driving financial inclusion across African markets.
@@ -181,7 +181,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
     
     // Default enhanced description
     return (
-      <div className="space-y-3 text-gray-600">
+      <div className="space-y-3 text-neutral-600">
         <p>
           Join us for an incredible event that brings together the best minds in the African diaspora. 
           This is your opportunity to network, learn, and contribute to meaningful conversations that shape our future.
@@ -200,7 +200,7 @@ const EventAboutSection: React.FC<EventAboutSectionProps> = ({ event }) => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">About Event</h3>
+      <h3 className="text-lg font-semibold text-neutral-900">About Event</h3>
       {getEnhancedDescription(event.title)}
     </div>
   );

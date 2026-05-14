@@ -1,7 +1,8 @@
 import React from 'react';
-import { X, Sparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTourProgress } from '@/hooks/useTourProgress';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface TourResumeBannerProps {
   onStartTour: () => void;
@@ -36,7 +37,7 @@ const TourResumeBanner: React.FC<TourResumeBannerProps> = ({ onStartTour }) => {
       
       <div className="flex items-start gap-3 pr-6">
         <div className="p-2 bg-primary/20 rounded-full">
-          <Sparkles className="h-5 w-5 text-primary" />
+          <MateMasie className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1">
           <h4 className="font-semibold text-foreground">
@@ -50,7 +51,7 @@ const TourResumeBanner: React.FC<TourResumeBannerProps> = ({ onStartTour }) => {
             className="mt-3"
             onClick={handleStartTour}
           >
-            <Sparkles className="h-4 w-4 mr-2" />
+            <MateMasie className="h-4 w-4 mr-2" />
             Take the Tour
           </Button>
         </div>

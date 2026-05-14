@@ -125,9 +125,9 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
     case 'DASHBOARD_HOME':
       return {
         type: 'three-column',
-        leftWidth: '25%',
-        centerWidth: '50%',
-        rightWidth: '25%',
+        leftWidth: '280px',
+        centerWidth: '1fr',
+        rightWidth: '340px',
         showLeftNav: true,
         showRightColumn: true,
       };
@@ -135,9 +135,9 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
     case 'CONNECT_MODE':
       return {
         type: 'three-column',
-        leftWidth: '15%',
-        centerWidth: '70%',
-        rightWidth: '15%',
+        leftWidth: '280px',
+        centerWidth: '1fr',
+        rightWidth: '340px',
         showLeftNav: true,
         showRightColumn: true, // Adapted with network stats
       };
@@ -181,9 +181,9 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
     case 'CONVEY_MODE':
       return {
         type: 'three-column',
-        leftWidth: '15%',
-        centerWidth: '70%',
-        rightWidth: '15%',
+        leftWidth: '280px',
+        centerWidth: '1fr',
+        rightWidth: '340px',
         showLeftNav: true,
         showRightColumn: true,
       };
@@ -200,9 +200,9 @@ const viewStateToLayout = (viewState: ViewState): LayoutConfig => {
     default:
       return {
         type: 'three-column',
-        leftWidth: '15%',
-        centerWidth: '70%',
-        rightWidth: '15%',
+        leftWidth: '280px',
+        centerWidth: '1fr',
+        rightWidth: '340px',
         showLeftNav: true,
         showRightColumn: true,
       };

@@ -9,11 +9,12 @@
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { HEADLINE_WIZARD } from '@/types/onboardingHub';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface HeadlineWizardProps {
   value: string;
@@ -79,7 +80,7 @@ export const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
           className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
             useWizard
               ? 'bg-emerald-100 text-emerald-800 font-medium'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
           }`}
           onClick={() => setUseWizard(true)}
         >
@@ -89,7 +90,7 @@ export const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
           className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
             !useWizard
               ? 'bg-emerald-100 text-emerald-800 font-medium'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
           }`}
           onClick={() => setUseWizard(false)}
         >
@@ -100,8 +101,8 @@ export const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
       {useWizard ? (
         <>
           {/* Pattern display */}
-          <div className="bg-gray-50 rounded-lg p-3">
-            <p className="text-xs text-gray-500 font-mono">
+          <div className="bg-neutral-50 rounded-lg p-3">
+            <p className="text-xs text-neutral-500 font-mono">
               {HEADLINE_WIZARD.pattern}
             </p>
           </div>
@@ -110,7 +111,7 @@ export const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
           <div className="space-y-3">
             {HEADLINE_WIZARD.components.map((comp) => (
               <div key={comp.id}>
-                <label className="text-xs font-medium text-gray-700 mb-1 block">
+                <label className="text-xs font-medium text-neutral-700 mb-1 block">
                   {comp.label}
                   {comp.required && <span className="text-red-400 ml-0.5">*</span>}
                 </label>
@@ -151,8 +152,8 @@ export const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
           {suggestions.length > 0 && (
             <div>
               <div className="flex items-center gap-1 mb-2">
-                <Sparkles className="w-3 h-3 text-amber-500" />
-                <p className="text-[10px] text-gray-500">DIA suggestions</p>
+                <MateMasie className="w-3 h-3 text-amber-500" />
+                <p className="text-[10px] text-neutral-500">DIA suggestions</p>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {suggestions.map((suggestion, i) => (
@@ -188,7 +189,7 @@ export const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
             className="text-sm"
             maxLength={120}
           />
-          <p className="text-[10px] text-gray-400">
+          <p className="text-[10px] text-neutral-400">
             {value.length}/120 characters
           </p>
         </>
@@ -196,14 +197,14 @@ export const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
 
       {/* Examples */}
       <div>
-        <p className="text-[10px] uppercase tracking-wider text-gray-400 font-medium mb-1.5">
+        <p className="text-[10px] uppercase tracking-wider text-neutral-400 font-medium mb-1.5">
           Examples
         </p>
         <div className="space-y-1">
           {HEADLINE_WIZARD.examples.map((example, i) => (
             <button
               key={i}
-              className="block w-full text-left text-xs text-gray-500 hover:text-gray-700 p-1.5 rounded hover:bg-gray-50 transition-colors"
+              className="block w-full text-left text-xs text-neutral-500 hover:text-neutral-700 p-1.5 rounded hover:bg-neutral-50 transition-colors"
               onClick={() => {
                 onChange(example);
                 if (useWizard) {

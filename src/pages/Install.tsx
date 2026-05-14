@@ -1,22 +1,12 @@
+// Token exception: arbitrary radius retained for phone mockup geometry.
+// Reviewed Phase 5. Do not normalize without design review.
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  Smartphone, 
-  Share, 
-  PlusSquare, 
-  CheckCircle2, 
-  Globe2, 
-  Users, 
-  MessageCircle, 
-  Heart,
-  ArrowRight,
-  Apple,
-  MonitorSmartphone,
-  Sparkles
-} from "lucide-react";
+import { Smartphone, Share, PlusSquare, CheckCircle2, Globe2, Users, MessageCircle, Heart, ArrowRight, Apple, MonitorSmartphone } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
+import { MateMasie } from '@/components/icons/adinkra';
 
 const Install = () => {
   const navigate = useNavigate();
@@ -95,12 +85,12 @@ const Install = () => {
     <div className="min-h-screen bg-background overflow-x-hidden">
 
       {/* Hero Section */}
-      <section className="relative bg-background py-16 sm:py-24">
+      <section className="relative bg-background py-16 sm:py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
           >
             <p className="text-sm font-medium text-primary mb-4 tracking-wide uppercase">
               Beta Now Live
@@ -131,9 +121,9 @@ const Install = () => {
 
           {/* Phone Mockups */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2, delay: 0.2 }}
             className="mt-16 relative"
           >
             <div className="flex items-end justify-center gap-4 sm:gap-8">
@@ -157,7 +147,7 @@ const Install = () => {
                       <img 
                         src="/icons/icon-192.png" 
                         alt="DNA" 
-                        className="w-16 h-16 rounded-2xl mb-4"
+                        className="w-16 h-16 rounded-lg mb-4"
                       />
                       <p className="text-sm font-semibold text-foreground mb-1">DNA</p>
                       <p className="text-xs text-muted-foreground text-center">Diaspora Network of Africa</p>
@@ -183,7 +173,7 @@ const Install = () => {
       </section>
 
       {/* Features Section - Dark Background */}
-      <section id="features" className="bg-[hsl(var(--primary))] py-20 sm:py-28">
+      <section id="features" className="bg-[hsl(var(--primary))] py-12 sm:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <p className="text-sm font-medium text-primary-foreground/70 mb-3 tracking-wide uppercase">
@@ -198,13 +188,13 @@ const Install = () => {
             {betaFeatures.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-6 text-center hover:bg-primary-foreground/15 transition-colors"
+                className="bg-primary-foreground/10 backdrop-blur-sm rounded-lg p-6 text-center hover:bg-primary-foreground/15 transition-colors"
               >
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-foreground/20 mb-4">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-primary-foreground/20 mb-4">
                   <feature.icon className="w-7 h-7 text-primary-foreground" />
                 </div>
                 <h3 className="text-lg font-semibold text-primary-foreground mb-2">
@@ -220,7 +210,7 @@ const Install = () => {
       </section>
 
       {/* Install Instructions Section */}
-      <section id="install" className="bg-background py-20 sm:py-28">
+      <section id="install" className="bg-background py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
@@ -259,7 +249,7 @@ const Install = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="flex items-start gap-4 p-5 bg-muted/30 rounded-2xl border border-border/50 hover:bg-muted/50 transition-colors"
+                  className="flex items-start gap-4 p-5 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg">
                     {step.step}
@@ -283,7 +273,7 @@ const Install = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="flex items-start gap-4 p-5 bg-muted/30 rounded-2xl border border-border/50 hover:bg-muted/50 transition-colors"
+                  className="flex items-start gap-4 p-5 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg">
                     {step.step}
@@ -304,7 +294,7 @@ const Install = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="bg-muted/30 py-20 sm:py-28">
+      <section id="about" className="bg-muted/30 py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -343,22 +333,22 @@ const Install = () => {
 
             {/* About Image/Graphic */}
             <div className="relative">
-              <div className="bg-primary/5 rounded-3xl p-8 border border-primary/10">
+              <div className="bg-primary/5 rounded-xl p-8 border border-primary/10">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
+                  <div className="bg-background rounded-lg p-6 shadow-sm text-center">
                     <Globe2 className="w-10 h-10 text-primary mx-auto mb-3" />
                     <p className="text-sm font-medium text-foreground">6 Continents</p>
                   </div>
-                  <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
+                  <div className="bg-background rounded-lg p-6 shadow-sm text-center">
                     <Users className="w-10 h-10 text-primary mx-auto mb-3" />
                     <p className="text-sm font-medium text-foreground">Diaspora United</p>
                   </div>
-                  <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
+                  <div className="bg-background rounded-lg p-6 shadow-sm text-center">
                     <Heart className="w-10 h-10 text-amber-500 mx-auto mb-3" />
                     <p className="text-sm font-medium text-foreground">Shared Heritage</p>
                   </div>
-                  <div className="bg-background rounded-2xl p-6 shadow-sm text-center">
-                    <Sparkles className="w-10 h-10 text-primary mx-auto mb-3" />
+                  <div className="bg-background rounded-lg p-6 shadow-sm text-center">
+                    <MateMasie className="w-10 h-10 text-primary mx-auto mb-3" />
                     <p className="text-sm font-medium text-foreground">Collective Impact</p>
                   </div>
                 </div>
@@ -369,7 +359,7 @@ const Install = () => {
       </section>
 
       {/* CTA Section - Dark */}
-      <section className="bg-foreground py-20 sm:py-24">
+      <section className="bg-foreground py-12 sm:py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-background mb-4">
             Join Africa's Sixth Region

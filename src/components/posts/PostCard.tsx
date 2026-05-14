@@ -147,17 +147,19 @@ export function PostCard({
 
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true });
 
-  const getPostTypeDisplay = () => {
-    const types = {
-      update: { label: 'Update', icon: '📝', color: 'text-blue-600' },
-      article: { label: 'Article', icon: '📄', color: 'text-purple-600' },
-      question: { label: 'Question', icon: '❓', color: 'text-orange-600' },
-      celebration: { label: 'Celebration', icon: '🎉', color: 'text-pink-600' },
-    };
-    return types[post.post_type] || types.update;
-  };
+  // Explicit post_type → badge mapping. Only these values render a chip.
+  // Standard / missing / 'update' / 'standard' → no badge (prevents accidental
+  // 'Update' label on plain posts).
+  const POST_TYPE_BADGES = {
+    article: { label: 'Article', icon: '📄', color: 'text-copper-600' },
+    question: { label: 'Question', icon: '❓', color: 'text-orange-600' },
+    celebration: { label: 'Celebration', icon: '🎉', color: 'text-copper-600' },
+  } as const;
 
-  const postTypeDisplay = getPostTypeDisplay();
+  const postTypeDisplay =
+    post.post_type && post.post_type in POST_TYPE_BADGES
+      ? POST_TYPE_BADGES[post.post_type as keyof typeof POST_TYPE_BADGES]
+      : null;
 
   const handleReactionSelect = async (reaction: ReactionEmoji) => {
     const userHasThisReaction = reactions.find((r) =>
@@ -274,11 +276,15 @@ export function PostCard({
 
           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
             <span>{timeAgo}</span>
-            <span>•</span>
-            <span className={cn('flex items-center gap-1', postTypeDisplay.color)}>
-              <span>{postTypeDisplay.icon}</span>
-              <span>{postTypeDisplay.label}</span>
-            </span>
+            {postTypeDisplay && (
+              <>
+                <span>•</span>
+                <span className={cn('flex items-center gap-1', postTypeDisplay.color)}>
+                  <span>{postTypeDisplay.icon}</span>
+                  <span>{postTypeDisplay.label}</span>
+                </span>
+              </>
+            )}
             <span>•</span>
             {post.privacy_level === 'public' ? (
               <Globe className="h-3 w-3" />

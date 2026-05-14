@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import dnaLogo from '@/assets/dna-logo.png';
+import dnaLogo from '@/assets/dna-logo.webp';
 
 const Logo = () => {
   const navigate = useNavigate();
@@ -13,12 +13,14 @@ const Logo = () => {
         className="flex items-center space-x-2 hover:opacity-80 transition-opacity focus:outline-none"
         aria-label="Navigate to home"
       >
-        <img 
+        <img
           src={dnaLogo}
-          alt="DNA Logo" 
+          alt="DNA"
           className="h-[80px] w-auto"
-          width="57"
-          height="32"
+          width={142}
+          height={80}
+          decoding="async"
+          fetchPriority="high"
         />
       </button>
     </div>

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Plus, X, Sparkles, Loader2, Check } from 'lucide-react';
+import { Edit, Plus, X, Loader2, Check } from 'lucide-react';
 import { ProfileV2Tags, ProfileV2Visibility } from '@/types/profileV2';
 import { Input } from '@/components/ui/input';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileV2InterestsProps {
   tags: ProfileV2Tags;
@@ -77,7 +78,7 @@ const ProfileV2Interests: React.FC<ProfileV2InterestsProps> = ({
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary" />
+          <Sankofa className="w-5 h-5 text-primary" />
           Interests & Focus Areas
         </CardTitle>
         {isOwner && !isEditing && onUpdate && (

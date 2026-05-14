@@ -8,24 +8,24 @@
 import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  SankofaIcon,
-  NkonsonkonsonIcon,
-  FuntunfunefuIcon,
-  AdinkrahenIcon,
-  MpatapoIcon,
-  type AdinkraIconComponent,
-} from '@/components/icons/adinkra';
+import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseSection, PulseConfig, PulseStatus } from '@/types/pulse';
 import { PulsePreviewCard } from './PulsePreviewCard';
+import {
+  Sankofa,
+  Nkonsonkonson,
+  FuntunfunefuDenkyemfunefu,
+  Adinkrahene,
+  Mpatapo,
+} from '@/components/icons/adinkra';
 
-const ICONS: Record<string, AdinkraIconComponent> = {
-  Users: SankofaIcon,
-  Calendar: NkonsonkonsonIcon,
-  Layers: FuntunfunefuIcon,
-  Gift: AdinkrahenIcon,
-  Megaphone: MpatapoIcon,
+const ICONS: Record<string, LucideIcon> = {
+  Sankofa,
+  Nkonsonkonson,
+  FuntunfunefuDenkyemfunefu,
+  Adinkrahene,
+  Mpatapo,
 };
 
 interface PulseItemProps {
@@ -66,7 +66,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
   const [isPressed, setIsPressed] = useState(false);
   const hideTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  const Icon = ICONS[config.icon] || SankofaIcon;
+  const Icon = ICONS[config.icon] || Sankofa;
   const status: PulseStatus = data?.status || 'dormant';
   const count = data?.count || 0;
   const microText = data?.micro_text || '';
@@ -105,9 +105,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        whileHover={{ y: -2, scale: 1.02 }}
-        whileTap={{ scale: 0.96 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        transition={{ duration: 0.12 }}
       >
         <Link
           to={config.href}
@@ -169,7 +167,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
               />
             </span>
 
-            <Icon className="w-4 h-4" />
+            <Icon className="w-[18px] h-[18px]" />
 
             <span className="text-xs font-semibold tracking-wide hidden sm:inline">
               {config.label}

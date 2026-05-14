@@ -1,3 +1,4 @@
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Eye, Bookmark, BookmarkCheck, Share2, Clock, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -96,7 +97,7 @@ const getStoryTypeBadge = (type: string) => {
     impact: { bg: 'bg-emerald-500/10', text: 'text-emerald-600', label: 'Impact Story' },
     update: { bg: 'bg-blue-500/10', text: 'text-blue-600', label: 'Update' },
     spotlight: { bg: 'bg-amber-500/10', text: 'text-amber-600', label: 'Spotlight' },
-    photo_essay: { bg: 'bg-purple-500/10', text: 'text-purple-600', label: 'Photo Essay' },
+    photo_essay: { bg: 'bg-copper-500/10', text: 'text-copper-600', label: 'Photo Essay' },
     story: { bg: 'bg-dna-gold/10', text: 'text-dna-gold', label: 'Story' },
   };
   return types[type] || types.story;
@@ -171,9 +172,12 @@ export function ConveyStoryCard({
         {/* Thumbnail */}
         {story.media_url && (
           <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0 bg-muted">
-            <img 
-              src={story.media_url} 
-              alt="" 
+            <OptimizedImage
+              src={story.media_url}
+              alt=""
+              imageSize="thumb"
+              width={80}
+              height={80}
               className="w-full h-full object-cover"
             />
           </div>
@@ -202,7 +206,7 @@ export function ConveyStoryCard({
         ref={viewRef}
         onClick={handleClick}
         className={cn(
-          "relative rounded-2xl overflow-hidden cursor-pointer group",
+          "relative rounded-lg overflow-hidden cursor-pointer group",
           "min-h-[280px] md:min-h-[320px]",
           "transition-all duration-300 hover:shadow-xl"
         )}
@@ -210,9 +214,13 @@ export function ConveyStoryCard({
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/40">
           {story.media_url && (
-            <img 
-              src={story.media_url} 
-              alt="" 
+            <OptimizedImage
+              src={story.media_url}
+              alt=""
+              imageSize="cover-hero"
+              width={800}
+              height={320}
+              priority
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           )}
@@ -274,7 +282,7 @@ export function ConveyStoryCard({
     <div 
       ref={viewRef}
       className={cn(
-        "bg-card rounded-2xl overflow-hidden border border-border/50",
+        "bg-card rounded-lg overflow-hidden border border-border/50",
         "hover:border-primary/30 hover:shadow-lg",
         "transition-all duration-300 group"
       )}
@@ -285,9 +293,12 @@ export function ConveyStoryCard({
           onClick={handleClick}
           className="relative aspect-[16/9] overflow-hidden cursor-pointer"
         >
-          <img 
-            src={story.media_url} 
-            alt="" 
+          <OptimizedImage
+            src={story.media_url}
+            alt=""
+            imageSize="cover-card"
+            width={480}
+            height={270}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <Badge className={cn("absolute top-3 left-3", storyType.bg, storyType.text)}>

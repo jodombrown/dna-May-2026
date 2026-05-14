@@ -9,17 +9,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Settings, 
-  Eye, 
-  Pencil, 
-  BadgeCheck, 
-  Award,
-  Sparkles 
-} from 'lucide-react';
+import { Settings, Eye, Pencil, BadgeCheck, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { calculateProfileCompletionPts } from '@/lib/profileCompletion';
 import { cn } from '@/lib/utils';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileV2StatusCardProps {
   profile: any;
@@ -56,7 +50,7 @@ const ProfileV2StatusCard: React.FC<ProfileV2StatusCardProps> = ({
       };
     }
     return {
-      icon: Sparkles,
+      icon: Sankofa,
       label: 'Building',
       color: 'text-muted-foreground',
       bgColor: 'bg-secondary',

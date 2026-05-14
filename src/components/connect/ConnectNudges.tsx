@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { X, Sparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { Sankofa } from '@/components/icons/adinkra';
 
 export const ConnectNudges: React.FC = () => {
   const { user } = useAuth();
@@ -30,7 +31,7 @@ export const ConnectNudges: React.FC = () => {
   return (
     <div className="space-y-3 mb-6">
       <div className="flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-dna-copper" />
+        <Sankofa className="w-4 h-4 text-dna-copper" />
         <h3 className="text-sm font-medium">Suggestions for you</h3>
       </div>
       {visible.map(n => (

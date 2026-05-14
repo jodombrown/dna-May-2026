@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { PenSquare, Users, Sparkles } from 'lucide-react';
+import { PenSquare, Users } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Profile } from '@/services/profilesService';
 import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { FeedTab } from '@/types/feed';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 interface DashboardFeedColumnProps {
   profile: Profile;
@@ -67,7 +68,7 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
               onClick={() => composer.open('story')}
               className="gap-2"
             >
-              <Sparkles className="h-4 w-4" />
+              <Mpatapo className="h-4 w-4" />
               Story
             </Button>
           </div>
@@ -81,7 +82,7 @@ export default function DashboardFeedColumn({ profile, isOwnProfile }: Dashboard
             Network
           </TabsTrigger>
           <TabsTrigger value="my_posts" className="flex-1">
-            <Sparkles className="h-4 w-4 mr-2" />
+            <Mpatapo className="h-4 w-4 mr-2" />
             My Posts
           </TabsTrigger>
         </TabsList>

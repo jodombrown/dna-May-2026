@@ -10,8 +10,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { UserPlus, Sparkles } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 export const SpotlightCard: React.FC = () => {
   const { user } = useAuth();
@@ -63,7 +64,7 @@ export const SpotlightCard: React.FC = () => {
       <div className="relative h-16 bg-gradient-to-br from-[hsl(var(--dna-emerald)/0.15)] to-[hsl(var(--dna-gold)/0.1)]">
         <CulturalPattern pattern="adinkra" opacity={0.06} />
         <div className="absolute top-2 left-3 flex items-center gap-1.5">
-          <Sparkles className="h-3 w-3 text-dna-gold" />
+          <Mpatapo className="h-3 w-3 text-dna-gold" />
           <span className="text-[10px] font-semibold uppercase tracking-wider text-foreground/70">Spotlight</span>
         </div>
       </div>

@@ -27,13 +27,28 @@ export interface LinkPreviewData {
 }
 
 /**
- * Reply-to data stored in message payload
+ * Reply-to data stored in message payload.
+ * Phase 10 - extended with timestamp + lightweight media/link snapshot
+ * so the reply chip and the quoted bubble can render full context.
  */
 export interface ReplyToData {
   messageId: string;
   senderName: string;
   senderAvatar?: string;
   content: string;
+  createdAt?: string;
+  attachment?: {
+    type: 'image' | 'file' | 'voice';
+    url: string;
+    filename?: string;
+    mimetype?: string;
+    duration?: number;
+  };
+  linkPreview?: {
+    url: string;
+    title?: string;
+    image?: string;
+  };
 }
 
 /**
@@ -101,6 +116,8 @@ export interface ConversationListItem {
   is_muted: boolean;
   is_pinned: boolean;
   is_archived: boolean;
+  bucket?: 'primary' | 'requests' | 'spam';
+  has_unread_mention?: boolean;
 }
 
 /**

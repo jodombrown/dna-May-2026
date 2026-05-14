@@ -1,34 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import {
-  LayoutDashboard,
-  Users,
-  Calendar,
-  FolderKanban,
-  MessageSquare,
-  Shield,
-  BarChart3,
-  Settings,
-  ClipboardList,
-  UserCog,
-  ChevronDown,
-  ChevronRight,
-  Menu,
-  X,
-  LogOut,
-  Bell,
-  Search,
-  Activity,
-  ExternalLink,
-  Sparkles,
-  Boxes,
-  Flag,
-  HandHeart
-} from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, FolderKanban, MessageSquare, Shield, BarChart3, Settings, ClipboardList, UserCog, ChevronDown, ChevronRight, Menu, X, LogOut, Bell, Search, Activity, ExternalLink, Boxes, Flag, HandHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,7 +102,7 @@ const navigation: NavItem[] = [
     badge: 0
   },
   {
-    icon: Sparkles,
+    icon: MateMasie,
     label: 'DIA',
     href: '/admin/dia'
   },
@@ -298,7 +275,7 @@ export const AdminDashboardLayout: React.FC = () => {
               'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors',
               active
                 ? 'bg-emerald-100 text-emerald-900'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
             )}
           >
             <div className="flex items-center gap-3">
@@ -312,7 +289,7 @@ export const AdminDashboardLayout: React.FC = () => {
             )}
           </button>
           {isExpanded && (
-            <div className="ml-4 mt-1 space-y-1 border-l border-slate-200 pl-3">
+            <div className="ml-4 mt-1 space-y-1 border-l border-neutral-200 pl-3">
               {item.children.map(child => renderNavItem(child, true))}
             </div>
           )}
@@ -330,7 +307,7 @@ export const AdminDashboardLayout: React.FC = () => {
           isChild ? 'py-1.5' : '',
           active
             ? 'bg-emerald-100 text-emerald-900 font-medium'
-            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
         )}
       >
         <div className="flex items-center gap-3">
@@ -350,13 +327,13 @@ export const AdminDashboardLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 px-4 py-3">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="p-2 -ml-2 text-slate-600 hover:text-slate-900"
+            className="p-2 -ml-2 text-neutral-600 hover:text-neutral-900"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -364,7 +341,7 @@ export const AdminDashboardLayout: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center">
               <Shield className="w-4 h-4 text-white" />
             </div>
-            <span className="font-semibold text-slate-900">DNA Admin</span>
+            <span className="font-semibold text-neutral-900">DNA Admin</span>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -397,26 +374,26 @@ export const AdminDashboardLayout: React.FC = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 bottom-0 w-64 bg-white border-r border-slate-200 z-50 transition-transform duration-300',
+          'fixed top-0 left-0 bottom-0 w-64 bg-white border-r border-neutral-200 z-50 transition-transform duration-300',
           'lg:translate-x-0',
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between px-4 py-4 border-b border-slate-200">
+          <div className="flex items-center justify-between px-4 py-4 border-b border-neutral-200">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center">
                 <Shield className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="font-bold text-slate-900">DNA Admin</h1>
-                <p className="text-xs text-slate-500">Control Panel</p>
+                <h1 className="font-bold text-neutral-900">DNA Admin</h1>
+                <p className="text-xs text-neutral-500">Control Panel</p>
               </div>
             </div>
             <button
               onClick={() => setIsSidebarOpen(false)}
-              className="lg:hidden p-1 text-slate-400 hover:text-slate-600"
+              className="lg:hidden p-1 text-neutral-400 hover:text-neutral-600"
             >
               <X className="w-5 h-5" />
             </button>
@@ -430,10 +407,10 @@ export const AdminDashboardLayout: React.FC = () => {
           </ScrollArea>
 
           {/* Sidebar Footer */}
-          <div className="p-4 border-t border-slate-200">
+          <div className="p-4 border-t border-neutral-200">
             <Link
               to="/dna/feed"
-              className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
               Back to Platform
@@ -445,13 +422,13 @@ export const AdminDashboardLayout: React.FC = () => {
       {/* Main Content */}
       <div className="lg:ml-64">
         {/* Desktop Header */}
-        <header className="hidden lg:flex sticky top-0 z-40 bg-white border-b border-slate-200 px-6 py-3 items-center justify-between">
+        <header className="hidden lg:flex sticky top-0 z-40 bg-white border-b border-neutral-200 px-6 py-3 items-center justify-between">
           {/* Search */}
           <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
             <Input
               placeholder="Search users, events..."
-              className="pl-9 bg-slate-50 border-slate-200"
+              className="pl-9 bg-neutral-50 border-neutral-200"
             />
           </div>
 
@@ -465,7 +442,7 @@ export const AdminDashboardLayout: React.FC = () => {
 
             {/* Notifications */}
             <Button variant="ghost" size="icon" className="relative">
-              <Bell className="w-5 h-5 text-slate-600" />
+              <Bell className="w-5 h-5 text-neutral-600" />
               {(pendingFeedback + pendingModeration) > 0 && (
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               )}
@@ -474,12 +451,12 @@ export const AdminDashboardLayout: React.FC = () => {
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 pl-3 pr-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors">
+                <button className="flex items-center gap-3 pl-3 pr-2 py-1.5 rounded-lg hover:bg-neutral-100 transition-colors">
                   <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900">
+                    <p className="text-sm font-medium text-neutral-900">
                       {adminUser?.email?.split('@')[0] || 'Admin'}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-neutral-500">
                       {adminUser?.roleLevel?.replace('_', ' ') || 'Loading...'}
                     </p>
                   </div>
@@ -493,7 +470,7 @@ export const AdminDashboardLayout: React.FC = () => {
               <DropdownMenuContent align="end" className="w-56">
                 <div className="px-3 py-2 border-b">
                   <p className="text-sm font-medium">{adminUser?.email}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <p className="text-xs text-neutral-500 mt-0.5">
                     {adminUser?.isSuperAdmin ? 'Super Admin' : adminUser?.roleLevel?.replace('_', ' ')}
                   </p>
                 </div>

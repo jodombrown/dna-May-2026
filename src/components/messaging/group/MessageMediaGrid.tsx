@@ -1,104 +1,162 @@
 /**
- * MessageMediaGrid - Responsive grid layout for media in message bubbles
- * 
- * Layouts: 1 image full-width, 2 side-by-side, 3 one+two, 4+ as 2x2 grid.
- * All images tappable to open lightbox.
+ * MessageMediaGrid - Responsive grid layout for visual media in message bubbles.
+ *
+ * Includes both images and videos. Videos render as a poster (or first-frame) with a
+ * play badge overlay. Tapping any tile opens the unified lightbox carousel.
+ *
+ * Layouts: 1 full-width, 2 side-by-side, 3 one-on-top, 4+ as 2x2 grid with +N overlay.
  */
 
 import React, { useState } from 'react';
+import { Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { MediaLightbox } from './MediaLightbox';
 import type { MediaItem } from '@/types/groupMessaging';
 
 interface MessageMediaGridProps {
+  /** All visual media (images + videos) for this message */
   media: MediaItem[];
+  /** Optional supplementary items (PDFs, etc.) to include in the lightbox carousel */
+  extraLightboxItems?: MediaItem[];
   isOwn: boolean;
+  /** Whether the viewer is allowed to download attachments. */
+  canDownload?: boolean;
+  /** Callback when the viewer chooses to reply to a specific attachment. */
+  onReplyToMedia?: (item: MediaItem, index: number) => void;
 }
 
-export function MessageMediaGrid({ media, isOwn }: MessageMediaGridProps) {
+function Tile({
+  item,
+  className,
+  onClick,
+}: {
+  item: MediaItem;
+  className?: string;
+  onClick: () => void;
+}) {
+  const isVideo = item.type === 'video';
+  const previewSrc = item.posterUrl || item.url;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn('relative block overflow-hidden', className)}
+      aria-label={isVideo ? `Play ${item.name}` : `Open ${item.name}`}
+    >
+      {isVideo ? (
+        item.posterUrl ? (
+          <img
+            src={previewSrc}
+            alt={item.name}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <video
+            src={item.url}
+            className="h-full w-full object-cover"
+            preload="metadata"
+            muted
+            playsInline
+          />
+        )
+      ) : (
+        <img
+          src={item.url}
+          alt={item.name}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
+      )}
+      {isVideo && (
+        <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
+          <span className="rounded-full bg-black/60 p-2">
+            <Play className="h-5 w-5 text-white" />
+          </span>
+        </span>
+      )}
+    </button>
+  );
+}
+
+export function MessageMediaGrid({
+  media,
+  extraLightboxItems = [],
+  isOwn: _isOwn,
+  canDownload = true,
+  onReplyToMedia,
+}: MessageMediaGridProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const images = media.filter(m => m.type === 'image');
-  if (images.length === 0) return null;
+  const visuals = media.filter((m) => m.type === 'image' || m.type === 'video');
+  if (visuals.length === 0) return null;
 
-  const openLightbox = (index: number) => setLightboxIndex(index);
+  // Lightbox sees visuals first, then extras (e.g., PDFs) so paging stays intuitive.
+  const lightboxItems = [...visuals, ...extraLightboxItems];
+
+  const open = (i: number) => setLightboxIndex(i);
+  const count = visuals.length;
 
   return (
     <>
-      <div className={cn(
-        'mt-1 rounded-lg overflow-hidden',
-        images.length === 1 && 'max-w-[280px]',
-        images.length === 2 && 'grid grid-cols-2 gap-0.5 max-w-[280px]',
-        images.length === 3 && 'grid grid-cols-2 gap-0.5 max-w-[280px]',
-        images.length >= 4 && 'grid grid-cols-2 gap-0.5 max-w-[280px]',
-      )}>
-        {images.length === 1 && (
-          <button onClick={() => openLightbox(0)} className="block w-full">
-            <img
-              src={images[0].url}
-              alt={images[0].name}
-              className="w-full max-h-[240px] object-cover rounded-lg"
-              loading="lazy"
-            />
-          </button>
+      <div
+        className={cn(
+          'mt-1 max-w-[280px] overflow-hidden rounded-lg',
+          count === 2 && 'grid grid-cols-2 gap-0.5',
+          count === 3 && 'grid grid-cols-2 gap-0.5',
+          count >= 4 && 'grid grid-cols-2 gap-0.5',
+        )}
+      >
+        {count === 1 && (
+          <Tile item={visuals[0]} className="max-h-[240px] w-full" onClick={() => open(0)} />
         )}
 
-        {images.length === 2 && images.map((img, i) => (
-          <button key={i} onClick={() => openLightbox(i)} className="block">
-            <img
-              src={img.url}
-              alt={img.name}
-              className="w-full h-[120px] object-cover"
-              loading="lazy"
-            />
-          </button>
-        ))}
+        {count === 2 &&
+          visuals.map((m, i) => (
+            <Tile key={i} item={m} className="h-[120px] w-full" onClick={() => open(i)} />
+          ))}
 
-        {images.length === 3 && (
+        {count === 3 && (
           <>
-            <button onClick={() => openLightbox(0)} className="col-span-2 block">
-              <img
-                src={images[0].url}
-                alt={images[0].name}
-                className="w-full h-[160px] object-cover"
-                loading="lazy"
-              />
-            </button>
-            {images.slice(1).map((img, i) => (
-              <button key={i + 1} onClick={() => openLightbox(i + 1)} className="block">
-                <img
-                  src={img.url}
-                  alt={img.name}
-                  className="w-full h-[100px] object-cover"
-                  loading="lazy"
-                />
-              </button>
+            <Tile item={visuals[0]} className="col-span-2 h-[160px] w-full" onClick={() => open(0)} />
+            {visuals.slice(1).map((m, i) => (
+              <Tile key={i + 1} item={m} className="h-[100px] w-full" onClick={() => open(i + 1)} />
             ))}
           </>
         )}
 
-        {images.length >= 4 && images.slice(0, 4).map((img, i) => (
-          <button key={i} onClick={() => openLightbox(i)} className="block relative">
-            <img
-              src={img.url}
-              alt={img.name}
-              className="w-full h-[100px] object-cover"
-              loading="lazy"
-            />
-            {i === 3 && images.length > 4 && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <span className="text-white font-semibold text-lg">+{images.length - 4}</span>
-              </div>
-            )}
-          </button>
-        ))}
+        {count >= 4 &&
+          visuals.slice(0, 4).map((m, i) => (
+            <div key={i} className="relative">
+              <Tile item={m} className="h-[100px] w-full" onClick={() => open(i)} />
+              {i === 3 && count > 4 && (
+                <button
+                  type="button"
+                  onClick={() => open(3)}
+                  aria-label={`View all ${count} items`}
+                  className="absolute inset-0 flex items-center justify-center bg-black/50"
+                >
+                  <span className="text-lg font-semibold text-white">+{count - 4}</span>
+                </button>
+              )}
+            </div>
+          ))}
       </div>
 
       {lightboxIndex !== null && (
         <MediaLightbox
-          images={images}
+          items={lightboxItems}
           initialIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
+          canDownload={canDownload}
+          onReply={
+            onReplyToMedia
+              ? (item, idx) => {
+                  onReplyToMedia(item, idx);
+                  setLightboxIndex(null);
+                }
+              : undefined
+          }
         />
       )}
     </>

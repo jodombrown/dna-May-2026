@@ -3,11 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import {
-  Search, Sparkles, Users, Calendar, FolderKanban, Hash,
-  ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen,
-  ChevronDown, ChevronUp, Target
-} from 'lucide-react';
+import { Search, Users, Calendar, FolderKanban, Hash, ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen, ChevronDown, ChevronUp, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +18,7 @@ import DiaStoryCard from './DiaStoryCard';
 import DiaHashtagChip from './DiaHashtagChip';
 import DiaOpportunityCard from './DiaOpportunityCard';
 import type { ContributionNeedType } from '@/types/contributeTypes';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DiaResponse {
   success: boolean;
@@ -123,7 +120,7 @@ function DiaSearchSkeleton() {
       <div className="flex flex-col items-center justify-center py-4">
         <div className="relative">
           <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
-          <Sparkles className="h-4 w-4 text-emerald-400 absolute -top-1 -right-1 animate-pulse" />
+          <MateMasie className="h-4 w-4 text-emerald-400 absolute -top-1 -right-1 animate-pulse" />
         </div>
         <p className="text-muted-foreground mt-4 animate-pulse">DIA is researching...</p>
         <p className="text-xs text-muted-foreground/60 mt-1">Searching global sources and your network</p>
@@ -183,7 +180,7 @@ function DiaEmptyState({
 }) {
   return (
     <div className="mt-8 text-center py-12">
-      <Sparkles className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+      <MateMasie className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
       <h3 className="text-lg font-medium text-foreground mb-2">
         Ask DIA Anything About Africa
       </h3>
@@ -656,7 +653,7 @@ export function DiaSearch({
         <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0">
           <div className="relative flex-1">
             <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" />
+              <MateMasie className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" />
             </div>
             <Input
               type="text"
@@ -715,7 +712,7 @@ export function DiaSearch({
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Sparkles className="h-5 w-5 text-emerald-600" />
+                  <MateMasie className="h-5 w-5 text-emerald-600" />
                   DIA
                 </CardTitle>
                 <div className="flex items-center gap-2">

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ChevronRight, ChevronLeft, Users, MessageSquare, BookOpen, CheckCircle } from "lucide-react";
+import { ChevronRight, ChevronLeft, Users, MessageSquare, BookOpen, CheckCircle } from 'lucide-react';
 import { useTourProgress } from "@/hooks/useTourProgress";
 import { cn } from "@/lib/utils";
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface OnboardingTourProps {
   open: boolean;
@@ -15,7 +16,7 @@ const TOUR_STEPS = [
     id: 'welcome',
     title: 'Welcome to DNA!',
     description: 'Before you connect with the vibrant African diaspora, let\'s explore what DNA has to offer.',
-    icon: Sparkles,
+    icon: MateMasie,
     content: (
       <ul className="list-disc pl-4 space-y-1 text-sm">
         <li><b>Fill out your profile</b> for better connection and discovery.</li>

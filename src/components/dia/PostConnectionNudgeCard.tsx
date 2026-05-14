@@ -38,7 +38,7 @@ const TARGET_C_COLORS: Record<string, string> = {
   COLLABORATE: 'text-blue-600 dark:text-blue-400',
   CONTRIBUTE: 'text-emerald-600 dark:text-emerald-400',
   CONNECT: 'text-primary',
-  MESSAGING: 'text-violet-600 dark:text-violet-400',
+  MESSAGING: 'text-copper-600 dark:text-copper-400',
 };
 
 /**
@@ -65,8 +65,8 @@ export const PostConnectionNudgeCard: React.FC<PostConnectionNudgeCardProps> = (
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
       className={cn(

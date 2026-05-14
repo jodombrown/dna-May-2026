@@ -297,11 +297,11 @@ export default function ContributionAnalytics() {
       funding: 'bg-emerald-500/10 text-emerald-600 border-emerald-500',
       skills: 'bg-blue-500/10 text-blue-600 border-blue-500',
       time: 'bg-orange-500/10 text-orange-600 border-orange-500',
-      access: 'bg-purple-500/10 text-purple-600 border-purple-500',
-      resources: 'bg-pink-500/10 text-pink-600 border-pink-500'
+      access: 'bg-copper-500/10 text-copper-600 border-copper-500',
+      resources: 'bg-copper-500/10 text-copper-600 border-copper-500'
     };
     return (
-      <Badge className={colors[type] || 'bg-gray-500/10 text-gray-600 border-gray-500'}>
+      <Badge className={colors[type] || 'bg-neutral-500/10 text-neutral-600 border-neutral-500'}>
         {TYPE_LABELS[type] || type}
       </Badge>
     );
@@ -352,9 +352,9 @@ export default function ContributionAnalytics() {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-purple-600" />
+              <CheckCircle className="h-5 w-5 text-copper-600" />
               <div>
-                <div className="text-2xl font-bold text-purple-600">{stats.fulfilledOpportunities}</div>
+                <div className="text-2xl font-bold text-copper-600">{stats.fulfilledOpportunities}</div>
                 <p className="text-xs text-muted-foreground">Fulfilled</p>
               </div>
             </div>

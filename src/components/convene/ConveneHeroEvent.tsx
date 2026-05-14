@@ -62,7 +62,7 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
 
   return (
     <div
-      className="relative w-full rounded-2xl overflow-hidden cursor-pointer group shadow-xl"
+      className="relative w-full rounded-lg overflow-hidden cursor-pointer group shadow-xl"
       onClick={handleClick}
     >
       {/* Image — taller hero */}

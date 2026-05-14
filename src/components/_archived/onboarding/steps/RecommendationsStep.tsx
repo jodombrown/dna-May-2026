@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, Calendar, Briefcase, UserPlus, Sparkles } from 'lucide-react';
+import { Users, Calendar, Briefcase, UserPlus } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface RecommendationsStepProps {
   data: any;
@@ -61,7 +62,7 @@ const getIcon = (type: string) => {
     case 'event': return Calendar;
     case 'project': return Briefcase;
     case 'user': return UserPlus;
-    default: return Sparkles;
+    default: return MateMasie;
   }
 };
 
@@ -176,7 +177,7 @@ const RecommendationsStep: React.FC<RecommendationsStepProps> = ({ data, updateD
         <h2 className="text-xl font-semibold text-dna-forest mb-2">
           Recommended for You
         </h2>
-        <p className="text-gray-600">
+        <p className="text-neutral-600">
           Based on your profile, here are communities, events, and opportunities we think you'll love.
         </p>
       </div>
@@ -212,7 +213,7 @@ const RecommendationsStep: React.FC<RecommendationsStepProps> = ({ data, updateD
                           </Badge>
                         </div>
                         
-                        <p className="text-gray-600 mb-3">
+                        <p className="text-neutral-600 mb-3">
                           {rec.description}
                         </p>
                         
@@ -248,7 +249,7 @@ const RecommendationsStep: React.FC<RecommendationsStepProps> = ({ data, updateD
           <p className="text-sm text-dna-forest font-medium">
             {selectedItems.length} selection{selectedItems.length > 1 ? 's' : ''} saved
           </p>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-neutral-600 mt-1">
             You can explore these later in your dashboard
           </p>
         </div>

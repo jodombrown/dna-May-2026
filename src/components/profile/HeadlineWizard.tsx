@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Wand2, PenLine, Eye } from 'lucide-react';
+import { PenLine, Eye } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface HeadlineWizardProps {
   headline: string;
@@ -109,7 +110,7 @@ const HeadlineWizard: React.FC<HeadlineWizardProps> = ({
             onClick={() => setUseWizard(true)}
             className="text-xs h-7"
           >
-            <Wand2 className="w-3 h-3 mr-1" />
+            <MateMasie className="w-3 h-3 mr-1" />
             Use Wizard
           </Button>
         </div>

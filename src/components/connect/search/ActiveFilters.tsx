@@ -40,7 +40,7 @@ const ActiveFilters: React.FC<ActiveFiltersProps> = ({
 
   return (
     <div className="flex flex-wrap gap-2 max-w-4xl mx-auto">
-      <span className="text-sm text-gray-600">Active filters:</span>
+      <span className="text-sm text-neutral-600">Active filters:</span>
       {filters.location && (
         <Badge variant="secondary" className="flex items-center gap-1">
           📍 {filters.location}

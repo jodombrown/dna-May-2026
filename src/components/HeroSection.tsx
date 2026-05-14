@@ -55,7 +55,7 @@ const HeroSection = () => {
                 </div>
 
                 {/* Legal Disclaimer */}
-                <p className="text-xs sm:text-sm text-gray-600 text-center lg:text-left leading-relaxed">
+                <p className="text-xs sm:text-sm text-neutral-600 text-center lg:text-left leading-relaxed">
                   By clicking Continue to join or sign in, you agree to DNA's{' '}
                   <a href="/legal/user-agreement" className="text-dna-copper hover:underline font-medium">
                     User Agreement
@@ -79,7 +79,7 @@ const HeroSection = () => {
 
             {/* Right Column, Hero Image */}
             <div className="relative h-full min-h-[400px] lg:min-h-[500px]">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl h-full">
+              <div className="relative rounded-lg overflow-hidden shadow-2xl h-full">
                 <img 
                   src={heroProfessional} 
                   alt="African diaspora professionals collaborating and working together" 

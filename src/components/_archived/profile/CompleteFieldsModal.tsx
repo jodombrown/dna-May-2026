@@ -61,7 +61,7 @@ export function CompleteFieldsModal({ missing, onClose }: { missing: string[]; o
 
   return (
     <div className="fixed inset-0 bg-foreground/30 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-background border border-border rounded-2xl p-6 w-full max-w-lg space-y-5">
+      <div className="bg-background border border-border rounded-lg p-6 w-full max-w-lg space-y-5">
         <h3 className="text-lg font-semibold">Complete a few details to continue</h3>
         <div className="space-y-4">
           {needs.has('headline') && (

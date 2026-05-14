@@ -9,7 +9,7 @@ const ProfileCard = () => {
   const { profile } = useAuth();
 
   return (
-    <Card className="bg-white border border-gray-200">
+    <Card className="bg-white border border-neutral-200">
       <div className="relative">
         {/* Cover Image */}
         <div className="h-16 bg-gradient-to-r from-dna-forest to-dna-emerald rounded-t-lg"></div>
@@ -26,15 +26,15 @@ const ProfileCard = () => {
       </div>
 
       <CardContent className="pt-10 pb-4 text-center">
-        <h3 className="font-semibold text-gray-900 mb-1">
+        <h3 className="font-semibold text-neutral-900 mb-1">
           {profile?.full_name || 'DNA Member'}
         </h3>
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-neutral-600 mb-3">
           {profile?.profession || profile?.headline || 'Professional'}
         </p>
         
-        <div className="border-t border-gray-200 pt-3 mt-3">
-          <div className="flex items-center justify-between text-xs text-gray-600">
+        <div className="border-t border-neutral-200 pt-3 mt-3">
+          <div className="flex items-center justify-between text-xs text-neutral-600">
             <div className="flex items-center">
               <Eye className="w-3 h-3 mr-1" />
               <span>Profile views</span>
@@ -42,7 +42,7 @@ const ProfileCard = () => {
             <span className="font-medium text-dna-forest">12</span>
           </div>
           
-          <div className="flex items-center justify-between text-xs text-gray-600 mt-2">
+          <div className="flex items-center justify-between text-xs text-neutral-600 mt-2">
             <div className="flex items-center">
               <Users className="w-3 h-3 mr-1" />
               <span>Connections</span>
@@ -51,8 +51,8 @@ const ProfileCard = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 pt-3 mt-3">
-          <p className="text-xs text-gray-600 mb-2">Strengthen your profile with an AI writing assistant</p>
+        <div className="border-t border-neutral-200 pt-3 mt-3">
+          <p className="text-xs text-neutral-600 mb-2">Strengthen your profile with an AI writing assistant</p>
           <Button variant="outline" size="sm" className="text-xs">
             Try Premium for free
           </Button>

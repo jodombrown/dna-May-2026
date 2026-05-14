@@ -2,6 +2,7 @@ import * as React from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
 import { cn } from "@/lib/utils"
+import { withImageTransform, type ImageSize } from "@/lib/images"
 
 /**
  * DNA Avatar Sizes (from Design System PRD):
@@ -43,12 +44,29 @@ const Avatar = React.forwardRef<
 ))
 Avatar.displayName = AvatarPrimitive.Root.displayName
 
+/**
+ * Phase 2A: AvatarImage auto-applies Supabase Storage image transforms so the
+ * 60+ avatar render sites never decode 2000px source files for a 44px slot.
+ *
+ * - `imageSize` defaults to 'avatar-md' (128px). Pass 'avatar-sm' for xs/sm
+ *   avatars or 'avatar-lg' for profile detail heroes.
+ * - Pass 'original' to opt out (e.g. local imports, data: URLs).
+ * - External URLs pass through unchanged (helper guards on Supabase host).
+ */
+interface AvatarImageProps
+  extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
+  imageSize?: ImageSize
+}
+
 const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
+  AvatarImageProps
+>(({ className, src, imageSize = "avatar-md", ...props }, ref) => (
   <AvatarPrimitive.Image
     ref={ref}
+    src={typeof src === "string" ? withImageTransform(src, imageSize) : src}
+    decoding="async"
+    loading="lazy"
     className={cn("aspect-square h-full w-full object-cover", className)}
     {...props}
   />

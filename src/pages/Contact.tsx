@@ -9,23 +9,11 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import WaitlistSlideIn from '@/components/waitlist/WaitlistSlideIn';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Send, 
-  CheckCircle, 
-  Clock,
-  Users,
-  MessageSquare,
-  Lightbulb,
-  Briefcase,
-  MessageCircle,
-  Sparkles
- } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Users, MessageSquare, Lightbulb, Briefcase, MessageCircle } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { PageSEO } from '@/components/seo/PageSEO';
 import { config } from '@/lib/config';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const Contact = () => {
   useScrollToTop();
@@ -63,7 +51,7 @@ const Contact = () => {
       description: "For general inquiries and support"
     },
     {
-      icon: <Sparkles className="w-6 h-6" />,
+      icon: <MateMasie className="w-6 h-6" />,
       title: "Join the DNA Community",
       detail: "Be the first to connect",
       description: "Get early access to our platform and exclusive community events",
@@ -161,7 +149,7 @@ const Contact = () => {
             <h1 className="text-4xl md:text-6xl font-bold text-dna-forest mb-6">
               Let's Build Together
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-neutral-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               Whether you have questions, ideas, or want to partner with us, we'd love to hear from you. 
               Let's explore how we can work together to advance Africa's development.
             </p>
@@ -170,7 +158,7 @@ const Contact = () => {
       </section>
 
       {/* Contact Methods */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8">
             {contactMethods.map((method, index) => (
@@ -189,7 +177,7 @@ const Contact = () => {
                   ) : (
                     <p className="text-dna-copper font-semibold mb-2">{method.detail}</p>
                   )}
-                  <p className="text-gray-600 text-sm mb-4">{method.description}</p>
+                  <p className="text-neutral-600 text-sm mb-4">{method.description}</p>
                   {method.onClick && (
                     <Button 
                       onClick={method.onClick}
@@ -203,7 +191,7 @@ const Contact = () => {
                       <Button 
                         className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
                       >
-                        <Sparkles className="w-4 h-4 mr-2" />
+                        <MateMasie className="w-4 h-4 mr-2" />
                         Join Waitlist
                       </Button>
                     </WaitlistSlideIn>
@@ -215,7 +203,6 @@ const Contact = () => {
         </div>
       </section>
 
-
       {/* WhatsApp Modal */}
       <Dialog open={showWhatsAppModal} onOpenChange={setShowWhatsAppModal}>
         <DialogContent className="max-w-md">
@@ -226,7 +213,7 @@ const Contact = () => {
             </DialogTitle>
           </DialogHeader>
           <div className="text-center space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-neutral-50 p-4 rounded-lg">
               <img 
                 src="/lovable-uploads/dea2fe8e-c718-403d-b6be-24cd5152c4a4.png" 
                 alt="WhatsApp QR Code" 
@@ -234,10 +221,10 @@ const Contact = () => {
               />
             </div>
             <div className="space-y-2">
-              <p className="text-sm text-gray-600 font-medium">
+              <p className="text-sm text-neutral-600 font-medium">
                 📱 <strong>On Mobile:</strong> Click the button below to join directly
               </p>
-              <p className="text-sm text-gray-600 font-medium">
+              <p className="text-sm text-neutral-600 font-medium">
                 💻 <strong>On Desktop:</strong> Scan the QR code above with your phone's camera or WhatsApp app
               </p>
             </div>

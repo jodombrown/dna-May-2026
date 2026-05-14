@@ -80,7 +80,7 @@ ${formData.interest}
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Start Your Partnership Journey
@@ -92,7 +92,7 @@ ${formData.interest}
       </section>
 
       {/* Steps */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">
             Your Partnership Path
@@ -150,7 +150,7 @@ ${formData.interest}
       </section>
 
       {/* Partnership Form */}
-      <section id="form" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="form" className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold mb-4 text-center">
             Partnership Inquiry Form
@@ -245,7 +245,7 @@ ${formData.interest}
       </section>
 
       {/* Meeting CTA */}
-      <section id="call" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
+      <section id="call" className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Prefer to Talk First?

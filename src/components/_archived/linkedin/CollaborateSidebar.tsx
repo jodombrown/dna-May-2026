@@ -69,7 +69,7 @@ export const CollaborateSidebar = () => {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <p className="text-sm font-medium">{project.name}</p>
-                    <p className="text-xs text-gray-600">{project.role}</p>
+                    <p className="text-xs text-neutral-600">{project.role}</p>
                   </div>
                   <Badge 
                     variant={project.priority === 'High' ? 'destructive' : 'secondary'}
@@ -81,7 +81,7 @@ export const CollaborateSidebar = () => {
                 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-600">Progress</span>
+                    <span className="text-xs text-neutral-600">Progress</span>
                     <span className="text-xs font-medium">{project.progress}%</span>
                   </div>
                   <Progress value={project.progress} className="h-2" />
@@ -97,7 +97,7 @@ export const CollaborateSidebar = () => {
                       </Avatar>
                     ))}
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-1 text-xs text-neutral-500">
                     <Clock className="w-3 h-3" />
                     {project.deadline}
                   </div>
@@ -119,10 +119,10 @@ export const CollaborateSidebar = () => {
         <CardContent>
           <div className="space-y-3">
             {skillsInDemand.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+              <div key={index} className="flex items-center justify-between p-2 bg-neutral-50 rounded">
                 <div>
                   <p className="text-sm font-medium">{item.skill}</p>
-                  <p className="text-xs text-gray-500">{item.projects} projects</p>
+                  <p className="text-xs text-neutral-500">{item.projects} projects</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge 
@@ -155,7 +155,7 @@ export const CollaborateSidebar = () => {
                       {opp.type}
                     </Badge>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
+                  <ArrowRight className="w-4 h-4 text-neutral-400" />
                 </div>
                 
                 <div className="space-y-2">
@@ -167,7 +167,7 @@ export const CollaborateSidebar = () => {
                     ))}
                   </div>
                   
-                  <div className="flex justify-between items-center text-xs text-gray-600">
+                  <div className="flex justify-between items-center text-xs text-neutral-600">
                     <span className="flex items-center gap-1">
                       <Users className="w-3 h-3" />
                       {opp.members} members
@@ -176,7 +176,7 @@ export const CollaborateSidebar = () => {
                   </div>
                   
                   <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Due: {opp.deadline}</span>
+                    <span className="text-xs text-neutral-500">Due: {opp.deadline}</span>
                     <Button size="sm" variant="outline" className="text-xs h-6">
                       Join
                     </Button>

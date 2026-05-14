@@ -12,10 +12,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore, Check, Settings, Users, MessageSquarePlus } from 'lucide-react';
+import { Loader2, Search, Plus, MoreVertical, Pin, BellOff, Trash2, Archive, ArchiveRestore, Check, Settings, Users, MessageSquarePlus, AtSign, Inbox, X, ShieldAlert } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ConversationListItem, InboxTab } from '@/types/messaging';
+import { ConversationListItem, InboxTab, InboxFilterChip } from '@/types/messaging';
 import InboxTabs from './InboxTabs';
 import PresenceIndicator from './PresenceIndicator';
 import { ConversationContextBadge } from './ConversationContext';
@@ -24,7 +24,10 @@ import { MessageRequestCard } from './MessageRequestBanner';
 import { useMessageRequests } from '@/hooks/useMessageRequests';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { messageService, deleteConversation } from '@/services/messageService';
+import { messageService, deleteConversation, pinConversation } from '@/services/messageService';
+import { groupMessageService } from '@/services/groupMessageService';
+import { MessageSettingsDialog } from './MessageSettingsDialog';
+import { InboxMessageSearchResults } from './InboxMessageSearchResults';
 
 interface ConversationListPanelProps {
   conversations?: ConversationListItem[];
@@ -64,8 +67,11 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   onRefresh,
   archivedConversations = [],
 }) => {
-  const [activeTab, setActiveTab] = useState<InboxTab>('focused');
+  const [activeTab, setActiveTab] = useState<InboxTab>('primary');
+  const [filterChip, setFilterChip] = useState<InboxFilterChip>('all');
   const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
+  const [actioningIds, setActioningIds] = useState<Set<string>>(new Set());
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { toast } = useToast();
   const { requests, requestCount, isLoading: requestsLoading } = useMessageRequests();
 
@@ -83,20 +89,31 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
     }, 250);
   }, []);
 
-  // Archive a conversation with poof animation
+  const findConv = (id: string) => conversations?.find((c) => c.conversation_id === id);
+
+  // Archive a conversation with poof animation (works for 1:1 and groups)
   const handleArchive = (conversationId: string) => {
     triggerPoof(conversationId, async () => {
       try {
-        await messageService.archiveConversation(conversationId);
-        toast({ 
-          title: 'Conversation archived', 
+        const conv = findConv(conversationId);
+        if (conv?.is_group) {
+          await groupMessageService.setArchive(conversationId, true);
+        } else {
+          await messageService.archiveConversation(conversationId);
+        }
+        toast({
+          title: 'Conversation archived',
           description: 'You can find it in the Archived tab',
           action: (
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={async () => {
-                await messageService.unarchiveConversation(conversationId);
+                if (conv?.is_group) {
+                  await groupMessageService.setArchive(conversationId, false);
+                } else {
+                  await messageService.unarchiveConversation(conversationId);
+                }
                 onRefresh?.();
                 toast({ title: 'Conversation restored' });
               }}
@@ -112,11 +129,15 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
     });
   };
 
-  // Unarchive a conversation with poof animation
   const handleUnarchive = (conversationId: string) => {
     triggerPoof(conversationId, async () => {
       try {
-        await messageService.unarchiveConversation(conversationId);
+        const conv = findConv(conversationId);
+        if (conv?.is_group) {
+          await groupMessageService.setArchive(conversationId, false);
+        } else {
+          await messageService.unarchiveConversation(conversationId);
+        }
         toast({ title: 'Conversation restored', description: 'Moved back to Focused' });
         onRefresh?.();
       } catch (error) {
@@ -125,25 +146,38 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
     });
   };
 
-  // Mute/unmute
+  // Mute/unmute (works for 1:1 and groups)
   const handleToggleMute = async (conversationId: string, currentlyMuted: boolean) => {
     try {
-      if (currentlyMuted) {
+      const conv = findConv(conversationId);
+      if (conv?.is_group) {
+        await groupMessageService.setMute(conversationId, !currentlyMuted);
+      } else if (currentlyMuted) {
         await messageService.unmuteConversation(conversationId);
-        toast({ title: 'Conversation unmuted' });
       } else {
         await messageService.muteConversation(conversationId);
-        toast({ title: 'Conversation muted', description: 'Moved to Other tab' });
       }
+      toast({ title: currentlyMuted ? 'Conversation unmuted' : 'Conversation muted' });
       onRefresh?.();
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to update mute status', variant: 'destructive' });
     }
   };
 
-  // Pin/unpin - simplified (just toast for now, needs RPC)
-  const handleTogglePin = (conversationId: string, currentlyPinned: boolean) => {
-    toast({ title: currentlyPinned ? 'Unpinned' : 'Pinned', description: 'Feature coming soon' });
+  // Pin/unpin (works for 1:1 and groups)
+  const handleTogglePin = async (conversationId: string, currentlyPinned: boolean) => {
+    try {
+      const conv = findConv(conversationId);
+      if (conv?.is_group) {
+        await groupMessageService.setPin(conversationId, !currentlyPinned);
+      } else {
+        await pinConversation(conversationId, !currentlyPinned);
+      }
+      toast({ title: currentlyPinned ? 'Unpinned' : 'Pinned' });
+      onRefresh?.();
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to update pin', variant: 'destructive' });
+    }
   };
 
   // Delete a conversation with poof animation
@@ -159,60 +193,117 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
     });
   };
 
+  // Accept request: move bucket to primary
+  const handleAcceptRequest = async (conversationId: string) => {
+    setActioningIds((prev) => new Set(prev).add(conversationId));
+    try {
+      await messageService.setConversationBucket(conversationId, 'primary');
+      toast({ title: 'Request accepted', description: 'Conversation moved to Primary' });
+      onRefresh?.();
+    } catch (err) {
+      toast({ title: 'Error', description: 'Failed to accept request', variant: 'destructive' });
+    } finally {
+      setActioningIds((prev) => { const n = new Set(prev); n.delete(conversationId); return n; });
+    }
+  };
+
+  // Ignore request: move bucket to spam
+  const handleIgnoreRequest = (conversationId: string) => {
+    triggerPoof(conversationId, async () => {
+      try {
+        await messageService.setConversationBucket(conversationId, 'spam');
+        toast({ title: 'Moved to Spam' });
+        onRefresh?.();
+      } catch (err) {
+        toast({ title: 'Error', description: 'Failed to ignore request', variant: 'destructive' });
+      }
+    });
+  };
+
+  // Move spam back to primary
+  const handleNotSpam = async (conversationId: string) => {
+    try {
+      await messageService.setConversationBucket(conversationId, 'primary');
+      toast({ title: 'Moved to Primary' });
+      onRefresh?.();
+    } catch (err) {
+      toast({ title: 'Error', description: 'Failed to move conversation', variant: 'destructive' });
+    }
+  };
+
   const getInitials = (name: string) => {
     return name?.split(' ').map((n) => n[0]).join('').toUpperCase() || '?';
   };
 
   // Filter conversations based on search term and tab
   const filteredConversations = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    const matches = (conv: ConversationListItem) => {
+      if (!q) return true;
+      const haystack = [
+        conv.other_user_full_name,
+        conv.other_user_username,
+        conv.other_user_headline,
+        conv.last_message_content,
+        conv.last_message_preview,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(q);
+    };
+
     // For archived tab, use archivedConversations prop
     if (activeTab === 'archived') {
-      return archivedConversations.filter((conv) =>
-        conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      return archivedConversations.filter(matches);
     }
 
     if (!conversations) return [];
 
-    let filtered = conversations.filter((conv) =>
-      conv.other_user_full_name?.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !conv.is_archived // Exclude archived from other tabs
-    );
+    let filtered = conversations.filter((conv) => matches(conv) && !conv.is_archived);
 
-    // Filter by tab
+    // Filter by tab (Primary / Requests / Spam) using bucket field; default 'primary'
+    const bucketOf = (c: ConversationListItem) => c.bucket ?? 'primary';
     switch (activeTab) {
-      case 'focused':
-        // Active conversations that are not muted
-        filtered = filtered.filter(
-          (conv) => !conv.is_muted
-        );
-        break;
-      case 'other':
-        // Muted conversations
-        filtered = filtered.filter(
-          (conv) => conv.is_muted
-        );
+      case 'primary':
+        filtered = filtered.filter((c) => bucketOf(c) === 'primary');
         break;
       case 'requests':
-        // Pending message requests
-        filtered = filtered.filter(
-          (conv) => conv.participant_status === 'pending'
-        );
+        filtered = filtered.filter((c) => bucketOf(c) === 'requests');
+        break;
+      case 'spam':
+        filtered = filtered.filter((c) => bucketOf(c) === 'spam');
         break;
     }
 
-    return filtered;
-  }, [conversations, archivedConversations, searchTerm, activeTab]);
+    // Apply filter chip
+    if (filterChip === 'unread') {
+      filtered = filtered.filter((c) => (c.unread_count || 0) > 0);
+    } else if (filterChip === 'mentions') {
+      filtered = filtered.filter((c) => !!c.has_unread_mention);
+    }
 
-  // Count unread for focused tab
-  const focusedUnreadCount = useMemo(() => {
+    return filtered;
+  }, [conversations, archivedConversations, searchTerm, activeTab, filterChip]);
+
+  // Counts per tab - badges show "conversations with unread" (LinkedIn pattern)
+  const primaryCount = useMemo(() => {
     if (!conversations) return 0;
-    return conversations
-      .filter((c) => !c.is_muted && !c.is_archived)
-      .reduce((sum, c) => sum + (c.unread_count || 0), 0);
+    return conversations.filter(
+      (c) => (c.bucket ?? 'primary') === 'primary' && !c.is_archived && (c.unread_count || 0) > 0
+    ).length;
   }, [conversations]);
 
-  // Count archived conversations
+  const spamCount = useMemo(() => {
+    if (!conversations) return 0;
+    return conversations.filter((c) => (c.bucket ?? 'primary') === 'spam' && !c.is_archived).length;
+  }, [conversations]);
+
+  const bucketRequestsCount = useMemo(() => {
+    if (!conversations) return 0;
+    return conversations.filter((c) => (c.bucket ?? 'primary') === 'requests' && !c.is_archived).length;
+  }, [conversations]);
+
   const archivedCount = archivedConversations.length;
 
   const handleMarkAllRead = async () => {
@@ -262,11 +353,11 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
   };
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full md:rounded-lg rounded-none border-0 md:border shadow-none md:shadow-sm">
       {/* Search Header */}
-      <div className="p-4 border-b space-y-3">
+      <div className="px-3 pt-3 pb-2 md:p-4 border-b space-y-2 md:space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-lg">Messages</h2>
+          <h2 className="font-serif text-h1 text-foreground">Messages</h2>
           <div className="flex items-center gap-1">
             {(onNewConversation || onNewGroup) && (
               <DropdownMenu>
@@ -308,8 +399,8 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                   Archive all read
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={() => toast({ title: 'Coming soon', description: 'Message settings will be available soon' })}
+                <DropdownMenuItem
+                  onClick={() => setSettingsOpen(true)}
                   className="cursor-pointer"
                 >
                   <Settings className="h-4 w-4 mr-2" />
@@ -320,42 +411,68 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
           </div>
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            placeholder="Search messages"
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="Search messages (press / to focus)"
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-9 h-9"
+              data-inbox-search
+              aria-label="Search messages"
+            />
+          </div>
+          {/* Trailing filter cluster: All / Unread / Mentions */}
+          {activeTab !== 'archived' && (
+            <div className="flex items-center gap-0.5 rounded-md border border-border/60 bg-background p-0.5" role="tablist" aria-label="Inbox filters">
+              {([
+                { id: 'all' as const, label: 'All', icon: Inbox },
+                { id: 'unread' as const, label: 'Unread', icon: MessageSquarePlus },
+                { id: 'mentions' as const, label: 'Mentions', icon: AtSign },
+              ]).map((chip) => {
+                const Icon = chip.icon;
+                const active = filterChip === chip.id;
+                return (
+                  <button
+                    key={chip.id}
+                    role="tab"
+                    aria-selected={active}
+                    aria-label={`Filter by ${chip.label}`}
+                    title={chip.label}
+                    onClick={() => setFilterChip(chip.id)}
+                    className={cn(
+                      'inline-flex items-center justify-center h-8 w-8 rounded transition-colors',
+                      active ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Inbox Tabs */}
+      {/* Inbox Tabs (segmented, on-brand) */}
       <InboxTabs
         activeTab={activeTab}
-        onTabChange={setActiveTab}
-        focusedCount={focusedUnreadCount}
-        requestsCount={requestCount}
+        onTabChange={(t) => { setActiveTab(t); setFilterChip('all'); }}
+        primaryCount={primaryCount}
+        requestsCount={bucketRequestsCount || requestCount}
+        spamCount={spamCount}
         archivedCount={archivedCount}
       />
 
+      {/* Tier 3: global message-body search results (>=2 chars) */}
+      <InboxMessageSearchResults query={searchTerm} />
+
       {/* Conversation List */}
       <ScrollArea className="flex-1">
-        {isLoading || (activeTab === 'requests' && requestsLoading) ? (
+        {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : activeTab === 'requests' && requests.length > 0 ? (
-          // Show message requests
-          <div className="p-4 space-y-4">
-            {requests.map((request) => (
-              <MessageRequestCard
-                key={request.conversation_id}
-                request={request}
-                onAccept={() => onSelectConversation(request.conversation_id)}
-              />
-            ))}
           </div>
         ) : filteredConversations.length === 0 ? (
           <div className="p-6 text-center text-muted-foreground">
@@ -363,21 +480,21 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
               <>
                 <Archive className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p className="font-medium">No archived conversations</p>
-                <p className="text-sm mt-2">
-                  Archived conversations will appear here
-                </p>
+                <p className="text-sm mt-2">Archived conversations will appear here</p>
               </>
             ) : activeTab === 'requests' ? (
               <>
-                <p>No message requests</p>
+                <Inbox className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="font-medium">No message requests</p>
                 <p className="text-sm mt-2">
-                  Requests from people you're not connected with will appear here
+                  First messages from people you are not connected with will appear here.
                 </p>
               </>
-            ) : activeTab === 'other' ? (
+            ) : activeTab === 'spam' ? (
               <>
-                <p>No muted conversations</p>
-                <p className="text-sm mt-2">Muted conversations will appear here</p>
+                <ShieldAlert className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p className="font-medium">No spam</p>
+                <p className="text-sm mt-2">Conversations you mark as spam show up here.</p>
               </>
             ) : (
               <>
@@ -388,6 +505,12 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
           </div>
         ) : (
           <div className="divide-y">
+            {/* Inline accept / ignore actions for Requests tab */}
+            {activeTab === 'requests' && (
+              <div className="px-4 py-2 text-xs text-muted-foreground bg-muted/30">
+                Tap a request to preview. Use Accept to move it to Primary or Ignore to mark as spam.
+              </div>
+            )}
             <AnimatePresence mode="popLayout">
               {filteredConversations.map((conversation) => {
                 const hasUnread = conversation.unread_count > 0;
@@ -423,25 +546,33 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                       filter: 'blur(4px)',
                     }}
                     transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                    data-selected-row={selectedConversationId === conversation.conversation_id ? 'true' : undefined}
+                    style={{ contentVisibility: 'auto', containIntrinsicSize: '88px' } as React.CSSProperties}
                     className={cn(
                       'relative group',
-                      selectedConversationId === conversation.conversation_id && 'bg-primary text-primary-foreground [&_p]:text-primary-foreground [&_span]:text-primary-foreground/80'
+                      selectedConversationId === conversation.conversation_id
+                        ? 'bg-accent text-accent-foreground'
+                        : 'hover:bg-muted/60'
                     )}
                   >
                   <button
                     onClick={() => onSelectConversation(conversation.conversation_id)}
-                    className="w-full p-4 pr-10 hover:bg-accent transition-colors text-left"
+                    className="w-full p-4 pr-10 transition-colors text-left"
                   >
                     <div className="flex items-start gap-3">
-                      {/* Avatar with presence indicator */}
+                      {/* Avatar with presence indicator (or group icon) */}
                       <div className="relative">
-                        <Avatar className="w-12 h-12">
+                        <Avatar className="w-10 h-10">
                           <AvatarImage src={conversation.other_user_avatar_url || ''} />
-                          <AvatarFallback className="bg-primary text-primary-foreground">
-                            {getInitials(conversation.other_user_full_name || '')}
+                          <AvatarFallback className="bg-primary text-primary-foreground" data-keep-color>
+                            {conversation.is_group ? (
+                              <Users className="h-5 w-5" />
+                            ) : (
+                              getInitials(conversation.other_user_full_name || '')
+                            )}
                           </AvatarFallback>
                         </Avatar>
-                        {isOnline && (
+                        {!conversation.is_group && isOnline && (
                           <div className="absolute bottom-0 right-0 border-2 border-background rounded-full">
                             <PresenceIndicator status="online" size="sm" />
                           </div>
@@ -457,8 +588,8 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                             )}
                             <p
                               className={cn(
-                                'font-semibold text-sm truncate',
-                                hasUnread && 'text-primary'
+                                'font-semibold text-body truncate',
+                                hasUnread && selectedConversationId !== conversation.conversation_id && 'text-primary'
                               )}
                             >
                               {conversation.other_user_full_name}
@@ -477,7 +608,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
 
                           <div className="flex items-center gap-2 flex-shrink-0">
                             {conversation.last_message_at && (
-                              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                              <span className="text-micro text-muted-foreground whitespace-nowrap">
                                 {formatDistanceToNow(
                                   new Date(conversation.last_message_at),
                                   { addSuffix: false }
@@ -487,7 +618,8 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                             {hasUnread && (
                               <Badge
                                 variant="default"
-                                className="rounded-full px-2 py-0 text-xs"
+                                className="rounded-full px-2 py-0 text-micro"
+                                data-keep-color
                               >
                                 {conversation.unread_count}
                               </Badge>
@@ -495,8 +627,15 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                           </div>
                         </div>
 
-                        {conversation.other_user_headline && (
-                          <p className="text-xs text-muted-foreground truncate mt-1">
+                        {conversation.is_group && (
+                          <p className="text-meta text-muted-foreground truncate mt-0.5">
+                            {conversation.participant_count || 0} member
+                            {(conversation.participant_count || 0) === 1 ? '' : 's'}
+                          </p>
+                        )}
+
+                        {!conversation.is_group && conversation.other_user_headline && (
+                          <p className="text-meta text-muted-foreground truncate mt-0.5">
                             {conversation.other_user_headline}
                           </p>
                         )}
@@ -505,7 +644,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                           conversation.last_message_preview) && (
                           <p
                             className={cn(
-                              'text-xs truncate mt-1',
+                              'text-meta truncate mt-0.5',
                               hasUnread
                                 ? 'font-medium text-foreground'
                                 : 'text-muted-foreground'
@@ -517,7 +656,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                         )}
 
                         {/* DIA Conversation Starter for stale conversations */}
-                        {!hasUnread && (
+                        {!hasUnread && !conversation.is_group && (
                           <DiaConversationStarter
                             otherUserId={conversation.other_user_id}
                             lastMessageAt={conversation.last_message_at || null}
@@ -529,7 +668,54 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
                     </div>
                   </button>
 
-                  {/* Context menu */}
+                  {/* Inline accept / ignore actions for the Requests tab */}
+                  {activeTab === 'requests' && (
+                    <div className="flex items-center gap-2 px-4 pb-3 -mt-1">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        disabled={actioningIds.has(conversation.conversation_id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAcceptRequest(conversation.conversation_id);
+                        }}
+                        aria-label={`Accept message request from ${conversation.other_user_full_name}`}
+                      >
+                        <Check className="h-3.5 w-3.5 mr-1" />
+                        Accept
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleIgnoreRequest(conversation.conversation_id);
+                        }}
+                        aria-label={`Ignore message request from ${conversation.other_user_full_name}`}
+                      >
+                        <X className="h-3.5 w-3.5 mr-1" />
+                        Ignore
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Inline action for Spam tab */}
+                  {activeTab === 'spam' && (
+                    <div className="flex items-center gap-2 px-4 pb-3 -mt-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleNotSpam(conversation.conversation_id);
+                        }}
+                        aria-label={`Move conversation with ${conversation.other_user_full_name} back to Primary`}
+                      >
+                        Not spam
+                      </Button>
+                    </div>
+                  )}
+
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -614,6 +800,7 @@ const ConversationListPanel: React.FC<ConversationListPanelProps> = ({
           </div>
         )}
       </ScrollArea>
+      <MessageSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </Card>
   );
 };

@@ -90,7 +90,7 @@ export default function GroupsBrowse() {
           <div className="flex items-center justify-between mb-6 relative overflow-hidden rounded-xl p-6">
             <CulturalPattern pattern="ndebele" opacity={0.05} />
             <div className="relative z-10">
-              <h1 className="text-3xl font-bold">Groups</h1>
+              <h1 className="text-h1 font-serif">Groups</h1>
               <p className="text-muted-foreground mt-1">
                 Connect with communities that share your interests
               </p>

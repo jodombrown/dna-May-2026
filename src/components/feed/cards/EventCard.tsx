@@ -52,11 +52,11 @@ const formatEventType = (type: string | null): string => {
 // Get event type badge color
 const getEventTypeBadgeClass = (type: string | null): string => {
   const colors: Record<string, string> = {
-    conference: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+    conference: 'bg-copper-100 text-copper-700 dark:bg-copper-900/30 dark:text-copper-300',
     workshop: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
     meetup: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-    webinar: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
-    networking: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+    webinar: 'bg-copper-100 text-copper-700 dark:bg-copper-900/30 dark:text-copper-300',
+    networking: 'bg-copper-100 text-copper-700 dark:bg-copper-900/30 dark:text-copper-300',
     social: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
     other: 'bg-muted text-muted-foreground',
   };

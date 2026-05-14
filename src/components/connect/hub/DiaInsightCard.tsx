@@ -5,20 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
-import {
-  Sparkles,
-  UserPlus,
-  Users,
-  TrendingUp,
-  Calendar,
-  Lightbulb,
-  ChevronRight,
-  X,
-  Eye,
-  ArrowRight,
-} from 'lucide-react';
+import { UserPlus, Users, TrendingUp, Calendar, Lightbulb, ChevronRight, X, Eye, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { Sankofa } from '@/components/icons/adinkra';
 
 /**
  * DIA Insight Card Types (from PRD)
@@ -177,7 +167,7 @@ export function DiaInsightCard({
             variant="secondary"
             className="bg-white/80 backdrop-blur-sm text-xs font-medium flex items-center gap-1"
           >
-            <Sparkles className="h-3 w-3 text-primary" />
+            <Sankofa className="h-3 w-3 text-primary" />
             DIA Insight
           </Badge>
         </div>

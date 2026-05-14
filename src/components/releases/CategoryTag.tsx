@@ -53,9 +53,9 @@ const categories: Record<ReleaseCategory, CategoryConfig> = {
     label: 'Convey',
   },
   PLATFORM: {
-    color: 'text-slate-600',
-    bgColor: 'bg-slate-100',
-    borderColor: 'border-slate-300',
+    color: 'text-neutral-600',
+    bgColor: 'bg-neutral-100',
+    borderColor: 'border-neutral-300',
     icon: <Settings className="w-3.5 h-3.5" />,
     label: 'Platform',
   },
@@ -127,7 +127,7 @@ export const CategoryButton: React.FC<CategoryButtonProps> = ({
         'hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2',
         isActive
           ? cn(config.bgColor, config.color, config.borderColor, 'ring-2 ring-offset-2')
-          : cn('bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'),
+          : cn('bg-neutral-100 text-neutral-600 border-neutral-200 hover:bg-neutral-200'),
         className
       )}
     >

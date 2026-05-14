@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Heart, Languages, Users, Sparkles, Globe, Plane, Target, MapPin } from 'lucide-react';
+import { Edit, Heart, Languages, Users, Globe, Plane, Target, MapPin, Compass } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { 
   CONNECTION_TYPE_OPTIONS, 
@@ -241,7 +241,7 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
             {profile.engagement_intentions && profile.engagement_intentions.length > 0 && (
               <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
                 <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-4 h-4 text-primary" />
+                  <Compass className="w-4 h-4 text-primary" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-xs text-muted-foreground mb-1.5">Here to</div>

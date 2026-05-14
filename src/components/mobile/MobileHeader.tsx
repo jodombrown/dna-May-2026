@@ -1,14 +1,12 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Search, PenSquare } from 'lucide-react';
-import dnaLogo from '@/assets/dna-logo.png';
+import { ArrowLeft, Search } from 'lucide-react';
+import dnaLogo from '@/assets/dna-logo.webp';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { UnifiedNotificationBell } from '@/components/notifications/UnifiedNotificationBell';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
+import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
 
 interface MobileHeaderProps {
   title?: string;
@@ -39,7 +37,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
   const location = useLocation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
-  const { open: openAccountDrawer } = useAccountDrawer();
+  
 
   // Auto-detect if we should show back button based on route depth
   const shouldShowBack = showBack || (
@@ -47,51 +45,21 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
     !location.pathname.endsWith('/feed')
   );
 
-  // Feed variant: compact header with DNA logo, composer, bell, profile
+  // Feed variant: shared DnaMobileHeader for pixel-perfect parity across hubs
   if (variant === 'feed' && user && profile) {
     return (
-      <header 
-        className={cn(
-          "sticky top-0 z-40 bg-background border-b border-border",
-          className
-        )}
-      >
-        <div className="flex items-center justify-between h-14 px-1 gap-1.5">
-          {/* DNA Logo */}
-          <img 
-            src={dnaLogo}
-            alt="DNA" 
-            className="h-[80px] w-auto cursor-pointer flex-shrink-0 -ml-4"
-            width={57}
-            height={32}
-            onClick={() => navigate('/dna/feed')}
-          />
-
-          {/* Composer Bubble - "What's on your mind?" */}
-          {onComposerClick && (
-            <div 
-              onClick={onComposerClick}
-              className="flex-1 min-w-0 bg-muted rounded-full px-3 py-2 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors"
-            >
-              <span className="truncate block">What's on your mind?</span>
-            </div>
-          )}
-
-          {/* Right: Notification + Profile */}
-          <div className="flex items-center gap-1.5 flex-shrink-0 pr-1">
-            <UnifiedNotificationBell />
-            <Avatar 
-              className="h-9 w-9 cursor-pointer" 
-              onClick={openAccountDrawer}
-            >
-              <AvatarImage src={profile.avatar_url || ''} />
-              <AvatarFallback>{profile.display_name?.[0] || profile.username?.[0] || 'U'}</AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
+      <header className={cn('sticky top-0 z-40 bg-background border-b border-border', className)}>
+        <DnaMobileHeader
+          bubble={{
+            kind: 'composer',
+            placeholder: "What's on your mind?",
+            onClick: onComposerClick ?? (() => {}),
+          }}
+        />
       </header>
     );
   }
+
 
   // Default variant: existing header layout
   return (
@@ -101,29 +69,30 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
         className
       )}
     >
-      <div className="flex items-center justify-between h-14 px-4">
-        {/* Left: Back or Logo */}
-        <div className="flex items-center gap-2">
-          {shouldShowBack ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="px-2"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          ) : (
-            <img 
-              src={dnaLogo}
-              alt="DNA" 
-              className="h-[80px] w-auto cursor-pointer"
-              width={57}
-              height={32}
-              onClick={() => navigate('/dna/feed')}
-            />
-          )}
-        </div>
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Left: Back or Logo */}
+          <div className="flex items-center gap-2 -ml-8">
+            {shouldShowBack ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(-1)}
+                className="px-2 ml-8"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            ) : (
+              <img
+                src={dnaLogo}
+                alt="DNA"
+                className="h-[80px] w-auto cursor-pointer"
+                width={142}
+                height={80}
+                onClick={() => navigate('/dna/feed')}
+              />
+            )}
+          </div>
 
         {/* Center: Title */}
         {title && (
@@ -145,6 +114,7 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
             </Button>
           )}
           {actions}
+          </div>
         </div>
       </div>
     </header>

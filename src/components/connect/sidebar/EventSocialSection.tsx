@@ -12,7 +12,7 @@ interface EventSocialSectionProps {
 const EventSocialSection: React.FC<EventSocialSectionProps> = ({ event }) => {
   return (
     <div className="space-y-4 pb-6">
-      <h3 className="text-lg font-semibold text-gray-900">Follow {event.title}</h3>
+      <h3 className="text-lg font-semibold text-neutral-900">Follow {event.title}</h3>
       <div className="flex gap-3">
         <Button 
           variant="outline" 

@@ -24,10 +24,10 @@ export function WelcomeOverlay({ firstName, onDismiss, onCompleteProfile }: Welc
         {/* Close button */}
         <button
           onClick={onDismiss}
-          className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100 transition-colors z-10"
+          className="absolute top-3 right-3 p-1 rounded-full hover:bg-neutral-100 transition-colors z-10"
           aria-label="Close"
         >
-          <X className="h-5 w-5 text-gray-400" />
+          <X className="h-5 w-5 text-neutral-400" />
         </button>
 
         {/* Decorative gradient */}

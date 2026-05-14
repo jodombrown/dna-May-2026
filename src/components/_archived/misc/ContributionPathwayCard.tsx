@@ -37,7 +37,7 @@ const ContributionPathwayCard: React.FC<ContributionPathwayCardProps> = ({
         <div className="flex justify-between items-start">
           <div>
             <CardTitle className="text-base sm:text-lg mb-2">{pathway.title}</CardTitle>
-            <p className="text-sm sm:text-base text-gray-600">{pathway.description}</p>
+            <p className="text-sm sm:text-base text-neutral-600">{pathway.description}</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
             <Badge 
@@ -60,17 +60,17 @@ const ContributionPathwayCard: React.FC<ContributionPathwayCardProps> = ({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-gray-400" />
+            <DollarSign className="w-4 h-4 text-neutral-400" />
             <span className="text-sm">
               ${pathway.currentAmount.toLocaleString()} / ${pathway.targetAmount.toLocaleString()}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-gray-400" />
+            <Users className="w-4 h-4 text-neutral-400" />
             <span className="text-sm">{pathway.contributors} contributors</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-gray-400" />
+            <Clock className="w-4 h-4 text-neutral-400" />
             <span className="text-sm">{pathway.timeLeft} remaining</span>
           </div>
         </div>

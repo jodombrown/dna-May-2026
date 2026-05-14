@@ -364,7 +364,7 @@ const FeedResearchForm: React.FC<FeedResearchFormProps> = ({ onSuccess }) => {
               rows={4}
               className="mt-2"
             />
-            <p className="text-sm text-gray-500 mt-1">{formData.differentiationIdea.length}/500</p>
+            <p className="text-sm text-neutral-500 mt-1">{formData.differentiationIdea.length}/500</p>
           </div>
 
           <div>
@@ -379,7 +379,7 @@ const FeedResearchForm: React.FC<FeedResearchFormProps> = ({ onSuccess }) => {
               rows={3}
               className="mt-2"
             />
-            <p className="text-sm text-gray-500 mt-1">{formData.dreamFeature.length}/300</p>
+            <p className="text-sm text-neutral-500 mt-1">{formData.dreamFeature.length}/300</p>
           </div>
 
           <div>
@@ -394,7 +394,7 @@ const FeedResearchForm: React.FC<FeedResearchFormProps> = ({ onSuccess }) => {
               rows={2}
               className="mt-2"
             />
-            <p className="text-sm text-gray-500 mt-1">{formData.useCase.length}/200</p>
+            <p className="text-sm text-neutral-500 mt-1">{formData.useCase.length}/200</p>
           </div>
         </div>
 
@@ -431,7 +431,7 @@ const FeedResearchForm: React.FC<FeedResearchFormProps> = ({ onSuccess }) => {
           >
             {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
           </Button>
-          <p className="text-sm text-gray-500 text-center mt-2">
+          <p className="text-sm text-neutral-500 text-center mt-2">
             * Required questions
           </p>
         </div>

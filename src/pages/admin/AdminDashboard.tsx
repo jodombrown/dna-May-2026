@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   const statCards = [
     { label: 'Total Users', value: stats?.users || 0, icon: Users, color: 'bg-blue-500' },
     { label: 'Total Posts', value: stats?.posts || 0, icon: MessageSquare, color: 'bg-emerald-500' },
-    { label: 'Active Spaces', value: stats?.spaces || 0, icon: Folder, color: 'bg-purple-500' },
+    { label: 'Active Spaces', value: stats?.spaces || 0, icon: Folder, color: 'bg-copper-500' },
     { label: 'Opportunities', value: stats?.opportunities || 0, icon: Briefcase, color: 'bg-orange-500' }
   ];
 

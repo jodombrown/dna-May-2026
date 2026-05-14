@@ -263,7 +263,7 @@ const EventCheckIn = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Check-in Progress</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-h2 font-serif">
                     {checkedInCount} / {totalGoingCount}
                     <span className="text-sm font-normal text-muted-foreground ml-2">
                       checked in
@@ -273,7 +273,7 @@ const EventCheckIn = () => {
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Show-up Rate</p>
-                <p className="text-2xl font-bold">
+                <p className="text-h2 font-serif">
                   {totalGoingCount > 0
                     ? Math.round((checkedInCount / totalGoingCount) * 100)
                     : 0}%

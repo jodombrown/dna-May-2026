@@ -6,25 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  ArrowLeft, 
-  MapPin,
-  Navigation,
-  Map,
-  Clock,
-  Users,
-  Search,
-  Bell,
-  Calendar,
-  Globe2,
-  TrendingUp,
-  Heart,
-  Home,
-  CheckCircle2,
-  XCircle,
-  Sparkles
-} from 'lucide-react';
+import { ArrowLeft, MapPin, Navigation, Map, Clock, Users, Search, Bell, Calendar, Globe2, TrendingUp, Heart, Home, CheckCircle2, XCircle } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 const LocalEventsPage = () => {
   useScrollToTop();
@@ -106,7 +90,7 @@ const LocalEventsPage = () => {
                 <p className="text-white drop-shadow-md text-sm mb-3 font-medium">{city.count} events nearby</p>
                 <Button 
                   size="sm" 
-                  className="w-full bg-white/90 hover:bg-white text-gray-900 border-0 font-semibold shadow-md"
+                  className="w-full bg-white/90 hover:bg-white text-neutral-900 border-0 font-semibold shadow-md"
                 >
                   Explore Events
                 </Button>
@@ -116,7 +100,7 @@ const LocalEventsPage = () => {
         </div>
 
         {/* Problem vs Solution - Alternating Layout */}
-        <div className="mb-16 bg-muted/30 rounded-3xl p-8 md:p-12">
+        <div className="mb-16 bg-muted/30 rounded-xl p-8 md:p-12">
           <h2 className="text-4xl font-bold mb-12 text-center">Why Local Discovery Changes Everything</h2>
           
           <div className="grid md:grid-cols-2 gap-8">
@@ -225,7 +209,7 @@ const LocalEventsPage = () => {
             <TabsContent value="hyper" className="mt-0">
               <Card className="p-8 bg-gradient-to-br from-dna-mint/30 to-dna-emerald/20 border-dna-emerald/30">
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 bg-dna-emerald rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 bg-dna-emerald rounded-lg flex items-center justify-center flex-shrink-0">
                     <Home className="h-10 w-10 text-white" />
                   </div>
                   <div className="flex-1">
@@ -260,7 +244,7 @@ const LocalEventsPage = () => {
             <TabsContent value="city" className="mt-0">
               <Card className="p-8 bg-gradient-to-br from-dna-forest/10 to-dna-emerald/10 border-dna-forest/30">
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 bg-dna-forest rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 bg-dna-forest rounded-lg flex items-center justify-center flex-shrink-0">
                     <Map className="h-10 w-10 text-white" />
                   </div>
                   <div className="flex-1">
@@ -295,7 +279,7 @@ const LocalEventsPage = () => {
             <TabsContent value="metro" className="mt-0">
               <Card className="p-8 bg-gradient-to-br from-cultural-purple/10 to-dna-copper/10 border-cultural-purple/30">
                 <div className="flex items-start gap-6">
-                  <div className="w-20 h-20 bg-cultural-purple rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <div className="w-20 h-20 bg-cultural-purple rounded-lg flex items-center justify-center flex-shrink-0">
                     <Globe2 className="h-10 w-10 text-white" />
                   </div>
                   <div className="flex-1">
@@ -330,7 +314,7 @@ const LocalEventsPage = () => {
         </div>
 
         {/* How It Works - Horizontal Timeline */}
-        <div className="mb-16 bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl p-8 md:p-12">
+        <div className="mb-16 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-8 md:p-12">
           <h2 className="text-4xl font-bold mb-4 text-center">How It Works</h2>
           <p className="text-center text-muted-foreground text-lg mb-12 max-w-2xl mx-auto">
             Four simple steps to start discovering events in your area
@@ -456,7 +440,7 @@ const LocalEventsPage = () => {
 
             <Card className="p-0 overflow-hidden group hover:shadow-2xl transition-all">
               <div className="h-48 bg-gradient-to-br from-cultural-purple to-dna-copper flex items-center justify-center">
-                <Sparkles className="h-20 w-20 text-white" />
+                <Nkonsonkonson className="h-20 w-20 text-white" />
               </div>
               <div className="p-6">
                 <Badge className="mb-3">Weekend Explorer</Badge>
@@ -477,7 +461,7 @@ const LocalEventsPage = () => {
           
           <div className="grid md:grid-cols-3 gap-6">
             <Card className="p-6 text-center hover:shadow-lg transition-all group">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <MapPin className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold mb-2">Find Events Near You</h3>
@@ -487,7 +471,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-6 text-center hover:shadow-lg transition-all group">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Clock className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold mb-2">Save Time & Energy</h3>
@@ -497,7 +481,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-6 text-center hover:shadow-lg transition-all group">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Users className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold mb-2">Build Local Connections</h3>
@@ -507,7 +491,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-6 text-center hover:shadow-lg transition-all group">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Home className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold mb-2">Support Your Community</h3>
@@ -517,7 +501,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-6 text-center hover:shadow-lg transition-all group">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Navigation className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold mb-2">Smart Distance Filtering</h3>
@@ -527,7 +511,7 @@ const LocalEventsPage = () => {
             </Card>
 
             <Card className="p-6 text-center hover:shadow-lg transition-all group">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Bell className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold mb-2">Location-Based Alerts</h3>
@@ -539,7 +523,7 @@ const LocalEventsPage = () => {
         </div>
 
         {/* CTA - Full Width Banner Style */}
-        <div className="relative overflow-hidden rounded-3xl">
+        <div className="relative overflow-hidden rounded-xl">
           <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary/70" />
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20" />
           

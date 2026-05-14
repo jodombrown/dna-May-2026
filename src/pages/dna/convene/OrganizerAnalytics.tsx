@@ -96,7 +96,7 @@ const OrganizerAnalytics = () => {
                 My Events
               </Button>
               <div>
-                <h1 className="text-2xl font-bold">Your Event Analytics</h1>
+                <h1 className="text-h2 font-serif">Your Event Analytics</h1>
                 <p className="text-sm text-muted-foreground">
                   Track your event performance and engagement
                 </p>

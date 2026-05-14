@@ -121,7 +121,7 @@ const InviteSignup = () => {
 
   if (validatingInvite) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader label="Validating invitation..." />
       </div>
     );
@@ -129,7 +129,7 @@ const InviteSignup = () => {
 
   if (referralCode && !inviteValid) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
@@ -154,7 +154,7 @@ const InviteSignup = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto w-12 h-12 bg-dna-emerald/10 rounded-full flex items-center justify-center mb-4">

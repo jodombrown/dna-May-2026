@@ -54,7 +54,7 @@ const ConnectHero = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               onClick={() => navigate('/about')}
-              className="bg-white text-dna-emerald hover:bg-gray-100"
+              className="bg-white text-dna-emerald hover:bg-neutral-100"
             >
               Learn About DNA
               <ArrowRight className="w-4 h-4 ml-2" />

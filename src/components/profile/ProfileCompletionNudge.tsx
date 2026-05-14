@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { X, Sparkles, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { ProfileMissingFields, getMissingFields } from './ProfileMissingFields';
 import { cn } from '@/lib/utils';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileCompletionNudgeProps {
   variant?: 'banner' | 'card' | 'compact' | 'inline';
@@ -65,7 +66,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
         'flex items-center gap-2 px-3 py-2 bg-dna-copper/10 border border-dna-copper/20 rounded-lg text-sm',
         className
       )}>
-        <Sparkles className="h-4 w-4 text-dna-copper flex-shrink-0" />
+        <Sankofa className="h-4 w-4 text-dna-copper flex-shrink-0" />
         <span className="flex-1">
           <span className="font-medium">{completenessScore}% complete</span>
           {topMissingField && (
@@ -99,7 +100,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
       )}>
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-dna-copper" />
+            <Sankofa className="h-4 w-4 text-dna-copper" />
             <span className="text-sm font-semibold">{completenessScore}% Profile Strength</span>
           </div>
           {dismissible && (
@@ -137,7 +138,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
       )}>
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0 p-2 bg-dna-copper/20 rounded-full">
-            <Sparkles className="h-5 w-5 text-dna-copper" />
+            <Sankofa className="h-5 w-5 text-dna-copper" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-1">
@@ -190,7 +191,7 @@ export const ProfileCompletionNudge: React.FC<ProfileCompletionNudgeProps> = ({
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className="p-1.5 bg-dna-copper/20 rounded-full">
-              <Sparkles className="h-4 w-4 text-dna-copper" />
+              <Sankofa className="h-4 w-4 text-dna-copper" />
             </div>
             <div>
               <h3 className="font-semibold text-sm">Profile Strength</h3>

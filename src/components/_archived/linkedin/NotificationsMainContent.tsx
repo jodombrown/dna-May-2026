@@ -104,7 +104,7 @@ const NotificationsMainContent = () => {
         <div>
           <h2 className="text-2xl font-bold text-dna-forest">Notifications</h2>
           {unreadCount > 0 && (
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
             </p>
           )}
@@ -150,14 +150,14 @@ const NotificationsList = ({ notifications }: { notifications: any[] }) => {
         <ScrollArea className="h-[500px]">
           {notifications.length === 0 ? (
             <div className="flex items-center justify-center h-32">
-              <p className="text-gray-500">No notifications in this category</p>
+              <p className="text-neutral-500">No notifications in this category</p>
             </div>
           ) : (
             <div className="divide-y">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-gray-50 transition-colors ${
+                  className={`p-4 hover:bg-neutral-50 transition-colors ${
                     notification.unread ? 'bg-blue-50 border-l-4 border-dna-copper' : ''
                   }`}
                 >
@@ -172,7 +172,7 @@ const NotificationsList = ({ notifications }: { notifications: any[] }) => {
                       <div className="flex items-center justify-between">
                         <p className="text-sm">
                           <span className="font-medium text-dna-forest">{notification.user}</span>
-                          <span className="text-gray-600 ml-1">{notification.action}</span>
+                          <span className="text-neutral-600 ml-1">{notification.action}</span>
                         </p>
                         <div className="flex items-center space-x-2">
                           <notification.icon className="w-4 h-4 text-dna-copper" />
@@ -183,13 +183,13 @@ const NotificationsList = ({ notifications }: { notifications: any[] }) => {
                       </div>
                       
                       {notification.comment && (
-                        <p className="text-sm text-gray-600 mt-1 italic">
+                        <p className="text-sm text-neutral-600 mt-1 italic">
                           "{notification.comment}"
                         </p>
                       )}
                       
                       <div className="flex items-center justify-between mt-2">
-                        <p className="text-xs text-gray-500">{notification.time}</p>
+                        <p className="text-xs text-neutral-500">{notification.time}</p>
                         {notification.unread && (
                           <div className="w-2 h-2 bg-dna-copper rounded-full"></div>
                         )}

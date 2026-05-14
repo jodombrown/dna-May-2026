@@ -9,9 +9,10 @@
  */
 
 import { Button } from '@/components/ui/button';
-import { Sparkles, X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { DIASuggestion } from '@/types/composer';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DIASuggestionBarProps {
   suggestion: DIASuggestion;
@@ -37,7 +38,7 @@ export const DIASuggestionBar = ({
       {/* DIA Icon */}
       <div className="flex-shrink-0 mt-0.5">
         <div className="w-7 h-7 rounded-full bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
-          <Sparkles className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+          <MateMasie className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
         </div>
       </div>
 

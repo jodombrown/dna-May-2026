@@ -43,17 +43,16 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors border-b border-border/50",
-        isSelected && "bg-primary/10 border-l-2 border-l-primary",
-        hasUnread && "bg-primary/5",
-        conversation.is_pinned && "bg-amber-50/50 dark:bg-amber-950/20"
+        "w-full flex items-center gap-3 px-3 py-2.5 transition-colors border-b border-border/60",
+        "hover:bg-muted/50 focus:outline-none focus-visible:bg-muted/60",
+        isSelected && "bg-primary/10",
       )}
     >
-      {/* Avatar */}
+      {/* Avatar — 44px WhatsApp-style */}
       <div className="relative flex-shrink-0">
-        <Avatar className="h-12 w-12">
+        <Avatar className="h-11 w-11">
           <AvatarImage src={conversation.other_user_avatar_url} />
-          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+          <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
             {conversation.other_user_full_name?.charAt(0) || '?'}
           </AvatarFallback>
         </Avatar>
@@ -64,11 +63,11 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 min-w-0">
             {conversation.is_pinned && (
-              <Pin className="h-3 w-3 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+              <Pin className="h-3 w-3 text-primary flex-shrink-0" />
             )}
             <span className={cn(
-              "truncate text-sm font-normal",
-              hasUnread && "font-medium text-foreground"
+              "truncate text-[15px] leading-[1.25]",
+              hasUnread ? "font-semibold text-foreground" : "font-medium text-foreground"
             )}>
               {conversation.other_user_full_name || 'Unknown User'}
             </span>
@@ -80,7 +79,7 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
             )}
           </div>
           <span className={cn(
-            "text-xs flex-shrink-0",
+            "text-[12px] leading-[1.25] flex-shrink-0",
             hasUnread ? "text-primary font-medium" : "text-muted-foreground"
           )}>
             {formatTime(conversation.last_message_at)}
@@ -88,13 +87,13 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
         </div>
         <div className="flex items-center justify-between gap-2 mt-0.5">
           <p className={cn(
-            "text-sm truncate font-light",
-            hasUnread ? "text-foreground font-normal" : "text-muted-foreground"
+            "text-[14px] leading-[1.35] truncate",
+            hasUnread ? "text-foreground" : "text-muted-foreground"
           )}>
             {conversation.last_message_content || 'No messages yet'}
           </p>
           {hasUnread && (
-            <Badge className="bg-primary text-primary-foreground h-5 min-w-5 flex items-center justify-center text-xs">
+            <Badge className="bg-primary text-primary-foreground h-5 min-w-5 flex items-center justify-center text-[11px] rounded-full px-1.5">
               {conversation.unread_count > 9 ? '9+' : conversation.unread_count}
             </Badge>
           )}

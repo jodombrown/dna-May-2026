@@ -78,7 +78,7 @@ const SearchFeedbackForm: React.FC<SearchFeedbackFormProps> = ({ onClose }) => {
         <GraduationCap className="w-4 h-4" />
         Help Shape Our Search Experience
       </h3>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-neutral-600 mb-4">
         Tell us what search features matter most to you:
       </p>
 

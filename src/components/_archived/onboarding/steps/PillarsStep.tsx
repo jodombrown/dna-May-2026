@@ -54,7 +54,7 @@ const PillarsStep: React.FC<PillarsStepProps> = ({ data, updateData }) => {
         <h2 className="text-xl font-semibold text-dna-forest mb-2">
           The DNA Framework
         </h2>
-        <p className="text-gray-600">
+        <p className="text-neutral-600">
           Select the pillars that resonate with your journey. You can choose multiple areas of focus.
         </p>
       </div>
@@ -70,7 +70,7 @@ const PillarsStep: React.FC<PillarsStepProps> = ({ data, updateData }) => {
               className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
                 isSelected 
                   ? `ring-2 ring-${pillar.color} bg-${pillar.color}/5` 
-                  : 'hover:bg-gray-50'
+                  : 'hover:bg-neutral-50'
               }`}
               onClick={() => togglePillar(pillar.id)}
             >
@@ -92,7 +92,7 @@ const PillarsStep: React.FC<PillarsStepProps> = ({ data, updateData }) => {
                         {isSelected ? 'Selected' : 'Select'}
                       </Button>
                     </div>
-                    <p className="text-gray-600 mt-2">
+                    <p className="text-neutral-600 mt-2">
                       {pillar.description}
                     </p>
                   </div>
@@ -104,7 +104,7 @@ const PillarsStep: React.FC<PillarsStepProps> = ({ data, updateData }) => {
       </div>
 
       {selectedPillars.length > 0 && (
-        <div className="text-center text-sm text-gray-600">
+        <div className="text-center text-sm text-neutral-600">
           Selected: {selectedPillars.length} pillar{selectedPillars.length > 1 ? 's' : ''}
         </div>
       )}

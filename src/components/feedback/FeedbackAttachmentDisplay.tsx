@@ -57,7 +57,7 @@ export function FeedbackAttachmentDisplay({ attachment }: FeedbackAttachmentDisp
           <DialogContent className="max-w-4xl p-0 bg-black/90">
             <button
               onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-2 right-2 text-white hover:text-gray-300 z-10"
+              className="absolute top-2 right-2 text-white hover:text-neutral-300 z-10"
             >
               <X className="h-6 w-6" />
             </button>
@@ -175,7 +175,7 @@ function VideoPlayer({ url }: { url: string }) {
         <DialogContent className="max-w-4xl p-0 bg-black/90">
           <button
             onClick={() => setIsLightboxOpen(false)}
-            className="absolute top-2 right-2 text-white hover:text-gray-300 z-10"
+            className="absolute top-2 right-2 text-white hover:text-neutral-300 z-10"
           >
             <X className="h-6 w-6" />
           </button>

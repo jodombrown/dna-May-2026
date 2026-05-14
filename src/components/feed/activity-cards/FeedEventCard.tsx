@@ -121,12 +121,12 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
     
     const formatColors: Record<string, string> = {
       virtual: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-      hybrid: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+      hybrid: 'bg-copper-100 text-copper-700 dark:bg-copper-900/30 dark:text-copper-300',
       in_person: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-      conference: 'bg-purple-100 text-purple-700',
+      conference: 'bg-copper-100 text-copper-700',
       workshop: 'bg-blue-100 text-blue-700',
       meetup: 'bg-green-100 text-green-700',
-      networking: 'bg-pink-100 text-pink-700',
+      networking: 'bg-copper-100 text-copper-700',
     };
     
     return (

@@ -109,7 +109,7 @@ export function RebuildingLanding({ module }: RebuildingLandingProps) {
   const paragraphs = copy.body.split('\n\n');
   return (
     <main className="min-h-[60vh] bg-background">
-      <div className="mx-auto max-w-2xl px-4 py-12 sm:py-20">
+      <div className="mx-auto max-w-2xl px-4 py-12 sm:py-12">
         <Card
           className="border-l-4 p-6 sm:p-10 bg-[#4A8D77]/5"
           style={{ borderLeftColor: '#4A8D77' }}

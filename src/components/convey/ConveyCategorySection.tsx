@@ -1,3 +1,4 @@
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -17,7 +18,7 @@ interface ConveyCategorySectionProps {
 // Loading skeleton for stories
 const StorySkeleton = ({ variant = 'default' }: { variant?: 'default' | 'compact' }) => (
   <div className={cn(
-    "rounded-2xl bg-muted animate-pulse",
+    "rounded-lg bg-muted animate-pulse",
     variant === 'compact' ? "h-24" : "h-64"
   )} />
 );
@@ -101,7 +102,7 @@ export function ConveyDiscussionPrompt({
   onAnswer?: () => void;
 }) {
   return (
-    <div className="rounded-xl md:rounded-2xl bg-gradient-to-br from-amber-100 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/10 p-4 md:p-5 border border-amber-200/50 dark:border-amber-800/30">
+    <div className="rounded-xl md:rounded-lg bg-gradient-to-br from-amber-100 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/10 p-4 md:p-5 border border-amber-200/50 dark:border-amber-800/30">
       <p className="text-xs font-semibold text-dna-gold uppercase tracking-wide mb-2">
         Join the Discussion
       </p>
@@ -139,9 +140,12 @@ export function ConveyMiniCard({ story }: { story: UniversalFeedItem }) {
     >
       {story.media_url && (
         <div className="w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden shrink-0 bg-muted">
-          <img 
-            src={story.media_url} 
-            alt="" 
+          <OptimizedImage
+            src={story.media_url}
+            alt=""
+            imageSize="thumb"
+            width={64}
+            height={64}
             className="w-full h-full object-cover"
           />
         </div>

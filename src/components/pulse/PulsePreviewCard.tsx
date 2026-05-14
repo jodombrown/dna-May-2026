@@ -24,21 +24,21 @@ export function PulsePreviewCard({ label, items, href }: PulsePreviewCardProps) 
 
   return (
     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1 z-50 w-64">
-      <div className="bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden animate-fade-in">
+      <div className="bg-white rounded-lg shadow-xl border border-neutral-200 overflow-hidden animate-fade-in">
         {/* Header */}
-        <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
-          <span className="text-xs font-semibold text-gray-600 tracking-wide">
+        <div className="px-3 py-2 bg-neutral-50 border-b border-neutral-200">
+          <span className="text-xs font-semibold text-neutral-600 tracking-wide">
             {label}
           </span>
         </div>
 
         {/* Items */}
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-neutral-100">
           {items.slice(0, 3).map((item) => (
             <Link
               key={item.id}
               to={item.action_url}
-              className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-3 px-3 py-2 hover:bg-neutral-50 transition-colors"
             >
               {item.avatar_url ? (
                 <img
@@ -54,11 +54,11 @@ export function PulsePreviewCard({ label, items, href }: PulsePreviewCardProps) 
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-neutral-900 truncate">
                   {item.title}
                 </p>
                 {item.subtitle && (
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-neutral-500 truncate">
                     {item.subtitle}
                   </p>
                 )}
@@ -72,8 +72,8 @@ export function PulsePreviewCard({ label, items, href }: PulsePreviewCardProps) 
           to={href}
           className={cn(
             'flex items-center justify-between px-3 py-2',
-            'bg-gray-50 border-t border-gray-200',
-            'hover:bg-gray-100 transition-colors group'
+            'bg-neutral-50 border-t border-neutral-200',
+            'hover:bg-neutral-100 transition-colors group'
           )}
         >
           <span className="text-xs font-medium text-dna-emerald">

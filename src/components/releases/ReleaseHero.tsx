@@ -21,7 +21,7 @@ const categoryColors: Record<ReleaseCategory, string> = {
   COLLABORATE: 'from-dna-gold to-dna-copper',
   CONTRIBUTE: 'from-dna-forest to-dna-emerald',
   CONVEY: 'from-dna-sunset to-dna-ochre',
-  PLATFORM: 'from-slate-500 to-slate-700',
+  PLATFORM: 'from-neutral-500 to-neutral-700',
 };
 
 const categoryIcons: Record<ReleaseCategory, React.ReactNode> = {

@@ -85,7 +85,7 @@ const DnaUserDashboard = () => {
       <div className="min-h-screen bg-background">
         <div className="container max-w-4xl mx-auto px-4 py-8 text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-          <h1 className="text-3xl font-bold mb-4">Profile Not Found</h1>
+          <h1 className="text-h1 font-serif mb-4">Profile Not Found</h1>
           <p className="text-muted-foreground mb-6">
             The user you're looking for doesn't exist or is temporarily unavailable.
           </p>
@@ -132,7 +132,7 @@ const DnaUserDashboard = () => {
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h1 className="text-3xl font-bold">{profile.full_name || profile.username}</h1>
+                        <h1 className="text-h1 font-serif">{profile.full_name || profile.username}</h1>
                         {profile.headline && (
                           <p className="text-lg text-muted-foreground mt-1">{profile.headline}</p>
                         )}
@@ -247,7 +247,7 @@ const DnaUserDashboard = () => {
                 <div className="flex items-start justify-between flex-wrap gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h1 className="text-2xl font-bold">{profile.full_name || profile.username}</h1>
+                      <h1 className="text-h2 font-serif">{profile.full_name || profile.username}</h1>
                     </div>
                     {profile.headline && (
                       <p className="text-muted-foreground mt-1">{profile.headline}</p>
@@ -355,9 +355,17 @@ const DnaUserDashboard = () => {
                       <h3 className="font-medium mb-3">Skills & Expertise</h3>
                       <div className="flex flex-wrap gap-2">
                         {profile.skills.map((skill: string) => (
-                          <Badge key={skill}>
-                            {skill}
-                          </Badge>
+                          <button
+                            key={skill}
+                            type="button"
+                            onClick={() => navigate(`/dna/connect/discover?skill=${encodeURIComponent(skill)}`)}
+                            aria-label={`Find members with skill: ${skill}`}
+                            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                          >
+                            <Badge className="hover:bg-primary/90 cursor-pointer transition-colors">
+                              {skill}
+                            </Badge>
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -375,9 +383,17 @@ const DnaUserDashboard = () => {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {profile.impact_areas.map((area: string) => (
-                      <Badge key={area} variant="secondary">
-                        {area}
-                      </Badge>
+                      <button
+                        key={area}
+                        type="button"
+                        onClick={() => navigate(`/dna/connect/discover?focus=${encodeURIComponent(area)}`)}
+                        aria-label={`Find members focused on: ${area}`}
+                        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                      >
+                        <Badge variant="secondary" className="hover:bg-secondary/70 cursor-pointer transition-colors">
+                          {area}
+                        </Badge>
+                      </button>
                     ))}
                   </div>
                 </CardContent>

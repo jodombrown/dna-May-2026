@@ -58,37 +58,48 @@ export function HubStatsBar({ stats, loading = false, className }: HubStatsBarPr
         className
       )}
     >
-      {stats.map((stat, index) => (
-        <button
-          key={index}
-          onClick={stat.onClick}
-          disabled={!stat.onClick}
-          className={cn(
-            'flex flex-col items-center justify-center p-4 rounded-lg',
-            'bg-card border border-border',
-            'transition-all duration-200',
-            stat.onClick && 'hover:border-primary hover:bg-primary/5 cursor-pointer',
-            !stat.onClick && 'cursor-default'
-          )}
-        >
-          {stat.icon && (
-            <stat.icon className="w-5 h-5 text-muted-foreground mb-2" />
-          )}
-          <div className="text-2xl sm:text-3xl font-bold text-foreground">
-            {loading ? (
-              <div className="h-8 w-16 bg-muted animate-pulse rounded" />
-            ) : (
-              <>
-                <AnimatedCounter value={stat.value} />
-                {stat.suffix && <span className="text-lg">{stat.suffix}</span>}
-              </>
+      {stats.map((stat, index) => {
+        const interactive = !!stat.onClick;
+        const Tag: 'button' | 'div' = interactive ? 'button' : 'div';
+        const ariaLabel = `${stat.value.toLocaleString()}${stat.suffix ?? ''} ${stat.label}`;
+        return (
+          <Tag
+            key={index}
+            {...(interactive
+              ? {
+                  onClick: stat.onClick,
+                  type: 'button' as const,
+                  'aria-label': ariaLabel,
+                }
+              : { 'aria-label': ariaLabel, role: 'group' as const })}
+            className={cn(
+              'flex flex-col items-center justify-center p-4 rounded-lg min-h-[44px]',
+              'bg-card border border-border',
+              'transition-all duration-200',
+              interactive &&
+                'hover:border-primary hover:bg-primary/5 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              !interactive && 'cursor-default'
             )}
-          </div>
-          <div className="text-xs sm:text-sm text-muted-foreground mt-1 text-center">
-            {stat.label}
-          </div>
-        </button>
-      ))}
+          >
+            {stat.icon && (
+              <stat.icon className="w-5 h-5 text-muted-foreground mb-2" />
+            )}
+            <div className="text-2xl sm:text-3xl font-bold text-foreground">
+              {loading ? (
+                <div className="h-8 w-16 bg-muted animate-pulse rounded" />
+              ) : (
+                <>
+                  <AnimatedCounter value={stat.value} />
+                  {stat.suffix && <span className="text-lg">{stat.suffix}</span>}
+                </>
+              )}
+            </div>
+            <div className="text-xs sm:text-sm text-muted-foreground mt-1 text-center">
+              {stat.label}
+            </div>
+          </Tag>
+        );
+      })}
     </div>
   );
 }

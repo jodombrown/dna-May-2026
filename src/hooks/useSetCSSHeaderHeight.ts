@@ -23,18 +23,45 @@ export function useSetCSSHeaderHeight(
     const el = ref.current;
     if (!el) return;
 
+    let raf = 0;
     const update = () => {
-      const h = Math.ceil(el.getBoundingClientRect().height);
-      document.documentElement.style.setProperty(varName, `${h}px`);
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const h = Math.ceil(el.getBoundingClientRect().height);
+        document.documentElement.style.setProperty(varName, `${h}px`);
+      });
     };
 
     update();
 
     const ro = new ResizeObserver(update);
     ro.observe(el);
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    // Re-run after route changes (history navigation in SPA)
+    window.addEventListener('popstate', update);
+    // pushState/replaceState don't fire events; patch once for SPA nav
+    const origPush = history.pushState;
+    const origReplace = history.replaceState;
+    history.pushState = function (...args) {
+      const r = origPush.apply(this, args as Parameters<typeof origPush>);
+      update();
+      return r;
+    };
+    history.replaceState = function (...args) {
+      const r = origReplace.apply(this, args as Parameters<typeof origReplace>);
+      update();
+      return r;
+    };
 
     return () => {
+      cancelAnimationFrame(raf);
       ro.disconnect();
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+      window.removeEventListener('popstate', update);
+      history.pushState = origPush;
+      history.replaceState = origReplace;
       document.documentElement.style.removeProperty(varName);
     };
   }, [ref, varName]);

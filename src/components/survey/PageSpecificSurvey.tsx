@@ -189,7 +189,7 @@ const PageSpecificSurvey: React.FC<PageSpecificSurveyProps> = ({ isOpen, onClose
           <SheetTitle className="text-2xl font-bold text-dna-forest">
             {content.title}
           </SheetTitle>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             {content.description}
           </p>
         </SheetHeader>

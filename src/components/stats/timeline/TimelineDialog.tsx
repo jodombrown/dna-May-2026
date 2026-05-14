@@ -38,13 +38,13 @@ const TimelineDialog: React.FC<TimelineDialogProps> = ({
         </DialogHeader>
         
         <div className="mt-6">
-          <p className="text-gray-700 leading-relaxed text-center">
+          <p className="text-neutral-700 leading-relaxed text-center">
             {activeTimelineData?.expandedContent.description}
           </p>
 
           {/* Sources */}
           {activeTimelineData?.expandedContent.sources && activeTimelineData.expandedContent.sources.length > 0 && (
-            <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="mt-6 pt-4 border-t border-neutral-200">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Sources</p>
               <ul className="space-y-1">
                 {activeTimelineData.expandedContent.sources.map((source, i) => (

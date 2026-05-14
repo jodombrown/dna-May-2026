@@ -11,7 +11,7 @@ const SearchFeaturePreview: React.FC = () => {
           <Users className="w-4 h-4" />
           Smart Professional Matching
         </h3>
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-neutral-600 mb-3">
           Our AI-powered search will find professionals based on:
         </p>
         <div className="flex flex-wrap gap-2">
@@ -27,7 +27,7 @@ const SearchFeaturePreview: React.FC = () => {
           <Briefcase className="w-4 h-4" />
           Advanced Filters
         </h3>
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-neutral-600 mb-3">
           Filter by specific criteria including:
         </p>
         <div className="flex flex-wrap gap-2">
@@ -43,7 +43,7 @@ const SearchFeaturePreview: React.FC = () => {
           <MapPin className="w-4 h-4" />
           Global Diaspora Network
         </h3>
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-neutral-600 mb-3">
           Connect across continents with professionals in:
         </p>
         <div className="flex flex-wrap gap-2">

@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,7 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Sparkles, ChevronDown, X, HelpCircle, MessageCircle, Loader2 } from 'lucide-react';
+import { ChevronDown, X, HelpCircle, MessageCircle, Loader2 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
 export interface DIARecommendation {
@@ -66,7 +67,7 @@ export function HubDIAPanel({
           <button className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-                <Sparkles className="w-4 h-4 text-primary" />
+                <MateMasie className="w-4 h-4 text-primary" />
               </div>
               <span className="font-semibold text-foreground">DIA Insights</span>
               <span className="text-xs text-muted-foreground px-2 py-0.5 rounded-full bg-muted">

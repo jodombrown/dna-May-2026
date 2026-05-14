@@ -330,7 +330,7 @@ export function InlineChat({
 
                       <div
                         className={cn(
-                          'max-w-[75%] px-3 py-2 rounded-2xl text-sm',
+                          'max-w-[75%] px-3 py-2 rounded-lg text-sm',
                           isOwn
                             ? 'bg-primary text-primary-foreground rounded-br-md'
                             : 'bg-muted rounded-bl-md'

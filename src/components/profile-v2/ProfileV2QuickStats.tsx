@@ -36,10 +36,12 @@ const QuickStat: React.FC<QuickStatProps> = ({
   const content = (
     <button
       onClick={onClick}
+      aria-label={`${label}: ${count}. ${tooltip ?? 'Open details'}`}
       className={cn(
         "flex flex-col items-center gap-1 p-2 sm:p-3 rounded-lg",
         "bg-secondary/50 hover:bg-secondary transition-colors",
-        "flex-1 min-w-0 cursor-pointer group"
+        "flex-1 min-w-0 cursor-pointer group min-h-[44px]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       )}
     >
       <div className="flex items-center gap-1.5">
@@ -93,32 +95,34 @@ const ProfileV2QuickStats: React.FC<ProfileV2QuickStatsProps> = ({
       icon: Users,
       label: 'Connections',
       count: activity.connections_count || 0,
-      onClick: () => username 
-        ? navigate(`/dna/${username}?tab=connections`)
-        : navigate('/dna/connect'),
+      onClick: () => navigate(isOwner ? '/dna/connect/network?tab=connections' : '/dna/connect/discover'),
       color: 'text-blue-500',
-      tooltip: "Total connections in this member's network",
+      tooltip: "View this member's network",
     },
     {
       icon: BookOpen,
-      label: 'Stories',
+      label: 'Posts',
       count: activity.stories_count || 0,
-      onClick: () => navigate('/dna/convey'),
+      onClick: () =>
+        navigate(isOwner ? '/dna/convey' : `/dna/feed${username ? `?author=${username}` : ''}`),
       color: 'text-emerald-500',
+      tooltip: 'View posts and stories',
     },
     {
       icon: Layers,
       label: 'Spaces',
       count: activity.spaces?.length || 0,
-      onClick: () => navigate('/dna/collaborate'),
-      color: 'text-purple-500',
+      onClick: () => navigate(isOwner ? '/dna/collaborate/my-spaces' : '/dna/collaborate'),
+      color: 'text-copper-500',
+      tooltip: 'View collaboration spaces',
     },
     {
       icon: Calendar,
       label: 'Events',
       count: activity.events_count ?? activity.events?.length ?? 0,
-      onClick: () => navigate('/dna/convene'),
+      onClick: () => navigate(isOwner ? '/dna/convene/my-events' : '/dna/convene'),
       color: 'text-amber-500',
+      tooltip: 'View events',
     },
   ];
 

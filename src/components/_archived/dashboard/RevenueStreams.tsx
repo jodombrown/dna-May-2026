@@ -71,11 +71,11 @@ const RevenueStreams = () => {
           <div className="text-2xl font-bold text-dna-forest">
             ${totalRevenue.toLocaleString()}/month
           </div>
-          <div className="text-sm text-gray-600">Total Monthly Revenue Target</div>
+          <div className="text-sm text-neutral-600">Total Monthly Revenue Target</div>
         </div>
         
         {platformData.revenue_streams.map((stream, index) => (
-          <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+          <div key={index} className="flex justify-between items-center p-3 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-4 h-4 rounded"
@@ -85,21 +85,21 @@ const RevenueStreams = () => {
             </div>
             <div className="text-right">
               <div className="font-semibold text-dna-forest">${stream.monthly_revenue.toLocaleString()}</div>
-              <div className="text-sm text-gray-600">{stream.percentage}%</div>
+              <div className="text-sm text-neutral-600">{stream.percentage}%</div>
             </div>
           </div>
         ))}
       </div>
 
       {/* Additional Insights */}
-      <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-gray-200">
+      <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-neutral-200">
         <div className="text-center p-3 bg-dna-mint/20 rounded-lg">
           <div className="text-lg font-bold text-dna-forest">85%</div>
-          <div className="text-sm text-gray-600">Project Success Rate</div>
+          <div className="text-sm text-neutral-600">Project Success Rate</div>
         </div>
         <div className="text-center p-3 bg-dna-mint/20 rounded-lg">
           <div className="text-lg font-bold text-dna-forest">$52K</div>
-          <div className="text-sm text-gray-600">Avg Investment</div>
+          <div className="text-sm text-neutral-600">Avg Investment</div>
         </div>
       </div>
     </div>

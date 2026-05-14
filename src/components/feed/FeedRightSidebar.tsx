@@ -11,10 +11,11 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserPlus, Sparkles, ExternalLink, TrendingUp, Hash } from 'lucide-react';
+import { UserPlus, ExternalLink, TrendingUp, Hash } from 'lucide-react';
 import { FeedHappeningNow } from '@/components/feed/FeedHappeningNow';
 import { useTrendingHashtags } from '@/hooks/useTrendingHashtags';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 export const FeedRightSidebar: React.FC = () => {
   const { user } = useAuth();
@@ -119,7 +120,7 @@ export const FeedRightSidebar: React.FC = () => {
         <CardContent className="p-3">
           <div className="flex items-start gap-2">
             <div className="p-1.5 rounded-full bg-primary/10">
-              <Sparkles className="h-4 w-4 text-primary" />
+              <Mpatapo className="h-4 w-4 text-primary" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold">Ask DIA</p>

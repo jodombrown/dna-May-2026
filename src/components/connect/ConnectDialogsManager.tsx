@@ -57,21 +57,21 @@ const ConnectDialogsManager: React.FC<ConnectDialogsManagerProps> = ({
             <DialogTitle>DNA Platform Demo</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               Welcome to the DNA platform demo! This prototype showcases our core Connect pillar functionality.
             </p>
             <div className="space-y-3">
               <div>
-                <h4 className="font-semibold text-gray-900">What you're seeing:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">What you're seeing:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Sample professionals from the African diaspora</li>
                   <li>• Community groups focused on impact areas</li>
                   <li>• Events created by diaspora leaders</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900">In our MVP, you'll have:</h4>
-                <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                <h4 className="font-semibold text-neutral-900">In our MVP, you'll have:</h4>
+                <ul className="text-sm text-neutral-600 space-y-1 mt-1">
                   <li>• Real user profiles with verified credentials</li>
                   <li>• Advanced matching algorithms</li>
                   <li>• Live event registration and management</li>

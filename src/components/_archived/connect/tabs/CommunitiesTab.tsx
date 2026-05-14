@@ -138,7 +138,7 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <p className="text-gray-600">
+        <p className="text-neutral-600">
           Showing {communities.length} communities {searchTerm && `matching "${searchTerm}"`}
         </p>
         <Button variant="default">
@@ -177,10 +177,10 @@ const CommunitiesTab: React.FC<CommunitiesTabProps> = ({ searchTerm }) => {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <p className="text-gray-700">{community.description}</p>
+              <p className="text-neutral-700">{community.description}</p>
               
               <div className="flex items-center justify-between pt-2 border-t">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-neutral-600">
                   <Users className="w-4 h-4" />
                   <span>{community.memberCount.toLocaleString()} members</span>
                 </div>

@@ -5,22 +5,9 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Users, 
-  Star,
-  Sparkles,
-  Eye,
-  Bell,
-  Share2,
-  Filter,
-  TrendingUp,
-  Heart,
-  Bookmark,
-  Globe2
-} from 'lucide-react';
+import { ArrowLeft, Calendar, Users, Star, Eye, Bell, Share2, Filter, TrendingUp, Heart, Bookmark, Globe2 } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const FeaturedCalendarsPage = () => {
   useScrollToTop();
@@ -34,7 +21,7 @@ const FeaturedCalendarsPage = () => {
       eventCount: '45',
       description: 'Curated selection of tech conferences, workshops, and meetups led by African innovators',
       avatar: '👩🏿‍💻',
-      color: 'from-blue-500 to-purple-600'
+      color: 'from-blue-500 to-copper-600'
     },
     {
       name: 'Diaspora Arts & Culture',
@@ -43,7 +30,7 @@ const FeaturedCalendarsPage = () => {
       eventCount: '62',
       description: 'Celebrating African heritage through art exhibitions, performances, and cultural festivals',
       avatar: '🎨',
-      color: 'from-pink-500 to-orange-500'
+      color: 'from-copper-500 to-orange-500'
     },
     {
       name: 'Business & Investment',
@@ -94,7 +81,7 @@ const FeaturedCalendarsPage = () => {
       step: '1',
       title: 'Create Your Calendar',
       description: 'Give your calendar a name, description, and theme. Choose a visual identity that represents your curation focus.',
-      icon: Sparkles
+      icon: MateMasie
     },
     {
       step: '2',
@@ -132,7 +119,7 @@ const FeaturedCalendarsPage = () => {
         </Button>
 
         {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/90 to-primary/70 p-12 md:p-16 text-white mb-12">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary via-primary/90 to-primary/70 p-12 md:p-16 text-white mb-12">
           <div className="relative z-10 max-w-4xl">
             <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 mb-6 text-base px-4 py-2">
               <Star className="h-4 w-4 mr-2" />
@@ -171,7 +158,7 @@ const FeaturedCalendarsPage = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Why Create a Featured Calendar?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mb-4">
+              <div className="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <Bookmark className="h-7 w-7 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-3">For Event Organizers</h3>
@@ -181,7 +168,7 @@ const FeaturedCalendarsPage = () => {
               </p>
             </div>
             <div>
-              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mb-4">
+              <div className="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <Star className="h-7 w-7 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-3">For Community Leaders</h3>
@@ -191,7 +178,7 @@ const FeaturedCalendarsPage = () => {
               </p>
             </div>
             <div>
-              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center mb-4">
+              <div className="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
                 <Globe2 className="h-7 w-7 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-3">For Event Seekers</h3>
@@ -295,7 +282,7 @@ const FeaturedCalendarsPage = () => {
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="flex gap-4">
               <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <Sparkles className="h-6 w-6 text-primary" />
+                <MateMasie className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">Industry Experts</h3>

@@ -145,7 +145,7 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
                 <div>
                   <CardTitle className="text-lg mb-1">{professional.name}</CardTitle>
                   <p className="text-dna-copper font-medium">{professional.title}</p>
-                  <p className="text-gray-600 text-sm">{professional.company}</p>
+                  <p className="text-neutral-600 text-sm">{professional.company}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {getConnectionButton()}
@@ -155,7 +155,7 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+              <div className="flex items-center gap-4 mt-2 text-sm text-neutral-600">
                 <div className="flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
                   <span>{professional.location}</span>
@@ -176,10 +176,10 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <p className="text-gray-700">{professional.bio}</p>
+          <p className="text-neutral-700">{professional.bio}</p>
 
           <div>
-            <div className="text-sm font-medium text-gray-700 mb-2">Key Skills</div>
+            <div className="text-sm font-medium text-neutral-700 mb-2">Key Skills</div>
             <div className="flex flex-wrap gap-2">
               {professional.skills.map((skill, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
@@ -189,13 +189,13 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-3">
-            <div className="text-sm text-gray-600">Recent Activity:</div>
+          <div className="bg-neutral-50 rounded-lg p-3">
+            <div className="text-sm text-neutral-600">Recent Activity:</div>
             <div className="text-sm font-medium">{professional.recentActivity}</div>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t">
-            <div className="flex gap-6 text-sm text-gray-600">
+            <div className="flex gap-6 text-sm text-neutral-600">
               <span>{professional.followers.toLocaleString()} followers</span>
               <span>{professional.connections.toLocaleString()} connections</span>
             </div>
@@ -230,7 +230,7 @@ const ProfessionalListItem: React.FC<ProfessionalListItemProps> = ({ professiona
               onChange={(e) => setConnectionMessage(e.target.value)}
               rows={4}
             />
-            <p className="text-xs text-gray-500 mt-2">Optional: Add a note to your connection request</p>
+            <p className="text-xs text-neutral-500 mt-2">Optional: Add a note to your connection request</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowConnectDialog(false)}>

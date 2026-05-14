@@ -32,9 +32,9 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ community, onJoin, isLogg
           <Badge variant="outline">{community.category}</Badge>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600 mb-4">{community.description}</p>
+          <p className="text-neutral-600 mb-4">{community.description}</p>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-neutral-500">
               <UsersIcon className="w-4 h-4" />
               {community.member_count} members
             </div>

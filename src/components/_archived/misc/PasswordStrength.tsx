@@ -37,7 +37,7 @@ export const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password }) 
 
   const activeColor =
     score <= 1
-      ? 'bg-gray-300'
+      ? 'bg-neutral-300'
       : score === 2
       ? 'bg-dna-copper'
       : score === 3
@@ -50,11 +50,11 @@ export const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password }) 
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className={`h-1.5 w-full rounded ${i < score ? activeColor : 'bg-gray-200'}`}
+            className={`h-1.5 w-full rounded ${i < score ? activeColor : 'bg-neutral-200'}`}
           />
         ))}
       </div>
-      <p className="mt-1 text-xs text-gray-500">Strength: {label}</p>
+      <p className="mt-1 text-xs text-neutral-500">Strength: {label}</p>
     </div>
   );
 };

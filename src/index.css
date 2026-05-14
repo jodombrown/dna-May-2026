@@ -30,7 +30,7 @@ html {
 :root {
   --bottom-nav-height: 4rem;
   --unified-header-height: 56px;   /* mobile: h-14=56px, desktop: h-16=64px */
-  --pulse-bar-height: 0px;         /* set by PulseBar when visible */
+  --pulse-bar-height: 56px;        /* sensible desktop default; PulseBar measures actual; mobile sets 0 */
   --total-header-height: calc(var(--unified-header-height) + var(--pulse-bar-height));
 }
 
@@ -44,8 +44,14 @@ html {
   }
 }
 
-/* Respect reduced motion preference */
+/* Respect reduced motion preference - global guard per DNA Design Standards */
 @media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
   .animate-breathing-pulse,
   .bokeh-drift-1, .bokeh-drift-2, .bokeh-drift-3, .bokeh-drift-4,
   .animate-float, .animate-kente-flow, .animate-shimmer,
@@ -89,9 +95,9 @@ html {
     --secondary-foreground: 20 8% 15%;
 
     --muted: 34 20% 94%;
-    --muted-foreground: 25 7% 49%; /* #8A847D warm gray */
+    --muted-foreground: 25 8% 38%; /* #6B6359 - WCAG AA on muted/cream */
 
-    --accent: 25 51% 46%; /* DNA Copper */
+    --accent: 25 51% 38%; /* DNA Copper deep - WCAG AA with white text */
     --accent-foreground: 0 0% 100%;
 
     /* ══════════════════════════════════════════
@@ -266,7 +272,94 @@ html {
     --input: 28 10% 89%;
     --ring: 153 31% 42%; /* emerald focus ring */
 
-    --radius: 0.75rem; /* 12px default */
+    /* ══════════════════════════════════════════
+       PHASE 3 — TOKEN LOCK-IN (DNA Design Standards)
+       Full 11-rung HSL scales. Raw triplets so Tailwind
+       can compose `hsl(var(--token))`. Do NOT chain vars.
+       ══════════════════════════════════════════ */
+
+    /* Emerald (primary brand — #4A8D77 at 500) */
+    --emerald-50:  160 30% 96%;
+    --emerald-100: 160 30% 90%;
+    --emerald-200: 160 28% 80%;
+    --emerald-300: 160 27% 68%;
+    --emerald-400: 160 28% 56%;
+    --emerald-500: 160 32% 42%;
+    --emerald-600: 160 35% 34%;
+    --emerald-700: 160 38% 28%;
+    --emerald-800: 160 40% 22%;
+    --emerald-900: 160 42% 16%;
+    --emerald-950: 160 45% 10%;
+
+    /* Forest (structural — #2D6A4F at 700) */
+    --forest-50:  155 25% 94%;
+    --forest-100: 155 25% 87%;
+    --forest-200: 155 27% 76%;
+    --forest-300: 155 30% 62%;
+    --forest-400: 155 35% 48%;
+    --forest-500: 155 40% 36%;
+    --forest-600: 155 42% 30%;
+    --forest-700: 155 45% 24%;
+    --forest-800: 155 48% 18%;
+    --forest-900: 155 52% 12%;
+    --forest-950: 155 55% 7%;
+
+    /* Copper (accent — #B87333 at 500) */
+    --copper-50:  28 50% 96%;
+    --copper-100: 28 50% 90%;
+    --copper-200: 28 48% 80%;
+    --copper-300: 28 47% 68%;
+    --copper-400: 28 50% 56%;
+    --copper-500: 28 55% 46%;
+    --copper-600: 28 60% 38%;
+    --copper-700: 28 65% 30%;
+    --copper-800: 28 70% 24%;
+    --copper-900: 28 75% 18%;
+    --copper-950: 28 80% 12%;
+
+    /* Warm neutrals (bògòlan-derived — replaces slate/zinc) */
+    --neutral-50:  36 20% 97%;
+    --neutral-100: 34 18% 93%;
+    --neutral-200: 32 15% 86%;
+    --neutral-300: 30 12% 76%;
+    --neutral-400: 28 10% 60%;
+    --neutral-500: 26 9% 46%;
+    --neutral-600: 24 10% 36%;
+    --neutral-700: 22 12% 26%;
+    --neutral-800: 20 14% 18%;
+    --neutral-900: 18 16% 11%;
+    --neutral-950: 16 18% 6%;
+
+    /* Five C's tokens */
+    --c-connect: 28 55% 46%;       /* copper-500 */
+    --c-convene: 160 32% 42%;      /* emerald-500 */
+    --c-collaborate: 210 40% 45%;
+    --c-contribute: 0 30% 38%;
+    --c-convey: 22 12% 26%;        /* neutral-700 */
+    --c-dia: 155 45% 24%;          /* forest-700 */
+
+    /* ── SEMANTIC OVERRIDES (Phase 3) ──
+       Override the legacy semantic tokens with the locked scale values.
+       These re-declarations win via cascade. */
+    --background: 36 20% 97%;
+    --foreground: 18 16% 11%;
+    --primary: 160 32% 42%;
+    --primary-foreground: 36 20% 97%;
+    --secondary: 155 45% 24%;
+    --secondary-foreground: 36 20% 97%;
+    --accent: 28 55% 46%;
+    --accent-foreground: 36 20% 97%;
+    --muted: 34 18% 93%;
+    --muted-foreground: 24 10% 36%;
+    --border: 32 15% 86%;
+    --input: 32 15% 86%;
+    --ring: 160 32% 42%;
+    --card: 36 20% 97%;
+    --card-foreground: 18 16% 11%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 36 20% 97%;
+
+    --radius: 0.5rem; /* 8px — Phase 3 lock */
 
     --sidebar-background: 34 33% 97%;
     --sidebar-foreground: 20 8% 22%;
@@ -380,6 +473,35 @@ html {
     --sidebar-accent-foreground: 34 8% 94%;
     --sidebar-border: 20 6% 28%;
     --sidebar-ring: 153 31% 42%;
+
+    /* ── PHASE 3 SEMANTIC OVERRIDES (dark) ──
+       Warm near-black surfaces, copper accent retained, primary lifts to emerald-400.
+       No cool inversion — bògòlan-derived neutrals only. */
+    --background: 18 16% 11%;       /* neutral-900 */
+    --foreground: 36 20% 97%;       /* neutral-50 */
+    --primary: 160 28% 56%;         /* emerald-400 lifts on dark */
+    --primary-foreground: 18 16% 11%;
+    --secondary: 155 45% 24%;       /* forest-700 */
+    --secondary-foreground: 36 20% 97%;
+    --accent: 28 55% 46%;           /* copper-500 retained */
+    --accent-foreground: 36 20% 97%;
+    --muted: 20 14% 18%;            /* neutral-800 */
+    --muted-foreground: 30 12% 76%; /* neutral-300 */
+    --border: 22 12% 26%;           /* neutral-700 */
+    --input: 22 12% 26%;
+    --ring: 160 28% 56%;
+    --card: 20 14% 18%;             /* neutral-800 surface */
+    --card-foreground: 36 20% 97%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 36 20% 97%;
+
+    /* Five C's tokens (dark — same hues, copper/emerald hold) */
+    --c-connect: 28 55% 46%;
+    --c-convene: 160 28% 56%;
+    --c-collaborate: 210 40% 55%;
+    --c-contribute: 0 30% 48%;
+    --c-convey: 30 12% 76%;
+    --c-dia: 155 35% 48%;
   }
 }
 
@@ -395,6 +517,61 @@ html {
     width: 100%;
     position: relative;
   }
+
+  /* ── DNA canonical type defaults (see mem://style/typography-scale) ── */
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 0.875rem; /* body 14px baseline */
+    line-height: 1.5;
+  }
+
+  /* ── Contrast guard ──
+     When a saturated/dark surface is rendered, force every nested
+     text node to inherit the surface foreground. Icons keep their own
+     color, and any element opting out can use [data-keep-color]. */
+  [cmdk-item][data-selected='true'] :not(svg):not([data-keep-color]),
+  [role='option'][data-state='checked'] :not(svg):not([data-keep-color]),
+  [role='option'][data-highlighted] :not(svg):not([data-keep-color]),
+  [role='menuitem'][data-highlighted] :not(svg):not([data-keep-color]),
+  [role='menuitemcheckbox'][data-highlighted] :not(svg):not([data-keep-color]),
+  [role='menuitemradio'][data-highlighted] :not(svg):not([data-keep-color]),
+  [role='tab'][data-state='active'] :not(svg):not([data-keep-color]),
+  [data-surface='strong'] :not(svg):not([data-keep-color]),
+  [data-selected-row='true'] :not(svg):not([data-keep-color]),
+  .bg-primary:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-accent:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-destructive:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-foreground:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-emerald:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-emerald-dark:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-copper:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-copper-dark:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-forest:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-forest-dark:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-crimson:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-black:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted),
+  .bg-dna-charcoal:not([data-keep-color]) :not(svg):not([data-keep-color]):not(.bg-card):not(.bg-background):not(.bg-popover):not(.bg-muted) {
+    color: inherit !important;
+    opacity: 1 !important;
+  }
+
+  /* Default foreground for saturated surfaces when no explicit color set */
+  [data-selected-row='true'] {
+    color: hsl(var(--accent-foreground));
+  }
+  .bg-primary:not([data-keep-color]) { color: hsl(var(--primary-foreground)); }
+  .bg-accent:not([data-keep-color]) { color: hsl(var(--accent-foreground)); }
+  .bg-destructive:not([data-keep-color]) { color: hsl(var(--destructive-foreground)); }
+  .bg-foreground:not([data-keep-color]) { color: hsl(var(--background)); }
+  .bg-dna-emerald:not([data-keep-color]),
+  .bg-dna-emerald-dark:not([data-keep-color]),
+  .bg-dna-copper:not([data-keep-color]),
+  .bg-dna-copper-dark:not([data-keep-color]),
+  .bg-dna-forest:not([data-keep-color]),
+  .bg-dna-forest-dark:not([data-keep-color]),
+  .bg-dna-crimson:not([data-keep-color]),
+  .bg-dna-black:not([data-keep-color]),
+  .bg-dna-charcoal:not([data-keep-color]) { color: hsl(0 0% 100%); }
 
   /* Smooth scrolling for all pages */
   html {

@@ -25,15 +25,30 @@ serve(async (req) => {
   }
 
   try {
-    const { query, searchType = 'web' } = await req.json();
-    
-    console.log(`Global search request: ${query}, type: ${searchType}`);
-
-    // Initialize Supabase client
+    // Initialize Supabase client (service role; gated on caller auth below)
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
+
+    // Require authenticated caller
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { data: userRes, error: userErr } = await supabase.auth.getUser(token);
+    if (userErr || !userRes?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { query, searchType = 'web' } = await req.json();
+
+    console.log(`Global search request: ${query}, type: ${searchType}`);
 
     // Perform hybrid search: database + real-time web search
     const [databaseResults, webResults] = await Promise.all([

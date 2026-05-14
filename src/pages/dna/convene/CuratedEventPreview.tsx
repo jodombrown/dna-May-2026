@@ -9,10 +9,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  ArrowLeft, Calendar, MapPin, Video, Globe, ExternalLink,
-  Share2, Sparkles, Heart, Loader2,
-} from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Video, Globe, ExternalLink, Share2, Heart, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 interface CuratedEventPreviewProps {
   event: Record<string, unknown>;
@@ -139,14 +137,14 @@ export function CuratedEventPreview({ event }: CuratedEventPreviewProps) {
       {/* Curated badge */}
       <div className="flex items-center gap-2">
         <Badge className="bg-[hsl(var(--module-connect))]/10 text-[hsl(var(--module-connect))] border-[hsl(var(--module-connect))]/20 hover:bg-[hsl(var(--module-connect))]/15">
-          <Sparkles className="h-3 w-3 mr-1" />
+          <Nkonsonkonson className="h-3 w-3 mr-1" />
           Curated by DNA
         </Badge>
       </div>
 
       {/* Cover image */}
       {coverImg && (
-        <div className="rounded-2xl overflow-hidden">
+        <div className="rounded-lg overflow-hidden">
           <img
             src={coverImg}
             alt={title}
@@ -157,7 +155,7 @@ export function CuratedEventPreview({ event }: CuratedEventPreviewProps) {
       )}
 
       {/* Title */}
-      <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
+      <h1 className="text-2xl sm:text-h1 font-serif text-foreground leading-tight">
         {title}
       </h1>
 

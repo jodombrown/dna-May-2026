@@ -66,7 +66,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
           onClick={onPrevious}
           disabled={!hasPrevious}
         >
-          <ChevronLeft className="h-4 w-4 text-gray-600" />
+          <ChevronLeft className="h-4 w-4 text-neutral-600" />
         </Button>
         
         <Button
@@ -76,7 +76,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
           onClick={onNext}
           disabled={!hasNext}
         >
-          <ChevronRight className="h-4 w-4 text-gray-600" />
+          <ChevronRight className="h-4 w-4 text-neutral-600" />
         </Button>
       </div>
 
@@ -85,7 +85,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-1.5 text-xs text-gray-700 hover:bg-dna-emerald/10 hover:text-dna-forest rounded-lg px-3 py-1.5 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-neutral-700 hover:bg-dna-emerald/10 hover:text-dna-forest rounded-lg px-3 py-1.5 transition-colors"
           onClick={handleCopyLink}
         >
           <Copy className="h-3 w-3" />
@@ -95,7 +95,7 @@ const EventNavigationHeader: React.FC<EventNavigationHeaderProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          className="flex items-center gap-1.5 text-xs text-gray-700 hover:bg-dna-emerald/10 hover:text-dna-forest rounded-lg px-3 py-1.5 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-neutral-700 hover:bg-dna-emerald/10 hover:text-dna-forest rounded-lg px-3 py-1.5 transition-colors"
           onClick={handleEventPageClick}
         >
           Event Page

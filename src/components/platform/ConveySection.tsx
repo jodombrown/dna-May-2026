@@ -1,10 +1,11 @@
 import React from 'react';
-import { Megaphone, Share2, MessageCircle, Eye, Heart, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
+import { Megaphone, Share2, MessageCircle, Eye, Heart, ArrowRight, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SwipeableCardStack from './SwipeableCardStack';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 const ConveySection = () => {
   const navigate = useNavigate();
@@ -82,12 +83,12 @@ const ConveySection = () => {
   };
 
   const renderCard = (story: typeof stories[0]) => (
-    <div className={`bg-gradient-to-br ${story.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-      <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+    <div className={`bg-gradient-to-br ${story.gradient} rounded-xl p-1.5 shadow-2xl h-full w-full`}>
+      <div className="bg-white rounded-xl overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${story.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg font-serif">{story.categoryTitle}</h3>
-            <Megaphone className="w-5 h-5" />
+            <Mpatapo className="w-6 h-6" />
           </div>
           <p className="text-sm text-white/80">{story.categorySubtitle}</p>
         </div>
@@ -95,7 +96,7 @@ const ConveySection = () => {
         <div className="p-6 space-y-4 flex-1">
           {story.featured && (
             <div className="flex items-center gap-1.5 text-dna-gold">
-              <Sparkles className="w-4 h-4" />
+              <Mpatapo className="w-4 h-4" />
               <span className="text-xs font-bold uppercase tracking-wide">Featured Story</span>
             </div>
           )}
@@ -103,9 +104,9 @@ const ConveySection = () => {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Badge className="bg-dna-forest text-white text-xs">{story.category}</Badge>
-              <span className="text-xs text-gray-500">{story.readTime}</span>
+              <span className="text-xs text-neutral-500">{story.readTime}</span>
             </div>
-            <h4 className="font-bold text-xl text-gray-900 leading-tight">{story.title}</h4>
+            <h4 className="font-bold text-xl text-neutral-900 leading-tight">{story.title}</h4>
           </div>
 
           <div className="flex items-center gap-3 pt-2">
@@ -115,8 +116,8 @@ const ConveySection = () => {
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-sm font-semibold text-gray-900">{story.author.name}</p>
-              <p className="text-xs text-gray-500">DNA Member</p>
+              <p className="text-sm font-semibold text-neutral-900">{story.author.name}</p>
+              <p className="text-xs text-neutral-500">DNA Member</p>
             </div>
           </div>
 
@@ -126,27 +127,27 @@ const ConveySection = () => {
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Eye className="w-3.5 h-3.5 text-dna-forest" />
                 </div>
-                <p className="text-sm font-bold text-gray-900">{(story.engagement.views / 1000).toFixed(1)}K</p>
-                <p className="text-xs text-gray-500">Views</p>
+                <p className="text-sm font-bold text-neutral-900">{(story.engagement.views / 1000).toFixed(1)}K</p>
+                <p className="text-xs text-neutral-500">Views</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Heart className="w-3.5 h-3.5 text-dna-copper" />
                 </div>
-                <p className="text-sm font-bold text-gray-900">{story.engagement.likes}</p>
-                <p className="text-xs text-gray-500">Likes</p>
+                <p className="text-sm font-bold text-neutral-900">{story.engagement.likes}</p>
+                <p className="text-xs text-neutral-500">Likes</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <MessageCircle className="w-3.5 h-3.5 text-dna-gold" />
                 </div>
-                <p className="text-sm font-bold text-gray-900">{story.engagement.comments}</p>
-                <p className="text-xs text-gray-500">Comments</p>
+                <p className="text-sm font-bold text-neutral-900">{story.engagement.comments}</p>
+                <p className="text-xs text-neutral-500">Comments</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 pt-2 border-t border-dna-forest/10">
               <TrendingUp className="w-4 h-4 text-dna-emerald" />
-              <span className="text-xs font-semibold text-gray-700">{story.reach}</span>
+              <span className="text-xs font-semibold text-neutral-700">{story.reach}</span>
             </div>
           </div>
 
@@ -157,8 +158,8 @@ const ConveySection = () => {
           </Button>
 
           <div className="flex items-center justify-center gap-2">
-            <Share2 className="w-3.5 h-3.5 text-gray-400" />
-            <p className="text-xs text-center text-gray-500">
+            <Share2 className="w-3.5 h-3.5 text-neutral-400" />
+            <p className="text-xs text-center text-neutral-500">
               Share your own success story →
             </p>
           </div>
@@ -175,25 +176,25 @@ const ConveySection = () => {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-forest to-dna-emerald rounded-xl flex items-center justify-center">
-                <Megaphone className="w-6 h-6 text-white" />
+                <Mpatapo className="w-7 h-7 text-white" />
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Convey</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-neutral-900">Convey</h2>
             </div>
-            <p className="text-xl font-semibold text-gray-900 mb-3">
+            <p className="text-xl font-semibold text-neutral-900 mb-3">
               Amplify Your Story, Inspire the Movement
             </p>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg text-neutral-600 mb-6">
               Share your wins, insights, and journey to build credibility, inspire others, and create social proof for the movement. When you convey your success, you demonstrate what's possible, attracting resources, partners, and momentum to your work while showing the world that Africa's diaspora is building at scale.
             </p>
 
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-dna-forest/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Sparkles className="w-4 h-4 text-dna-forest" />
+                  <Mpatapo className="w-4 h-4 text-dna-forest" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Strategic Storytelling</h3>
-                  <p className="text-sm text-gray-600">Share wins, lessons, and insights that attract opportunities and inspire action</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Strategic Storytelling</h3>
+                  <p className="text-sm text-neutral-600">Share wins, lessons, and insights that attract opportunities and inspire action</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -201,8 +202,8 @@ const ConveySection = () => {
                   <MessageCircle className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Credibility Building</h3>
-                  <p className="text-sm text-gray-600">Visible success stories position you as a leader and attract resources to your work</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Credibility Building</h3>
+                  <p className="text-sm text-neutral-600">Visible success stories position you as a leader and attract resources to your work</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -210,8 +211,8 @@ const ConveySection = () => {
                   <Share2 className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Movement Amplification</h3>
-                  <p className="text-sm text-gray-600">Your story becomes social proof, showing the world that DNA members deliver results</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Movement Amplification</h3>
+                  <p className="text-sm text-neutral-600">Your story becomes social proof, showing the world that DNA members deliver results</p>
                 </div>
               </div>
             </div>

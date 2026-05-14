@@ -44,11 +44,11 @@ const MobileMenuView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-neutral-50 pb-20">
       {/* Header */}
       <div className="bg-white p-6 border-b">
         <h1 className="text-2xl font-bold text-dna-forest">Menu</h1>
-        <p className="text-gray-600 mt-1">Navigate DNA Platform</p>
+        <p className="text-neutral-600 mt-1">Navigate DNA Platform</p>
       </div>
 
       <div className="p-4 space-y-4">
@@ -64,17 +64,17 @@ const MobileMenuView = () => {
             {marketingPages.map((page) => (
               <div 
                 key={page.path}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 active:bg-gray-100 cursor-pointer"
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 active:bg-neutral-100 cursor-pointer"
                 onClick={() => handleMarketingPageClick(page.path)}
               >
                 <div className="flex items-center">
                   <page.icon className="w-5 h-5 mr-3 text-dna-copper" />
                   <div>
                     <p className="font-medium text-dna-forest">{page.name}</p>
-                    <p className="text-sm text-gray-600">{page.description}</p>
+                    <p className="text-sm text-neutral-600">{page.description}</p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400" />
+                <ChevronRight className="w-5 h-5 text-neutral-400" />
               </div>
             ))}
           </CardContent>
@@ -92,17 +92,17 @@ const MobileMenuView = () => {
             {appFeatures.map((feature) => (
               <div 
                 key={feature.view || feature.path}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 active:bg-gray-100 cursor-pointer"
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 active:bg-neutral-100 cursor-pointer"
                 onClick={() => feature.path ? navigate(feature.path) : handleAppFeatureClick(feature.view!)}
               >
                 <div className="flex items-center">
                   <feature.icon className="w-5 h-5 mr-3 text-dna-emerald" />
                   <div>
                     <p className="font-medium text-dna-forest">{feature.name}</p>
-                    <p className="text-sm text-gray-600">{feature.description}</p>
+                    <p className="text-sm text-neutral-600">{feature.description}</p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-gray-400" />
+                <ChevronRight className="w-5 h-5 text-neutral-400" />
               </div>
             ))}
           </CardContent>

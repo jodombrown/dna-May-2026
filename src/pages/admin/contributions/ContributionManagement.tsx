@@ -328,9 +328,9 @@ export default function ContributionManagement() {
       case 'in_progress':
         return <Badge className="bg-blue-500/10 text-blue-600 border-blue-500"><Clock className="h-3 w-3 mr-1" />In Progress</Badge>;
       case 'fulfilled':
-        return <Badge className="bg-purple-500/10 text-purple-600 border-purple-500"><CheckCircle className="h-3 w-3 mr-1" />Fulfilled</Badge>;
+        return <Badge className="bg-copper-500/10 text-copper-600 border-copper-500"><CheckCircle className="h-3 w-3 mr-1" />Fulfilled</Badge>;
       case 'closed':
-        return <Badge className="bg-gray-500/10 text-gray-600 border-gray-500"><XCircle className="h-3 w-3 mr-1" />Closed</Badge>;
+        return <Badge className="bg-neutral-500/10 text-neutral-600 border-neutral-500"><XCircle className="h-3 w-3 mr-1" />Closed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -341,11 +341,11 @@ export default function ContributionManagement() {
       funding: 'bg-emerald-500/10 text-emerald-600 border-emerald-500',
       skills: 'bg-blue-500/10 text-blue-600 border-blue-500',
       time: 'bg-orange-500/10 text-orange-600 border-orange-500',
-      access: 'bg-purple-500/10 text-purple-600 border-purple-500',
-      resources: 'bg-pink-500/10 text-pink-600 border-pink-500'
+      access: 'bg-copper-500/10 text-copper-600 border-copper-500',
+      resources: 'bg-copper-500/10 text-copper-600 border-copper-500'
     };
     return (
-      <Badge className={colors[type] || 'bg-gray-500/10 text-gray-600 border-gray-500'}>
+      <Badge className={colors[type] || 'bg-neutral-500/10 text-neutral-600 border-neutral-500'}>
         {TYPE_ICONS[type]}
         <span className="ml-1 capitalize">{type}</span>
       </Badge>
@@ -388,7 +388,7 @@ export default function ContributionManagement() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold text-copper-600">
               {needs.filter(n => n.status === 'fulfilled').length}
             </div>
             <p className="text-sm text-muted-foreground">Fulfilled</p>

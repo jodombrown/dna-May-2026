@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { CROSS_ACTIONS, CrossActionType } from '@/config/crossActions';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Zap } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface CrossActionPanelProps {
   type: CrossActionType;
@@ -27,7 +27,7 @@ export function CrossActionPanel({ type, context, title = 'Quick Actions' }: Cro
     <Card className="border-primary/20">
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex items-center gap-2">
-          <Zap className="h-4 w-4 text-primary" />
+          <MateMasie className="h-4 w-4 text-primary" />
           {title}
         </CardTitle>
       </CardHeader>

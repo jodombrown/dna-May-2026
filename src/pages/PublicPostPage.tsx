@@ -13,16 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  MessageCircle, 
-  Heart, 
-  Share2, 
-  ExternalLink,
-  FileText,
-  Copy,
-  Check,
-  Sparkles,
-} from 'lucide-react';
+import { MessageCircle, Heart, Share2, ExternalLink, FileText, Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
@@ -31,6 +22,7 @@ import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 const PublicPostPage = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -225,7 +217,7 @@ const PublicPostPage = () => {
             >
               <div className="px-4 py-2.5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-white min-w-0">
-                  <Sparkles className="w-4 h-4 shrink-0" />
+                  <Mpatapo className="w-4 h-4 shrink-0" />
                   <span className="text-sm font-medium truncate">
                     Shared from DNA. Connect with the diaspora
                   </span>

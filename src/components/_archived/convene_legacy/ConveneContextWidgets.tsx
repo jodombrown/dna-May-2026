@@ -3,11 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
+import { Calendar, ArrowRight, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 export function ConveneContextWidgets() {
   const navigate = useNavigate();
@@ -139,7 +140,7 @@ export function ConveneContextWidgets() {
       {connectionInsight && connectionInsight.eventsThisMonth >= 2 && (
         <Card className="p-4 bg-gradient-to-br from-dna-copper/10 to-dna-rust/5 border-dna-copper/20">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-dna-copper" />
+            <Nkonsonkonson className="w-4 h-4 text-dna-copper" />
             <span className="text-sm font-medium">Ready for the next step?</span>
           </div>
           <p className="text-sm text-muted-foreground mb-3">

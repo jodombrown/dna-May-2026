@@ -117,21 +117,21 @@ const Resources = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-dna-gold fill-current' : 'text-gray-300'}`}
+        className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-dna-gold fill-current' : 'text-neutral-300'}`}
       />
     ));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       <UnifiedHeader />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-neutral-900 mb-4">
             Knowledge <span className="text-dna-copper">Resources</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
             Access curated resources, guides, and tools to accelerate your African business ventures
           </p>
         </div>
@@ -139,7 +139,7 @@ const Resources = () => {
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
             <Input
               placeholder="Search resources, guides, toolkits..."
               value={searchTerm}
@@ -165,7 +165,7 @@ const Resources = () => {
         {/* Featured Resources */}
         {selectedCategory === 'all' && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Resources</h2>
+            <h2 className="text-2xl font-bold text-neutral-900 mb-6">Featured Resources</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {resources.filter(r => r.featured).map((resource) => (
                 <Card key={resource.id} className="hover:shadow-lg transition-shadow border-dna-copper/20">
@@ -181,15 +181,15 @@ const Resources = () => {
                     <CardTitle className="text-lg">{resource.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600 text-sm mb-4">{resource.description}</p>
-                    <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                    <p className="text-neutral-600 text-sm mb-4">{resource.description}</p>
+                    <div className="flex items-center gap-4 text-xs text-neutral-500 mb-3">
                       <span>{resource.type}</span>
                       <span>{resource.size}</span>
                       <span>{resource.downloads} downloads</span>
                     </div>
                     <div className="flex items-center gap-2 mb-4">
                       <div className="flex">{renderStars(resource.rating)}</div>
-                      <span className="text-sm text-gray-600">({resource.rating})</span>
+                      <span className="text-sm text-neutral-600">({resource.rating})</span>
                     </div>
                     <Button 
                       className="w-full bg-dna-copper hover:bg-dna-gold"
@@ -207,7 +207,7 @@ const Resources = () => {
 
         {/* All Resources */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-neutral-900 mb-6">
             {selectedCategory === 'all' ? 'All Resources' : `${categories.find(c => c.id === selectedCategory)?.label}`}
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -227,7 +227,7 @@ const Resources = () => {
                   <CardTitle className="text-lg">{resource.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 text-sm mb-4">{resource.description}</p>
+                  <p className="text-neutral-600 text-sm mb-4">{resource.description}</p>
                   
                   <div className="flex flex-wrap gap-1 mb-4">
                     {resource.tags.map((tag, index) => (
@@ -237,14 +237,14 @@ const Resources = () => {
                     ))}
                   </div>
                   
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                  <div className="flex items-center justify-between text-xs text-neutral-500 mb-3">
                     <span>{resource.type} • {resource.size}</span>
                     <span>{resource.downloads} downloads</span>
                   </div>
                   
                   <div className="flex items-center gap-2 mb-4">
                     <div className="flex">{renderStars(resource.rating)}</div>
-                    <span className="text-sm text-gray-600">({resource.rating})</span>
+                    <span className="text-sm text-neutral-600">({resource.rating})</span>
                   </div>
                   
                   <Button 
@@ -262,8 +262,8 @@ const Resources = () => {
 
         {filteredResources.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No resources found matching your criteria.</p>
-            <p className="text-gray-400 mt-2">Try adjusting your search terms or category filter.</p>
+            <p className="text-neutral-500 text-lg">No resources found matching your criteria.</p>
+            <p className="text-neutral-400 mt-2">Try adjusting your search terms or category filter.</p>
           </div>
         )}
 
@@ -275,7 +275,7 @@ const Resources = () => {
               <p className="text-lg mb-6">
                 Share your expertise with the DNA community by contributing valuable resources and insights.
               </p>
-              <Button size="lg" className="bg-white text-dna-forest hover:bg-gray-100">
+              <Button size="lg" className="bg-white text-dna-forest hover:bg-neutral-100">
                 Submit Resource
               </Button>
             </CardContent>

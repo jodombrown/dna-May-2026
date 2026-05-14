@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { PenSquare, Sparkles, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { PenSquare, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen, Compass, Bookmark } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+// Adinkra icons reserved for module identity surfaces; feed tabs use lucide.
 // Dynamic header spacing replaces hardcoded constants from mobileHeaderSpacing
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { incrementSessionCount } from '@/services/dia-feed-cadence';
@@ -35,6 +37,56 @@ import { useLocation } from 'react-router-dom';
 
 // Scroll position storage key
 const FEED_SCROLL_KEY = 'dna_feed_scroll_position';
+
+const RealtimeDiagnostics = () => {
+  const [channels, setChannels] = useState<string[]>(() =>
+    supabase.getChannels().map((c) => c.topic),
+  );
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+
+    const sync = () => setChannels(supabase.getChannels().map((c) => c.topic));
+    sync();
+    const intervalId = window.setInterval(sync, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  if (!import.meta.env.DEV) return null;
+
+  // Count duplicate topics so leaks are obvious
+  const topicCounts = channels.reduce<Record<string, number>>((acc, t) => {
+    acc[t] = (acc[t] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return (
+    <div className="fixed bottom-20 right-3 z-50 max-w-[360px] rounded-dna-lg border border-border bg-card text-xs text-foreground shadow-dna-2 md:bottom-3">
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        className="block w-full px-3 py-2 text-left hover:bg-muted/50"
+      >
+        Realtime channels: <span className="font-medium">{channels.length}</span>
+        <span className="ml-2 text-muted-foreground">{expanded ? '(hide)' : '(show)'}</span>
+      </button>
+      {expanded && (
+        <ul className="max-h-64 overflow-auto border-t border-border px-3 py-2 font-mono text-[10px] leading-relaxed">
+          {Object.entries(topicCounts)
+            .sort(([, a], [, b]) => b - a)
+            .map(([topic, count]) => (
+              <li key={topic} className={count > 1 ? 'text-destructive' : ''}>
+                {count > 1 ? `[x${count}] ` : ''}
+                {topic}
+              </li>
+            ))}
+        </ul>
+      )}
+    </div>
+  );
+};
 
 const DnaFeed = () => {
   const { user } = useAuth();
@@ -146,7 +198,6 @@ const DnaFeed = () => {
     return null;
   }
 
-
   // Mobile layout with custom header - hide UnifiedHeader
   if (isMobile) {
     return (
@@ -238,6 +289,7 @@ const DnaFeed = () => {
             isOpen={showSearchDialog}
             onClose={() => setShowSearchDialog(false)}
           />
+          <RealtimeDiagnostics />
         </div>
       </>
     );
@@ -256,8 +308,8 @@ const DnaFeed = () => {
       <div
         className="max-w-7xl mx-auto flex gap-5 px-4"
         style={{
-          paddingTop: '2rem',
-          height: 'calc(100dvh - var(--total-header-height, 128px) - 2rem)',
+          paddingTop: '1.5rem',
+          height: 'calc(100dvh - var(--total-header-height, 7.5rem) - 1.5rem)',
           overflow: 'hidden',
         }}
       >
@@ -355,11 +407,14 @@ const DnaFeed = () => {
               }}
             >
               <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as FeedTab)}>
-                 <TabsList className="w-full grid grid-cols-5 h-10 bg-muted/20 rounded-full p-1">
+                 <TabsList
+                   className="w-full grid grid-cols-5 h-10 bg-muted/20 rounded-full p-1"
+                   aria-label="Feed filter tabs"
+                 >
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="all" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <Newspaper className="h-3.5 w-3.5 mr-1.5" />
+                       <TabsTrigger value="all" aria-label="All posts from across DNA" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <Newspaper className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                          All
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -367,8 +422,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="for_you" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                       <TabsTrigger value="for_you" aria-label="Personalized for you" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <Compass className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                          For You
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -376,8 +431,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="network" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <Users className="h-3.5 w-3.5 mr-1.5" />
+                       <TabsTrigger value="network" aria-label="Posts from your network" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <Users className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                          Network
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -385,8 +440,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="my_posts" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <PenSquare className="h-3.5 w-3.5 mr-1.5" />
+                       <TabsTrigger value="my_posts" aria-label="Your own posts" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <PenSquare className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                          Mine
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -394,10 +449,8 @@ const DnaFeed = () => {
                    </Tooltip>
                    <Tooltip>
                      <TooltipTrigger asChild>
-                       <TabsTrigger value="bookmarks" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
-                         <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                         </svg>
+                       <TabsTrigger value="bookmarks" aria-label="Saved posts" className="text-xs rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-primary data-[state=active]:font-semibold">
+                         <Bookmark className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
                          Saved
                        </TabsTrigger>
                      </TooltipTrigger>
@@ -465,6 +518,7 @@ const DnaFeed = () => {
         isOpen={showSearchDialog}
         onClose={() => setShowSearchDialog(false)}
       />
+      <RealtimeDiagnostics />
     </div>
   );
 };

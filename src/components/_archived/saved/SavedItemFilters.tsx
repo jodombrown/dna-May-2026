@@ -67,7 +67,7 @@ const SavedItemFilters: React.FC<SavedItemFiltersProps> = ({
           {/* Search and View Toggle */}
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
               <Input
                 placeholder="Search your saved content..."
                 value={searchQuery}
@@ -97,7 +97,7 @@ const SavedItemFilters: React.FC<SavedItemFiltersProps> = ({
           {/* Filters Row */}
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gray-500" />
+              <Calendar className="w-4 h-4 text-neutral-500" />
               <Select value={dateFilter} onValueChange={onDateFilterChange}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue />
@@ -113,7 +113,7 @@ const SavedItemFilters: React.FC<SavedItemFiltersProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <SortAsc className="w-4 h-4 text-gray-500" />
+              <SortAsc className="w-4 h-4 text-neutral-500" />
               <Select value={sortBy} onValueChange={onSortChange}>
                 <SelectTrigger className="w-[140px]">
                   <SelectValue />
@@ -133,7 +133,7 @@ const SavedItemFilters: React.FC<SavedItemFiltersProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={onClearFilters}
-                className="text-gray-600"
+                className="text-neutral-600"
               >
                 <X className="w-4 h-4 mr-1" />
                 Clear Filters
@@ -145,8 +145,8 @@ const SavedItemFilters: React.FC<SavedItemFiltersProps> = ({
           {availableTags.length > 0 && (
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Tag className="w-4 h-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700">Filter by tags:</span>
+                <Tag className="w-4 h-4 text-neutral-500" />
+                <span className="text-sm font-medium text-neutral-700">Filter by tags:</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {availableTags.map(tag => (
@@ -156,7 +156,7 @@ const SavedItemFilters: React.FC<SavedItemFiltersProps> = ({
                     className={`cursor-pointer transition-colors ${
                       selectedTags.includes(tag) 
                         ? 'bg-dna-emerald text-white' 
-                        : 'hover:bg-gray-100'
+                        : 'hover:bg-neutral-100'
                     }`}
                     onClick={() => handleTagToggle(tag)}
                   >

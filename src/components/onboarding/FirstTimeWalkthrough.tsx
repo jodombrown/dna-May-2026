@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, MessageCircle, PenSquare, BookOpen, 
-  ArrowRight, Sparkles
-} from 'lucide-react';
+import { Users, MessageCircle, PenSquare, BookOpen, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useTourProgress } from '@/hooks/useTourProgress';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface WalkthroughStep {
   id: string;
@@ -23,7 +21,7 @@ const walkthroughSteps: WalkthroughStep[] = [
     id: 'welcome',
     title: 'Welcome to DNA',
     description: 'The Diaspora Network of Africa connects you with a global community of professionals committed to Africa\'s development.',
-    icon: <Sparkles className="h-12 w-12 text-dna-emerald" />,
+    icon: <MateMasie className="h-12 w-12 text-dna-emerald" />,
     highlight: 'Your journey starts here',
     tips: [
       'DNA is built on the Five C\'s: Connect, Convene, Collaborate, Contribute, and Convey',
@@ -263,7 +261,7 @@ export function FirstTimeWalkthrough() {
                 {step.tips.map((tip, idx) => (
                   <div key={idx} className="flex items-start gap-3 text-sm">
                     <div className="mt-0.5 h-5 w-5 rounded-full bg-dna-emerald/10 flex items-center justify-center flex-shrink-0">
-                      <Sparkles className="h-3 w-3 text-dna-emerald" />
+                      <MateMasie className="h-3 w-3 text-dna-emerald" />
                     </div>
                     <span className="text-muted-foreground">{tip}</span>
                   </div>

@@ -13,7 +13,7 @@ const categoryDetails = {
     title: 'Technology Events',
     description: 'Connect with innovators, developers, and tech leaders across the African diaspora',
     icon: '💻',
-    color: 'from-blue-500 to-purple-600',
+    color: 'from-blue-500 to-copper-600',
     features: [
       {
         icon: MapPin,
@@ -59,7 +59,7 @@ const categoryDetails = {
     title: 'Arts & Culture Events',
     description: 'Celebrate African heritage through art exhibitions, performances, and cultural gatherings',
     icon: '🎨',
-    color: 'from-pink-500 to-orange-500',
+    color: 'from-copper-500 to-orange-500',
     features: [
       {
         icon: MapPin,
@@ -151,7 +151,7 @@ const categoryDetails = {
     title: 'Education & Learning Events',
     description: 'Expand your knowledge through workshops, seminars, and skill-building programs',
     icon: '📚',
-    color: 'from-indigo-500 to-blue-600',
+    color: 'from-copper-500 to-blue-600',
     features: [
       {
         icon: MapPin,
@@ -311,7 +311,7 @@ const ConveneCategoryPage = () => {
         </Button>
 
         {/* Hero Section */}
-        <div className={`bg-gradient-to-r ${details.color} rounded-3xl p-12 text-white mb-12`}>
+        <div className={`bg-gradient-to-r ${details.color} rounded-xl p-12 text-white mb-12`}>
           <div className="max-w-3xl">
             <div className="text-6xl mb-4">{details.icon}</div>
             <h1 className="text-5xl font-bold mb-4">{details.title}</h1>

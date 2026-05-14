@@ -205,13 +205,13 @@ const CommunityConnect = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
             Community <span className="text-dna-copper">Connect</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
             Discover programs, events, resources, knowledge, and services that connect our diaspora community
           </p>
         </div>
@@ -220,7 +220,7 @@ const CommunityConnect = () => {
         <div id="programs" className="mb-16">
           <div className="flex items-center mb-8">
             <GraduationCap className="w-6 h-6 text-dna-copper mr-3" />
-            <h3 className="text-2xl font-bold text-gray-900">Programs</h3>
+            <h3 className="text-2xl font-bold text-neutral-900">Programs</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {programs.map((program) => (
@@ -237,17 +237,17 @@ const CommunityConnect = () => {
                   <CardTitle className="text-lg">{program.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{program.description}</p>
+                  <p className="text-neutral-600 mb-4">{program.description}</p>
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Clock className="w-4 h-4 mr-2" />
                       {program.duration}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Users className="w-4 h-4 mr-2" />
                       {program.participants} participants
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Calendar className="w-4 h-4 mr-2" />
                       Next: {program.nextCohort}
                     </div>
@@ -272,7 +272,7 @@ const CommunityConnect = () => {
         <div id="events" className="mb-16">
           <div className="flex items-center mb-8">
             <Calendar className="w-6 h-6 text-dna-copper mr-3" />
-            <h3 className="text-2xl font-bold text-gray-900">Events</h3>
+            <h3 className="text-2xl font-bold text-neutral-900">Events</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => (
@@ -287,24 +287,24 @@ const CommunityConnect = () => {
                   <CardTitle className="text-lg">{event.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{event.description}</p>
+                  <p className="text-neutral-600 mb-4">{event.description}</p>
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Calendar className="w-4 h-4 mr-2" />
                       {new Date(event.date).toLocaleDateString()} at {event.time}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <MapPin className="w-4 h-4 mr-2" />
                       {event.location}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Users className="w-4 h-4 mr-2" />
                       {event.attendees} registered
                     </div>
                   </div>
                   <div className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-1">Speakers:</p>
-                    <p className="text-sm text-gray-600">{event.speakers.join(", ")}</p>
+                    <p className="text-sm font-medium text-neutral-700 mb-1">Speakers:</p>
+                    <p className="text-sm text-neutral-600">{event.speakers.join(", ")}</p>
                   </div>
                   <div className="flex flex-wrap gap-1 mb-4">
                     {event.tags.map((tag, index) => (
@@ -326,7 +326,7 @@ const CommunityConnect = () => {
         <div id="resources" className="mb-16">
           <div className="flex items-center mb-8">
             <BookOpen className="w-6 h-6 text-dna-copper mr-3" />
-            <h3 className="text-2xl font-bold text-gray-900">Resources</h3>
+            <h3 className="text-2xl font-bold text-neutral-900">Resources</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {resources.map((resource) => (
@@ -341,13 +341,13 @@ const CommunityConnect = () => {
                   <CardTitle className="text-lg">{resource.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{resource.description}</p>
+                  <p className="text-neutral-600 mb-4">{resource.description}</p>
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Download className="w-4 h-4 mr-2" />
                       {resource.downloads.toLocaleString()} downloads
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Star className="w-4 h-4 mr-2 fill-yellow-400 text-yellow-400" />
                       {resource.rating}/5.0 rating
                     </div>
@@ -373,7 +373,7 @@ const CommunityConnect = () => {
         <div id="knowledge" className="mb-16">
           <div className="flex items-center mb-8">
             <Users className="w-6 h-6 text-dna-copper mr-3" />
-            <h3 className="text-2xl font-bold text-gray-900">Knowledge</h3>
+            <h3 className="text-2xl font-bold text-neutral-900">Knowledge</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {knowledge.map((article) => (
@@ -388,13 +388,13 @@ const CommunityConnect = () => {
                   <CardTitle className="text-lg">{article.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{article.description}</p>
+                  <p className="text-neutral-600 mb-4">{article.description}</p>
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <User className="w-4 h-4 mr-2" />
                       {article.author}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Clock className="w-4 h-4 mr-2" />
                       {article.readTime} read
                     </div>
@@ -420,7 +420,7 @@ const CommunityConnect = () => {
         <div id="services" className="mb-16">
           <div className="flex items-center mb-8">
             <Briefcase className="w-6 h-6 text-dna-copper mr-3" />
-            <h3 className="text-2xl font-bold text-gray-900">Services</h3>
+            <h3 className="text-2xl font-bold text-neutral-900">Services</h3>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service) => (
@@ -435,13 +435,13 @@ const CommunityConnect = () => {
                   <CardTitle className="text-lg">{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{service.description}</p>
+                  <p className="text-neutral-600 mb-4">{service.description}</p>
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Briefcase className="w-4 h-4 mr-2" />
                       {service.provider}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-neutral-500">
                       <Star className="w-4 h-4 mr-2 fill-yellow-400 text-yellow-400" />
                       {service.rating}/5.0 ({service.reviews} reviews)
                     </div>

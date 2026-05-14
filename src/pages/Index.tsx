@@ -2,7 +2,6 @@ import React, { useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import HeroSection from '@/components/HeroSection';
-import RoadmapBanner from '@/components/RoadmapBanner';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWaitlistPopup } from '@/hooks/useWaitlistPopup';
@@ -52,9 +51,6 @@ const Index = () => {
         canonicalPath="/"
         structuredData={structuredData}
       />
-
-      {/* ROADMAP 2026 — non-intrusive announcement banner */}
-      <RoadmapBanner />
 
       {/* Hero Section with improved layout */}
       <HeroSection />

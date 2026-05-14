@@ -3,10 +3,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Sparkles } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Activity } from '@/types/activity';
 import { formatDistanceToNow } from 'date-fns';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 interface FeedStoryCardProps {
   activity: Activity;
@@ -39,11 +40,11 @@ export const FeedStoryCard: React.FC<FeedStoryCardProps> = ({ activity }) => {
     <Card className="hover:shadow-md transition-shadow">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className="bg-indigo-100 dark:bg-indigo-900/20 p-2 rounded-full">
+          <div className="bg-copper-100 dark:bg-copper-900/20 p-2 rounded-full">
             {storyData.story_type === 'impact' ? (
-              <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <Mpatapo className="h-5 w-5 text-copper-600 dark:text-copper-400" />
             ) : (
-              <FileText className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <FileText className="h-5 w-5 text-copper-600 dark:text-copper-400" />
             )}
           </div>
           

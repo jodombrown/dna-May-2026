@@ -108,28 +108,28 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
             
             <div className="space-y-1 mt-2">
               {profile.company && (
-                <div className="flex items-center text-gray-600 text-xs">
+                <div className="flex items-center text-neutral-600 text-xs">
                   <Building className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span className="truncate">{profile.company}</span>
                 </div>
               )}
               
               {profile.location && (
-                <div className="flex items-center text-gray-600 text-xs">
+                <div className="flex items-center text-neutral-600 text-xs">
                   <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span className="truncate">{profile.location}</span>
                 </div>
               )}
 
               {profile.country_of_origin && (
-                <div className="flex items-center text-gray-600 text-xs">
+                <div className="flex items-center text-neutral-600 text-xs">
                   <Heart className="w-3 h-3 mr-1 flex-shrink-0 text-dna-crimson" />
                   <span className="truncate">From {profile.country_of_origin}</span>
                 </div>
               )}
 
               {profile.years_experience && (
-                <div className="flex items-center text-gray-600 text-xs">
+                <div className="flex items-center text-neutral-600 text-xs">
                   <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span className="truncate">{profile.years_experience} experience</span>
                 </div>
@@ -139,7 +139,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
         </div>
         
         {profile.bio && (
-          <p className="text-gray-700 text-sm mb-3 line-clamp-2 flex-grow">
+          <p className="text-neutral-700 text-sm mb-3 line-clamp-2 flex-grow">
             {profile.bio}
           </p>
         )}
@@ -154,7 +154,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
                 </Badge>
               ))}
               {allSkillsCount > 3 && (
-                <Badge variant="outline" className="text-xs text-gray-500">
+                <Badge variant="outline" className="text-xs text-neutral-500">
                   +{allSkillsCount - 3} more
                 </Badge>
               )}

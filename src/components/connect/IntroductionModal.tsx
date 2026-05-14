@@ -23,7 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
-import dnaLogo from '@/assets/dna-logo.png';
+import dnaLogo from '@/assets/dna-logo.webp';
 import africaIcon from '@/assets/africa-icon.png';
 import { IntroductionToneSelector } from './IntroductionToneSelector';
 import { IntroductionInsightChips } from './IntroductionInsightChips';
@@ -170,7 +170,7 @@ export function IntroductionModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[480px] gap-0 !p-0 overflow-hidden rounded-2xl !border-0 shadow-2xl bg-transparent">
+      <DialogContent className="sm:max-w-[480px] gap-0 !p-0 overflow-hidden rounded-lg !border-0 shadow-2xl bg-transparent">
         {/* Full-flush Kente pattern background */}
         <div
           className="relative"

@@ -132,21 +132,21 @@ const Services = () => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-dna-gold fill-current' : 'text-gray-300'}`}
+        className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-dna-gold fill-current' : 'text-neutral-300'}`}
       />
     ));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       <UnifiedHeader />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-neutral-900 mb-4">
             Professional <span className="text-dna-copper">Services</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
             Access world-class professional services from experienced African diaspora experts
           </p>
         </div>
@@ -170,32 +170,32 @@ const Services = () => {
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <CardTitle className="text-xl text-gray-900 mb-2">
+                          <CardTitle className="text-xl text-neutral-900 mb-2">
                             {service.title}
                           </CardTitle>
                           <p className="text-dna-emerald font-medium">{service.provider}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-2xl font-bold text-dna-copper">{service.price}</p>
-                          <p className="text-sm text-gray-500">{service.duration}</p>
+                          <p className="text-sm text-neutral-500">{service.duration}</p>
                         </div>
                       </div>
                     </CardHeader>
                     
                     <CardContent className="space-y-4">
-                      <p className="text-gray-600">{service.description}</p>
+                      <p className="text-neutral-600">{service.description}</p>
                       
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
                           {renderStars(service.rating)}
                         </div>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-neutral-600">
                           {service.rating} ({service.reviews} reviews)
                         </span>
                       </div>
                       
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Expertise Areas:</h4>
+                        <h4 className="font-semibold text-neutral-900 mb-2">Expertise Areas:</h4>
                         <div className="flex flex-wrap gap-2">
                           {service.expertise.map((skill, index) => (
                             <Badge key={index} variant="secondary">
@@ -206,10 +206,10 @@ const Services = () => {
                       </div>
                       
                       <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Key Deliverables:</h4>
+                        <h4 className="font-semibold text-neutral-900 mb-2">Key Deliverables:</h4>
                         <ul className="space-y-1">
                           {service.deliverables.map((deliverable, index) => (
-                            <li key={index} className="flex items-center text-sm text-gray-600">
+                            <li key={index} className="flex items-center text-sm text-neutral-600">
                               <CheckCircle className="w-4 h-4 text-dna-emerald mr-2 flex-shrink-0" />
                               {deliverable}
                             </li>
@@ -247,7 +247,7 @@ const Services = () => {
                 Join our network of professional service providers and connect with African diaspora professionals and businesses seeking expert guidance.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" className="bg-white text-dna-forest hover:bg-gray-100">
+                <Button size="lg" className="bg-white text-dna-forest hover:bg-neutral-100">
                   Become a Service Provider
                 </Button>
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-dna-forest">
@@ -260,7 +260,7 @@ const Services = () => {
 
         {/* How It Works */}
         <div className="mt-16">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h2 className="text-3xl font-bold text-center text-neutral-900 mb-12">
             How DNA Services Work
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -268,8 +268,8 @@ const Services = () => {
               <div className="w-16 h-16 bg-dna-copper/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <TrendingUp className="w-8 h-8 text-dna-copper" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Browse Services</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-neutral-900 mb-2">Browse Services</h3>
+              <p className="text-neutral-600">
                 Explore our curated directory of professional services from verified diaspora experts.
               </p>
             </div>
@@ -277,8 +277,8 @@ const Services = () => {
               <div className="w-16 h-16 bg-dna-emerald/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MessageSquare className="w-8 h-8 text-dna-emerald" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Connect & Discuss</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-neutral-900 mb-2">Connect & Discuss</h3>
+              <p className="text-neutral-600">
                 Reach out to service providers to discuss your requirements and project scope.
               </p>
             </div>
@@ -286,8 +286,8 @@ const Services = () => {
               <div className="w-16 h-16 bg-dna-gold/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-dna-gold" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Get Results</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold text-neutral-900 mb-2">Get Results</h3>
+              <p className="text-neutral-600">
                 Work with experienced professionals to achieve your African business objectives.
               </p>
             </div>

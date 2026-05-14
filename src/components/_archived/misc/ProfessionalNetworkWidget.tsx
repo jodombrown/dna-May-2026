@@ -143,7 +143,7 @@ export const ProfessionalNetworkWidget: React.FC = () => {
 
         {/* Professional Insights */}
         <div className="pt-3 border-t">
-          <div className="text-xs text-gray-600 mb-2">
+          <div className="text-xs text-neutral-600 mb-2">
             💡 Complete your profile to get better connection suggestions
           </div>
           <div className="text-xs text-dna-emerald">

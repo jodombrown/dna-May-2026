@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, Sparkles, MessageSquare, ArrowLeft } from 'lucide-react';
+import { Calendar, MapPin, Users, ExternalLink, Share2, Clock, MoreHorizontal, XCircle, Trash2, Flag, QrCode, Loader2, Settings, MessageSquare, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
 import UnifiedHeader from '@/components/UnifiedHeader';
@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -396,7 +397,7 @@ const EventDetail = () => {
           <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft className="w-4 h-4 mr-1" /> Back
           </button>
-          <div className="flex items-center justify-center py-20">
+          <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         </div>
@@ -478,7 +479,7 @@ const EventDetail = () => {
           >
             <div className="px-4 py-2.5 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-white min-w-0">
-                <Sparkles className="w-4 h-4 shrink-0" />
+                <Nkonsonkonson className="w-4 h-4 shrink-0" />
                 <span className="text-sm font-medium truncate">
                   You're invited! Join DNA to attend this event
                 </span>
@@ -502,7 +503,7 @@ const EventDetail = () => {
         </button>
 
         {/* Hero Image */}
-        <div ref={heroRef} className="relative overflow-hidden rounded-2xl mb-8">
+        <div ref={heroRef} className="relative overflow-hidden rounded-lg mb-8">
           <CulturalPattern pattern="kente" opacity={0.05} />
           {(event.cover_image_url as string) ? (
             <div className="aspect-[2.5/1] w-full overflow-hidden">

@@ -5,9 +5,7 @@
  */
 
 import React from 'react';
-import {
-  Zap, Briefcase, Users, Clock, MapPin,
-} from 'lucide-react';
+import { Briefcase, Users, Clock, MapPin, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type ConnectFilterId = 'all' | 'sectors' | 'active' | 'new' | 'nearby';
@@ -15,7 +13,7 @@ export type ConnectFilterId = 'all' | 'sectors' | 'active' | 'new' | 'nearby';
 const FILTERS = [
   { id: 'all' as const, name: 'All', icon: null },
   { id: 'sectors' as const, name: 'My Sectors', icon: Briefcase },
-  { id: 'active' as const, name: 'Active', icon: Zap },
+  { id: 'active' as const, name: 'Active', icon: Activity },
   { id: 'new' as const, name: 'New Members', icon: Clock },
   { id: 'nearby' as const, name: 'Near Me', icon: MapPin },
 ] as const;

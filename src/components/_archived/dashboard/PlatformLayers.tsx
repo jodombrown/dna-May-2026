@@ -21,7 +21,7 @@ const PlatformLayers = () => {
               <Badge 
                 key={compIndex} 
                 variant="secondary"
-                className={layerColors[layer.layer as keyof typeof layerColors] || "bg-gray-200"}
+                className={layerColors[layer.layer as keyof typeof layerColors] || "bg-neutral-200"}
               >
                 {component}
               </Badge>

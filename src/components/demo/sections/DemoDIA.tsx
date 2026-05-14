@@ -2,8 +2,9 @@ import { forwardRef } from 'react';
 import { KenteBorder } from '../KenteBorder';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { cn } from '@/lib/utils';
-import { Search, Bell, BarChart3, Target, Bot } from 'lucide-react';
+import { Search, Bell, BarChart3, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DemoDIAProps {
   id: string;
@@ -39,15 +40,15 @@ export const DemoDIA = forwardRef<HTMLElement, DemoDIAProps>(
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-20 bg-background"
+        className="min-h-screen py-16 md:py-12 bg-background"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
           <div ref={animationRef}>
             {/* Kente Border */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2 } as const}
             >
               <KenteBorder width="80px" height="3px" className="mb-8" />
             </motion.div>
@@ -56,9 +57,9 @@ export const DemoDIA = forwardRef<HTMLElement, DemoDIAProps>(
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left - Explanation */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ duration: 0.6, delay: 0.1 } as const}
+                initial={{ opacity: 0 }}
+                animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.2, delay: 0.1 } as const}
               >
                 <h2 
                   className="font-cormorant font-semibold text-foreground mb-2"
@@ -85,9 +86,9 @@ export const DemoDIA = forwardRef<HTMLElement, DemoDIAProps>(
                     <motion.div 
                       key={index}
                       className="flex items-start gap-3"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                      transition={{ duration: 0.4, delay: 0.3 + index * 0.1 } as const}
+                      initial={{ opacity: 0 }}
+                      animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                      transition={{ duration: 0.2, delay: 0.3 + index * 0.1 } as const}
                     >
                       <div className="w-10 h-10 rounded-lg bg-dna-emerald/10 flex items-center justify-center flex-shrink-0">
                         <feature.icon className="w-5 h-5 text-dna-emerald" />
@@ -108,14 +109,14 @@ export const DemoDIA = forwardRef<HTMLElement, DemoDIAProps>(
               {/* Right - Chat Mockup */}
               <motion.div 
                 className="bg-dna-pearl border border-border rounded-xl p-4 md:p-6 shadow-sm"
-                initial={{ opacity: 0, y: 30 }}
-                animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ duration: 0.6, delay: 0.2 } as const}
+                initial={{ opacity: 0 }}
+                animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.2, delay: 0.2 } as const}
               >
                 {/* DIA Avatar Header */}
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-dna-emerald to-dna-forest">
-                    <Bot className="w-6 h-6 text-white" />
+                    <MateMasie className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h4 className="font-outfit font-medium text-foreground">DIA</h4>
@@ -132,13 +133,13 @@ export const DemoDIA = forwardRef<HTMLElement, DemoDIAProps>(
                         "max-w-[85%]",
                         msg.from === 'user' ? "ml-auto" : ""
                       )}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                      transition={{ duration: 0.4, delay: 0.5 + index * 0.15 } as const}
+                      initial={{ opacity: 0 }}
+                      animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                      transition={{ duration: 0.2, delay: 0.5 + index * 0.15 } as const}
                     >
                       <div 
                         className={cn(
-                          "p-3 rounded-2xl font-outfit text-sm leading-relaxed",
+                          "p-3 rounded-lg font-outfit text-sm leading-relaxed",
                           msg.from === 'dia' 
                             ? "bg-dna-emerald/10 rounded-bl-sm text-foreground" 
                             : "bg-muted rounded-br-sm text-foreground"

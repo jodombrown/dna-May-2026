@@ -25,7 +25,7 @@ const PartnerWithDna = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
+      <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -65,12 +65,12 @@ const PartnerWithDna = () => {
                 </EnhancedButton>
               </div>
             </div>
-            <div className="relative h-96 lg:h-[500px] bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl flex items-center justify-center">
+            <div className="relative h-96 lg:h-[500px] bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-lg flex items-center justify-center">
               {partnerPageContent.hero.heroImageUrl ? (
                 <img 
                   src={partnerPageContent.hero.heroImageUrl} 
                   alt={partnerPageContent.hero.heroImageAlt}
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full h-full object-cover rounded-lg"
                 />
               ) : (
                 <div className="text-center p-8">
@@ -85,7 +85,7 @@ const PartnerWithDna = () => {
       </section>
 
       {/* Why Partner Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
             {partnerPageContent.whyPartner.title}
@@ -127,7 +127,7 @@ const PartnerWithDna = () => {
       </section>
 
       {/* 5Cs Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/5 to-transparent">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/5 to-transparent">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             How DNA Works With Partners
@@ -144,7 +144,7 @@ const PartnerWithDna = () => {
       </section>
 
       {/* Sectors Grid */}
-      <section id="who-we-partner" className="py-20 px-4 sm:px-6 lg:px-8">
+      <section id="who-we-partner" className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             Who We Partner With
@@ -180,7 +180,7 @@ const PartnerWithDna = () => {
       </section>
 
       {/* Partnership Advantage */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-copper/5 to-transparent">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-copper/5 to-transparent">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             {partnerPageContent.advantage.title}
@@ -197,7 +197,7 @@ const PartnerWithDna = () => {
       </section>
 
       {/* Closing CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Build with Us?

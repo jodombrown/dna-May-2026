@@ -15,25 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  Calendar, 
-  MapPin, 
-  Users, 
-  Clock, 
-  Share2,
-  ExternalLink,
-  Copy,
-  Check,
-  Sparkles,
-  Video,
-  Globe,
-  Ticket,
-  Handshake,
-  CalendarDays,
-  UsersRound,
-  Heart,
-  MessageSquare,
-} from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Ticket, Handshake, CalendarDays, UsersRound, Heart, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
@@ -42,6 +24,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
 import { getEventSchema } from '@/components/seo/PageSEO';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 const PublicEventPage = () => {
   const { slugOrId } = useParams<{ slugOrId: string }>();
@@ -345,13 +328,13 @@ const PublicEventPage = () => {
           <div className="sticky top-0 z-40 px-4 sm:px-0 pt-2">
             <motion.div
               initial={{ y: -30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
               className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
             >
               <div className="px-4 py-2.5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-white min-w-0">
-                  <Sparkles className="w-4 h-4 shrink-0" />
+                  <Nkonsonkonson className="w-4 h-4 shrink-0" />
                   <span className="text-sm font-medium truncate">
                     You're invited! Join DNA to attend this event
                   </span>
@@ -377,7 +360,7 @@ const PublicEventPage = () => {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 } as const}
-              className="aspect-[2.5/1] w-full overflow-hidden rounded-2xl mb-6"
+              className="aspect-[2.5/1] w-full overflow-hidden rounded-lg mb-6"
             >
               <img
                 src={event.cover_image_url}
@@ -389,8 +372,8 @@ const PublicEventPage = () => {
 
           {/* Event Header */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.1 } as const}
           >
           <Card className="overflow-hidden mb-4">
@@ -528,8 +511,8 @@ const PublicEventPage = () => {
           {/* Event Description */}
           {(event.description || event.short_description) && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 } as const}
             >
               <Card className="mb-4">
@@ -567,8 +550,8 @@ const PublicEventPage = () => {
           {/* What is DNA? Section - for non-logged-in users */}
           {!isLoggedIn && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.3 } as const}
             >
               <Card className="mb-4 border-dna-emerald/20 bg-gradient-to-br from-dna-emerald/5 to-transparent">
@@ -595,8 +578,8 @@ const PublicEventPage = () => {
           {/* Why Join DNA? - Five C's Benefits Block for non-logged-in users */}
           {!isLoggedIn && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 } as const}
             >
               <Card className="mb-4">
@@ -662,8 +645,8 @@ const PublicEventPage = () => {
           {/* CTA Card for non-logged-in users */}
           {!isLoggedIn && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 } as const}
             >
               <Card className="mt-4 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">

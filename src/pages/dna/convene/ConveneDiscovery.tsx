@@ -27,7 +27,7 @@ import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscover
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
 import { ConveneMobileHeader } from '@/components/convene/ConveneMobileHeader';
-import { ConveneTabExplainer } from '@/components/convene/ConveneTabExplainer';
+// ConveneTabExplainer removed on mobile - segmented tab labels are self-explanatory
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import {
   useHeroEvent,
@@ -297,11 +297,9 @@ export function ConveneDiscovery() {
       )}
 
       <div
-        className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-0 md:space-y-4 lg:space-y-5"
+        className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-3 md:space-y-4 lg:space-y-5"
         style={isMobile ? { paddingTop: headerHeight } : undefined}
       >
-        {/* Tab Explainer — mobile only */}
-        {isMobile && <ConveneTabExplainer activeTab={activePill} />}
         {/* ═══════════════════════════════════════
             DESKTOP HEADER: Location + Actions
             ═══════════════════════════════════════ */}
@@ -382,9 +380,9 @@ export function ConveneDiscovery() {
           /* ═══════════════════════════════════════
              DISCOVERY LANES MODE
              ═══════════════════════════════════════ */
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 lg:gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4 md:gap-6 lg:gap-8 items-start">
             {/* LEFT — Main discovery content */}
-            <div className="space-y-6 min-w-0">
+            <div className="space-y-4 md:space-y-6 min-w-0">
               {/* Happening Now — live pulse */}
               <HappeningNowSection />
 

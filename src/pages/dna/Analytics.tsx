@@ -37,7 +37,7 @@ const DnaAnalytics = () => {
       <div className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
           <BarChart3 className="w-6 h-6 text-primary" />
-          <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+          <h1 className="text-h2 font-serif">Analytics Dashboard</h1>
         </div>
         <Card className="p-6">
           <p className="text-muted-foreground">Analytics content coming soon...</p>

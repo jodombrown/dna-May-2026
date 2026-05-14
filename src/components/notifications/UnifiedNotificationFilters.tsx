@@ -8,8 +8,9 @@
  */
 
 import { cn } from '@/lib/utils';
-import { Bell, Activity, Sparkles } from 'lucide-react';
+import { Bell, Activity } from 'lucide-react';
 import type { UnifiedNotificationFilter } from '@/services/unifiedNotificationService';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface FilterOption {
   value: UnifiedNotificationFilter;
@@ -21,7 +22,7 @@ interface FilterOption {
 const FILTERS: FilterOption[] = [
   { value: 'all', label: 'All', icon: <Bell className="h-3.5 w-3.5" />, color: null },
   { value: 'activity', label: 'Activity', icon: <Activity className="h-3.5 w-3.5" />, color: '#4A8D77' },
-  { value: 'dia', label: 'DIA', icon: <Sparkles className="h-3.5 w-3.5" />, color: '#C4942A' },
+  { value: 'dia', label: 'DIA', icon: <MateMasie className="h-3.5 w-3.5" />, color: '#C4942A' },
 ];
 
 interface UnifiedNotificationFiltersProps {

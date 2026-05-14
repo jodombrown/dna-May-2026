@@ -86,9 +86,9 @@ export default function EventDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg w-full p-0 rounded-2xl overflow-hidden sm:max-w-2xl shadow-xl">
+      <DialogContent className="max-w-lg w-full p-0 rounded-lg overflow-hidden sm:max-w-2xl shadow-xl">
         {/* Banner */}
-        <div className="relative w-full h-40 sm:h-56 bg-gray-100">
+        <div className="relative w-full h-40 sm:h-56 bg-neutral-100">
           <img
             src={eventBanner}
             alt={`${event.title} banner`}
@@ -141,7 +141,7 @@ export default function EventDetailDialog({
               </div>
             </div>
             {/* Date & Time */}
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-neutral-600">
               <Calendar className="w-4 h-4" />
               <span>
                 {event.date_time
@@ -151,7 +151,7 @@ export default function EventDetailDialog({
             </div>
           </div>
           {/* Location, Attendees */}
-          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mt-3 mb-1">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-500 mt-3 mb-1">
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
               {event.location}
@@ -163,7 +163,7 @@ export default function EventDetailDialog({
           </div>
           {/* Description */}
           {event.description && (
-            <div className="my-4 text-gray-800 text-base leading-relaxed whitespace-pre-line break-words">
+            <div className="my-4 text-neutral-800 text-base leading-relaxed whitespace-pre-line break-words">
               {event.description}
             </div>
           )}

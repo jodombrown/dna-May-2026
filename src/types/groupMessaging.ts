@@ -12,10 +12,17 @@ export type ConnectionStatus = 'connected' | 'reconnecting' | 'offline';
 /** Media item stored in media_urls JSONB array */
 export interface MediaItem {
   url: string;
-  type: 'image' | 'document';
+  type: 'image' | 'video' | 'audio' | 'document';
   name: string;
   size: number;
   mimeType?: string;
+  /** Optional dimensions (image/video) */
+  width?: number;
+  height?: number;
+  /** Optional duration in seconds (video/audio) */
+  durationSec?: number;
+  /** Optional poster URL for video previews */
+  posterUrl?: string;
 }
 
 /** A message in a group or DM conversation (from get_group_messages RPC) */
@@ -34,10 +41,14 @@ export interface GroupMessage {
   created_at: string;
   is_deleted: boolean;
   edited_at: string | null;
+  deleted_at?: string | null;
+  forwarded_from_message_id?: string | null;
   /** Client-only: optimistic send status */
   _status?: MessageStatus;
   /** Client-only: client-generated ID for deduplication */
   _clientId?: string;
+  /** Client-only: whether the current user has starred this message */
+  _isStarred?: boolean;
 }
 
 /** A group conversation from get_group_conversations_for_user RPC */
@@ -52,6 +63,11 @@ export interface GroupConversation {
   last_message_at: string;
   participant_count: number;
   unread_count: number;
+  last_message_preview?: string | null;
+  last_sender_name?: string | null;
+  is_pinned?: boolean;
+  is_muted?: boolean;
+  is_archived?: boolean;
 }
 
 /** Participant in a conversation */

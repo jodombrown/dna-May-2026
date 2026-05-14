@@ -6,8 +6,9 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Bell, Calendar, Users, LayoutGrid, Handshake, Megaphone, Sparkles, Heart, MessageSquare, Share2, Bookmark, Check, X } from 'lucide-react';
-import dnaLogo from '@/assets/dna-logo.png';
+import { Bell, Calendar, Users, LayoutGrid, Handshake, Megaphone, Heart, MessageSquare, Share2, Bookmark, Check, X } from 'lucide-react';
+import dnaLogo from '@/assets/dna-logo.webp';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <section className="space-y-4">
@@ -426,7 +427,7 @@ export default function DesignSystem() {
             <Badge className="bg-dna-collaborate-light text-dna-collaborate border-0">Collaborate</Badge>
             <Badge className="bg-dna-contribute-light text-dna-contribute border-0">Contribute</Badge>
             <Badge className="bg-dna-convey-light text-dna-convey border-0">Convey</Badge>
-            <Badge className="bg-dna-dia-light text-dna-dia border-0"><Sparkles className="w-3 h-3 mr-1" />DIA</Badge>
+            <Badge className="bg-dna-dia-light text-dna-dia border-0"><MateMasie className="w-3 h-3 mr-1" />DIA</Badge>
             <Badge variant="destructive">Error</Badge>
             <Badge variant="outline">Outline</Badge>
           </div>
@@ -476,7 +477,7 @@ export default function DesignSystem() {
               { name: 'Collaborate', Icon: LayoutGrid, color: 'text-dna-collaborate' },
               { name: 'Contribute', Icon: Handshake, color: 'text-dna-contribute' },
               { name: 'Convey', Icon: Megaphone, color: 'text-dna-convey' },
-              { name: 'DIA', Icon: Sparkles, color: 'text-dna-dia' },
+              { name: 'DIA', Icon: MateMasie, color: 'text-dna-dia' },
               { name: 'Notifications', Icon: Bell, color: 'text-foreground' },
             ].map(({ name, Icon, color }) => (
               <div key={name} className="flex flex-col items-center gap-1">

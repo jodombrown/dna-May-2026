@@ -36,35 +36,35 @@ const WhoIsDNAForSection = () => {
   };
 
   return (
-    <section className="py-12 lg:py-16 bg-gradient-to-br from-gray-50 to-white">
+    <section className="py-12 lg:py-16 bg-gradient-to-br from-neutral-50 to-white">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Who is DNA for? */}
         <div className="mb-8 lg:mb-12">
           <h2 className={`${TYPOGRAPHY.h2} text-dna-copper mb-3 lg:mb-4`}>
             Who is DNA for?
           </h2>
-          <p className="text-base sm:text-lg text-gray-700 mb-6 lg:mb-8">
+          <p className="text-base sm:text-lg text-neutral-700 mb-6 lg:mb-8">
             Anyone committed to Africa's transformation through innovation and entrepreneurship.
           </p>
 
           {/* FAQ Toggles */}
           <div className="space-y-2 sm:space-y-3">
             {faqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div key={index} className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-gray-50 transition-all duration-200 text-left"
+                  className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-neutral-50 transition-all duration-200 text-left"
                 >
-                  <span className="text-sm sm:text-base text-gray-900 font-medium pr-4">{faq.question}</span>
+                  <span className="text-sm sm:text-base text-neutral-900 font-medium pr-4">{faq.question}</span>
                   <ChevronDown 
-                    className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0 transition-transform duration-200 ${
+                    className={`w-4 h-4 sm:w-5 sm:h-5 text-neutral-400 flex-shrink-0 transition-transform duration-200 ${
                       openIndex === index ? 'rotate-180 text-dna-copper' : ''
                     }`} 
                   />
                 </button>
                 {openIndex === index && (
                   <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0">
-                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                    <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
                       {faq.answer}
                     </p>
                   </div>
@@ -75,11 +75,11 @@ const WhoIsDNAForSection = () => {
         </div>
 
         {/* Final CTA */}
-        <div className="bg-white rounded-2xl p-8 sm:p-12 border border-gray-200 shadow-sm text-center">
-          <h3 className={`${TYPOGRAPHY.h3} text-gray-900 mb-4`}>
+        <div className="bg-white rounded-lg p-8 sm:p-12 border border-neutral-200 shadow-sm text-center">
+          <h3 className={`${TYPOGRAPHY.h3} text-neutral-900 mb-4`}>
             The African Diaspora Movement Starts Here
           </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+          <p className="text-neutral-600 mb-6 max-w-2xl mx-auto">
             Connect with visionary leaders, builders, and changemakers dedicated to accelerating Africa's development.
           </p>
           <Button 

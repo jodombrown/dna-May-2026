@@ -34,8 +34,8 @@ const SavedItemCard: React.FC<SavedItemCardProps> = ({
       case 'post': return 'bg-blue-500';
       case 'event': return 'bg-dna-copper';
       case 'opportunity': return 'bg-green-500';
-      case 'community': return 'bg-purple-500';
-      default: return 'bg-gray-500';
+      case 'community': return 'bg-copper-500';
+      default: return 'bg-neutral-500';
     }
   };
 
@@ -69,10 +69,10 @@ const SavedItemCard: React.FC<SavedItemCardProps> = ({
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 truncate">
+                  <h3 className="font-semibold text-neutral-900 truncate">
                     {getItemTitle(item)}
                   </h3>
-                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                  <p className="text-sm text-neutral-600 mt-1 line-clamp-2">
                     {getItemDescription(item)}
                   </p>
                 </div>
@@ -98,7 +98,7 @@ const SavedItemCard: React.FC<SavedItemCardProps> = ({
                 </div>
               </div>
               
-              <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-4 text-xs text-neutral-500">
                 <Badge variant="outline" className="text-xs">
                   {item.target_type}
                 </Badge>
@@ -142,10 +142,10 @@ const SavedItemCard: React.FC<SavedItemCardProps> = ({
         </div>
         
         <div>
-          <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2">
+          <h3 className="font-semibold text-neutral-900 line-clamp-2 mb-2">
             {getItemTitle(item)}
           </h3>
-          <p className="text-sm text-gray-600 line-clamp-3">
+          <p className="text-sm text-neutral-600 line-clamp-3">
             {getItemDescription(item)}
           </p>
         </div>
@@ -161,7 +161,7 @@ const SavedItemCard: React.FC<SavedItemCardProps> = ({
                   {getItemAuthor(item)?.full_name?.charAt(0) || '?'}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-neutral-600">
                 {getItemAuthor(item)?.full_name || getItemAuthor(item)}
               </span>
             </div>
@@ -172,7 +172,7 @@ const SavedItemCard: React.FC<SavedItemCardProps> = ({
               <Badge variant="outline" className="text-xs">
                 {item.target_type}
               </Badge>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-neutral-500">
                 {formatDistanceToNow(new Date(item.created_at))} ago
               </span>
             </div>

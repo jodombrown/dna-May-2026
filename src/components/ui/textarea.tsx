@@ -16,6 +16,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           "focus-visible:outline-none focus-visible:border-primary focus-visible:shadow-dna-focus",
           "disabled:cursor-not-allowed disabled:opacity-50",
           "transition-[border-color,box-shadow] duration-150",
+          // Invalid state highlight (driven by aria-invalid="true")
+          "aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-destructive/30",
           className
         )}
         ref={ref}

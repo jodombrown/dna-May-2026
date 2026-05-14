@@ -359,7 +359,7 @@ export default function SpaceModeration() {
       case 'resolved':
         return <Badge className="bg-green-500/10 text-green-600 border-green-500"><CheckCircle className="h-3 w-3 mr-1" />Resolved</Badge>;
       case 'dismissed':
-        return <Badge className="bg-gray-500/10 text-gray-600 border-gray-500"><XCircle className="h-3 w-3 mr-1" />Dismissed</Badge>;
+        return <Badge className="bg-neutral-500/10 text-neutral-600 border-neutral-500"><XCircle className="h-3 w-3 mr-1" />Dismissed</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -369,10 +369,10 @@ export default function SpaceModeration() {
     const reasonColors: Record<string, string> = {
       spam: 'bg-orange-500/10 text-orange-600 border-orange-500',
       harassment: 'bg-red-500/10 text-red-600 border-red-500',
-      inappropriate_content: 'bg-purple-500/10 text-purple-600 border-purple-500',
+      inappropriate_content: 'bg-copper-500/10 text-copper-600 border-copper-500',
       scam: 'bg-red-500/10 text-red-600 border-red-500',
       impersonation: 'bg-yellow-500/10 text-yellow-600 border-yellow-500',
-      other: 'bg-gray-500/10 text-gray-600 border-gray-500'
+      other: 'bg-neutral-500/10 text-neutral-600 border-neutral-500'
     };
     return (
       <Badge className={reasonColors[reason] || reasonColors.other}>
@@ -427,7 +427,7 @@ export default function SpaceModeration() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-2xl font-bold text-gray-600">
+            <div className="text-2xl font-bold text-neutral-600">
               {reports.filter(r => r.status === 'dismissed').length}
             </div>
             <p className="text-sm text-muted-foreground">Dismissed</p>

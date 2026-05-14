@@ -34,7 +34,7 @@ const CulturalImpactSection: React.FC<CulturalImpactSectionProps> = ({ profile }
           {/* Diaspora Networks */}
           {diasporaNetworks.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-3 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-dna-emerald" />
                 Diaspora Networks & Organizations
               </h4>
@@ -51,11 +51,11 @@ const CulturalImpactSection: React.FC<CulturalImpactSectionProps> = ({ profile }
           {/* Community Involvement */}
           {profile.community_involvement && (
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
                 <Building className="w-4 h-4 text-dna-copper" />
                 Community Involvement
               </h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-neutral-600 leading-relaxed">
                 {profile.community_involvement}
               </p>
             </div>
@@ -64,11 +64,11 @@ const CulturalImpactSection: React.FC<CulturalImpactSectionProps> = ({ profile }
           {/* Giving Back Initiatives */}
           {profile.giving_back_initiatives && (
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
                 <HandHeart className="w-4 h-4 text-dna-crimson" />
                 Giving Back Initiatives
               </h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-neutral-600 leading-relaxed">
                 {profile.giving_back_initiatives}
               </p>
             </div>
@@ -77,11 +77,11 @@ const CulturalImpactSection: React.FC<CulturalImpactSectionProps> = ({ profile }
           {/* Home Country Projects */}
           {profile.home_country_projects && (
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-2 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-dna-emerald" />
                 Home Country Projects
               </h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-neutral-600 leading-relaxed">
                 {profile.home_country_projects}
               </p>
             </div>
@@ -90,10 +90,10 @@ const CulturalImpactSection: React.FC<CulturalImpactSectionProps> = ({ profile }
           {/* Volunteer Experience */}
           {profile.volunteer_experience && (
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-2">
+              <h4 className="text-sm font-medium text-neutral-700 mb-2">
                 Volunteer Experience
               </h4>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <p className="text-sm text-neutral-600 leading-relaxed">
                 {profile.volunteer_experience}
               </p>
             </div>

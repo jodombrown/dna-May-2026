@@ -7,9 +7,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useFeaturedCount } from '@/hooks/useReleases';
 import { cn } from '@/lib/utils';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface NewFeaturePillProps {
   className?: string;
@@ -24,10 +25,9 @@ export const NewFeaturePill: React.FC<NewFeaturePillProps> = ({ className }) => 
 
   return (
     <motion.button
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
       onClick={() => navigate('/releases?filter=featured')}
       className={cn(
         'relative inline-flex items-center gap-2 px-4 py-2 rounded-full',
@@ -45,7 +45,7 @@ export const NewFeaturePill: React.FC<NewFeaturePillProps> = ({ className }) => 
         transition={{ duration: 2, repeat: Infinity }}
       />
 
-      <Sparkles className="w-4 h-4 relative z-10" />
+      <MateMasie className="w-4 h-4 relative z-10" />
 
       <span className="relative z-10">What's New</span>
 
@@ -85,7 +85,7 @@ export const NewFeaturePillCompact: React.FC<NewFeaturePillProps> = ({
       )}
       aria-label={`${count} new features`}
     >
-      <Sparkles className="w-4 h-4" />
+      <MateMasie className="w-4 h-4" />
 
       {/* Count indicator */}
       {count > 0 && (

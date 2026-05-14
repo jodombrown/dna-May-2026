@@ -5,21 +5,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/lib/utils';
-import {
-  UserPlus,
-  Heart,
-  MessageCircle,
-  Mail,
-  Calendar,
-  Users,
-  Bell,
-  SmilePlus,
-  AtSign,
-  Repeat2,
-  X,
-  Eye,
-  Sparkles,
-} from 'lucide-react';
+import { UserPlus, Heart, MessageCircle, Mail, Calendar, Users, Bell, SmilePlus, AtSign, Repeat2, X, Eye } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -53,7 +40,7 @@ export function NotificationItem({
   const getIcon = () => {
     // DNA system notifications get a special icon
     if (isDNANotification) {
-      return <Sparkles className="h-4 w-4" />;
+      return <MateMasie className="h-4 w-4" />;
     }
     
     switch (notification.type) {
@@ -101,14 +88,14 @@ export function NotificationItem({
       case 'mention':
         return 'bg-blue-500';
       case 'reshare':
-        return 'bg-purple-500';
+        return 'bg-copper-500';
       case 'profile_view':
         return 'bg-amber-500';
       case 'post_comment':
       case 'comment_reply':
         return 'bg-sky-500';
       case 'new_message':
-        return 'bg-indigo-500';
+        return 'bg-copper-500';
       case 'event_invite':
       case 'event_reminder':
         return 'bg-orange-500';

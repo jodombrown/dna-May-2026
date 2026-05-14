@@ -29,7 +29,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dna-mint/20 to-background flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-card shadow-xl rounded-2xl p-8 space-y-6 border">
+      <div className="max-w-md w-full bg-card shadow-xl rounded-lg p-8 space-y-6 border">
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold text-dna-forest">Reset Your Password</h1>

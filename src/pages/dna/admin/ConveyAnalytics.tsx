@@ -186,7 +186,7 @@ export default function ConveyAnalytics() {
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
+        <h1 className="text-h1 font-serif text-foreground mb-2">
           CONVEY Analytics
         </h1>
         <p className="text-muted-foreground">
@@ -222,7 +222,7 @@ export default function ConveyAnalytics() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics?.created || 0}</div>
+                <div className="text-h2 font-serif">{metrics?.created || 0}</div>
               </CardContent>
             </Card>
             <Card>
@@ -231,7 +231,7 @@ export default function ConveyAnalytics() {
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics?.published || 0}</div>
+                <div className="text-h2 font-serif">{metrics?.published || 0}</div>
               </CardContent>
             </Card>
             <Card>
@@ -240,7 +240,7 @@ export default function ConveyAnalytics() {
                 <Eye className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics?.viewed || 0}</div>
+                <div className="text-h2 font-serif">{metrics?.viewed || 0}</div>
               </CardContent>
             </Card>
             <Card>
@@ -249,7 +249,7 @@ export default function ConveyAnalytics() {
                 <MousePointerClick className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{metrics?.ctaClicked || 0}</div>
+                <div className="text-h2 font-serif">{metrics?.ctaClicked || 0}</div>
               </CardContent>
             </Card>
           </div>

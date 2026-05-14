@@ -106,7 +106,7 @@ const ConveneExample = () => {
       name: 'Arts & Culture', 
       icon: '🎨', 
       count: '67 Events', 
-      color: 'bg-purple-500',
+      color: 'bg-copper-500',
       description: 'Art exhibitions, cultural festivals, music concerts, film screenings, and creative showcases'
     },
     { 
@@ -146,7 +146,7 @@ const ConveneExample = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       <PageSEO
         title="Convene: African Diaspora Events & Gatherings"
         description="Discover events connecting the African diaspora worldwide. Tech summits, investment forums, cultural celebrations, and professional networking across Africa and beyond."
@@ -167,8 +167,8 @@ const ConveneExample = () => {
         <div className="pt-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Discover Events</h1>
-              <p className="text-gray-600 mt-2">
+              <h1 className="text-3xl md:text-4xl font-bold text-neutral-900">Discover Events</h1>
+              <p className="text-neutral-600 mt-2">
                 Explore events near you, browse by category, or check out featured calendars
               </p>
             </div>
@@ -244,10 +244,10 @@ const ConveneExample = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-neutral-900">
                 Popular Events ({upcomingEvents.length})
               </h2>
-              <p className="text-sm text-gray-600">Trending events in your network</p>
+              <p className="text-sm text-neutral-600">Trending events in your network</p>
             </div>
             <Button variant="ghost" className="text-dna-emerald hover:text-dna-forest">
               View All <ArrowRight className="w-4 h-4 ml-1" />
@@ -283,7 +283,7 @@ const ConveneExample = () => {
                             alt={event.creatorName}
                             className="w-5 h-5 rounded-full object-cover"
                           />
-                          <span className="text-xs font-medium text-gray-700 max-w-[60px] truncate">
+                          <span className="text-xs font-medium text-neutral-700 max-w-[60px] truncate">
                             {event.creatorName}
                           </span>
                         </div>
@@ -298,15 +298,15 @@ const ConveneExample = () => {
                     <CardContent className="pt-8 pb-4">
                       <div className="space-y-3">
                         <div>
-                          <h3 className="font-semibold text-gray-900 line-clamp-1">{event.title}</h3>
-                          <p className="text-sm text-gray-600 line-clamp-2 mt-1">{event.description}</p>
+                          <h3 className="font-semibold text-neutral-900 line-clamp-1">{event.title}</h3>
+                          <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{event.description}</p>
                         </div>
                         
                         <div className="flex gap-2">
                           <Badge variant="outline" className="text-xs">{event.type}</Badge>
                         </div>
                         
-                        <div className="space-y-1 text-xs text-gray-500">
+                        <div className="space-y-1 text-xs text-neutral-500">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             <span>{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {event.time}</span>
@@ -343,8 +343,8 @@ const ConveneExample = () => {
         {/* Browse by Category Section */}
         <div className="space-y-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Browse by Category</h2>
-            <p className="text-sm text-gray-600">Find events that match your interests</p>
+            <h2 className="text-2xl font-bold text-neutral-900">Browse by Category</h2>
+            <p className="text-sm text-neutral-600">Find events that match your interests</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -357,8 +357,8 @@ const ConveneExample = () => {
                         <div className={`w-12 h-12 ${category.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
                           <span className="text-2xl">{category.icon}</span>
                         </div>
-                        <h3 className="font-medium text-gray-900 text-sm">{category.name}</h3>
-                        <p className="text-xs text-gray-500 mt-1">{category.count}</p>
+                        <h3 className="font-medium text-neutral-900 text-sm">{category.name}</h3>
+                        <p className="text-xs text-neutral-500 mt-1">{category.count}</p>
                       </CardContent>
                     </Card>
                   </TooltipTrigger>
@@ -375,8 +375,8 @@ const ConveneExample = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Featured Calendars</h2>
-              <p className="text-sm text-gray-600">Curated event collections from community leaders</p>
+              <h2 className="text-2xl font-bold text-neutral-900">Featured Calendars</h2>
+              <p className="text-sm text-neutral-600">Curated event collections from community leaders</p>
             </div>
             <Button variant="ghost" className="text-dna-emerald hover:text-dna-forest">
               View All <ArrowRight className="w-4 h-4 ml-1" />
@@ -397,9 +397,9 @@ const ConveneExample = () => {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 truncate">{calendar.name}</h3>
-                        <p className="text-sm text-gray-600 line-clamp-2 mt-1">{calendar.description}</p>
-                        <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                        <h3 className="font-semibold text-neutral-900 truncate">{calendar.name}</h3>
+                        <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{calendar.description}</p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-neutral-500">
                           <span>{calendar.eventCount} events</span>
                           <span>{calendar.followers} followers</span>
                         </div>
@@ -421,7 +421,7 @@ const ConveneExample = () => {
                           </Tooltip>
                         </div>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-dna-emerald transition-colors" />
+                      <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-dna-emerald transition-colors" />
                     </div>
                   </CardContent>
                 </Card>
@@ -433,8 +433,8 @@ const ConveneExample = () => {
         {/* Explore Local Events Section */}
         <div className="space-y-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Explore Local Events</h2>
-            <p className="text-sm text-gray-600">See what's happening in major cities and diaspora hubs</p>
+            <h2 className="text-2xl font-bold text-neutral-900">Explore Local Events</h2>
+            <p className="text-sm text-neutral-600">See what's happening in major cities and diaspora hubs</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -447,9 +447,9 @@ const ConveneExample = () => {
                         <div className={`w-12 h-12 ${location.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
                           <span className="text-2xl">{location.flag}</span>
                         </div>
-                        <h3 className="font-medium text-gray-900 text-sm">{location.city}</h3>
-                        <p className="text-xs text-gray-500">{location.country}</p>
-                        <p className="text-xs text-gray-500 mt-1">{location.count} Events</p>
+                        <h3 className="font-medium text-neutral-900 text-sm">{location.city}</h3>
+                        <p className="text-xs text-neutral-500">{location.country}</p>
+                        <p className="text-xs text-neutral-500 mt-1">{location.count} Events</p>
                       </CardContent>
                     </Card>
                   </TooltipTrigger>
@@ -467,7 +467,7 @@ const ConveneExample = () => {
           <h3 className="text-2xl font-bold text-dna-forest mb-4">
             Help Us Improve Event Experiences
           </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+          <p className="text-neutral-600 mb-6 max-w-2xl mx-auto">
             Share your thoughts on diaspora gatherings and networking events. 
             Your feedback will shape how we bring the community together.
           </p>

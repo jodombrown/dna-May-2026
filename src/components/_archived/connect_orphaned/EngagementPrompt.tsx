@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Users, Calendar, TrendingUp } from 'lucide-react';
+import { Users, Calendar, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface EngagementPromptProps {
   type: 'profile_completion' | 'first_connection' | 'join_event' | 'network_growth';
@@ -22,7 +23,7 @@ export const EngagementPrompt: React.FC<EngagementPromptProps> = ({
 
   const prompts = {
     profile_completion: {
-      icon: Sparkles,
+      icon: Sankofa,
       title: 'Complete your profile to unlock features',
       description: `You're just ${100 - profileCompletion}% away from full platform access`,
       action: 'Complete Now',
@@ -45,7 +46,7 @@ export const EngagementPrompt: React.FC<EngagementPromptProps> = ({
       description: 'Discover events happening in your community this week',
       action: 'Browse Events',
       onClick: () => navigate('/dna/convene/events'),
-      gradient: 'from-blue-50 to-indigo-50',
+      gradient: 'from-blue-50 to-copper-50',
       border: 'border-blue-200',
     },
     network_growth: {
@@ -54,8 +55,8 @@ export const EngagementPrompt: React.FC<EngagementPromptProps> = ({
       description: `You have ${connectionCount} connections. Discover more professionals in your field`,
       action: 'Find Connections',
       onClick: () => navigate('/dna/connect'),
-      gradient: 'from-purple-50 to-pink-50',
-      border: 'border-purple-200',
+      gradient: 'from-copper-50 to-copper-50',
+      border: 'border-copper-200',
     },
   };
 

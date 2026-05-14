@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, Users, Sparkles } from 'lucide-react';
+import { Mail, Users } from 'lucide-react';
 import ComprehensiveLocationInput from '@/components/ui/comprehensive-location-input';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface WaitlistSlideInProps {
   children: React.ReactNode;
@@ -88,12 +89,12 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
       <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
         <SheetHeader className="text-center space-y-4 mb-6">
           <div className="mx-auto w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center animate-pulse">
-            <Sparkles className="h-8 w-8 text-white" />
+            <MateMasie className="h-8 w-8 text-white" />
           </div>
           <SheetTitle className="text-2xl font-bold text-dna-forest">
             Join the DNA Waitlist
           </SheetTitle>
-          <p className="text-gray-600 text-sm leading-relaxed">
+          <p className="text-neutral-600 text-sm leading-relaxed">
             Be the first to connect with the global African diaspora. Get early access 
             to our platform and help shape the future of diaspora collaboration.
           </p>
@@ -143,10 +144,10 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
 
           <div className="bg-gradient-to-br from-dna-emerald/10 to-dna-copper/10 p-4 rounded-lg border border-dna-emerald/20">
             <h4 className="font-semibold text-dna-forest mb-3 flex items-center gap-2">
-              <Sparkles className="h-4 w-4" />
+              <MateMasie className="h-4 w-4" />
               What you'll get:
             </h4>
-            <ul className="text-sm text-gray-600 space-y-2">
+            <ul className="text-sm text-neutral-600 space-y-2">
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 bg-dna-emerald rounded-full mt-2 flex-shrink-0"></span>
                 Early access to the DNA platform
@@ -175,7 +176,7 @@ const WaitlistSlideIn: React.FC<WaitlistSlideInProps> = ({ children }) => {
           </Button>
         </form>
 
-        <p className="text-xs text-gray-500 text-center mt-6">
+        <p className="text-xs text-neutral-500 text-center mt-6">
           We respect your privacy. Your information will only be used to notify you about DNA platform updates.
         </p>
       </SheetContent>

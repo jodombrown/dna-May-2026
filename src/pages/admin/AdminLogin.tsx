@@ -166,7 +166,7 @@ const AdminLogin = () => {
 
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-emerald-500" />
           <p className="text-white/60">Checking authentication...</p>
@@ -178,7 +178,7 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 p-12 flex-col justify-between relative overflow-hidden">
         {/* Background effects */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-20 w-64 h-64 rounded-full bg-emerald-500/30 blur-3xl" />
@@ -199,7 +199,7 @@ const AdminLogin = () => {
         {/* Main Content */}
         <div className="relative z-10 space-y-8">
           <div className="space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-600 flex items-center justify-center mb-6">
+            <div className="w-16 h-16 rounded-lg bg-emerald-600 flex items-center justify-center mb-6">
               <Shield className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold text-white leading-tight">
@@ -238,13 +238,13 @@ const AdminLogin = () => {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 bg-slate-50 flex items-center justify-center p-6 lg:p-12">
+      <div className="w-full lg:w-1/2 bg-neutral-50 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md space-y-8">
           {/* Mobile Back Link */}
           <div className="lg:hidden">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to DNA Platform
@@ -256,8 +256,8 @@ const AdminLogin = () => {
             <div className="lg:hidden w-14 h-14 rounded-xl bg-emerald-600 flex items-center justify-center mx-auto mb-4">
               <Shield className="w-7 h-7 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">Admin Sign In</h2>
-            <p className="text-slate-500">
+            <h2 className="text-2xl font-bold text-neutral-900">Admin Sign In</h2>
+            <p className="text-neutral-500">
               {magicLinkSent 
                 ? 'Check your email for the magic link' 
                 : 'Enter your email to receive a secure login link'}
@@ -265,7 +265,7 @@ const AdminLogin = () => {
           </div>
 
           {/* Login Card */}
-          <Card className="border-slate-200 shadow-lg">
+          <Card className="border-neutral-200 shadow-lg">
             <CardContent className="pt-6">
               {magicLinkSent ? (
                 // Magic Link Sent State
@@ -274,13 +274,13 @@ const AdminLogin = () => {
                     <Mail className="w-8 h-8 text-emerald-600" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-slate-900">Check Your Email</h3>
-                    <p className="text-slate-600 text-sm">
+                    <h3 className="text-lg font-semibold text-neutral-900">Check Your Email</h3>
+                    <p className="text-neutral-600 text-sm">
                       We've sent a secure login link to<br />
-                      <span className="font-medium text-slate-900">{email}</span>
+                      <span className="font-medium text-neutral-900">{email}</span>
                     </p>
                   </div>
-                  <div className="bg-slate-50 rounded-lg p-4 text-sm text-slate-600">
+                  <div className="bg-neutral-50 rounded-lg p-4 text-sm text-neutral-600">
                     <p>Click the link in your email to access the admin portal. The link expires in 24 hours.</p>
                   </div>
                   <Button
@@ -297,7 +297,7 @@ const AdminLogin = () => {
                 <form onSubmit={handleSendMagicLink} className="space-y-5">
                   {/* Email Input */}
                   <div className="space-y-2">
-                    <Label htmlFor="admin-email" className="text-slate-700">
+                    <Label htmlFor="admin-email" className="text-neutral-700">
                       Email Address
                     </Label>
                     <div className="relative">
@@ -323,7 +323,7 @@ const AdminLogin = () => {
                         }`}
                       />
                       {isValidatingEmail && (
-                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-slate-400" />
+                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-neutral-400" />
                       )}
                       {!isValidatingEmail && emailValidation?.isValid && (
                         <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
@@ -388,7 +388,7 @@ const AdminLogin = () => {
           </div>
 
           {/* Contact Admin */}
-          <p className="text-center text-sm text-slate-500">
+          <p className="text-center text-sm text-neutral-500">
             Need admin access?{' '}
             <a
               href="mailto:admin@diasporanetwork.africa"

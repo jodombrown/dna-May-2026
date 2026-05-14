@@ -60,10 +60,10 @@ const CommunityGroups = () => {
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
             Join Professional <span className="text-dna-copper">Communities</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
             Connect with like-minded professionals in specialized groups focused on Africa's development
           </p>
         </div>
@@ -84,22 +84,22 @@ const CommunityGroups = () => {
                 )}
                 <Badge 
                   variant="secondary" 
-                  className="absolute top-3 right-3 bg-white/90 text-gray-700"
+                  className="absolute top-3 right-3 bg-white/90 text-neutral-700"
                 >
                   {group.category}
                 </Badge>
               </div>
               
               <CardContent className="p-6">
-                <h3 className="font-semibold text-lg mb-2 text-gray-900 group-hover:text-dna-copper transition-colors">
+                <h3 className="font-semibold text-lg mb-2 text-neutral-900 group-hover:text-dna-copper transition-colors">
                   {group.name}
                 </h3>
-                <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                <p className="text-neutral-600 mb-4 text-sm leading-relaxed">
                   {group.description}
                 </p>
                 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center text-gray-500">
+                  <div className="flex items-center text-neutral-500">
                     <Users className="h-4 w-4 mr-1" />
                     <span className="text-sm font-medium">{group.members.toLocaleString()} members</span>
                   </div>

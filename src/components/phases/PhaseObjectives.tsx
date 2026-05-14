@@ -21,8 +21,8 @@ const PhaseObjectives: React.FC<PhaseObjectivesProps> = ({ objectives, color = "
   <section className="py-16">
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Phase Objectives</h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-neutral-900 mb-4">Phase Objectives</h2>
+        <p className="text-lg text-neutral-600 max-w-3xl mx-auto">
           Our focused approach to driving this phase's success. Track our real-time progress and see exactly what we're working on.
         </p>
       </div>
@@ -38,12 +38,12 @@ const PhaseObjectives: React.FC<PhaseObjectivesProps> = ({ objectives, color = "
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 mb-4 text-sm">{objective.description}</p>
+              <p className="text-neutral-600 mb-4 text-sm">{objective.description}</p>
               <div className="flex items-center justify-between mb-2">
                 <Badge variant="outline" className={`border-${color} text-${color} text-xs`}>
                   {objective.status}
                 </Badge>
-                <span className="text-xs font-medium text-gray-700">
+                <span className="text-xs font-medium text-neutral-700">
                   {objective.completion}%
                 </span>
               </div>

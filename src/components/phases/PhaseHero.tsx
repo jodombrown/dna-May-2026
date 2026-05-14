@@ -111,7 +111,7 @@ const PhaseHero: React.FC<PhaseHeroProps> = ({
     <>
       {/* Sticky Navigation Bar */}
       {showStickyButtons && (
-        <div className="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 py-3 z-40 transition-all duration-300">
+        <div className="fixed top-16 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-neutral-200 py-3 z-40 transition-all duration-300">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {stickyNavigationButtons}
           </div>

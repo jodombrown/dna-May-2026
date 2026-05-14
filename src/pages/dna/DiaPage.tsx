@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Search, History, Lightbulb } from 'lucide-react';
+import { Search, History, Lightbulb } from 'lucide-react';
 import DiaSearch from '@/components/dia/DiaSearch';
 import DiaHistory from '@/components/dia/DiaHistory';
 import DiaInsights from '@/components/dia/DiaInsights';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { MateMasie } from '@/components/icons/adinkra';
 
 export default function DiaPage() {
   const [selectedQuery, setSelectedQuery] = useState<string>('');
@@ -29,12 +30,12 @@ export default function DiaPage() {
       {/* Header */}
       <div className="text-center mb-3 sm:mb-8">
         <div className="relative inline-flex items-center justify-center w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-emerald-500/10 mb-2 sm:mb-4">
-          <Sparkles className="h-5 w-5 sm:h-8 sm:w-8 text-emerald-600" />
+          <MateMasie className="h-5 w-5 sm:h-8 sm:w-8 text-emerald-600" />
           <Badge className="absolute -top-1 -right-1 bg-dna-copper text-white text-[10px] px-1.5 py-0 h-4 font-semibold">
             New
           </Badge>
         </div>
-        <h1 className="text-xl sm:text-3xl font-bold mb-1 flex items-center justify-center gap-2">
+        <h1 className="text-xl sm:text-h1 font-serif mb-1 flex items-center justify-center gap-2">
           DIA
           <span className="text-xs font-medium text-dna-copper bg-dna-copper/10 px-2 py-0.5 rounded-full">Alpha</span>
         </h1>

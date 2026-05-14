@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Send, Link2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { messageService } from '@/services/messageService';
+import { offlineQueueService } from '@/services/offlineQueueService';
 import { cn } from '@/lib/utils';
 import { EntitySharePicker } from '@/components/messaging/EntitySharePicker';
+import { useMessageDraft } from '@/hooks/messaging/useMessageDraft';
 
 interface MessageComposerProps {
   conversationId: string;
@@ -24,7 +26,9 @@ export function MessageComposer({
   currentUserId,
   onMessageSent,
 }: MessageComposerProps) {
-  const [message, setMessage] = useState('');
+  const { draft, setDraft, clear: clearDraft } = useMessageDraft(conversationId);
+  const message = draft;
+  const setMessage = setDraft;
   const [isSending, setIsSending] = useState(false);
   const [showEntityPicker, setShowEntityPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -64,16 +68,36 @@ export function MessageComposer({
 
     setIsSending(true);
     try {
-      await messageService.sendMessage(conversationId, trimmedMessage);
-      setMessage('');
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        await offlineQueueService.enqueue('send_message', {
+          conversationId,
+          content: trimmedMessage,
+          isGroup: false,
+        });
+        toast({ title: 'Queued', description: 'Message will send when you are back online.' });
+      } else {
+        await messageService.sendMessage(conversationId, trimmedMessage);
+      }
+      clearDraft();
       onMessageSent?.();
       textareaRef.current?.focus();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to send message',
-        variant: 'destructive',
-      });
+      // Fallback to queue on transient network failure
+      try {
+        await offlineQueueService.enqueue('send_message', {
+          conversationId,
+          content: trimmedMessage,
+          isGroup: false,
+        });
+        clearDraft();
+        toast({ title: 'Queued', description: 'Network failed, message will retry.' });
+      } catch {
+        toast({
+          title: 'Error',
+          description: 'Failed to send message',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setIsSending(false);
     }
@@ -101,7 +125,7 @@ export function MessageComposer({
         </Button>
 
         {/* Pill-shaped input container */}
-        <div className="flex-1 flex items-end bg-muted rounded-3xl border border-border/50 px-4 py-2">
+        <div className="flex-1 flex items-end bg-muted rounded-xl border border-border/50 px-4 py-2">
           <textarea
             ref={textareaRef}
             placeholder="iMessage"

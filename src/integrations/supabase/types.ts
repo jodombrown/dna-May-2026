@@ -1771,7 +1771,7 @@ export type Database = {
             foreignKeyName: "contribution_acknowledgments_fulfillment_id_fkey"
             columns: ["fulfillment_id"]
             isOneToOne: false
-            referencedRelation: "need_fulfillments"
+            referencedRelation: "contribution_fulfillments"
             referencedColumns: ["id"]
           },
           {
@@ -6294,72 +6294,6 @@ export type Database = {
           },
         ]
       }
-      need_fulfillments: {
-        Row: {
-          cancelled_at: string | null
-          cancelled_by: string | null
-          confirmed_at: string | null
-          created_at: string
-          fulfilled_at: string | null
-          fulfiller_id: string
-          fulfiller_message: string | null
-          id: string
-          need_id: string
-          requester_id: string
-          room_curation_id: string | null
-          status: string
-          thread_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          fulfilled_at?: string | null
-          fulfiller_id: string
-          fulfiller_message?: string | null
-          id?: string
-          need_id: string
-          requester_id: string
-          room_curation_id?: string | null
-          status?: string
-          thread_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          cancelled_at?: string | null
-          cancelled_by?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          fulfilled_at?: string | null
-          fulfiller_id?: string
-          fulfiller_message?: string | null
-          id?: string
-          need_id?: string
-          requester_id?: string
-          room_curation_id?: string | null
-          status?: string
-          thread_id?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "need_fulfillments_need_id_fkey"
-            columns: ["need_id"]
-            isOneToOne: false
-            referencedRelation: "need_declarations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "need_fulfillments_room_curation_id_fkey"
-            columns: ["room_curation_id"]
-            isOneToOne: false
-            referencedRelation: "room_curations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       newsletter_subscriptions: {
         Row: {
           country_interests: string[] | null
@@ -10192,8 +10126,6 @@ export type Database = {
           curation_date: string
           currency: Database["public"]["Enums"]["contribution_currency"]
           dismissed_at: string | null
-          engaged_at: string | null
-          engaged_thread_id: string | null
           id: string
           kind: Database["public"]["Enums"]["match_kind"]
           reasoning: string
@@ -10211,8 +10143,6 @@ export type Database = {
           curation_date?: string
           currency: Database["public"]["Enums"]["contribution_currency"]
           dismissed_at?: string | null
-          engaged_at?: string | null
-          engaged_thread_id?: string | null
           id?: string
           kind: Database["public"]["Enums"]["match_kind"]
           reasoning: string
@@ -10230,8 +10160,6 @@ export type Database = {
           curation_date?: string
           currency?: Database["public"]["Enums"]["contribution_currency"]
           dismissed_at?: string | null
-          engaged_at?: string | null
-          engaged_thread_id?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["match_kind"]
           reasoning?: string
@@ -12290,10 +12218,6 @@ export type Database = {
         }
         Returns: string
       }
-      confirm_fulfillment: {
-        Args: { p_fulfillment_id: string }
-        Returns: undefined
-      }
       cosine_similarity: { Args: { vec1: Json; vec2: Json }; Returns: number }
       create_acknowledgment: {
         Args: {
@@ -14053,14 +13977,6 @@ export type Database = {
       mark_notifications_read: {
         Args: { p_notification_ids: string[]; p_user_id: string }
         Returns: undefined
-      }
-      offer_fulfillment: {
-        Args: {
-          p_message?: string
-          p_need_id: string
-          p_room_curation_id?: string
-        }
-        Returns: string
       }
       owns_organization: {
         Args: { _org_id: string; _user_id: string }

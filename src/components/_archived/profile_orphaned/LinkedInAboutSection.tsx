@@ -54,7 +54,7 @@ const LinkedInAboutSection: React.FC<AboutSectionProps> = ({
         {/* Bio/Description */}
         {profile.bio && (
           <div>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+            <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
               {showFullBio ? profile.bio : bioPreview}
             </p>
             {shouldShowReadMore && (
@@ -81,7 +81,7 @@ const LinkedInAboutSection: React.FC<AboutSectionProps> = ({
         {/* Impact Areas */}
         {impactAreas.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-neutral-700 mb-3 flex items-center gap-2">
               <Target className="w-4 h-4 text-dna-crimson" />
               Impact Areas
             </h4>
@@ -101,7 +101,7 @@ const LinkedInAboutSection: React.FC<AboutSectionProps> = ({
         {/* Skills Offered */}
         {skillsOffered.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-neutral-700 mb-3 flex items-center gap-2">
               <Award className="w-4 h-4 text-dna-emerald" />
               Skills I Can Offer
             </h4>
@@ -122,7 +122,7 @@ const LinkedInAboutSection: React.FC<AboutSectionProps> = ({
         {/* Skills Needed */}
         {skillsNeeded.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <h4 className="text-sm font-semibold text-neutral-700 mb-3 flex items-center gap-2">
               <Lightbulb className="w-4 h-4 text-dna-gold" />
               Skills I'm Looking For
             </h4>
@@ -143,7 +143,7 @@ const LinkedInAboutSection: React.FC<AboutSectionProps> = ({
         {/* Available For */}
         {profile.available_for && profile.available_for.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">Available For</h4>
+            <h4 className="text-sm font-semibold text-neutral-700 mb-3">Available For</h4>
             <div className="flex flex-wrap gap-2">
               {profile.available_for.map((service: string, index: number) => (
                 <Badge 

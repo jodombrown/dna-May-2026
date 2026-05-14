@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { messageService } from '@/services/messageService';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useMobile } from '@/hooks/useMobile';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import ConversationListPanel from '@/components/messaging/ConversationListPanel';
@@ -10,8 +10,17 @@ import EmptyConversationState from '@/components/messaging/EmptyConversationStat
 import { CreateGroupDrawer } from '@/components/messaging/CreateGroupDrawer';
 import { LayoutTransitionLoader } from '@/components/LayoutTransitionLoader';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
+import { useInboxRealtime } from '@/hooks/messaging/useInboxRealtime';
+import { useAuth } from '@/contexts/AuthContext';
+import type { ConversationListItem } from '@/types/messaging';
 
 import MessagesBreadcrumb from '@/components/messaging/MessagesBreadcrumb';
+import { OfflineQueueBanner } from '@/components/messaging/OfflineQueueBanner';
+import { RouteErrorPanel } from '@/components/RouteErrorPanel';
+import { InboxLiveRegion } from '@/components/messaging/InboxLiveRegion';
+import { useInboxKeyboardShortcuts } from '@/hooks/messaging/useInboxKeyboardShortcuts';
+import { useBlockedUserIds } from '@/hooks/messaging/useBlockedUserIds';
+import { archiveConversation, muteConversation } from '@/services/messageConversationActions';
 /**
  * DnaMessages - Canonical Messages route (/dna/messages)
  *
@@ -24,6 +33,9 @@ const DnaMessages = () => {
   const [searchParams] = useSearchParams();
   const { isMobile } = useMobile();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  useInboxRealtime(user?.id ?? null);
 
   // Resolve initial conversation: route param takes precedence, then ?thread= query param
   const threadParam = searchParams.get('thread');
@@ -59,35 +71,80 @@ const DnaMessages = () => {
     };
   }, [isMobile, selectedConversationId, hideHeader, showHeader]);
 
-  // Proper refresh function that invalidates both query keys
+  // Refresh helper: invalidate the unified inbox + legacy keys still in use elsewhere
   const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['inbox'] });
+    queryClient.invalidateQueries({ queryKey: ['inbox-archived'] });
     queryClient.invalidateQueries({ queryKey: ['conversations'] });
     queryClient.invalidateQueries({ queryKey: ['conversations-archived'] });
+    queryClient.invalidateQueries({ queryKey: ['group-conversations'] });
   };
 
-  // Fetch conversations
-  const { data: conversations, isLoading, refetch } = useQuery({
-    queryKey: ['conversations'],
-    queryFn: () => messageService.getConversations(),
+  // Unified inbox: 1:1 + group conversations in a single RPC (kills the N+1).
+  const { data: rawConversations = [], isLoading } = useQuery<ConversationListItem[]>({
+    queryKey: ['inbox'],
+    queryFn: () => messageService.getInbox(),
   });
 
-  // Fetch archived conversations
-  const { data: archivedConversations } = useQuery({
-    queryKey: ['conversations-archived'],
-    queryFn: () => messageService.getConversations(50, 0, true),
-    select: (data) => data.filter(c => c.is_archived),
+  // Archived inbox (shown under the Archived tab)
+  const { data: rawArchivedConversations = [] } = useQuery<ConversationListItem[]>({
+    queryKey: ['inbox-archived'],
+    queryFn: () => messageService.getInbox(100, 0, true),
+    select: (data) => data.filter((c) => c.is_archived),
   });
+
+  // Tier 3: hide conversations involving blocked users (groups always pass through)
+  const { data: blockedIds } = useBlockedUserIds();
+  const filterBlocked = (list: ConversationListItem[]) =>
+    blockedIds && blockedIds.size > 0
+      ? list.filter((c) => c.is_group || !blockedIds.has(c.other_user_id))
+      : list;
+  const conversations = filterBlocked(rawConversations);
+  const archivedConversations = filterBlocked(rawArchivedConversations);
 
   const handleGroupCreated = (newConversationId: string) => {
-    setSelectedConversationId(newConversationId);
     handleRefresh();
+    navigate(`/dna/messages/group/${newConversationId}`);
   };
+
+  const handleSelectConversation = (id: string) => {
+    const conv = conversations.find((c) => c.conversation_id === id);
+    if (conv?.is_group) {
+      navigate(`/dna/messages/group/${id}`);
+      return;
+    }
+    setSelectedConversationId(id);
+  };
+
+  // Tier 3 keyboard shortcuts (j/k navigate, e archive, m mute, / focus search)
+  useInboxKeyboardShortcuts({
+    conversations,
+    selectedId: selectedConversationId,
+    onSelect: handleSelectConversation,
+    onArchive: async (id) => {
+      const conv = conversations.find((c) => c.conversation_id === id);
+      if (!conv || conv.is_group) return;
+      await archiveConversation(id, !conv.is_archived);
+      handleRefresh();
+    },
+    onMute: async (id) => {
+      const conv = conversations.find((c) => c.conversation_id === id);
+      if (!conv || conv.is_group) return;
+      await muteConversation(id, !conv.is_muted);
+      handleRefresh();
+    },
+    onFocusSearch: () => {
+      const el = document.querySelector<HTMLInputElement>('input[data-inbox-search]');
+      el?.focus();
+    },
+    enabled: !isMobile,
+  });
 
   if (isLoading) {
     return <LayoutTransitionLoader message="Loading messages..." />;
   }
 
-  const selectedConversation = conversations?.find(c => c.conversation_id === selectedConversationId);
+  const selectedConversation = conversations.find(c => c.conversation_id === selectedConversationId && !c.is_group);
 
   // Build otherUser object for ChatThread
   const otherUser = selectedConversation ? {
@@ -112,16 +169,18 @@ const DnaMessages = () => {
       );
     }
 
-    // Mobile: Conversation list — reduced top gap
+    // Mobile: Conversation list — flush, edge-to-edge
     return (
       <div className="min-h-screen bg-background pb-bottom-nav" style={{ paddingTop: 'var(--total-header-height, 56px)' }}>
-        <div className="container mx-auto px-3 py-2">
+        <InboxLiveRegion conversations={conversations} />
+        <div className="w-full">
+          <OfflineQueueBanner />
           <ConversationListPanel
-            conversations={conversations || []}
+            conversations={conversations}
             archivedConversations={archivedConversations || []}
             isLoading={isLoading}
             selectedConversationId={selectedConversationId}
-            onSelectConversation={setSelectedConversationId}
+            onSelectConversation={handleSelectConversation}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             onNewGroup={() => setGroupDrawerOpen(true)}
@@ -141,22 +200,28 @@ const DnaMessages = () => {
   // Desktop: Two-column layout
   return (
     <div className="min-h-screen bg-background pt-20">
+      <InboxLiveRegion conversations={conversations} />
 
       <TwoColumnLayout
         leftWidth="35%"
         rightWidth="65%"
         left={
-          <ConversationListPanel
-            conversations={conversations || []}
-            archivedConversations={archivedConversations || []}
-            isLoading={isLoading}
-            selectedConversationId={selectedConversationId}
-            onSelectConversation={setSelectedConversationId}
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            onNewGroup={() => setGroupDrawerOpen(true)}
-            onRefresh={handleRefresh}
-          />
+          <div className="flex flex-col h-full">
+            <OfflineQueueBanner />
+            <div className="flex-1 min-h-0">
+              <ConversationListPanel
+                conversations={conversations}
+                archivedConversations={archivedConversations || []}
+                isLoading={isLoading}
+                selectedConversationId={selectedConversationId}
+                onSelectConversation={handleSelectConversation}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                onNewGroup={() => setGroupDrawerOpen(true)}
+                onRefresh={handleRefresh}
+              />
+            </div>
+          </div>
         }
         right={
           selectedConversationId && otherUser ? (
@@ -179,4 +244,17 @@ const DnaMessages = () => {
   );
 };
 
-export default DnaMessages;
+const DnaMessagesWithBoundary: React.FC = () => {
+  const queryClient = useQueryClient();
+  const handleRetry = () => {
+    queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    queryClient.invalidateQueries({ queryKey: ['conversations-archived'] });
+  };
+  return (
+    <RouteErrorPanel surface="Messages" onRetry={handleRetry}>
+      <DnaMessages />
+    </RouteErrorPanel>
+  );
+};
+
+export default DnaMessagesWithBoundary;

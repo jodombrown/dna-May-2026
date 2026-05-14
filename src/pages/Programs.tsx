@@ -77,15 +77,15 @@ const Programs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       <UnifiedHeader />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-neutral-900 mb-4">
             Professional Development <span className="text-dna-copper">Programs</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
             Accelerate your impact through world-class programs designed for African diaspora professionals and African innovators
           </p>
         </div>
@@ -120,21 +120,21 @@ const Programs = () => {
               </div>
               
               <CardHeader>
-                <CardTitle className="text-xl text-gray-900">{program.title}</CardTitle>
-                <p className="text-gray-600">{program.description}</p>
+                <CardTitle className="text-xl text-neutral-900">{program.title}</CardTitle>
+                <p className="text-neutral-600">{program.description}</p>
               </CardHeader>
               
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-neutral-600">
                     <Clock className="w-4 h-4 mr-2" />
                     {program.duration}
                   </div>
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-neutral-600">
                     <Users className="w-4 h-4 mr-2" />
                     {program.participants}
                   </div>
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-neutral-600">
                     <Calendar className="w-4 h-4 mr-2" />
                     Starts: {program.nextCohort}
                   </div>
@@ -145,7 +145,7 @@ const Programs = () => {
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Program Benefits:</h4>
+                  <h4 className="font-semibold text-neutral-900 mb-2">Program Benefits:</h4>
                   <div className="flex flex-wrap gap-2">
                     {program.benefits.map((benefit, index) => (
                       <Badge key={index} variant="secondary">
@@ -180,7 +180,7 @@ const Programs = () => {
               <p className="text-lg mb-6">
                 Join thousands of African diaspora professionals who are making a difference through our programs.
               </p>
-              <Button size="lg" className="bg-white text-dna-forest hover:bg-gray-100">
+              <Button size="lg" className="bg-white text-dna-forest hover:bg-neutral-100">
                 Get Started Today
               </Button>
             </CardContent>

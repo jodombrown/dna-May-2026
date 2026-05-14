@@ -7,7 +7,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Sparkles } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
+
 import { useReleases } from '@/hooks/useReleases';
 import {
   ReleaseCard,
@@ -72,17 +73,17 @@ const ReleasesIndex: React.FC = () => {
           {/* Hero Section */}
           <header className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 text-amber-700 font-medium text-sm mb-4">
-              <Sparkles className="w-4 h-4" />
+              <MateMasie className="w-4 h-4" />
               {featuredCount > 0 ? (
                 <span>{featuredCount} new {featuredCount === 1 ? 'feature' : 'features'} this month</span>
               ) : (
                 <span>Platform Updates</span>
               )}
             </div>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
               What&apos;s New
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
               Keep up with the latest DNA features and improvements.
               Discover new ways to connect with the diaspora.
             </p>
@@ -102,7 +103,7 @@ const ReleasesIndex: React.FC = () => {
               {[1, 2].map((section) => (
                 <div key={section}>
                   <Skeleton className="h-6 w-40 mb-4" />
-                  <div className="border-t border-gray-200 pt-6">
+                  <div className="border-t border-neutral-200 pt-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {[1, 2, 3].map((card) => (
                         <div key={card} className="space-y-4">
@@ -124,10 +125,10 @@ const ReleasesIndex: React.FC = () => {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
                 <span className="text-2xl">!</span>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <h2 className="text-xl font-semibold text-neutral-900 mb-2">
                 Unable to load releases
               </h2>
-              <p className="text-gray-600">
+              <p className="text-neutral-600">
                 Please try refreshing the page or check back later.
               </p>
             </div>
@@ -136,13 +137,13 @@ const ReleasesIndex: React.FC = () => {
           {/* Empty State */}
           {!isLoading && !error && data?.length === 0 && (
             <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
-                <Sparkles className="w-10 h-10 text-gray-400" />
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-neutral-100 mb-6">
+                <MateMasie className="w-10 h-10 text-neutral-400" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <h2 className="text-xl font-semibold text-neutral-900 mb-2">
                 No releases found
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-neutral-600 mb-6">
                 {filters.search
                   ? `No releases match "${filters.search}"`
                   : filters.category
@@ -166,10 +167,10 @@ const ReleasesIndex: React.FC = () => {
               {groupedReleases.map((group) => (
                 <section key={group.month}>
                   {/* Month Header */}
-                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
+                  <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4">
                     {group.month}
                   </h2>
-                  <div className="border-t border-gray-200 pt-6">
+                  <div className="border-t border-neutral-200 pt-6">
                     {/* Release Cards Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {group.releases.map((release, index) => (
@@ -197,7 +198,7 @@ const ReleasesIndex: React.FC = () => {
 
           {/* Total Count */}
           {!isLoading && data && data.length > 0 && (
-            <div className="mt-12 text-center text-sm text-gray-500">
+            <div className="mt-12 text-center text-sm text-neutral-500">
               Showing {data.length} releases
             </div>
           )}

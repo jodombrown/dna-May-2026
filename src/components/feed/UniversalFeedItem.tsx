@@ -36,12 +36,21 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
     setShowComments(!showComments);
   };
 
-  // For linked entities, we might want to show them differently
-  // For MVP, we route based on post_type
-  
+  // Wrap every rendered card so the regression test (and analytics) can
+  // count items uniformly across All / For You / Mine.
+  const wrap = (children: React.ReactNode) => (
+    <div data-testid="universal-feed-item" data-post-id={item.post_id} data-post-type={item.post_type}>
+      {children}
+    </div>
+  );
+
+
+  // Route based on canonical post_type. The post_type / story_type values
+  // are passed through unchanged - never tab-overridden - so the same post
+  // renders identically on All / For You / Mine.
   switch (item.post_type) {
     case 'story':
-      return (
+      return wrap(
         <StoryCard
           item={item}
           currentUserId={currentUserId}
@@ -52,42 +61,62 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
       );
 
     case 'event':
-      return (
-        <EventCard
-          item={item}
-          currentUserId={currentUserId}
-          onUpdate={onUpdate}
-        />
+      return wrap(
+        <EventCard item={item} currentUserId={currentUserId} onUpdate={onUpdate} />
       );
-    
+
     case 'space':
-      return (
-        <SpaceCard
-          item={item}
-          currentUserId={currentUserId}
-          onUpdate={onUpdate}
-        />
+      return wrap(
+        <SpaceCard item={item} currentUserId={currentUserId} onUpdate={onUpdate} />
       );
-    
+
     case 'need':
-      // Use OpportunityFeedCard for needs/offers with the new design
-      return (
-        <OpportunityFeedCard
-          item={item}
+      return wrap(
+        <OpportunityFeedCard item={item} currentUserId={currentUserId} onUpdate={onUpdate} />
+      );
+
+    case 'reshare':
+      return wrap(
+        <PostCard
+          post={{
+            post_id: item.post_id,
+            author_id: item.author_id,
+            author_username: item.author_username,
+            author_full_name: item.author_display_name,
+            author_avatar_url: item.author_avatar_url || undefined,
+            content: item.content,
+            post_type: item.post_type as never,
+            privacy_level: item.privacy_level as never,
+            image_url: item.media_url || undefined,
+            created_at: item.created_at,
+            likes_count: item.like_count,
+            comments_count: item.comment_count,
+            user_has_liked: item.has_liked,
+            is_connection: false,
+            original_post_id: item.original_post_id || undefined,
+            original_author_id: item.original_author_id || undefined,
+            original_author_username: item.original_author_username || undefined,
+            original_author_full_name: item.original_author_full_name || undefined,
+            original_author_avatar_url: item.original_author_avatar_url || undefined,
+            original_author_headline: item.original_author_headline || undefined,
+            original_content: item.original_content || undefined,
+            original_image_url: item.original_image_url || undefined,
+            original_created_at: item.original_created_at || undefined,
+            share_commentary: item.content || undefined,
+          }}
           currentUserId={currentUserId}
           onUpdate={onUpdate}
+          onCommentClick={handleCommentClick}
+          showComments={showComments}
+          feedItem={item}
+          isReshare={true}
         />
       );
-    
+
     case 'post':
     case 'community_post':
     default:
-      // Use existing PostCard for standard posts
-      const mappedPostType = item.post_type === 'post' || item.post_type === 'community_post' 
-        ? 'text' 
-        : 'text';
-      
-      return (
+      return wrap(
         <PostCard
           post={{
             post_id: item.post_id,
@@ -96,8 +125,11 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
             author_full_name: item.author_display_name || 'Unknown User',
             author_avatar_url: item.author_avatar_url || undefined,
             content: item.content || '',
-            post_type: mappedPostType as any,
-            privacy_level: item.privacy_level as any,
+            // Preserve the real post_type. PostCard's POST_TYPE_BADGES
+            // allowlist controls badge rendering; unknown types render no
+            // badge, which is the correct behavior.
+            post_type: (item.post_type || 'post') as never,
+            privacy_level: item.privacy_level as never,
             image_url: item.media_url || undefined,
             created_at: item.created_at,
             likes_count: item.like_count || 0,
@@ -116,46 +148,6 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
           onCommentClick={handleCommentClick}
           showComments={showComments}
           feedItem={item}
-        />
-      );
-    
-    case 'reshare':
-      // Reshares are handled specially by PostCard - include original post data
-      return (
-        <PostCard
-          post={{
-            post_id: item.post_id,
-            author_id: item.author_id,
-            author_username: item.author_username,
-            author_full_name: item.author_display_name,
-            author_avatar_url: item.author_avatar_url || undefined,
-            content: item.content,
-            post_type: 'text' as any,
-            privacy_level: item.privacy_level as any,
-            image_url: item.media_url || undefined,
-            created_at: item.created_at,
-            likes_count: item.like_count,
-            comments_count: item.comment_count,
-            user_has_liked: item.has_liked,
-            is_connection: false,
-            // Original post data for SharedPostCard to display
-            original_post_id: item.original_post_id || undefined,
-            original_author_id: item.original_author_id || undefined,
-            original_author_username: item.original_author_username || undefined,
-            original_author_full_name: item.original_author_full_name || undefined,
-            original_author_avatar_url: item.original_author_avatar_url || undefined,
-            original_author_headline: item.original_author_headline || undefined,
-            original_content: item.original_content || undefined,
-            original_image_url: item.original_image_url || undefined,
-            original_created_at: item.original_created_at || undefined,
-            share_commentary: item.content || undefined,
-          }}
-          currentUserId={currentUserId}
-          onUpdate={onUpdate}
-          onCommentClick={handleCommentClick}
-          showComments={showComments}
-          feedItem={item}
-          isReshare={true}
         />
       );
   }

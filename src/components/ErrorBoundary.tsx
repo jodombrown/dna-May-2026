@@ -104,17 +104,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 </div>
 
                 {/* Error details (development mode) */}
-                {process.env.NODE_ENV === 'development' && this.state.error && (
-                  <details className="mt-6 text-left">
+                {this.state.error && (
+                  <details className="mt-6 text-left" open>
                     <summary className="cursor-pointer text-sm font-semibold text-muted-foreground hover:text-foreground mb-2">
-                      Technical Details (Development Only)
+                      Technical Details
                     </summary>
-                    <div className="bg-dna-charcoal/5 rounded-lg p-4 overflow-auto">
-                      <p className="text-xs font-mono text-dna-error mb-2">
+                    <div className="bg-dna-charcoal/5 rounded-lg p-4 overflow-auto max-h-64">
+                      <p className="text-xs font-mono text-dna-error mb-2 break-all">
                         {this.state.error.toString()}
                       </p>
                       {this.state.errorInfo && (
-                        <pre className="text-xs font-mono text-muted-foreground whitespace-pre-wrap">
+                        <pre className="text-[10px] font-mono text-muted-foreground whitespace-pre-wrap">
                           {this.state.errorInfo.componentStack}
                         </pre>
                       )}

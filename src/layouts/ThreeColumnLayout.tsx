@@ -55,12 +55,19 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
     );
   }
 
-  // Desktop: 3-column grid with independent scrolling
-  // Height reads from CSS vars set by UnifiedHeader + PulseBar ResizeObservers
+  // Desktop: 3-column layout. Pixel widths = fixed rails; percentage widths = legacy ratio.
+  // Center fills remaining space (flex: 1) when rails are pixel-based, matching the mockup.
+  const isPixel = (v?: string) => !!v && /px$/.test(v.trim());
+  const railsArePixel = isPixel(leftWidth) || isPixel(rightWidth);
+  const centerStyle: React.CSSProperties = railsArePixel || centerWidth === '1fr'
+    ? { flex: 1, minWidth: 0, height: '100%' }
+    : { width: centerWidth, maxWidth: centerWidth, minWidth: centerWidth, height: '100%' };
+
   return (
     <div
-      className={cn("flex w-full gap-4 px-4", className)}
+      className={cn("flex w-full gap-5 px-4 mx-auto", className)}
       style={{
+        maxWidth: '1400px',
         paddingTop: '1.5rem',
         height: 'calc(100dvh - var(--total-header-height, 7.5rem) - 1.5rem)',
         overflow: 'hidden',
@@ -86,12 +93,7 @@ const ThreeColumnLayout: React.FC<ThreeColumnLayoutProps> = ({
           tabIndex={-1}
           className="transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin focus:outline-none"
           data-scroll-container="main"
-          style={{ 
-            width: centerWidth,
-            maxWidth: centerWidth,
-            minWidth: centerWidth,
-            height: '100%',
-          }}
+          style={centerStyle}
         >
           {center}
         </main>

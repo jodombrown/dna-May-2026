@@ -40,7 +40,7 @@ export const ReleaseMeta: React.FC<ReleaseMetaProps> = ({
 
       {/* Version */}
       {showVersion && release.version && (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-sm font-medium text-gray-600 bg-gray-100 rounded">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-sm font-medium text-neutral-600 bg-neutral-100 rounded">
           <Tag className="w-3.5 h-3.5" />
           v{release.version}
         </span>
@@ -48,7 +48,7 @@ export const ReleaseMeta: React.FC<ReleaseMetaProps> = ({
 
       {/* Date */}
       {showDate && (
-        <span className="inline-flex items-center gap-1.5 text-sm text-gray-500">
+        <span className="inline-flex items-center gap-1.5 text-sm text-neutral-500">
           <Calendar className="w-4 h-4" />
           {releaseDate}
         </span>
@@ -78,16 +78,16 @@ export const ReleaseMetaCompact: React.FC<
   return (
     <div className={cn('flex items-center gap-2 text-sm', className)}>
       <StatusBadge stage={lifecycleStage} size="sm" />
-      <span className="text-gray-400">•</span>
+      <span className="text-neutral-400">•</span>
       <CategoryTag category={release.category} size="sm" showIcon={false} />
       {release.version && (
         <>
-          <span className="text-gray-400">•</span>
-          <span className="text-gray-500">v{release.version}</span>
+          <span className="text-neutral-400">•</span>
+          <span className="text-neutral-500">v{release.version}</span>
         </>
       )}
-      <span className="text-gray-400">•</span>
-      <span className="text-gray-500">{releaseDate}</span>
+      <span className="text-neutral-400">•</span>
+      <span className="text-neutral-500">{releaseDate}</span>
     </div>
   );
 };

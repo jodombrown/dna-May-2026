@@ -76,9 +76,9 @@ const MobileMessagingView = () => {
   if (!isMobile) {
     return (
       <div className="text-center py-8">
-        <MessageSquare className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-700 mb-2">Messages Coming Soon</h3>
-        <p className="text-gray-600">Real-time messaging will be available in the next update.</p>
+        <MessageSquare className="w-16 h-16 mx-auto text-neutral-400 mb-4" />
+        <h3 className="text-lg font-semibold text-neutral-700 mb-2">Messages Coming Soon</h3>
+        <p className="text-neutral-600">Real-time messaging will be available in the next update.</p>
       </div>
     );
   }
@@ -91,7 +91,7 @@ const MobileMessagingView = () => {
           <div className="p-4 border-b bg-white">
             <h2 className="text-xl font-semibold text-dna-forest mb-3">Messages</h2>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
               <Input
                 placeholder="Search conversations"
                 className="pl-10"
@@ -104,7 +104,7 @@ const MobileMessagingView = () => {
               <div
                 key={conversation.id}
                 onClick={() => setSelectedConversation(conversation.id)}
-                className="p-4 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100 cursor-pointer"
+                className="p-4 border-b border-neutral-100 hover:bg-neutral-50 active:bg-neutral-100 cursor-pointer"
               >
                 <div className="flex items-center space-x-3">
                   <div className="relative">
@@ -122,11 +122,11 @@ const MobileMessagingView = () => {
                       <p className="font-medium text-dna-forest truncate">
                         {conversation.name}
                       </p>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-neutral-500">
                         {conversation.timestamp}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 truncate">
+                    <p className="text-sm text-neutral-600 truncate">
                       {conversation.lastMessage}
                     </p>
                   </div>
@@ -141,9 +141,9 @@ const MobileMessagingView = () => {
             
             {mockConversations.length === 0 && (
               <div className="p-8 text-center">
-                <Users className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-600 mb-2">No conversations yet</h3>
-                <p className="text-gray-500">Start connecting with other members to begin messaging.</p>
+                <Users className="w-16 h-16 mx-auto text-neutral-300 mb-4" />
+                <h3 className="text-lg font-semibold text-neutral-600 mb-2">No conversations yet</h3>
+                <p className="text-neutral-500">Start connecting with other members to begin messaging.</p>
               </div>
             )}
           </div>
@@ -170,7 +170,7 @@ const MobileMessagingView = () => {
               <p className="font-medium text-dna-forest">
                 {currentConversation?.name}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-neutral-600">
                 {currentConversation?.online ? 'Online' : 'Last seen recently'}
               </p>
             </div>
@@ -187,12 +187,12 @@ const MobileMessagingView = () => {
                   className={`max-w-xs px-4 py-2 rounded-lg ${
                     message.senderId === 'me'
                       ? 'bg-dna-copper text-white'
-                      : 'bg-gray-100 text-gray-900'
+                      : 'bg-neutral-100 text-neutral-900'
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>
                   <p className={`text-xs mt-1 ${
-                    message.senderId === 'me' ? 'text-white/80' : 'text-gray-500'
+                    message.senderId === 'me' ? 'text-white/80' : 'text-neutral-500'
                   }`}>
                     {message.timestamp}
                   </p>

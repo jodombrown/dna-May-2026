@@ -2,19 +2,16 @@ import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Hash, TrendingUp, ArrowLeft, Share2, Settings, Crown, Copy, Check } from 'lucide-react';
+import { Loader2, Hash, TrendingUp, ArrowLeft, Share2, Settings, Crown, Copy } from 'lucide-react';
 import { useHashtag } from '@/hooks/useHashtag';
 import { useTrendingHashtags } from '@/hooks/useTrendingHashtags';
-import { UniversalFeedItemComponent } from '@/components/feed/UniversalFeedItem';
-import { UniversalFeedItem } from '@/types/feed';
+import { UniversalFeedInfinite } from '@/components/feed/UniversalFeedInfinite';
 import { useAuth } from '@/contexts/AuthContext';
 import { HashtagStatsGrid } from '@/components/hashtag/HashtagStatsGrid';
 import { useState } from 'react';
-import { hashtagService } from '@/services/hashtagService';
-import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -26,7 +23,7 @@ import {
 export default function HashtagFeed() {
   const { hashtag: hashtagParam } = useParams<{ hashtag: string }>();
   const { user } = useAuth();
-  const [sortMode, setSortMode] = useState<'recent' | 'top'>('recent');
+  const [sortMode, setSortMode] = useState<'latest' | 'top'>('latest');
 
   const {
     hashtag,
@@ -38,16 +35,6 @@ export default function HashtagFeed() {
   } = useHashtag(hashtagParam);
 
   const { data: trendingHashtags } = useTrendingHashtags(10);
-
-  // Get top posts when in top mode
-  const { data: topPosts } = useQuery({
-    queryKey: ['hashtagPosts', hashtagParam, 'top'],
-    queryFn: () => hashtagService.getPosts(hashtagParam!, 20, 0, 'top'),
-    enabled: !!hashtagParam && sortMode === 'top',
-    staleTime: 30000
-  });
-
-  const displayPosts = sortMode === 'top' ? topPosts : posts;
 
   if (!hashtagParam) {
     return (
@@ -209,84 +196,32 @@ export default function HashtagFeed() {
         {/* Main content */}
         <div className="lg:col-span-2 space-y-4">
           {/* Sort Tabs */}
-          <Tabs value={sortMode} onValueChange={(v) => setSortMode(v as 'recent' | 'top')}>
+          <Tabs value={sortMode} onValueChange={(v) => setSortMode(v as 'latest' | 'top')}>
             <TabsList>
-              <TabsTrigger value="recent">Recent</TabsTrigger>
+              <TabsTrigger value="latest">Recent</TabsTrigger>
               <TabsTrigger value="top">Top</TabsTrigger>
             </TabsList>
           </Tabs>
 
-          {/* Posts */}
-          {!displayPosts || displayPosts.length === 0 ? (
+          {/* Posts - canonical pipeline so cards render identically to the main feed */}
+          {user ? (
+            <UniversalFeedInfinite
+              viewerId={user.id}
+              tab="all"
+              hashtag={hashtagParam}
+              rankingMode={sortMode}
+              surface="home"
+            />
+          ) : (
             <Card>
               <CardContent className="py-12 text-center">
                 <Hash className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-lg font-semibold mb-2">No posts found</p>
+                <p className="text-lg font-semibold mb-2">Sign in to view posts</p>
                 <p className="text-sm text-muted-foreground">
-                  Be the first to post with #{displayName}!
+                  Posts using #{displayName} appear here.
                 </p>
               </CardContent>
             </Card>
-          ) : (
-            displayPosts.map((post) => {
-              // Map HashtagPost to UniversalFeedItem structure
-              const feedItem: UniversalFeedItem = {
-                post_id: post.post_id,
-                post_type: 'post',
-                story_type: null,
-                author_id: post.author_id,
-                author_display_name: post.author_name,
-                author_username: post.author_username,
-                author_avatar_url: post.author_avatar,
-                content: post.content,
-                title: null,
-                subtitle: null,
-                media_url: post.media_urls?.[0] || null,
-                privacy_level: 'public',
-                linked_entity_type: null,
-                linked_entity_id: null,
-                space_id: null,
-                space_title: null,
-                event_id: null,
-                event_title: null,
-                created_at: post.created_at,
-                updated_at: post.created_at,
-                like_count: post.like_count,
-                comment_count: post.comment_count,
-                share_count: 0,
-                reshare_count: post.reshare_count,
-                view_count: 0,
-                bookmark_count: 0,
-                has_liked: false,
-                has_bookmarked: false,
-                has_reshared: false,
-                pinned_at: null,
-                comments_disabled: false,
-                link_url: null,
-                link_title: null,
-                link_description: null,
-                link_metadata: null,
-                original_post_id: null,
-                original_author_id: null,
-                original_author_username: null,
-                original_author_full_name: null,
-                original_author_avatar_url: null,
-                original_author_headline: null,
-                original_content: null,
-                original_image_url: null,
-                original_created_at: null,
-                slug: null,
-              };
-
-              return (
-                <UniversalFeedItemComponent
-                  key={post.post_id}
-                  item={feedItem}
-                  currentUserId={user?.id || ''}
-                  onUpdate={() => {}}
-                />
-              );
-            })
           )}
         </div>
 

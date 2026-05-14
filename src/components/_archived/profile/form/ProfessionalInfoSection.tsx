@@ -75,7 +75,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="professional_role" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="professional_role" className="text-sm font-medium text-neutral-700">
               Current Role/Title
             </Label>
             <Input
@@ -89,7 +89,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
           </div>
 
           <div>
-            <Label htmlFor="organization" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="organization" className="text-sm font-medium text-neutral-700">
               Organization/Company
             </Label>
             <Input
@@ -105,7 +105,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="industry" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="industry" className="text-sm font-medium text-neutral-700">
               Industry
             </Label>
             <Input
@@ -119,7 +119,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
           </div>
 
           <div>
-            <Label htmlFor="years_experience" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="years_experience" className="text-sm font-medium text-neutral-700">
               Years of Experience
             </Label>
             <Input
@@ -134,7 +134,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
         </div>
 
         <div>
-          <Label htmlFor="education" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="education" className="text-sm font-medium text-neutral-700">
             Education
           </Label>
           <Textarea
@@ -147,7 +147,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
         </div>
 
         <div>
-          <Label htmlFor="certifications" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="certifications" className="text-sm font-medium text-neutral-700">
             Certifications & Credentials
           </Label>
           <Textarea
@@ -160,7 +160,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
         </div>
 
         <div>
-          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+          <Label className="text-sm font-medium text-neutral-700 mb-3 block">
             Skills I Can Offer
           </Label>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -198,7 +198,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
         </div>
 
         <div>
-          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+          <Label className="text-sm font-medium text-neutral-700 mb-3 block">
             Skills I'm Looking For
           </Label>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -236,7 +236,7 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
         </div>
 
         <div>
-          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+          <Label className="text-sm font-medium text-neutral-700 mb-3 block">
             What I'm Available For
           </Label>
           <div className="flex flex-wrap gap-2">
@@ -255,13 +255,13 @@ const ProfessionalInfoSection: React.FC<ProfessionalInfoSectionProps> = ({
               </Badge>
             ))}
           </div>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-neutral-500 mt-2">
             Select what you're available to help with
           </p>
         </div>
 
         <div>
-          <Label htmlFor="achievements" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="achievements" className="text-sm font-medium text-neutral-700">
             Key Achievements
           </Label>
           <Textarea

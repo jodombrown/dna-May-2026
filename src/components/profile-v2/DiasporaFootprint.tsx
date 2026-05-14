@@ -7,7 +7,13 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Users, Calendar, FolderKanban, Heart, BookOpen } from 'lucide-react';
+import {
+  Sankofa,
+  Nkonsonkonson,
+  FuntunfunefuDenkyemfunefu,
+  Adinkrahene,
+  Mpatapo,
+} from '@/components/icons/adinkra';
 
 interface DiasporaFootprintProps {
   userId: string;
@@ -22,11 +28,11 @@ interface FootprintCounts {
 }
 
 const FIVE_CS = [
-  { key: 'connections' as const, label: 'Connect', icon: Users },
-  { key: 'events' as const, label: 'Convene', icon: Calendar },
-  { key: 'spaces' as const, label: 'Collaborate', icon: FolderKanban },
-  { key: 'contributions' as const, label: 'Contribute', icon: Heart },
-  { key: 'posts' as const, label: 'Convey', icon: BookOpen },
+  { key: 'connections' as const, label: 'Connect', icon: Sankofa },
+  { key: 'events' as const, label: 'Convene', icon: Nkonsonkonson },
+  { key: 'spaces' as const, label: 'Collaborate', icon: FuntunfunefuDenkyemfunefu },
+  { key: 'contributions' as const, label: 'Contribute', icon: Adinkrahene },
+  { key: 'posts' as const, label: 'Convey', icon: Mpatapo },
 ];
 
 export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({ userId }) => {

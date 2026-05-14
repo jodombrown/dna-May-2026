@@ -6,7 +6,8 @@ import { AspirationMode } from '../shared/AspirationMode';
 import { NotifyMeModal } from '../shared/NotifyMeModal';
 import { HostApplicationModal } from '../shared/HostApplicationModal';
 import { CollaborateIllustration } from '../shared/HubIllustrations';
-import { Bell, Rocket } from 'lucide-react';
+import { Bell } from 'lucide-react';
+import { FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
 
 interface CollaborateAspirationProps {
   earlyContent?: React.ReactNode;
@@ -40,7 +41,7 @@ export function CollaborateAspiration({ earlyContent }: CollaborateAspirationPro
         }}
         secondaryCTA={{
           label: 'Propose a Space',
-          icon: <Rocket className="w-4 h-4 ml-2" />,
+          icon: <FuntunfunefuDenkyemfunefu className="w-4 h-4 ml-2" />,
           onClick: () => setShowHostModal(true)
         }}
         comingSoon={comingSoonFeatures}

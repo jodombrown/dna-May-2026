@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, Sparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 const WELCOME_DISMISSED_KEY = 'dna_feedback_welcome_dismissed';
 
@@ -63,7 +64,7 @@ export function FeedbackWelcomeBanner() {
                 }}
                 className="absolute"
               >
-                <Sparkles className="h-4 w-4 text-dna-gold" />
+                <Mpatapo className="h-4 w-4 text-dna-gold" />
               </motion.div>
             ))}
           </div>

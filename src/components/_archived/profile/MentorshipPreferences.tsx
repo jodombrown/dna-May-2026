@@ -50,7 +50,7 @@ const MentorshipPreferences: React.FC<MentorshipPreferencesProps> = ({
 
         {mentorshipAreas.length > 0 && (
           <div>
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Mentorship Areas</h4>
+            <h4 className="text-sm font-medium text-neutral-700 mb-2">Mentorship Areas</h4>
             <div className="flex flex-wrap gap-2">
               {mentorshipAreas.map((area: string, index: number) => (
                 <Badge key={index} variant="outline" className="text-dna-crimson border-dna-crimson">
@@ -63,7 +63,7 @@ const MentorshipPreferences: React.FC<MentorshipPreferencesProps> = ({
 
         {profile.availability_for_mentoring && !isOwnProfile && (
           <div className="pt-4 border-t">
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="text-sm text-neutral-600 mb-3">
               This member is available for mentoring and knowledge sharing within the diaspora community.
             </p>
             <div className="flex gap-2">
@@ -89,7 +89,7 @@ const MentorshipPreferences: React.FC<MentorshipPreferencesProps> = ({
 
         {profile.looking_for_opportunities && !isOwnProfile && (
           <div className="pt-4 border-t">
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="text-sm text-neutral-600 mb-3">
               This member is actively seeking new opportunities and collaborations.
             </p>
             <div className="flex gap-2">

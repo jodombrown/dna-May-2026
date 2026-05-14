@@ -42,7 +42,7 @@ const BetaProgressTracker: React.FC = () => {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+    <Card className="bg-gradient-to-br from-blue-50 to-copper-50 border-blue-200">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-blue-800">
@@ -59,13 +59,13 @@ const BetaProgressTracker: React.FC = () => {
         <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
           <Clock className="w-5 h-5 text-blue-600" />
           <div className="flex-1">
-            <p className="font-medium text-gray-900">
+            <p className="font-medium text-neutral-900">
               {expiration?.isExpired 
                 ? 'Beta period has ended' 
                 : `${expiration?.daysRemaining || 0} days remaining`
               }
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-600">
               Beta Phase: {betaProfile.beta_phase || 'Discovery'}
             </p>
           </div>
@@ -74,8 +74,8 @@ const BetaProgressTracker: React.FC = () => {
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Testing Progress</span>
-            <span className="text-sm text-gray-600">{completionPercentage}%</span>
+            <span className="text-sm font-medium text-neutral-700">Testing Progress</span>
+            <span className="text-sm text-neutral-600">{completionPercentage}%</span>
           </div>
           <Progress value={completionPercentage} className="h-2" />
         </div>
@@ -86,21 +86,21 @@ const BetaProgressTracker: React.FC = () => {
             <Target className="w-4 h-4 text-green-600" />
             <div>
               <p className="text-sm font-medium">{featuresCompleted}</p>
-              <p className="text-xs text-gray-600">Features Tested</p>
+              <p className="text-xs text-neutral-600">Features Tested</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-2 bg-white rounded border">
             <MessageSquare className="w-4 h-4 text-blue-600" />
             <div>
               <p className="text-sm font-medium">{feedbackGiven}</p>
-              <p className="text-xs text-gray-600">Feedback Given</p>
+              <p className="text-xs text-neutral-600">Feedback Given</p>
             </div>
           </div>
         </div>
 
         {/* Features to Test */}
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-700">Key Features to Test</h4>
+          <h4 className="text-sm font-medium text-neutral-700">Key Features to Test</h4>
           <div className="grid grid-cols-2 gap-1 text-xs">
             {keyFeatures.map((feature) => (
               <div 
@@ -108,13 +108,13 @@ const BetaProgressTracker: React.FC = () => {
                 className={`flex items-center gap-1 p-1 rounded ${
                   betaProfile.beta_features_tested?.includes(feature)
                     ? 'text-green-700 bg-green-100'
-                    : 'text-gray-600 bg-gray-100'
+                    : 'text-neutral-600 bg-neutral-100'
                 }`}
               >
                 <div className={`w-2 h-2 rounded-full ${
                   betaProfile.beta_features_tested?.includes(feature)
                     ? 'bg-green-500'
-                    : 'bg-gray-300'
+                    : 'bg-neutral-300'
                 }`} />
                 {feature}
               </div>
@@ -125,7 +125,7 @@ const BetaProgressTracker: React.FC = () => {
         {/* Call to Action */}
         {!expiration?.isExpired && (
           <div className="text-center pt-2">
-            <p className="text-xs text-gray-600 mb-2">
+            <p className="text-xs text-neutral-600 mb-2">
               Help us build the future of African diaspora networking!
             </p>
             <Button 

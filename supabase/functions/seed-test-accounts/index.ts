@@ -229,6 +229,30 @@ Deno.serve(async (req) => {
       supabaseServiceRole
     );
 
+    // Require authenticated admin caller
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401,
+      });
+    }
+    const { data: userRes, error: userErr } = await supabase.auth.getUser(token);
+    if (userErr || !userRes?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401,
+      });
+    }
+    const { data: isAdmin } = await supabase.rpc('has_role', {
+      _user_id: userRes.user.id,
+      _role: 'admin',
+    });
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
+      });
+    }
+
     console.log('Starting test account seeding...');
 
     // Create profiles

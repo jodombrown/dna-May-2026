@@ -56,14 +56,14 @@ export const STATUS_COLORS: Record<FeedbackStatus, string> = {
   acknowledged: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
   in_progress: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
   resolved: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-  closed: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+  closed: 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300',
 };
 
 export const ADMIN_STATUS_COLORS: Record<AdminStatus, string> = {
   open: 'bg-blue-100 text-blue-800',
   in_progress: 'bg-yellow-100 text-yellow-800',
   resolved: 'bg-green-100 text-green-800',
-  wont_fix: 'bg-gray-100 text-gray-800',
+  wont_fix: 'bg-neutral-100 text-neutral-800',
 };
 
 export const PRIORITY_LABELS: Record<FeedbackPriority, string> = {
@@ -76,7 +76,7 @@ export const PRIORITY_LABELS: Record<FeedbackPriority, string> = {
 export const ADMIN_PRIORITY_LABELS = PRIORITY_LABELS;
 
 export const PRIORITY_COLORS: Record<FeedbackPriority, string> = {
-  low: 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300',
+  low: 'bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300',
   medium: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
   high: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
   critical: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',

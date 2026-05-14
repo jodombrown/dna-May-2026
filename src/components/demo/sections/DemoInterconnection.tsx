@@ -52,15 +52,15 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-24 bg-dna-pearl"
+        className="min-h-screen py-16 md:py-12 bg-dna-pearl"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
           {/* Header */}
           <div ref={headerRef}>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6 } as const}
+              initial={{ opacity: 0 }}
+              animate={headerVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2 } as const}
             >
               <KenteBorder width="80px" height="3px" className="mb-8" />
             </motion.div>
@@ -68,18 +68,18 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
             <motion.h2 
               className="font-cormorant font-semibold text-foreground mb-4 text-center"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.1 } as const}
+              initial={{ opacity: 0 }}
+              animate={headerVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.1 } as const}
             >
               Not Five Features. <span className="text-dna-emerald">One System.</span>
             </motion.h2>
 
             <motion.p 
               className="font-outfit text-muted-foreground max-w-2xl mx-auto leading-relaxed text-base md:text-lg mb-12 text-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={headerVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.2 } as const}
+              initial={{ opacity: 0 }}
+              animate={headerVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.2 } as const}
             >
               DNA's magic is in the connections between the Five C's. Each action in one dimension 
               creates value in others. This is what makes DNA an operating system, not just an app.
@@ -94,9 +94,9 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
             {/* Visualization */}
             <motion.div 
               className="relative aspect-square max-w-md mx-auto w-full"
-              initial={{ opacity: 0, y: 30 }}
-              animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.3 } as const}
+              initial={{ opacity: 0 }}
+              animate={contentVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.3 } as const}
             >
               {/* Center DNA Hub */}
               <div 
@@ -178,9 +178,9 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
                   <motion.div 
                     key={index}
                     className="bg-background border border-border rounded-lg p-4 flex items-start gap-4 hover:shadow-md hover:border-dna-emerald/30 transition-all"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                    transition={{ duration: 0.5, delay: 0.4 + index * 0.1 } as const}
+                    initial={{ opacity: 0 }}
+                    animate={contentVisible ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: 0.2, delay: 0.4 + index * 0.1 } as const}
                   >
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className={cn("w-8 h-8 rounded-full flex items-center justify-center", fromStyles.bg)}>
@@ -203,9 +203,9 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
           {/* Flywheel Box */}
           <motion.div 
             className="mt-12 p-6 rounded-xl border bg-dna-emerald/5 border-dna-emerald/20"
-            initial={{ opacity: 0, y: 30 }}
-            animate={contentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.6, delay: 1 } as const}
+            initial={{ opacity: 0 }}
+            animate={contentVisible ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.2, delay: 1 } as const}
           >
             <h3 className="font-cormorant font-semibold text-dna-emerald text-lg mb-2">
               The Flywheel Effect

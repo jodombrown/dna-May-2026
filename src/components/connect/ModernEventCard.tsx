@@ -2,10 +2,11 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Video, Globe, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, Users, Video, Globe } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Event } from '@/types/search';
 import { format } from 'date-fns';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ModernEventCardProps {
   event: Event;
@@ -88,7 +89,6 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
         {(event as any).is_curated ? (
           <div className="flex items-center gap-2 mb-4">
             <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-              <Sparkles className="h-3 w-3 mr-1" />
               Curated by DNA
             </Badge>
           </div>

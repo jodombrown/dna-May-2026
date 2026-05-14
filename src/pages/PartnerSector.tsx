@@ -44,7 +44,7 @@ const PartnerSector = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
+      <section className="relative py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -55,12 +55,12 @@ const PartnerSector = () => {
                 {sector.heroSubtitle}
               </p>
             </div>
-            <div className="relative h-64 lg:h-96 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl flex items-center justify-center">
+            <div className="relative h-64 lg:h-96 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-lg flex items-center justify-center">
               {sector.heroImageUrl ? (
                 <img 
                   src={sector.heroImageUrl} 
                   alt={sector.heroImageAlt}
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full h-full object-cover rounded-lg"
                 />
               ) : (
                 <div className="text-center p-8">
@@ -75,7 +75,7 @@ const PartnerSector = () => {
       </section>
 
       {/* 5Cs for This Sector */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             Your Role in the 5C Mobilization Engine
@@ -94,7 +94,7 @@ const PartnerSector = () => {
       </section>
 
       {/* Roles */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/5 to-transparent">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/5 to-transparent">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             How You Create Impact Through DNA
@@ -116,7 +116,7 @@ const PartnerSector = () => {
       </section>
 
       {/* What You Bring / Receive */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             What You Bring + What You Receive
@@ -149,7 +149,7 @@ const PartnerSector = () => {
       </section>
 
       {/* Partnership Models */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-copper/5 to-transparent">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-copper/5 to-transparent">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             Partnership Models for Your Sector
@@ -173,7 +173,7 @@ const PartnerSector = () => {
       </section>
 
       {/* Programs */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
             Programs & Initiatives You Can Join
@@ -190,7 +190,7 @@ const PartnerSector = () => {
       </section>
 
       {/* Closing CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             {sector.ctaLabel}

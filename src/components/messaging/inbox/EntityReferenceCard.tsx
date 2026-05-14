@@ -38,9 +38,9 @@ const entityConfig = {
   post: {
     icon: FileText,
     label: 'POST',
-    accentClass: 'text-purple-600 dark:text-purple-400',
-    borderClass: 'border-purple-200 dark:border-purple-800',
-    bgClass: 'bg-purple-50/50 dark:bg-purple-950/20',
+    accentClass: 'text-copper-600 dark:text-copper-400',
+    borderClass: 'border-copper-200 dark:border-copper-800',
+    bgClass: 'bg-copper-50/50 dark:bg-copper-950/20',
   },
   story: {
     icon: BookOpen,

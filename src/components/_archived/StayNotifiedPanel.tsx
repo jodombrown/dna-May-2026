@@ -28,7 +28,7 @@ const StayNotifiedPanel: React.FC<StayNotifiedPanelProps> = ({ isOpen, onClose }
               <NotificationBenefits />
               <NotificationForm onClose={onClose} />
 
-              <p className="text-center text-sm text-gray-500">
+              <p className="text-center text-sm text-neutral-500">
                 We respect your privacy. Your information will only be used to notify you about our platform launch. 
                 During the Prototyping and Building Phase, emails will come from our mother company{' '}
                 <a 

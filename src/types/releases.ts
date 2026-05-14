@@ -49,8 +49,8 @@ export const CATEGORY_CONFIG: Record<ReleaseCategory, {
   CONVENE: {
     label: 'Convene',
     icon: '📅',
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
+    color: 'text-copper-600',
+    bgColor: 'bg-copper-100',
   },
   COLLABORATE: {
     label: 'Collaborate',
@@ -67,14 +67,14 @@ export const CATEGORY_CONFIG: Record<ReleaseCategory, {
   CONVEY: {
     label: 'Convey',
     icon: '📢',
-    color: 'text-pink-600',
-    bgColor: 'bg-pink-100',
+    color: 'text-copper-600',
+    bgColor: 'bg-copper-100',
   },
   PLATFORM: {
     label: 'Platform',
     icon: '⚙️',
-    color: 'text-slate-600',
-    bgColor: 'bg-slate-100',
+    color: 'text-neutral-600',
+    bgColor: 'bg-neutral-100',
   },
 };
 
@@ -99,9 +99,9 @@ export const LIFECYCLE_CONFIG: Record<ReleaseLifecycleStage, {
   },
   archived: {
     label: 'ARCHIVED',
-    color: 'text-slate-600',
-    bgColor: 'bg-slate-100',
-    borderColor: 'border-slate-300',
+    color: 'text-neutral-600',
+    bgColor: 'bg-neutral-100',
+    borderColor: 'border-neutral-300',
   },
 };
 

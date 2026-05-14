@@ -11,21 +11,21 @@ const NotificationBenefits: React.FC = () => {
           <Users className="h-5 w-5 text-dna-emerald mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-medium text-dna-forest">Early Access</h4>
-            <p className="text-sm text-gray-600">Be among the first to access our platform when we launch and connect with diaspora professionals worldwide.</p>
+            <p className="text-sm text-neutral-600">Be among the first to access our platform when we launch and connect with diaspora professionals worldwide.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <Globe className="h-5 w-5 text-dna-emerald mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-medium text-dna-forest">Development Updates</h4>
-            <p className="text-sm text-gray-600">Regular updates on our platform development progress and upcoming features.</p>
+            <p className="text-sm text-neutral-600">Regular updates on our platform development progress and upcoming features.</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
           <Lightbulb className="h-5 w-5 text-dna-emerald mt-1 flex-shrink-0" />
           <div>
             <h4 className="font-medium text-dna-forest">Exclusive Opportunities</h4>
-            <p className="text-sm text-gray-600">Access to exclusive events, collaboration opportunities, and networking sessions.</p>
+            <p className="text-sm text-neutral-600">Access to exclusive events, collaboration opportunities, and networking sessions.</p>
           </div>
         </div>
       </div>

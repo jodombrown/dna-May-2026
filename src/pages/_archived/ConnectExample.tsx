@@ -105,7 +105,7 @@ const handleApplyPreset = (preset: { searchTerm: string; tab?: string; filters?:
 };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       <PageSEO
         title="Connect: Network with African Diaspora Professionals"
         description="Build your professional network with 200M+ African diaspora members worldwide. Find mentors, investors, and collaborators across industries and continents."
@@ -116,7 +116,7 @@ const handleApplyPreset = (preset: { searchTerm: string; tab?: string; filters?:
       
       <main className="max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-12 py-6 sm:py-8 pt-20">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="sticky top-16 z-20 bg-gray-50 pb-4 pt-2 shadow-sm">
+          <div className="sticky top-16 z-20 bg-neutral-50 pb-4 pt-2 shadow-sm">
             <SearchSection
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}
@@ -153,7 +153,7 @@ const handleApplyPreset = (preset: { searchTerm: string; tab?: string; filters?:
           <h3 className="text-2xl font-bold text-dna-forest mb-4">
             Help Us Build Better Networking
           </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+          <p className="text-neutral-600 mb-6 max-w-2xl mx-auto">
             Share your thoughts on how you connect with the diaspora community. 
             Your feedback will directly shape our networking features and user experience.
           </p>

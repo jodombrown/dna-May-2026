@@ -58,12 +58,12 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
       <Card className="w-full">
         <CardContent className="p-8 text-center">
           <div className="space-y-4">
-            <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-              <Briefcase className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 mx-auto bg-neutral-100 rounded-full flex items-center justify-center">
+              <Briefcase className="w-8 h-8 text-neutral-400" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">Profile Private</h2>
-              <p className="text-gray-600">This user has chosen to keep their profile private.</p>
+              <h2 className="text-xl font-semibold text-neutral-900 mb-2">Profile Private</h2>
+              <p className="text-neutral-600">This user has chosen to keep their profile private.</p>
             </div>
           </div>
         </CardContent>
@@ -83,7 +83,7 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-neutral-900">
                 {profile.full_name || 'DNA Member'}
               </h1>
               {profile.profession && (
@@ -146,14 +146,14 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
       <CardContent className="space-y-6">
         {profile.bio && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">About</h3>
-            <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">About</h3>
+            <p className="text-neutral-700 leading-relaxed">{profile.bio}</p>
           </div>
         )}
 
         {profile.interests && profile.interests.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-3 flex items-center gap-2">
               <Hash className="w-5 h-5 text-dna-copper" />
               Diaspora Interests
             </h3>
@@ -173,7 +173,7 @@ const PublicProfileView: React.FC<PublicProfileViewProps> = ({
 
         {!profile.bio && (!profile.interests || profile.interests.length === 0) && (
           <div className="text-center py-8">
-            <p className="text-gray-500">This member hasn't shared much about themselves yet.</p>
+            <p className="text-neutral-500">This member hasn't shared much about themselves yet.</p>
           </div>
         )}
       </CardContent>

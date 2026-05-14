@@ -104,9 +104,9 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
       <div className="mb-6 p-4 bg-dna-mint/10 border border-dna-mint/30 rounded-lg">
         <div className="flex items-start gap-3">
           <Calendar className="w-5 h-5 text-dna-copper mt-0.5 flex-shrink-0" />
-          <div className="text-sm text-gray-700">
+          <div className="text-sm text-neutral-700">
             <p className="font-medium mb-1">Join our waitlist for upcoming access</p>
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               Sign up to be notified when DNA opens to more users after the beta period.
             </p>
           </div>
@@ -125,7 +125,7 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
               placeholder="First name"
               value={formData.firstName}
               onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-              className="border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+              className="border-neutral-300 focus:border-dna-copper focus:ring-dna-copper"
               required
             />
           </div>
@@ -140,7 +140,7 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
               placeholder="Last name"
               value={formData.lastName}
               onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-              className="border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+              className="border-neutral-300 focus:border-dna-copper focus:ring-dna-copper"
               required
             />
           </div>
@@ -151,14 +151,14 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
             Email Address <span className="text-red-500">*</span>
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
             <Input
               id="waitlist-email"
               type="email"
               placeholder="you@example.com"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className="pl-10 border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+              className="pl-10 border-neutral-300 focus:border-dna-copper focus:ring-dna-copper"
               required
             />
           </div>
@@ -169,14 +169,14 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
             LinkedIn Profile URL
           </Label>
           <div className="relative">
-            <Linkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Linkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
             <Input
               id="waitlist-linkedin"
               type="url"
               placeholder="https://linkedin.com/in/yourprofile"
               value={formData.linkedin}
               onChange={(e) => setFormData(prev => ({ ...prev, linkedin: e.target.value }))}
-              className="pl-10 border-gray-300 focus:border-dna-copper focus:ring-dna-copper"
+              className="pl-10 border-neutral-300 focus:border-dna-copper focus:ring-dna-copper"
             />
           </div>
         </div>
@@ -186,17 +186,17 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
             Why are you interested? (Optional)
           </Label>
           <div className="relative">
-            <MessageSquare className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+            <MessageSquare className="absolute left-3 top-3 text-neutral-400 w-5 h-5" />
             <Textarea
               id="waitlist-message"
               placeholder="Tell us what excites you about DNA..."
               value={formData.message}
               onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-              className="pl-10 pt-2 border-gray-300 focus:border-dna-copper focus:ring-dna-copper min-h-[100px]"
+              className="pl-10 pt-2 border-neutral-300 focus:border-dna-copper focus:ring-dna-copper min-h-[100px]"
               maxLength={500}
             />
           </div>
-          <p className="text-xs text-gray-500 text-right">
+          <p className="text-xs text-neutral-500 text-right">
             {formData.message.length}/500 characters
           </p>
         </div>
@@ -221,7 +221,7 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
             type="button"
             variant="ghost"
             onClick={onBack}
-            className="w-full text-gray-600 hover:text-dna-forest"
+            className="w-full text-neutral-600 hover:text-dna-forest"
           >
             ← Back to Sign In
           </Button>
@@ -229,8 +229,8 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
       </form>
 
       {onBack && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-xs text-center text-gray-500">
+        <div className="mt-6 pt-6 border-t border-neutral-200">
+          <p className="text-xs text-center text-neutral-500">
             Already have an account?{' '}
             <button
               onClick={onBack}

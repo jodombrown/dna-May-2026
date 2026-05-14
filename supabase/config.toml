@@ -124,3 +124,24 @@ verify_jwt = false
 
 [functions.curate-diaspora-events]
 verify_jwt = false
+
+[functions.messages-cleanup]
+verify_jwt = false
+
+[functions.dia-smart-replies]
+verify_jwt = true
+
+[functions.dia-thread-summary]
+verify_jwt = true
+
+[functions.dia-inbox-brief]
+verify_jwt = true
+
+[functions.dia-daily-pulse]
+verify_jwt = true
+
+[functions.dia-smart-compose]
+verify_jwt = true
+
+[functions.messaging-email-digest]
+verify_jwt = false

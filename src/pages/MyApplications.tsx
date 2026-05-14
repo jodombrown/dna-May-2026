@@ -60,7 +60,7 @@ export default function MyApplications() {
       case 'pending':
         return 'bg-yellow-500';
       default:
-        return 'bg-gray-500';
+        return 'bg-neutral-500';
     }
   };
 

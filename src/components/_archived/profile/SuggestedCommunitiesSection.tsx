@@ -36,11 +36,11 @@ const SuggestedCommunitiesSection: React.FC<SuggestedCommunitiesSectionProps> = 
     fetchCommunities();
   }, [impactAreas]);
 
-  if (loading) return <div className="text-sm text-gray-400 py-4">Loading communities…</div>;
+  if (loading) return <div className="text-sm text-neutral-400 py-4">Loading communities…</div>;
 
   if (!communities.length)
     return (
-      <div className="text-sm text-gray-500 py-4">
+      <div className="text-sm text-neutral-500 py-4">
         No personalized communities yet. Fill out your profile for DNA recommendations.
       </div>
     );
@@ -52,12 +52,12 @@ const SuggestedCommunitiesSection: React.FC<SuggestedCommunitiesSectionProps> = 
           <Card key={c.id} className="flex flex-row gap-4 items-center p-4">
             <img
               src={c.image_url || "/placeholder.svg"}
-              className="w-12 h-12 rounded-md bg-gray-100 object-cover border"
+              className="w-12 h-12 rounded-md bg-neutral-100 object-cover border"
               alt={c.name}
             />
             <div className="flex-1 min-w-0">
               <div className="font-medium text-dna-forest truncate">{c.name}</div>
-              <div className="text-xs text-gray-600 line-clamp-2">{c.description}</div>
+              <div className="text-xs text-neutral-600 line-clamp-2">{c.description}</div>
             </div>
             <Button size="sm" className="bg-dna-emerald text-white" onClick={() => onJoin?.(c.id)}>
               Join

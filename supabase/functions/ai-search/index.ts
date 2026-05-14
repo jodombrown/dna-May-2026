@@ -35,9 +35,24 @@ serve(async (req) => {
   }
 
   try {
+    // Require authenticated caller
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { data: userRes, error: userErr } = await supabase.auth.getUser(token);
+    if (userErr || !userRes?.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { query, userId } = await req.json();
-    
-    console.log(`AI Search request: ${query} for user: ${userId}`);
+
+    console.log(`AI Search request: ${query} for user: ${userRes.user.id}`);
 
     // Use OpenAI to understand the search intent
     const intent = await analyzeSearchIntent(query);

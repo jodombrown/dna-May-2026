@@ -17,10 +17,10 @@ const SponsorshipManagement = lazy(() => import('@/pages/admin/SponsorshipManage
 
 // Placeholder pages for routes that will be implemented later
 const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-lg border border-slate-200">
+  <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-lg border border-neutral-200">
     <div className="text-center space-y-2">
-      <h2 className="text-xl font-semibold text-slate-900">{title}</h2>
-      <p className="text-slate-500">This page is coming soon.</p>
+      <h2 className="text-xl font-semibold text-neutral-900">{title}</h2>
+      <p className="text-neutral-500">This page is coming soon.</p>
     </div>
   </div>
 );
@@ -30,7 +30,7 @@ const AdminPageLoader = () => (
   <div className="flex items-center justify-center min-h-[400px]">
     <div className="flex flex-col items-center gap-3">
       <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
-      <p className="text-sm text-slate-500">Loading...</p>
+      <p className="text-sm text-neutral-500">Loading...</p>
     </div>
   </div>
 );

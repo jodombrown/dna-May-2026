@@ -14,7 +14,8 @@ import { useState } from 'react';
 import { isDismissed, dismissDIACard } from '@/services/diaCardService';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Brain, Sparkles, X } from 'lucide-react';
+import { Brain, X } from 'lucide-react';
+import { FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
 
 interface CollaborateDIADiscoveryCardProps {
   spaceCount?: number;
@@ -62,7 +63,7 @@ export function CollaborateDIADiscoveryCard({
             className="flex items-center justify-center w-6 h-6 rounded-full"
             style={{ backgroundColor: `${ACCENT}20` }}
           >
-            <Sparkles className="w-3 h-3" style={{ color: ACCENT }} />
+            <FuntunfunefuDenkyemfunefu className="w-3 h-3" style={{ color: ACCENT }} />
           </div>
           <span
             className="text-[10px] font-bold tracking-widest"

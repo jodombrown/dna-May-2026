@@ -19,7 +19,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-[999] bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -29,7 +29,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 
 const sheetVariants = cva(
-  "fixed z-[1000] gap-4 bg-background p-4 sm:p-8 shadow-lg border-2 border-gray-200 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 overflow-y-auto max-h-[100dvh]",
+  "fixed z-[1000] gap-4 bg-background p-4 sm:p-8 shadow-lg border-2 border-neutral-200 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 overflow-y-auto max-h-[100dvh]",
   {
     variants: {
       side: {
@@ -74,8 +74,8 @@ const SheetContent = React.forwardRef<
         left: side === "left" ? "8px" : "auto", 
         top: "8px"
       }}>
-        <button className="rounded-full bg-white border-2 border-gray-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-sm group pointer-events-auto">
-          <X className="h-4 w-4 text-gray-600 group-hover:text-white transition-colors duration-200" />
+        <button className="rounded-full bg-white border-2 border-neutral-200 w-8 h-8 flex items-center justify-center hover:bg-dna-emerald hover:border-dna-emerald transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-dna-emerald focus:ring-offset-2 shadow-sm group pointer-events-auto">
+          <X className="h-4 w-4 text-neutral-600 group-hover:text-white transition-colors duration-200" />
           <span className="sr-only">Close</span>
         </button>
       </SheetPrimitive.Close>

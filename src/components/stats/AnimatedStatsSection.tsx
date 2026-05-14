@@ -37,7 +37,7 @@ const AnimatedStat = ({ value, suffix, label, description, bgGradient, source, s
 
 const AnimatedStatsSection = () => {
   return (
-    <section className="relative bg-gradient-to-br from-dna-forest via-dna-emerald to-dna-copper rounded-3xl overflow-hidden mb-16">
+    <section className="relative bg-gradient-to-br from-dna-forest via-dna-emerald to-dna-copper rounded-xl overflow-hidden mb-16">
       <div className="absolute inset-0 bg-black/40"></div>
       <div className="relative z-10 px-8 py-16 text-center text-white">
         <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif mb-12 leading-tight">

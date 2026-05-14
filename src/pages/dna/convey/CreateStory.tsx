@@ -194,7 +194,7 @@ export default function CreateStory() {
           </Button>
 
           <div className="mb-6">
-            <h1 className="text-3xl font-bold mb-2">Create Story</h1>
+            <h1 className="text-h1 font-serif mb-2">Create Story</h1>
             <p className="text-muted-foreground">
               Share a story about diaspora impact, innovation, or connection
             </p>

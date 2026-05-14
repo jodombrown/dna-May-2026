@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Sparkles, ArrowRight, Users, Calendar, Briefcase } from 'lucide-react';
+import { ArrowRight, Users, Calendar, Briefcase } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface FirstActionStepProps {
   data: any;
@@ -44,7 +45,7 @@ const getRecommendedAction = (userData: any) => {
       type: 'explore',
       title: 'Explore Your Interests',
       description: 'Check out the communities and opportunities you selected',
-      icon: Sparkles,
+      icon: MateMasie,
       action: 'View My Selections',
       route: '/app/dashboard'
     };
@@ -134,12 +135,12 @@ const FirstActionStep: React.FC<FirstActionStepProps> = ({ data, updateData }) =
     <div className="space-y-6">
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-dna-emerald to-dna-copper rounded-full flex items-center justify-center mx-auto mb-4">
-          <Sparkles className="w-8 h-8 text-white" />
+          <MateMasie className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-dna-forest mb-2">
           Welcome to DNA!
         </h2>
-        <p className="text-gray-600">
+        <p className="text-neutral-600">
           You're all set up. Here's what we recommend you do first based on your profile.
         </p>
       </div>
@@ -155,7 +156,7 @@ const FirstActionStep: React.FC<FirstActionStepProps> = ({ data, updateData }) =
               <h3 className="text-xl font-semibold text-dna-forest mb-1">
                 {recommendedAction.title}
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-neutral-600 mb-4">
                 {recommendedAction.description}
               </p>
               <Button 
@@ -193,9 +194,9 @@ const FirstActionStep: React.FC<FirstActionStepProps> = ({ data, updateData }) =
                     </div>
                     <div className="flex-1">
                       <h4 className="font-medium text-dna-forest">{action.title}</h4>
-                      <p className="text-sm text-gray-600">{action.description}</p>
+                      <p className="text-sm text-neutral-600">{action.description}</p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-gray-400" />
+                    <ArrowRight className="w-4 h-4 text-neutral-400" />
                   </div>
                 </CardContent>
               </Card>
@@ -209,7 +210,7 @@ const FirstActionStep: React.FC<FirstActionStepProps> = ({ data, updateData }) =
         <Button 
           variant="ghost" 
           onClick={() => navigate('/app')}
-          className="text-gray-500 hover:text-dna-forest"
+          className="text-neutral-500 hover:text-dna-forest"
         >
           Skip for now - take me to my dashboard
         </Button>

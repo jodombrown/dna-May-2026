@@ -29,16 +29,16 @@ const ActivityTabContent: React.FC<ActivityTabContentProps> = ({
           {userPosts.length > 0 ? (
             <div className="space-y-4">
               {userPosts.slice(0, 3).map((post: any) => (
-                <div key={post.id} className="p-4 bg-gray-50 rounded-lg">
+                <div key={post.id} className="p-4 bg-neutral-50 rounded-lg">
                   <p className="font-medium">{post.content?.substring(0, 100)}...</p>
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-sm text-neutral-500 mt-2">
                     {new Date(post.created_at).toLocaleDateString()}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No posts yet</p>
+            <p className="text-neutral-500">No posts yet</p>
           )}
         </CardContent>
       </Card>
@@ -61,7 +61,7 @@ const ActivityTabContent: React.FC<ActivityTabContentProps> = ({
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No communities joined yet</p>
+            <p className="text-neutral-500">No communities joined yet</p>
           )}
         </CardContent>
       </Card>
@@ -78,14 +78,14 @@ const ActivityTabContent: React.FC<ActivityTabContentProps> = ({
           {userEvents.length > 0 ? (
             <div className="space-y-3">
               {userEvents.slice(0, 3).map((event: any) => (
-                <div key={event.id} className="p-3 bg-gray-50 rounded-lg">
+                <div key={event.id} className="p-3 bg-neutral-50 rounded-lg">
                   <p className="font-medium">{event.title}</p>
-                  <p className="text-sm text-gray-500">{event.date_time}</p>
+                  <p className="text-sm text-neutral-500">{event.date_time}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No events yet</p>
+            <p className="text-neutral-500">No events yet</p>
           )}
         </CardContent>
       </Card>

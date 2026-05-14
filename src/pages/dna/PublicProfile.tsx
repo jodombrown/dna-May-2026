@@ -169,7 +169,7 @@ const PublicProfile = () => {
       <div className="min-h-screen bg-background pt-20">
         <div className="container max-w-4xl mx-auto px-4 py-16 text-center">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-          <h1 className="text-3xl font-bold mb-4">Profile Not Found</h1>
+          <h1 className="text-h1 font-serif mb-4">Profile Not Found</h1>
           <p className="text-muted-foreground mb-6">
             The user you're looking for doesn't exist or has been removed.
           </p>
@@ -197,7 +197,7 @@ const PublicProfile = () => {
           <Card>
             <CardContent className="p-12 text-center">
               <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-2xl font-bold mb-2">Profile Private</h2>
+              <h2 className="text-h2 font-serif mb-2">Profile Private</h2>
               <p className="text-muted-foreground">
                 This user has chosen to keep their profile private.
               </p>
@@ -224,7 +224,7 @@ const PublicProfile = () => {
           <Card>
             <CardContent className="p-12 text-center">
               <Ban className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="text-2xl font-bold mb-2">Profile Unavailable</h2>
+              <h2 className="text-h2 font-serif mb-2">Profile Unavailable</h2>
               <p className="text-muted-foreground">
                 This profile is not available to view.
               </p>
@@ -296,7 +296,7 @@ const PublicProfile = () => {
                 </Avatar>
                 
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold mb-2">{profile.full_name || 'DNA Member'}</h1>
+                  <h1 className="text-h1 font-serif mb-2">{profile.full_name || 'DNA Member'}</h1>
                   
                   {profile.professional_role && (
                     <div className="flex items-center text-muted-foreground mb-2">
@@ -422,7 +422,15 @@ const PublicProfile = () => {
                   <h3 className="font-semibold mb-3">Focus Areas</h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.focus_areas.map((area, i) => (
-                      <Badge key={i} variant="outline" className="border-dna-copper">{area}</Badge>
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => navigate(`/dna/connect/discover?focus=${encodeURIComponent(area)}`)}
+                        aria-label={`Find members with focus area: ${area}`}
+                        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                      >
+                        <Badge variant="outline" className="border-dna-copper hover:bg-dna-copper/10 cursor-pointer transition-colors">{area}</Badge>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -433,7 +441,15 @@ const PublicProfile = () => {
                   <h3 className="font-semibold mb-3">Industries</h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.industries.map((industry, i) => (
-                      <Badge key={i} variant="secondary">{industry}</Badge>
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => navigate(`/dna/connect/discover?industry=${encodeURIComponent(industry)}`)}
+                        aria-label={`Find members in industry: ${industry}`}
+                        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                      >
+                        <Badge variant="secondary" className="hover:bg-secondary/70 cursor-pointer transition-colors">{industry}</Badge>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -444,7 +460,15 @@ const PublicProfile = () => {
                   <h3 className="font-semibold mb-3">Regional Expertise</h3>
                   <div className="flex flex-wrap gap-2">
                     {profile.regional_expertise.map((region, i) => (
-                      <Badge key={i} variant="outline">{region}</Badge>
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => navigate(`/dna/connect/discover?region=${encodeURIComponent(region)}`)}
+                        aria-label={`Find members with regional expertise: ${region}`}
+                        className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                      >
+                        <Badge variant="outline" className="hover:bg-muted cursor-pointer transition-colors">{region}</Badge>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -456,11 +480,26 @@ const PublicProfile = () => {
               <h3 className="font-semibold mb-3">Open To</h3>
               <div className="flex flex-wrap gap-3">
                 {profile.open_to_opportunities && (
-                  <Badge className="bg-dna-emerald">Opportunities</Badge>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/dna/contribute')}
+                    aria-label="Browse opportunities"
+                    className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                  >
+                    <Badge className="bg-dna-emerald hover:bg-dna-emerald/90 cursor-pointer transition-colors">Opportunities</Badge>
+                  </button>
                 )}
                 {profile.available_for && profile.available_for.length > 0 && (
                   profile.available_for.map((item, i) => (
-                    <Badge key={i} variant="outline">{item}</Badge>
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => navigate(`/dna/connect/discover?available_for=${encodeURIComponent(item)}`)}
+                      aria-label={`Find members available for: ${item}`}
+                      className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                    >
+                      <Badge variant="outline" className="hover:bg-muted cursor-pointer transition-colors">{item}</Badge>
+                    </button>
                   ))
                 )}
               </div>

@@ -10,10 +10,11 @@
  * 3. "Done" button that dismisses to the feed
  */
 
-import { CheckCircle2, Sparkles, ExternalLink } from 'lucide-react';
+import { CheckCircle2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MODE_HANDLERS } from './modeHandlers';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   SUCCESS_HEADLINES,
   getPostCreationSuggestion,
@@ -92,7 +93,7 @@ export const ComposerSuccessScreen = ({
             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
             style={{ backgroundColor: `${handler.accentColor}15` }}
           >
-            <Sparkles
+            <MateMasie
               className="h-4 w-4"
               style={{ color: handler.accentColor }}
             />

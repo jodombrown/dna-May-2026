@@ -112,7 +112,7 @@ const MarketResearchPhase = () => {
   const [isBetaSignupOpen, setIsBetaSignupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-dna-mint/10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-dna-mint/10 flex flex-col">
       <UnifiedHeader />
       
       <PhaseHero
@@ -127,8 +127,8 @@ const MarketResearchPhase = () => {
       <section className="py-16 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Research First?</h2>
-            <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Why Research First?</h2>
+            <p className="text-lg text-neutral-600 max-w-4xl mx-auto leading-relaxed">
               Before building DNA, we're investing deeply in understanding the African diaspora's needs, challenges, and aspirations. 
               This research-first approach ensures we create a platform that truly serves our community, not just what we think they need. 
               Every feature, every interaction, every decision will be grounded in real insights from real people.
@@ -140,32 +140,32 @@ const MarketResearchPhase = () => {
               <div className="w-12 h-12 bg-dna-forest rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Deep Research</h3>
-              <p className="text-gray-600 text-sm">AI-powered analysis of diaspora trends, behaviors, and market dynamics.</p>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">Deep Research</h3>
+              <p className="text-neutral-600 text-sm">AI-powered analysis of diaspora trends, behaviors, and market dynamics.</p>
             </div>
             
             <div className="text-center p-6 bg-dna-emerald/10 rounded-xl border border-dna-emerald/30">
               <div className="w-12 h-12 bg-dna-emerald rounded-full flex items-center justify-center mx-auto mb-4">
                 <MessageSquare className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Stakeholder Voices</h3>
-              <p className="text-gray-600 text-sm">50+ interviews with diaspora leaders, entrepreneurs, and community builders.</p>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">Stakeholder Voices</h3>
+              <p className="text-neutral-600 text-sm">50+ interviews with diaspora leaders, entrepreneurs, and community builders.</p>
             </div>
             
             <div className="text-center p-6 bg-dna-copper/10 rounded-xl border border-dna-copper/30">
               <div className="w-12 h-12 bg-dna-copper rounded-full flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Data Analysis</h3>
-              <p className="text-gray-600 text-sm">Quantitative validation of market size, opportunities, and growth potential.</p>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">Data Analysis</h3>
+              <p className="text-neutral-600 text-sm">Quantitative validation of market size, opportunities, and growth potential.</p>
             </div>
             
             <div className="text-center p-6 bg-dna-gold/10 rounded-xl border border-dna-gold/30">
               <div className="w-12 h-12 bg-dna-gold rounded-full flex items-center justify-center mx-auto mb-4">
                 <Target className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Validation</h3>
-              <p className="text-gray-600 text-sm">Testing our core assumptions and refining our platform concept.</p>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-2">Validation</h3>
+              <p className="text-neutral-600 text-sm">Testing our core assumptions and refining our platform concept.</p>
             </div>
           </div>
         </div>
@@ -178,12 +178,12 @@ const MarketResearchPhase = () => {
       {/* Research Community CTA */}
       <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30">
+          <div className="bg-white rounded-lg shadow-xl p-8 md:p-12 border border-dna-mint/30">
             <Search className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
               Help Shape DNA Through Research
             </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-neutral-600 mb-8 leading-relaxed">
               Your voice matters in building a platform that truly serves the African diaspora. Join our research community 
               to share your experiences, insights, and vision for how we can better strengthen our global network.
             </p>

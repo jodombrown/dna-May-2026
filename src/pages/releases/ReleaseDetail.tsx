@@ -31,8 +31,8 @@ const ReleaseDetail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Release not found</h1>
-          <p className="text-gray-600 mb-6">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">Release not found</h1>
+          <p className="text-neutral-600 mb-6">
             The release you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Button onClick={() => navigate('/releases')} variant="outline">
@@ -49,8 +49,8 @@ const ReleaseDetail: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Unable to load release</h1>
-          <p className="text-gray-600 mb-6">
+          <h1 className="text-2xl font-bold text-neutral-900 mb-2">Unable to load release</h1>
+          <p className="text-neutral-600 mb-6">
             Please try refreshing the page or check back later.
           </p>
           <Button onClick={() => navigate('/releases')} variant="outline">
@@ -94,11 +94,11 @@ const ReleaseDetail: React.FC = () => {
 
       <div className="min-h-screen bg-white">
         {/* Back Navigation */}
-        <div className="bg-gray-50 border-b border-gray-200">
+        <div className="bg-neutral-50 border-b border-neutral-200">
           <div className="container max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <Link
               to="/releases"
-              className="inline-flex items-center gap-2 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+              className="inline-flex items-center gap-2 py-4 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Releases
@@ -126,9 +126,9 @@ const ReleaseDetail: React.FC = () => {
           <article className="container max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {/* Archived Notice */}
             {isArchived && (
-              <Alert className="mb-6 bg-slate-50 border-slate-200">
-                <AlertCircle className="h-4 w-4 text-slate-600" />
-                <AlertDescription className="text-slate-700">
+              <Alert className="mb-6 bg-neutral-50 border-neutral-200">
+                <AlertCircle className="h-4 w-4 text-neutral-600" />
+                <AlertDescription className="text-neutral-700">
                   This feature was released on {releaseDate}. It may have been updated since this announcement.
                 </AlertDescription>
               </Alert>
@@ -152,11 +152,11 @@ const ReleaseDetail: React.FC = () => {
 
             {/* Title & Subtitle */}
             <header className="mb-8">
-              <h1 className="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="font-serif text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
                 {release.title}
               </h1>
               {release.subtitle && (
-                <p className="text-xl text-gray-600 italic">
+                <p className="text-xl text-neutral-600 italic">
                   {release.subtitle}
                 </p>
               )}
@@ -164,7 +164,7 @@ const ReleaseDetail: React.FC = () => {
 
             {/* Description */}
             <div className="prose prose-lg max-w-none mb-10">
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <p className="text-neutral-700 leading-relaxed whitespace-pre-wrap">
                 {release.description}
               </p>
             </div>
@@ -189,7 +189,7 @@ const ReleaseDetail: React.FC = () => {
             {/* Media Gallery */}
             {(release as any).media && (release as any).media.length > 0 && (
               <section className="mb-12">
-                <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-6">
+                <h2 className="font-serif text-2xl font-semibold text-neutral-900 mb-6">
                   Gallery
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -211,7 +211,7 @@ const ReleaseDetail: React.FC = () => {
                         />
                       )}
                       {item.caption && (
-                        <p className="p-3 text-sm text-gray-600 bg-gray-50">
+                        <p className="p-3 text-sm text-neutral-600 bg-neutral-50">
                           {item.caption}
                         </p>
                       )}
@@ -224,19 +224,19 @@ const ReleaseDetail: React.FC = () => {
             {/* Changelog */}
             {(release as any).changelog && (release as any).changelog.length > 0 && (
               <section className="mb-12">
-                <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-6">
+                <h2 className="font-serif text-2xl font-semibold text-neutral-900 mb-6">
                   Changelog
                 </h2>
                 <div className="space-y-4">
                   {(release as any).changelog.map((entry: any) => (
                     <div
                       key={entry.id}
-                      className="flex items-start gap-3 p-4 rounded-lg bg-gray-50"
+                      className="flex items-start gap-3 p-4 rounded-lg bg-neutral-50"
                     >
                       <ChangelogBadge type={entry.change_type} />
                       <div>
-                        <p className="text-gray-700">{entry.description}</p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-neutral-700">{entry.description}</p>
+                        <p className="text-xs text-neutral-500 mt-1">
                           {new Date(entry.created_at).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -251,12 +251,12 @@ const ReleaseDetail: React.FC = () => {
             )}
 
             {/* Divider */}
-            <hr className="border-gray-200 my-12" />
+            <hr className="border-neutral-200 my-12" />
 
             {/* Related Releases */}
             {relatedReleases.length > 0 && (
               <section>
-                <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-6">
+                <h2 className="font-serif text-2xl font-semibold text-neutral-900 mb-6">
                   Related Releases
                 </h2>
                 {isLoadingRelated ? (
@@ -309,7 +309,7 @@ const ChangelogBadge: React.FC<{ type: string }> = ({ type }) => {
     improved: { label: 'Improved', className: 'bg-blue-100 text-blue-700' },
     fixed: { label: 'Fixed', className: 'bg-orange-100 text-orange-700' },
     removed: { label: 'Removed', className: 'bg-red-100 text-red-700' },
-    security: { label: 'Security', className: 'bg-purple-100 text-purple-700' },
+    security: { label: 'Security', className: 'bg-copper-100 text-copper-700' },
   };
 
   const style = styles[type] || styles.improved;

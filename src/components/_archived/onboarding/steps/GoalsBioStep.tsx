@@ -14,7 +14,7 @@ const GoalsBioStep: React.FC<GoalsBioStepProps> = ({ data, updateData }) => {
     <div className="space-y-6">
       <div className="text-center">
         <h3 className="text-lg font-semibold text-dna-forest mb-2">Connect Your Identity</h3>
-        <p className="text-gray-600">Link your professional presence and upload your photo</p>
+        <p className="text-neutral-600">Link your professional presence and upload your photo</p>
       </div>
 
       {/* LinkedIn URL */}

@@ -64,7 +64,7 @@ export function HubHero({
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center text-center space-y-4">
         {/* Icon */}
-        <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10">
+        <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-primary/10">
           <Icon className="w-8 h-8 text-primary" />
         </div>
 

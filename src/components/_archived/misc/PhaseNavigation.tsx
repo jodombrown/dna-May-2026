@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import PatternBackground from '@/components/ui/PatternBackground';
-import { Search, Palette, Users, Code, TestTube, Rocket } from 'lucide-react';
+import { Search, Palette, Users, Code, TestTube } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const phases = [
   {
@@ -65,7 +66,7 @@ const phases = [
     status: "Planned",
     timeline: "Sep 2026+",
     path: "/phase-6/go-to-market",
-    icon: <Rocket className="w-6 h-6" />,
+    icon: <MateMasie className="w-6 h-6" />,
     color: "bg-dna-emerald"
   }
 ];
@@ -74,11 +75,11 @@ const PhaseNavigation = () => {
   const navigate = useNavigate();
 
   return (
-    <PatternBackground pattern="mudcloth" intensity="subtle" className="py-16 bg-gray-50">
+    <PatternBackground pattern="mudcloth" intensity="subtle" className="py-16 bg-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Development Journey</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-neutral-900 mb-4">Our Development Journey</h2>
+          <p className="text-lg text-neutral-600 max-w-3xl mx-auto">
             Follow our transparent, phase-by-phase approach to building DNA. Each phase has clear objectives, 
             timelines, and measurable outcomes to ensure we're building something that truly serves the African diaspora.
           </p>
@@ -100,13 +101,13 @@ const PhaseNavigation = () => {
                     {phase.status}
                   </Badge>
                 </div>
-                <CardTitle className="text-lg text-gray-900">
+                <CardTitle className="text-lg text-neutral-900">
                   Phase {phase.phase}: {phase.title}
                 </CardTitle>
-                <p className="text-sm text-gray-500">{phase.timeline}</p>
+                <p className="text-sm text-neutral-500">{phase.timeline}</p>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 mb-4">{phase.description}</p>
+                <p className="text-neutral-600 mb-4">{phase.description}</p>
                 <Button 
                   variant="default"
                   onClick={(e) => {

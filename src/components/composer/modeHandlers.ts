@@ -9,6 +9,7 @@
 
 import type { ComposerMode, ComposerFormData } from '@/hooks/useUniversalComposer';
 import { supabase } from '@/integrations/supabase/client';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   createStandardPost,
   createStoryPost,
@@ -313,6 +314,13 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
       if ((format === 'virtual' || format === 'hybrid') && !data.meetingUrl) {
         errors.meetingUrl = 'Add a meeting link';
       }
+      if (data.maxAttendees !== undefined && data.maxAttendees !== null) {
+        if (!Number.isInteger(data.maxAttendees) || data.maxAttendees < 1) {
+          errors.maxAttendees = 'Capacity must be at least 1';
+        } else if (data.maxAttendees > 100000) {
+          errors.maxAttendees = 'Capacity is too large (max 100,000)';
+        }
+      }
       return { isValid: Object.keys(errors).length === 0, errors };
     },
     submit: async (data, context) => {
@@ -412,7 +420,7 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     shortLabel: 'Start',
     submitLabel: 'Launch Space',
     submittingLabel: 'Launching...',
-    icon: 'Rocket',
+    icon: 'MateMasie',
     accentColor: '#2D5A3D',
     accentClass: 'bg-[#2D5A3D]',
     hoverClass: 'hover:bg-[#244a32]',

@@ -24,6 +24,7 @@ interface UniversalFeedInfiniteProps {
   authorId?: string;
   spaceId?: string;
   eventId?: string;
+  hashtag?: string;
   postType?: FeedItemType;
   rankingMode?: RankingMode;
   surface?: FeedSurface;
@@ -37,6 +38,7 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
   authorId,
   spaceId,
   eventId,
+  hashtag,
   postType,
   rankingMode = 'latest',
   surface = 'home',
@@ -56,6 +58,7 @@ export const UniversalFeedInfinite: React.FC<UniversalFeedInfiniteProps> = ({
     authorId,
     spaceId,
     eventId,
+    hashtag,
     postType,
     rankingMode,
   });

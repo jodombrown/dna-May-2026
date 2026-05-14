@@ -12,25 +12,12 @@ import { FeedCardBase } from './FeedCardBase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Lightbulb, 
-  DollarSign, 
-  Clock, 
-  Users, 
-  BookOpen,
-  MapPin,
-  Calendar,
-  Heart,
-  MessageCircle,
-  Share2,
-  Bookmark,
-  HandHeart,
-  Sparkles
-} from 'lucide-react';
+import { Lightbulb, DollarSign, Clock, Users, BookOpen, MapPin, Calendar, Heart, MessageCircle, Share2, Bookmark, HandHeart } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { cn } from '@/lib/utils';
+import { Adinkrahene } from '@/components/icons/adinkra';
 
 interface OpportunityFeedCardProps {
   item: UniversalFeedItem;
@@ -100,7 +87,7 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
             </>
           ) : (
             <>
-              <Sparkles className="h-3 w-3 mr-1" />
+              <Adinkrahene className="h-3 w-3 mr-1" />
               OFFER
             </>
           )}

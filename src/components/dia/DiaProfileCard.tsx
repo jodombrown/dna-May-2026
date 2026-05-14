@@ -4,8 +4,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Users, Sparkles, ArrowUpRight } from 'lucide-react';
+import { MapPin, Users, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { MateMasie } from '@/components/icons/adinkra';
 
 export interface DiaProfileCardProps {
   id: string;
@@ -50,7 +51,7 @@ export function DiaProfileCard({
       case 'skills match':
         return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
       case 'location match':
-        return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400';
+        return 'bg-copper-100 text-copper-700 dark:bg-copper-900/30 dark:text-copper-400';
       default:
         return 'bg-muted text-muted-foreground';
     }
@@ -113,16 +114,39 @@ export function DiaProfileCard({
           {/* Relevance and mutual connections */}
           <div className="flex items-center gap-2 flex-wrap">
             {relevance && (
-              <Badge variant="secondary" className={cn("text-xs", getRelevanceColor(relevance))}>
-                <Sparkles className="h-3 w-3 mr-1" />
-                {relevance}
-              </Badge>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const slug = relevance.toLowerCase().includes('skill')
+                    ? 'skills'
+                    : relevance.toLowerCase().includes('location')
+                      ? 'location'
+                      : 'high';
+                  navigate(`/dna/connect/discover?match=${slug}`);
+                }}
+                aria-label={`Filter discovery by ${relevance}`}
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+              >
+                <Badge variant="secondary" className={cn("text-xs cursor-pointer hover:opacity-80", getRelevanceColor(relevance))}>
+                  <MateMasie className="h-3 w-3 mr-1" />
+                  {relevance}
+                </Badge>
+              </button>
             )}
             {mutualConnections && mutualConnections > 0 && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/dna/${id}?tab=mutuals`);
+                }}
+                aria-label={`View ${mutualConnections} mutual connections`}
+                className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded px-1 -mx-1"
+              >
                 <Users className="h-3 w-3" />
                 {mutualConnections} mutual{mutualConnections > 1 ? 's' : ''}
-              </span>
+              </button>
             )}
           </div>
 
@@ -130,9 +154,20 @@ export function DiaProfileCard({
           {skills.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {skills.slice(0, 3).map((skill, idx) => (
-                <Badge key={idx} variant="outline" className="text-xs font-normal">
-                  {skill}
-                </Badge>
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/dna/connect/discover?skill=${encodeURIComponent(skill)}`);
+                  }}
+                  aria-label={`Find more profiles with ${skill}`}
+                  className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+                >
+                  <Badge variant="outline" className="text-xs font-normal cursor-pointer hover:bg-muted">
+                    {skill}
+                  </Badge>
+                </button>
               ))}
               {skills.length > 3 && (
                 <Badge variant="outline" className="text-xs font-normal text-muted-foreground">

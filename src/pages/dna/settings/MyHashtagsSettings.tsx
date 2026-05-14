@@ -75,15 +75,15 @@ export default function MyHashtagsSettings() {
             <div className="flex items-center justify-between">
               <div className="flex gap-6">
                 <div>
-                  <p className="text-2xl font-bold">{limits?.active_count || 0}</p>
+                  <p className="text-h2 font-serif">{limits?.active_count || 0}</p>
                   <p className="text-sm text-muted-foreground">Active</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{limits?.archived_count || 0}</p>
+                  <p className="text-h2 font-serif">{limits?.archived_count || 0}</p>
                   <p className="text-sm text-muted-foreground">Archived</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{availableSlots}</p>
+                  <p className="text-h2 font-serif">{availableSlots}</p>
                   <p className="text-sm text-muted-foreground">Available</p>
                 </div>
               </div>

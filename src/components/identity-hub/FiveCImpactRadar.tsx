@@ -7,6 +7,7 @@
  */
 
 import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { FiveCImpactScore, CModule } from '@/types/profileIdentityHub';
@@ -28,11 +29,20 @@ const C_LABELS: Record<CModule, string> = {
 
 const C_ORDER: CModule[] = ['connect', 'convene', 'collaborate', 'contribute', 'convey'];
 
+const C_ROUTES: Record<CModule, string> = {
+  connect: '/dna/connect/network',
+  convene: '/dna/convene/my-events',
+  collaborate: '/dna/collaborate/my-spaces',
+  contribute: '/dna/contribute/my',
+  convey: '/dna/convey',
+};
+
 export const FiveCImpactRadar: React.FC<FiveCImpactRadarProps> = ({
   impactScore,
   size: sizeProp,
   showDetails = true,
 }) => {
+  const navigate = useNavigate();
   const { impactRadar } = PROFILE_LAYOUT;
   const size = sizeProp ?? impactRadar.size.desktop;
   const center = size / 2;
@@ -81,7 +91,7 @@ export const FiveCImpactRadar: React.FC<FiveCImpactRadarProps> = ({
   const trendColor =
     impactScore.trend === 'rising' ? 'text-emerald-600' :
     impactScore.trend === 'declining' ? 'text-red-500' :
-    'text-gray-500';
+    'text-neutral-500';
 
   return (
     <div className="flex flex-col items-center">
@@ -90,7 +100,7 @@ export const FiveCImpactRadar: React.FC<FiveCImpactRadarProps> = ({
         <div className="text-3xl font-bold" style={{ color: impactRadar.colors.connect }}>
           {impactScore.overall}
         </div>
-        <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
+        <div className="text-xs text-neutral-500 flex items-center justify-center gap-1">
           <span>Impact Score</span>
           <span className={trendColor}>{trendIcon}</span>
         </div>
@@ -159,8 +169,11 @@ export const FiveCImpactRadar: React.FC<FiveCImpactRadarProps> = ({
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="text-[10px] font-medium"
+            className="text-[10px] font-medium cursor-pointer"
             fill={impactRadar.colors[c]}
+            onClick={() => navigate(C_ROUTES[c])}
+            role="link"
+            aria-label={`Open ${label} hub`}
           >
             {label}
           </text>
@@ -171,13 +184,19 @@ export const FiveCImpactRadar: React.FC<FiveCImpactRadarProps> = ({
       {showDetails && (
         <div className="w-full mt-3 space-y-1.5">
           {C_ORDER.map((c) => (
-            <div key={c} className="flex items-center gap-2">
+            <button
+              key={c}
+              type="button"
+              aria-label={`${C_LABELS[c]} score ${impactScore[c] ?? 0}, view hub`}
+              onClick={() => navigate(C_ROUTES[c])}
+              className="flex items-center gap-2 w-full text-left rounded-md px-1 py-1 hover:bg-muted/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[36px]"
+            >
               <div
                 className="w-2 h-2 rounded-full flex-shrink-0"
                 style={{ backgroundColor: impactRadar.colors[c] }}
               />
-              <span className="text-xs text-gray-600 w-20">{C_LABELS[c]}</span>
-              <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <span className="text-xs text-muted-foreground w-20">{C_LABELS[c]}</span>
+              <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{
@@ -186,14 +205,14 @@ export const FiveCImpactRadar: React.FC<FiveCImpactRadarProps> = ({
                   }}
                 />
               </div>
-              <span className="text-xs font-medium text-gray-700 w-8 text-right">
+              <span className="text-xs font-medium text-foreground w-8 text-right">
                 {impactScore[c] ?? 0}
               </span>
-            </div>
+            </button>
           ))}
 
           {/* Strongest & Growth */}
-          <div className="flex gap-2 mt-2 pt-2 border-t border-gray-100">
+          <div className="flex gap-2 mt-2 pt-2 border-t border-neutral-100">
             <Badge
               variant="outline"
               className="text-[10px]"
@@ -201,7 +220,7 @@ export const FiveCImpactRadar: React.FC<FiveCImpactRadarProps> = ({
             >
               Strongest: {C_LABELS[impactScore.strongestC]}
             </Badge>
-            <Badge variant="outline" className="text-[10px] text-gray-500">
+            <Badge variant="outline" className="text-[10px] text-neutral-500">
               Grow: {C_LABELS[impactScore.growthOpportunityC]}
             </Badge>
           </div>

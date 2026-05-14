@@ -10,15 +10,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import {
-  X, Sparkles, UserPlus, TrendingUp, RefreshCw, GitBranch,
-  Users, Calendar, MessageCircle, Mic, AlertCircle, Wrench,
-  Trophy, Clock, Target, Activity, Heart, Handshake,
-  BarChart3, Share2, PenLine, ArrowRightLeft, LayoutGrid, Lightbulb,
-} from 'lucide-react';
+import { X, UserPlus, TrendingUp, RefreshCw, GitBranch, Users, Calendar, MessageCircle, Mic, AlertCircle, Wrench, Trophy, Clock, Target, Activity, Heart, Handshake, BarChart3, Share2, PenLine, ArrowRightLeft, LayoutGrid, Lightbulb } from 'lucide-react';
 import type { DIACard, DIACardAction, DIACardCategory } from '@/services/diaCardService';
 import { IntroductionModal } from '@/components/connect/IntroductionModal';
 import { supabase } from '@/integrations/supabase/client';
+import { MateMasie } from '@/components/icons/adinkra';
 
 // ── Icon Registry ──────────────────────────────────
 
@@ -26,7 +22,7 @@ const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   UserPlus, TrendingUp, RefreshCw, GitBranch, Users, Calendar,
   MessageCircle, Mic, AlertCircle, Wrench, Trophy, Clock,
   Target, Activity, Heart, Handshake, BarChart3, Share2,
-  PenLine, ArrowRightLeft, LayoutGrid, Lightbulb, Sparkles,
+  PenLine, ArrowRightLeft, LayoutGrid, Lightbulb, MateMasie,
 };
 
 // ── Category Display Names ─────────────────────────
@@ -135,7 +131,7 @@ export function DIAInsightCard({
             className="flex items-center justify-center w-6 h-6 rounded-full"
             style={{ backgroundColor: `${card.accentColor}20` }}
           >
-            <Sparkles className="w-3 h-3" style={{ color: card.accentColor }} />
+            <MateMasie className="w-3 h-3" style={{ color: card.accentColor }} />
           </div>
           <span
             className="text-[10px] font-bold tracking-widest"

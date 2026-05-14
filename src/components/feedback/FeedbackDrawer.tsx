@@ -158,7 +158,7 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
           ) : !user ? (
             <div className="flex-1 flex items-center justify-center p-6">
               <div className="text-center max-w-xs">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10">
                   <LogIn className="h-7 w-7 text-primary" />
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Sign in to share feedback</h3>
@@ -252,7 +252,7 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
 
       {/* Opt Out Confirmation */}
       <AlertDialog open={showOptOutConfirm} onOpenChange={setShowOptOutConfirm}>
-        <AlertDialogContent className="rounded-2xl">
+        <AlertDialogContent className="rounded-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Opt out of Feedback Hub?</AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">

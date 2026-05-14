@@ -22,7 +22,7 @@ const ProfessionalsResults: React.FC<ProfessionalsResultsProps> = ({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Professionals</h3>
+      <h3 className="text-lg font-semibold text-neutral-900">Professionals</h3>
       {professionals.map((professional) => (
         <Card key={professional.id} className="hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
@@ -37,12 +37,12 @@ const ProfessionalsResults: React.FC<ProfessionalsResultsProps> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 truncate">
+                    <h3 className="text-lg font-semibold text-neutral-900 truncate">
                       {professional.full_name}
                     </h3>
                     
                     {professional.profession && (
-                      <div className="flex items-center text-gray-600 mt-1">
+                      <div className="flex items-center text-neutral-600 mt-1">
                         <Briefcase className="w-4 h-4 mr-1" />
                         <span className="text-sm">
                           {professional.profession}
@@ -52,7 +52,7 @@ const ProfessionalsResults: React.FC<ProfessionalsResultsProps> = ({
                     )}
                     
                     {professional.location && (
-                      <div className="flex items-center text-gray-500 mt-1">
+                      <div className="flex items-center text-neutral-500 mt-1">
                         <MapPin className="w-4 h-4 mr-1" />
                         <span className="text-sm">{professional.location}</span>
                       </div>
@@ -81,7 +81,7 @@ const ProfessionalsResults: React.FC<ProfessionalsResultsProps> = ({
                 </div>
                 
                 {professional.bio && (
-                  <p className="text-gray-600 text-sm mt-2 line-clamp-2">
+                  <p className="text-neutral-600 text-sm mt-2 line-clamp-2">
                     {professional.bio}
                   </p>
                 )}

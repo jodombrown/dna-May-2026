@@ -9,7 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { PenSquare, Calendar, BookOpen, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { PenSquare, Calendar, BookOpen, Activity } from 'lucide-react';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 
 interface FeedHeroGreetingProps {
@@ -18,6 +19,7 @@ interface FeedHeroGreetingProps {
 
 export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOpen }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { data: profile } = useProfile();
 
   const { data: pulse } = useQuery({
@@ -56,10 +58,10 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
     { label: 'Share a Story', icon: BookOpen, mode: 'story' },
   ];
 
-  const pulseItems = [];
-  if (pulse?.upcomingEvents) pulseItems.push(`${pulse.upcomingEvents} upcoming events`);
-  if (pulse?.newConnections) pulseItems.push(`${pulse.newConnections} new connections this week`);
-  if (pulse?.newPosts) pulseItems.push(`${pulse.newPosts} posts today`);
+  const pulseItems: { label: string; to: string }[] = [];
+  if (pulse?.upcomingEvents) pulseItems.push({ label: `${pulse.upcomingEvents} upcoming events`, to: '/dna/convene' });
+  if (pulse?.newConnections) pulseItems.push({ label: `${pulse.newConnections} new connections this week`, to: '/dna/connect/network' });
+  if (pulse?.newPosts) pulseItems.push({ label: `${pulse.newPosts} posts today`, to: '/dna/feed' });
 
   return (
     <div className="relative overflow-hidden rounded-dna-xl bg-gradient-to-br from-[hsl(var(--dna-emerald)/0.08)] via-[hsl(var(--dna-cream))] to-[hsl(var(--dna-gold)/0.06)] px-6 py-5">
@@ -74,9 +76,21 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
 
         {/* Platform pulse */}
         {pulseItems.length > 0 && (
-          <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-dna-gold" />
-            {pulseItems.join(' · ')}
+          <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1.5 flex-wrap">
+            <Activity className="h-3.5 w-3.5 text-dna-gold" />
+            {pulseItems.map((item, i) => (
+              <span key={item.to} className="contents">
+                {i > 0 && <span className="text-muted-foreground/60">·</span>}
+                <button
+                  type="button"
+                  onClick={() => navigate(item.to)}
+                  aria-label={`Open ${item.label}`}
+                  className="hover:text-foreground hover:underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                >
+                  {item.label}
+                </button>
+              </span>
+            ))}
           </p>
         )}
 

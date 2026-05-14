@@ -56,8 +56,8 @@ const DNARecentActivityCard: React.FC<DNARecentActivityCardProps> = ({
                   <IconComponent className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-800">{activity.action}</p>
-                  <span className="text-xs text-gray-500">{activity.time}</span>
+                  <p className="text-sm text-neutral-800">{activity.action}</p>
+                  <span className="text-xs text-neutral-500">{activity.time}</span>
                 </div>
               </div>
             );

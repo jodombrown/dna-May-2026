@@ -129,7 +129,7 @@ const ProfileHeroSection = ({
   };
 
   return (
-    <section className="relative rounded-3xl overflow-hidden mb-6">
+    <section className="relative rounded-xl overflow-hidden mb-6">
       {/* Banner */}
       <div 
         className="w-full h-[200px] md:h-[280px] relative"
@@ -190,13 +190,13 @@ const ProfileHeroSection = ({
 
           {/* Name & Info */}
           <div className="flex-1 md:mb-4">
-            <h1 className="text-2xl md:text-4xl font-bold text-warm-gray-900">{profile?.full_name}</h1>
+            <h1 className="text-2xl md:text-4xl font-bold text-warm-neutral-900">{profile?.full_name}</h1>
             {profile?.profession && (
-              <p className="text-base md:text-lg text-warm-gray-600 mt-1">{profile.profession}</p>
+              <p className="text-base md:text-lg text-warm-neutral-600 mt-1">{profile.profession}</p>
             )}
             
             {profile?.company && (
-              <div className="flex items-center gap-2 text-warm-gray-600 mt-2">
+              <div className="flex items-center gap-2 text-warm-neutral-600 mt-2">
                 <Briefcase className="w-4 h-4" />
                 <span>{profile.company}</span>
               </div>
@@ -204,13 +204,13 @@ const ProfileHeroSection = ({
 
             <div className="flex flex-wrap gap-3 mt-2">
               {profile?.location && (
-                <div className="flex items-center gap-1 text-warm-gray-600">
+                <div className="flex items-center gap-1 text-warm-neutral-600">
                   <MapPin className="w-4 h-4" />
                   <span className="text-sm">{profile.location}</span>
                 </div>
               )}
               {profile?.country_of_origin && (
-                <div className="flex items-center gap-1 text-warm-gray-600">
+                <div className="flex items-center gap-1 text-warm-neutral-600">
                   <Globe className="w-4 h-4" />
                   <span className="text-sm">{profile.country_of_origin}</span>
                 </div>

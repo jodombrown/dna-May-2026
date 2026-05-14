@@ -6,9 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ConnectIllustration } from '../shared/HubIllustrations';
-import { Search, Sparkles, Users, ArrowRight } from 'lucide-react';
+import { Search, Users, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface SuggestedProfile {
   id: string;
@@ -72,7 +73,7 @@ export function ZeroConnectionsState({
         <CardContent className="pt-4 pb-4">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-dna-emerald/20 flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-4 h-4 text-dna-emerald" />
+              <Sankofa className="w-4 h-4 text-dna-emerald" />
             </div>
             <div className="text-left">
               <p className="text-sm font-medium text-foreground mb-1">

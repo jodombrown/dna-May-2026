@@ -6,7 +6,8 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Sparkles, Clock, Archive } from 'lucide-react';
+import { Clock, Archive } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 type BadgeStatus = 'new' | 'recent' | 'archived' | 'featured';
 
@@ -21,12 +22,12 @@ const statusConfig: Record<BadgeStatus, { label: string; className: string; icon
   new: {
     label: 'NEW',
     className: 'bg-dna-gold text-dna-charcoal',
-    icon: <Sparkles className="w-3 h-3" />,
+    icon: <MateMasie className="w-3 h-3" />,
   },
   featured: {
     label: 'FEATURED',
     className: 'bg-dna-gold text-dna-charcoal',
-    icon: <Sparkles className="w-3 h-3" />,
+    icon: <MateMasie className="w-3 h-3" />,
   },
   recent: {
     label: 'RECENT',
@@ -35,7 +36,7 @@ const statusConfig: Record<BadgeStatus, { label: string; className: string; icon
   },
   archived: {
     label: 'ARCHIVED',
-    className: 'bg-slate-500 text-white',
+    className: 'bg-neutral-500 text-white',
     icon: <Archive className="w-3 h-3" />,
   },
 };

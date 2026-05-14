@@ -76,7 +76,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToAuth }) =
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm text-neutral-600 text-center">
             If you don't see the email in your inbox, check your spam folder.
           </p>
           <Button 

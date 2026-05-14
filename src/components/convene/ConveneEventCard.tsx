@@ -3,24 +3,12 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Calendar,
-  MapPin,
-  Video,
-  Globe,
-  Users,
-  Eye,
-  Edit,
-  BarChart3,
-  CheckCircle2,
-  HelpCircle,
-  Sparkles,
-  Clock,
-} from 'lucide-react';
+import { Calendar, MapPin, Video, Globe, Users, Eye, Edit, BarChart3, CheckCircle2, HelpCircle, Clock } from 'lucide-react';
 import { format, differenceInHours, differenceInDays, isToday, isTomorrow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { MutualAttendeesLine } from './MutualAttendeesLine';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 export interface ConveneEventCardProps {
   event: {
@@ -321,7 +309,7 @@ export function ConveneEventCard({
   return (
     <Card
       className={cn(
-        'overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group rounded-2xl border-0 shadow-lg',
+        'overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group rounded-lg border-0 shadow-lg',
         event.is_cancelled && 'opacity-60',
         className,
       )}
@@ -457,7 +445,7 @@ export function ConveneEventCard({
           {/* Left: Organizer or attendee count */}
           {event.is_curated ? (
             <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 text-xs">
-              <Sparkles className="h-3 w-3 mr-1" />
+              <Nkonsonkonson className="h-3 w-3 mr-1" />
               Curated
             </Badge>
           ) : showOrganizer && organizerName ? (

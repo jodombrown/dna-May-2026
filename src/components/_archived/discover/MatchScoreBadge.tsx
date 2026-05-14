@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Heart, MapPin, Briefcase, Target, Zap, Globe, Star, Users } from "lucide-react";
+import { Heart, MapPin, Briefcase, Target, Globe, Star, Users } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 export interface MatchReasoning {
@@ -157,7 +158,7 @@ export function MatchScoreBadge({
       allReasons.push({ icon: Briefcase, label: `Industry: ${reasoning.shared_industries.slice(0, 2).join(', ')}` });
     }
     if (reasoning.shared_skills?.length) {
-      allReasons.push({ icon: Zap, label: `Skills: ${reasoning.shared_skills.slice(0, 2).join(', ')}` });
+      allReasons.push({ icon: MateMasie, label: `Skills: ${reasoning.shared_skills.slice(0, 2).join(', ')}` });
     }
     if (reasoning.regional_expertise_match) {
       allReasons.push({ icon: Globe, label: 'Regional expertise match' });

@@ -2,6 +2,7 @@
 // Modal for host/creator applications
 
 import React, { useState } from 'react';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, CheckCircle2, Sparkles } from 'lucide-react';
+import { Loader2, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { submitHostApplication, HubType } from '@/services/hubNotifications';
 import { toast } from 'sonner';
@@ -148,7 +149,7 @@ export function HostApplicationModal({
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-dna-copper" />
+            <MateMasie className="w-5 h-5 text-dna-copper" />
             {config.title}
           </DialogTitle>
           <DialogDescription>
@@ -253,7 +254,7 @@ export function HostApplicationModal({
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 mr-2" />
+                <MateMasie className="w-4 h-4 mr-2" />
                 Submit Application
               </>
             )}

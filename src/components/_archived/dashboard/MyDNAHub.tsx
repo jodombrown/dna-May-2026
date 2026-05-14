@@ -12,7 +12,7 @@ import { useProfileUnlock } from '@/hooks/useProfileUnlock';
 import type { Profile } from '@/services/profilesService';
 import type { User } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface MyDNAHubProps {
   profile: Profile;
@@ -32,7 +32,7 @@ const MyDNAHub: React.FC<MyDNAHubProps> = ({ profile, currentUser }) => {
         {/* Welcome Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
-            <Sparkles className="h-7 w-7 text-dna-copper" />
+            <MateMasie className="h-7 w-7 text-dna-copper" />
             Welcome back, {profile.first_name || profile.full_name}!
           </h1>
           <p className="text-muted-foreground">

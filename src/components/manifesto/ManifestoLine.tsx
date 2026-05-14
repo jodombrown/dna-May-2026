@@ -20,8 +20,8 @@ export function ManifestoLine({ children, bold = false, delay = 0, className = '
     <motion.div
       ref={ref}
       className={`mb-4 md:mb-5 ${baseClasses} ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : { opacity: 0 }}
       transition={{
         duration: bold ? 0.3 : 0.2,
         delay,

@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import PhaseObjectives from '@/components/phases/PhaseObjectives';
 import PhaseTimeline from '@/components/phases/PhaseTimeline';
 import PhaseMetrics from '@/components/phases/PhaseMetrics';
-import { Rocket, Code, Users, Target, TrendingUp, CheckCircle, Lightbulb, Settings, ArrowRight } from "lucide-react";
+import { Code, Users, Target, TrendingUp, CheckCircle, Lightbulb, Settings, ArrowRight } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useNavigate } from 'react-router-dom';
 import PhaseHero from '@/components/phases/PhaseHero';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const objectives = [
   {
@@ -128,8 +129,8 @@ const MvpPhase = () => {
       <section className="py-16 bg-white">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Building the Foundation</h2>
-            <p className="text-lg text-gray-600 max-w-5xl mx-auto leading-relaxed">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">Building the Foundation</h2>
+            <p className="text-lg text-neutral-600 max-w-5xl mx-auto leading-relaxed">
               This phase transforms our validated designs and research into a working platform. We're building the core DNA experience 
               that enables diaspora professionals to connect meaningfully, collaborate on impactful projects, and contribute their skills 
               to initiatives that strengthen Africa's development. Every feature is purposefully designed to serve our community's unique needs.
@@ -137,28 +138,28 @@ const MvpPhase = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 px-4 lg:px-16">
-            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-2xl border border-dna-emerald/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-mint/20 to-dna-emerald/20 rounded-lg border border-dna-emerald/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-forest rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Code className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Core Development</h3>
-              <p className="text-gray-600 leading-relaxed">Building robust backend systems and user-friendly interfaces that support authentic diaspora networking and collaboration at scale.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Core Development</h3>
+              <p className="text-neutral-600 leading-relaxed">Building robust backend systems and user-friendly interfaces that support authentic diaspora networking and collaboration at scale.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-2xl border border-dna-copper/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-emerald/20 to-dna-copper/20 rounded-lg border border-dna-copper/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-emerald to-dna-copper rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">User Experience</h3>
-              <p className="text-gray-600 leading-relaxed">Implementing intuitive user flows that make it easy for diaspora professionals to discover opportunities and build meaningful connections.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">User Experience</h3>
+              <p className="text-neutral-600 leading-relaxed">Implementing intuitive user flows that make it easy for diaspora professionals to discover opportunities and build meaningful connections.</p>
             </div>
             
-            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-2xl border border-dna-gold/30">
-              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <div className="text-center p-8 bg-gradient-to-br from-dna-copper/20 to-dna-gold/20 rounded-lg border border-dna-gold/30">
+              <div className="w-16 h-16 bg-gradient-to-r from-dna-copper to-dna-gold rounded-lg flex items-center justify-center mx-auto mb-6">
                 <Target className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Quality Assurance</h3>
-              <p className="text-gray-600 leading-relaxed">Comprehensive testing and optimization to ensure platform reliability, performance, and user satisfaction before launch.</p>
+              <h3 className="text-xl font-semibold text-neutral-900 mb-3">Quality Assurance</h3>
+              <p className="text-neutral-600 leading-relaxed">Comprehensive testing and optimization to ensure platform reliability, performance, and user satisfaction before launch.</p>
             </div>
           </div>
         </div>
@@ -171,12 +172,12 @@ const MvpPhase = () => {
       {/* Alpha Testing CTA */}
       <section className="py-16 bg-gradient-to-r from-dna-mint/20 via-dna-emerald/10 to-dna-copper/20">
         <div className="w-full text-center px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-dna-mint/30 max-w-5xl mx-auto">
+          <div className="bg-white rounded-lg shadow-xl p-8 md:p-12 border border-dna-mint/30 max-w-5xl mx-auto">
             <Lightbulb className="w-16 h-16 text-dna-emerald mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
               Help Us Build DNA Together
             </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-neutral-600 mb-8 leading-relaxed">
               Join our alpha testing community to be among the first to experience the DNA platform as we build it. 
               Your feedback helps us create features that truly serve the African diaspora's networking and collaboration needs, 
               ensuring we launch with a platform that adds real value to your professional journey.

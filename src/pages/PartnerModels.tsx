@@ -23,7 +23,7 @@ const PartnerModels = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-mint/10 via-background to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Partnership Models
@@ -35,7 +35,7 @@ const PartnerModels = () => {
       </section>
 
       {/* Models Grid */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {partnershipModels.map((model) => (
@@ -106,7 +106,7 @@ const PartnerModels = () => {
       </section>
 
       {/* CTA Band */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-dna-emerald/10 via-background to-dna-copper/10">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Not Sure Which Model Fits?

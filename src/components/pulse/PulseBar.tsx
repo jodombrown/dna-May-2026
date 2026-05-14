@@ -34,11 +34,29 @@ function PulseBarSkeleton() {
 export function PulseBar() {
   const { user } = useAuth();
   const { isMobile } = useMobile();
+
+  // On mobile, force pulse-bar-height to 0 so layouts using --total-header-height don't reserve space.
+  React.useEffect(() => {
+    if (isMobile) {
+      document.documentElement.style.setProperty('--pulse-bar-height', '0px');
+      return () => {
+        document.documentElement.style.removeProperty('--pulse-bar-height');
+      };
+    }
+  }, [isMobile]);
+
+  // CRITICAL PERF: bail BEFORE invoking usePulseBar() so mobile pages don't
+  // run 5 parallel Supabase queries + 4 realtime subscriptions on every
+  // /dna/* render. Desktop-only data work belongs in <PulseBarInner />.
+  if (isMobile || !user) return null;
+
+  return <PulseBarInner />;
+}
+
+function PulseBarInner() {
   const { pulseData, isLoading } = usePulseBar();
   const pulseRef = useRef<HTMLDivElement>(null);
   useSetCSSHeaderHeight(pulseRef, '--pulse-bar-height');
-
-  if (isMobile || !user) return null;
 
   if (isLoading) {
     return <PulseBarSkeleton />;

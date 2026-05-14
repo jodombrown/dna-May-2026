@@ -27,7 +27,7 @@ const CTASection = () => {
                   <MessageCircle className="w-8 h-8 text-dna-copper" />
                 </div>
                 <h3 className="text-2xl font-bold text-dna-copper mb-4">Share Feedback</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-neutral-600 leading-relaxed">
                   Help us build better by sharing your thoughts and ideas
                 </p>
               </CardContent>
@@ -39,7 +39,7 @@ const CTASection = () => {
                   <Eye className="w-8 h-8 text-dna-emerald" />
                 </div>
                 <h3 className="text-2xl font-bold text-dna-emerald mb-4">Track Our Progress</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-neutral-600 leading-relaxed">
                   Follow our development journey phase by phase
                 </p>
               </CardContent>
@@ -51,7 +51,7 @@ const CTASection = () => {
                   <Eye className="w-8 h-8 text-dna-forest" />
                 </div>
                 <h3 className="text-2xl font-bold text-dna-forest mb-4">Learn About DNA</h3>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-neutral-600 leading-relaxed">
                   Understand our mission, vision, and approach
                 </p>
               </CardContent>

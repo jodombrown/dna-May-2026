@@ -7,16 +7,15 @@
  */
 
 import React from 'react';
+import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseSection, PulseStatus } from '@/types/pulse';
-
-type IconComponent = React.ComponentType<{ className?: string; strokeWidth?: number | string }>;
 
 interface PulseTrayItemProps {
   item: {
     key: string;
     label: string;
-    icon: IconComponent;
+    icon: LucideIcon;
     href: string;
   };
   pulseData: Partial<PulseSection> | null;
@@ -27,14 +26,14 @@ interface PulseTrayItemProps {
 const STATUS_BG: Record<PulseStatus, string> = {
   active: 'bg-dna-emerald/10',
   attention: 'bg-dna-copper/10',
-  dormant: 'bg-gray-50',
+  dormant: 'bg-neutral-50',
   urgent: 'bg-dna-copper/10',
 };
 
 const STATUS_INDICATOR: Record<PulseStatus, string> = {
   active: 'bg-dna-emerald',
   attention: 'bg-dna-copper',
-  dormant: 'bg-gray-300',
+  dormant: 'bg-neutral-300',
   urgent: 'bg-dna-copper animate-pulse',
 };
 
@@ -51,9 +50,9 @@ export function PulseTrayItem({ item, pulseData, onClick, variant }: PulseTrayIt
           className={cn(
             'relative flex items-center justify-center',
             'w-12 h-12 rounded-full',
-            'bg-gray-100 text-gray-600',
-            'hover:bg-gray-200 transition-colors',
-            'active:bg-gray-300 active:shadow-inner'
+            'bg-neutral-100 text-neutral-600',
+            'hover:bg-neutral-200 transition-colors',
+            'active:bg-neutral-300 active:shadow-inner'
           )}
         >
           <Icon className="w-5 h-5" />
@@ -63,7 +62,7 @@ export function PulseTrayItem({ item, pulseData, onClick, variant }: PulseTrayIt
             </span>
           )}
         </div>
-        <span className="text-xs text-gray-500">{item.label}</span>
+        <span className="text-xs text-neutral-500">{item.label}</span>
       </button>
     );
   }
@@ -82,7 +81,7 @@ export function PulseTrayItem({ item, pulseData, onClick, variant }: PulseTrayIt
     >
       {/* Icon with status indicator */}
       <div className="relative mb-2">
-        <Icon className={cn('w-6 h-6', status === 'dormant' ? 'text-gray-400' : 'text-gray-700')} />
+        <Icon className={cn('w-6 h-6', status === 'dormant' ? 'text-neutral-400' : 'text-neutral-700')} />
         {status !== 'dormant' && (
           <span
             className={cn(
@@ -99,7 +98,7 @@ export function PulseTrayItem({ item, pulseData, onClick, variant }: PulseTrayIt
       <span
         className={cn(
           'text-xs font-medium',
-          status === 'dormant' ? 'text-gray-400' : 'text-gray-700'
+          status === 'dormant' ? 'text-neutral-400' : 'text-neutral-700'
         )}
       >
         {item.label}
@@ -107,7 +106,7 @@ export function PulseTrayItem({ item, pulseData, onClick, variant }: PulseTrayIt
 
       {/* Micro-text */}
       {microText && (
-        <span className="text-[10px] text-gray-500 mt-0.5 truncate max-w-full">{microText}</span>
+        <span className="text-[10px] text-neutral-500 mt-0.5 truncate max-w-full">{microText}</span>
       )}
     </button>
   );

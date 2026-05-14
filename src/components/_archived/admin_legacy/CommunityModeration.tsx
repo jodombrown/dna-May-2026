@@ -190,12 +190,12 @@ const CommunityModeration = () => {
             <p className="text-sm text-green-600">Active</p>
           </div>
         </div>
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+        <div className="bg-copper-50 border border-copper-200 rounded-lg p-4">
           <div className="text-center">
-            <p className="text-2xl font-bold text-purple-600">
+            <p className="text-2xl font-bold text-copper-600">
               {communities.filter(c => c.is_featured).length}
             </p>
-            <p className="text-sm text-purple-600">Featured</p>
+            <p className="text-sm text-copper-600">Featured</p>
           </div>
         </div>
       </div>
@@ -282,7 +282,7 @@ const CommunityModeration = () => {
                               
                               <div>
                                 <label className="text-sm font-medium">Description</label>
-                                <p className="text-sm bg-gray-50 p-3 rounded">
+                                <p className="text-sm bg-neutral-50 p-3 rounded">
                                   {selectedCommunity.description}
                                 </p>
                               </div>

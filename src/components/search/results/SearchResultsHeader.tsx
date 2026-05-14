@@ -13,7 +13,7 @@ const SearchResultsHeader: React.FC<SearchResultsHeaderProps> = ({
   eventsCount
 }) => {
   return (
-    <div className="text-sm text-gray-600 mb-4">
+    <div className="text-sm text-neutral-600 mb-4">
       Found {professionalsCount} professional{professionalsCount !== 1 ? 's' : ''}, {communitiesCount} communit{communitiesCount !== 1 ? 'ies' : 'y'}, and {eventsCount} event{eventsCount !== 1 ? 's' : ''}
     </div>
   );

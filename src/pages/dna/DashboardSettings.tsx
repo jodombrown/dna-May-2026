@@ -6,8 +6,9 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useDashboardPreferences, DashboardModule } from '@/hooks/useDashboardPreferences';
+import { MateMasie } from '@/components/icons/adinkra';
 
-import { Sparkles, GripVertical, X } from 'lucide-react';
+import { GripVertical, X } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -132,8 +133,8 @@ export default function DashboardSettings() {
 
       <div className="container max-w-4xl mx-auto pb-8 px-4">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Sparkles className="h-8 w-8 text-primary" />
+          <h1 className="text-h1 font-serif flex items-center gap-2">
+            <MateMasie className="h-8 w-8 text-primary" />
             Dashboard Settings
           </h1>
           <p className="text-muted-foreground mt-2">

@@ -29,7 +29,7 @@ export const ImpactProfileLink: React.FC<ImpactProfileLinkProps> = ({
     if (score >= 500) return { label: 'Influencer', color: 'bg-dna-copper text-white' };
     if (score >= 200) return { label: 'Contributor', color: 'bg-dna-emerald text-white' };
     if (score >= 50) return { label: 'Engaged', color: 'bg-dna-mint text-dna-forest' };
-    return { label: 'Starting', color: 'bg-gray-200 text-gray-700' };
+    return { label: 'Starting', color: 'bg-neutral-200 text-neutral-700' };
   };
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -53,7 +53,7 @@ export const ImpactProfileLink: React.FC<ImpactProfileLinkProps> = ({
   };
 
   return (
-    <div className={`flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-dna-emerald/30 transition-colors ${className}`}>
+    <div className={`flex items-center justify-between p-3 bg-white rounded-lg border border-neutral-200 hover:border-dna-emerald/30 transition-colors ${className}`}>
       <Link to={profileUrl} className="flex items-center space-x-3 flex-1 min-w-0">
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
@@ -64,10 +64,10 @@ export const ImpactProfileLink: React.FC<ImpactProfileLinkProps> = ({
               </Badge>
             )}
           </div>
-          <p className="text-sm text-gray-500">@{username}</p>
+          <p className="text-sm text-neutral-500">@{username}</p>
           {influenceScore !== undefined && (
             <div className="flex items-center space-x-2 mt-1">
-              <span className="text-xs text-gray-600">{influenceScore} influence points</span>
+              <span className="text-xs text-neutral-600">{influenceScore} influence points</span>
               <Badge className={`text-xs ${getInfluenceLevel(influenceScore).color}`}>
                 {getInfluenceLevel(influenceScore).label}
               </Badge>

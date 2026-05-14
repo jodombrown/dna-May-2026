@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, X, Loader2, MapPin, Briefcase, Users, Sparkles } from 'lucide-react';
+import { Search, X, Loader2, MapPin, Briefcase, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface SearchResult {
   id: string;
@@ -378,7 +379,7 @@ export function SearchTypeahead({
                 setIsOpen(false);
               }}
             >
-              <Sparkles className="h-3.5 w-3.5" />
+              <Sankofa className="h-3.5 w-3.5" />
               See all results for "{query}"
             </div>
           )}

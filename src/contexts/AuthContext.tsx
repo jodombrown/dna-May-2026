@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -86,14 +86,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Fetch user profile
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
-      
+
       if (error) {
         return;
       }
@@ -126,14 +126,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch {
       // Silently ignore profile fetch errors
     }
-  };
+  }, []);
 
   // Public method to refresh profile
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     if (user) {
       await fetchProfile(user.id);
     }
-  };
+  }, [user, fetchProfile]);
 
   useEffect(() => {
     // Removed dev bypass; relying solely on Supabase auth
@@ -189,10 +189,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
     try {
       const redirectUrl = `${window.location.origin}/dna/feed`;
-      
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -203,14 +203,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
       });
-      
+
       if (error) {
-        // Provide more specific error messages
         if (error.message.includes('already registered') || error.message.includes('User already registered')) {
           return { error: { ...error, message: 'This email is already registered. Please sign in instead.' } };
         }
         const lowerMsg = error.message.toLowerCase();
-        // Map only explicit minimum-length messages to our 8-character requirement
         if (
           lowerMsg.includes('should be at least') ||
           lowerMsg.includes('at least 6 characters') ||
@@ -218,7 +216,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ) {
           return { error: { ...error, message: 'Password must be at least 8 characters long.' } };
         }
-        // For other password-related errors (strength, leaks, etc.), surface Supabase's message directly
         if (lowerMsg.includes('password')) {
           return { error };
         }
@@ -228,30 +225,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (error.message.includes('network') || error.message.includes('fetch')) {
           return { error: { ...error, message: 'Connection error. Please check your internet connection and try again.' } };
         }
-        // Return the original error message if no specific match
         return { error };
       }
-      
+
       return { error };
     } catch {
-      return { 
-        error: { 
+      return {
+        error: {
           message: 'Unable to connect to the server. Please check your internet connection and try again.',
           name: 'NetworkError'
-        } 
+        }
       };
     }
-  };
+  }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      
+
       if (error) {
-        // Provide more specific error messages
         if (error.message.includes('Invalid login credentials')) {
           return { error: { ...error, message: 'Invalid email or password. Please try again.' } };
         }
@@ -262,19 +257,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return { error: { ...error, message: 'Connection error. Please check your internet connection and try again.' } };
         }
       }
-      
+
       return { error, data: { user: data?.user ?? null } };
     } catch {
-      return { 
-        error: { 
+      return {
+        error: {
           message: 'Unable to connect to the server. Please check your internet connection and try again.',
           name: 'NetworkError'
-        } 
+        }
       };
     }
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       await supabase.auth.signOut();
     } finally {
@@ -282,16 +277,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setProfile(null);
     }
-  };
+  }, []);
 
-  const updatePassword = async (password: string) => {
+  const updatePassword = useCallback(async (password: string) => {
     const { error } = await supabase.auth.updateUser({
       password: password
     });
     return { error };
-  };
+  }, []);
 
-  const value = {
+  // CRITICAL PERF: memoize the context value so consumers (every component
+  // reading useAuth()) only re-render when actual auth state changes, not on
+  // every AuthProvider render.
+  const value = useMemo<AuthContextType>(() => ({
     user,
     session,
     loading,
@@ -301,6 +299,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut,
     updatePassword,
     refreshProfile,
-  };
+  }), [user, session, loading, profile, signUp, signIn, signOut, updatePassword, refreshProfile]);
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

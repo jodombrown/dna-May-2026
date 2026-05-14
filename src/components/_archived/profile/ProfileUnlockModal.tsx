@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sankofa } from '@/components/icons/adinkra';
 import {
   Dialog,
   DialogContent,
@@ -7,7 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Sparkles, Users, Calendar, Briefcase, Gift } from 'lucide-react';
+import { CheckCircle2, Users, Calendar, Briefcase, Gift } from 'lucide-react';
 
 interface ProfileUnlockModalProps {
   isOpen: boolean;
@@ -48,7 +49,7 @@ export const ProfileUnlockModal: React.FC<ProfileUnlockModalProps> = ({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-dna-copper to-dna-forest rounded-full flex items-center justify-center">
-            <Sparkles className="h-8 w-8 text-white" />
+            <Sankofa className="h-8 w-8 text-white" />
           </div>
           <DialogTitle className="text-center text-2xl">
             Profile Unlocked! 🎉

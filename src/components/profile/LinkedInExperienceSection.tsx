@@ -42,7 +42,7 @@ const LinkedInExperienceSection: React.FC<ExperienceSectionProps> = ({
           </Button>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500 text-center py-8">
+          <p className="text-neutral-500 text-center py-8">
             Add your professional experience to showcase your career journey
           </p>
         </CardContent>
@@ -68,20 +68,20 @@ const LinkedInExperienceSection: React.FC<ExperienceSectionProps> = ({
               <Briefcase className="w-6 h-6 text-dna-copper" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-gray-900">
+              <h3 className="font-semibold text-lg text-neutral-900">
                 {profile.professional_role || 'Current Position'}
               </h3>
               {profile.organization && (
                 <p className="text-dna-copper font-medium">{profile.organization}</p>
               )}
               {profile.years_experience && (
-                <div className="flex items-center gap-1 text-gray-600 mt-1">
+                <div className="flex items-center gap-1 text-neutral-600 mt-1">
                   <Calendar className="w-4 h-4" />
                   <span>{profile.years_experience} years experience</span>
                 </div>
               )}
               {profile.industry && (
-                <div className="flex items-center gap-1 text-gray-600 mt-1">
+                <div className="flex items-center gap-1 text-neutral-600 mt-1">
                   <Building className="w-4 h-4" />
                   <span>{profile.industry}</span>
                 </div>
@@ -97,8 +97,8 @@ const LinkedInExperienceSection: React.FC<ExperienceSectionProps> = ({
               <GraduationCap className="w-6 h-6 text-dna-emerald" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-gray-900">Education</h3>
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+              <h3 className="font-semibold text-lg text-neutral-900">Education</h3>
+              <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
                 {profile.education}
               </p>
             </div>
@@ -112,8 +112,8 @@ const LinkedInExperienceSection: React.FC<ExperienceSectionProps> = ({
               <Award className="w-6 h-6 text-dna-gold" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-gray-900">Certifications</h3>
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+              <h3 className="font-semibold text-lg text-neutral-900">Certifications</h3>
+              <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
                 {profile.certifications}
               </p>
             </div>
@@ -127,8 +127,8 @@ const LinkedInExperienceSection: React.FC<ExperienceSectionProps> = ({
               <Award className="w-6 h-6 text-dna-crimson" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-lg text-gray-900">Key Achievements</h3>
-              <p className="text-gray-700 whitespace-pre-line leading-relaxed">
+              <h3 className="font-semibold text-lg text-neutral-900">Key Achievements</h3>
+              <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
                 {profile.achievements}
               </p>
             </div>
@@ -138,7 +138,7 @@ const LinkedInExperienceSection: React.FC<ExperienceSectionProps> = ({
         {/* Skills from profile */}
         {profile.skills && profile.skills.length > 0 && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-3">Skills & Expertise</h4>
+            <h4 className="font-semibold text-neutral-900 mb-3">Skills & Expertise</h4>
             <div className="flex flex-wrap gap-2">
               {profile.skills.map((skill: string, index: number) => (
                 <Badge 

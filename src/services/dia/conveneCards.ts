@@ -12,6 +12,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { DIACard } from '@/services/diaCardService';
+import { MateMasie } from '@/components/icons/adinkra';
 const ACCENT = '#C4942A';
 
 // ── Card Type 1: Event Overlap ─────────────────────
@@ -305,7 +306,7 @@ async function generateCuratedEventCard(_userId: string): Promise<DIACard | null
       headline: event.title,
       body: `${location ? `📍 ${location} · ` : ''}${event.event_type || 'Event'} curated by DNA for the diaspora community.${tags.length > 0 ? ` Tags: ${tags.join(', ')}` : ''}`,
       accentColor: ACCENT,
-      icon: 'Sparkles',
+      icon: 'MateMasie',
       priority: 55,
       actions: [
         { label: 'View Event', type: 'navigate' as const, payload: { url: `/dna/convene/events/${event.id}` }, isPrimary: true },

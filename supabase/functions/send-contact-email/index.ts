@@ -52,24 +52,32 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { name, email, linkedin_url, message } = body;
 
+    const esc = (s: unknown) =>
+      String(s ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
     const adminHtml = `
       <h2>New Contact Form Submission</h2>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>LinkedIn URL:</strong> ${linkedin_url}</p>
+      <p><strong>Name:</strong> ${esc(name)}</p>
+      <p><strong>Email:</strong> ${esc(email)}</p>
+      <p><strong>LinkedIn URL:</strong> ${esc(linkedin_url)}</p>
       <p><strong>Message:</strong></p>
-      <p>${message}</p>
+      <p>${esc(message).replace(/\n/g, "<br/>")}</p>
       <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
     `;
 
     const userHtml = `
       <h1>Thank you for reaching out!</h1>
-      <p>Hi ${name},</p>
+      <p>Hi ${esc(name)},</p>
       <p>We've received your message and our team will review it carefully.</p>
       <p><strong>What happens next:</strong></p>
       <ul>
         <li>Our team will review your inquiry within 24-48 hours</li>
-        <li>We'll respond to you directly at ${email}</li>
+        <li>We'll respond to you directly at ${esc(email)}</li>
         <li>For urgent matters, you can also reach us through our social channels</li>
       </ul>
       <p>Thank you for your interest in the Diaspora Network of Africa!</p>

@@ -14,7 +14,7 @@ export function ManifestoSection({ number, children, isLast = false }: Manifesto
   return (
     <section
       ref={ref}
-      className={`min-h-screen flex flex-col justify-center px-6 md:px-8 py-16 md:py-24 ${isLast ? 'pb-32' : ''}`}
+      className={`min-h-screen flex flex-col justify-center px-6 md:px-8 py-16 md:py-12 ${isLast ? 'pb-32' : ''}`}
     >
       <div className="max-w-3xl mx-auto w-full">
         <motion.p

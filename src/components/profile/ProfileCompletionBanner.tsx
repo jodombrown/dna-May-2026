@@ -3,9 +3,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { X, Sparkles, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { ProfileMissingFields } from './ProfileMissingFields';
 import { useNavigate } from 'react-router-dom';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileCompletionBannerProps {
   minForFull?: number; // show banner until this score
@@ -52,7 +53,7 @@ export const ProfileCompletionBanner: React.FC<ProfileCompletionBannerProps> = (
       <div className="rounded-lg border border-dna-copper/30 bg-gradient-to-r from-dna-copper/5 to-dna-gold/5 p-4 shadow-sm">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 p-2 bg-dna-copper/20 rounded-full">
-            <Sparkles className="h-4 w-4 text-dna-copper" />
+            <Sankofa className="h-4 w-4 text-dna-copper" />
           </div>
           <div className="flex-1">
             <div className="flex items-center justify-between">

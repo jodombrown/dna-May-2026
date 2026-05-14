@@ -123,7 +123,7 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
           <SheetTitle className="text-2xl font-bold text-dna-forest">
             DNA Market Validation Survey
           </SheetTitle>
-          <p className="text-gray-600">
+          <p className="text-neutral-600">
             Thank you for participating in this survey. Your feedback will help shape a new digital platform 
             designed to connect, empower, and mobilize the African diaspora for Africa's progress. 
             All responses are confidential.
@@ -364,7 +364,7 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
             </div>
 
             {formData.follow_up && (
-              <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+              <div className="space-y-4 bg-neutral-50 p-4 rounded-lg">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="first_name">First Name</Label>

@@ -1,11 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, TrendingUp, Users, Award, Info } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 import { OrganizerAnalytics } from '@/hooks/useEventAnalytics';
 import { format } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { predictAttendance } from '@/lib/diaAttendancePrediction';
+import { OrganizerAlertsCard } from './OrganizerAlertsCard';
 
 interface OrganizerAnalyticsDashboardProps {
   analytics: OrganizerAnalytics;
@@ -16,6 +19,8 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
 
   return (
     <div className="space-y-6">
+      <OrganizerAlertsCard analytics={analytics} />
+
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
@@ -112,8 +117,9 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
             </TabsContent>
             
             <TabsContent value="upcoming" className="mt-4">
-              <EventListTable 
-                events={(event_list || []).filter(e => new Date(e.start_time) > new Date())} 
+              <EventListTable
+                events={(event_list || []).filter(e => new Date(e.start_time) > new Date())}
+                forecastShowUpRate={avg_show_up_rate}
               />
             </TabsContent>
             
@@ -131,9 +137,10 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
 
 interface EventListTableProps {
   events: OrganizerAnalytics['event_list'];
+  forecastShowUpRate?: number;
 }
 
-const EventListTable = ({ events }: EventListTableProps) => {
+const EventListTable = ({ events, forecastShowUpRate }: EventListTableProps) => {
   if (!events || events.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -141,6 +148,8 @@ const EventListTable = ({ events }: EventListTableProps) => {
       </div>
     );
   }
+
+  const showForecast = typeof forecastShowUpRate === 'number';
 
   return (
     <div className="rounded-md border">
@@ -153,12 +162,29 @@ const EventListTable = ({ events }: EventListTableProps) => {
             <TableHead className="text-right">Going</TableHead>
             <TableHead className="text-right">Checked In</TableHead>
             <TableHead className="text-right">Show-up Rate</TableHead>
+            {showForecast && (
+              <TableHead className="text-right">
+                <span className="inline-flex items-center gap-1">
+                  <MateMasie className="h-3.5 w-3.5" />
+                  Forecast
+                </span>
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {events.map((event) => {
             const isPast = new Date(event.end_time) < new Date();
-            
+            const forecast = showForecast && !isPast
+              ? predictAttendance({
+                  eventStartIso: event.start_time,
+                  goingNow: event.going_count,
+                  totalRsvpsNow: event.total_rsvps,
+                  rsvpTimeline: null,
+                  organizerHistoricalShowUpRate: forecastShowUpRate,
+                })
+              : null;
+
             return (
               <TableRow key={event.event_id}>
                 <TableCell className="font-medium max-w-xs truncate">
@@ -194,6 +220,18 @@ const EventListTable = ({ events }: EventListTableProps) => {
                     <span className="text-muted-foreground">-</span>
                   )}
                 </TableCell>
+                {showForecast && (
+                  <TableCell className="text-right text-sm tabular-nums">
+                    {forecast ? (
+                      <span className="text-foreground/80">
+                        {forecast.predictedGoingLow}-{forecast.predictedGoingHigh}
+                        <span className="text-muted-foreground ml-1">going</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             );
           })}

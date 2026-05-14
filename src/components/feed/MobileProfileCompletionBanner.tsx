@@ -12,9 +12,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, X } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
+import { Sankofa } from '@/components/icons/adinkra';
 
 const STORAGE_KEY_PREFIX = 'dna_profile_banner_shown_';
 const CONFETTI_SHOWN_KEY = 'dna_profile_100_confetti_shown';
@@ -240,7 +241,7 @@ export const MobileProfileCompletionBanner: React.FC<MobileProfileCompletionBann
         >
           <div className="mx-3 px-3 py-2 bg-gradient-to-r from-dna-copper/10 via-dna-gold/5 to-dna-emerald/10 border border-dna-copper/20 rounded-lg">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-3.5 w-3.5 text-dna-copper flex-shrink-0" />
+              <Sankofa className="h-3.5 w-3.5 text-dna-copper flex-shrink-0" />
               <div className="flex-1 min-w-0 flex items-center gap-2">
                 <span className="text-xs font-medium whitespace-nowrap">{completenessScore}%</span>
                 <div className="flex-1 h-1.5 bg-muted/50 rounded-full overflow-hidden">

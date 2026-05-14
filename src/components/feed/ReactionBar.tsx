@@ -51,7 +51,7 @@ interface ReactionBarProps {
 
 const REACTIONS: ReactionConfig[] = [
   { type: 'asante', emoji: '\uD83D\uDE4F', label: 'Asante', color: 'text-amber-500' },
-  { type: 'inspired', emoji: '\u2728', label: 'Inspired', color: 'text-purple-500' },
+  { type: 'inspired', emoji: '\u2728', label: 'Inspired', color: 'text-copper-500' },
   { type: 'lets_build', emoji: '\uD83D\uDD28', label: "Let's Build", color: 'text-blue-500' },
   { type: 'powerful', emoji: '\u270A', label: 'Powerful', color: 'text-red-500' },
   { type: 'insightful', emoji: '\uD83E\uDDE0', label: 'Insightful', color: 'text-emerald-500' },

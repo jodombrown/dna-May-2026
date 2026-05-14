@@ -1,27 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Users,
-  Activity,
-  UserPlus,
-  Link2,
-  RefreshCw,
-  TrendingUp,
-  TrendingDown,
-  MessageSquare,
-  Shield,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  Globe,
-  Zap,
-  Heart
-} from 'lucide-react';
+import { Users, Activity, UserPlus, Link2, RefreshCw, TrendingUp, TrendingDown, MessageSquare, Shield, Calendar, Clock, CheckCircle2, Globe, Heart } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   LineChart,
   Line,
@@ -93,8 +78,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
       <CardContent className="pt-6">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-500">{title}</p>
-            <p className="text-2xl font-bold text-slate-900 mt-1">
+            <p className="text-sm font-medium text-neutral-500">{title}</p>
+            <p className="text-2xl font-bold text-neutral-900 mt-1">
               {typeof value === 'number' ? value.toLocaleString() : value}
             </p>
             {trend && (
@@ -112,11 +97,11 @@ const MetricCard: React.FC<MetricCardProps> = ({
                 >
                   {trend.value > 0 ? '+' : ''}{trend.value}%
                 </span>
-                <span className="text-xs text-slate-400">{trend.label}</span>
+                <span className="text-xs text-neutral-400">{trend.label}</span>
               </div>
             )}
             {subtitle && (
-              <p className="text-xs text-slate-400 mt-1">{subtitle}</p>
+              <p className="text-xs text-neutral-400 mt-1">{subtitle}</p>
             )}
           </div>
           <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
@@ -176,13 +161,13 @@ const AdminDashboardOverview: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard Overview</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-neutral-900">Dashboard Overview</h1>
+          <p className="text-neutral-500 mt-1">
             Monitor your platform's key metrics and performance
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="text-sm text-slate-400">
+          <div className="text-sm text-neutral-400">
             <Clock className="w-4 h-4 inline mr-1" />
             Last updated: {lastRefresh.toLocaleTimeString()}
           </div>
@@ -321,13 +306,13 @@ const AdminDashboardOverview: React.FC = () => {
                     verticalAlign="bottom"
                     height={36}
                     formatter={(value: string) => (
-                      <span className="text-sm text-slate-600">{value}</span>
+                      <span className="text-sm text-neutral-600">{value}</span>
                     )}
                   />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[300px] flex items-center justify-center text-slate-400">
+              <div className="h-[300px] flex items-center justify-center text-neutral-400">
                 No segment data available
               </div>
             )}
@@ -348,11 +333,11 @@ const AdminDashboardOverview: React.FC = () => {
           <CardContent className="space-y-3">
             <Link
               to="/admin/dashboard"
-              className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <MessageSquare className="w-4 h-4 text-slate-500" />
-                <span className="text-sm text-slate-700">Feedback</span>
+                <MessageSquare className="w-4 h-4 text-neutral-500" />
+                <span className="text-sm text-neutral-700">Feedback</span>
               </div>
               <Badge variant={stats?.feedback.pending ? 'destructive' : 'secondary'}>
                 {stats?.feedback.pending || 0}
@@ -360,11 +345,11 @@ const AdminDashboardOverview: React.FC = () => {
             </Link>
             <Link
               to="/admin/moderation"
-              className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Shield className="w-4 h-4 text-slate-500" />
-                <span className="text-sm text-slate-700">Content Flags</span>
+                <Shield className="w-4 h-4 text-neutral-500" />
+                <span className="text-sm text-neutral-700">Content Flags</span>
               </div>
               <Badge variant={stats?.moderation.pending_flags ? 'destructive' : 'secondary'}>
                 {stats?.moderation.pending_flags || 0}
@@ -372,11 +357,11 @@ const AdminDashboardOverview: React.FC = () => {
             </Link>
             <Link
               to="/admin/dashboard"
-              className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <Calendar className="w-4 h-4 text-slate-500" />
-                <span className="text-sm text-slate-700">Upcoming Events</span>
+                <Calendar className="w-4 h-4 text-neutral-500" />
+                <span className="text-sm text-neutral-700">Upcoming Events</span>
               </div>
               <Badge variant="secondary">
                 {stats?.events.upcoming || 0}
@@ -396,22 +381,22 @@ const AdminDashboardOverview: React.FC = () => {
           <CardContent className="space-y-4">
             <div>
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-slate-600">System Status</span>
+                <span className="text-neutral-600">System Status</span>
                 <span className="text-emerald-600 font-medium">Online</span>
               </div>
-              <Progress value={100} className="h-2 bg-slate-100" />
+              <Progress value={100} className="h-2 bg-neutral-100" />
             </div>
             <div>
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-slate-600">User Engagement</span>
-                <span className="text-slate-700 font-medium">{stickinessRatio}%</span>
+                <span className="text-neutral-600">User Engagement</span>
+                <span className="text-neutral-700 font-medium">{stickinessRatio}%</span>
               </div>
-              <Progress value={stickinessRatio} className="h-2 bg-slate-100" />
+              <Progress value={stickinessRatio} className="h-2 bg-neutral-100" />
             </div>
             <div>
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-slate-600">Connection Rate</span>
-                <span className="text-slate-700 font-medium">
+                <span className="text-neutral-600">Connection Rate</span>
+                <span className="text-neutral-700 font-medium">
                   {stats?.users.total && stats?.connections.total
                     ? Math.round((stats.connections.total / stats.users.total) * 100)
                     : 0}%
@@ -421,7 +406,7 @@ const AdminDashboardOverview: React.FC = () => {
                 value={stats?.users.total && stats?.connections.total
                   ? Math.round((stats.connections.total / stats.users.total) * 100)
                   : 0}
-                className="h-2 bg-slate-100"
+                className="h-2 bg-neutral-100"
               />
             </div>
           </CardContent>
@@ -431,7 +416,7 @@ const AdminDashboardOverview: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Zap className="w-5 h-5 text-blue-500" />
+              <MateMasie className="w-5 h-5 text-blue-500" />
               Module Activity
             </CardTitle>
           </CardHeader>
@@ -450,12 +435,12 @@ const AdminDashboardOverview: React.FC = () => {
               </div>
               <Badge className="bg-blue-600 hover:bg-blue-700">Active</Badge>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-purple-50 border border-purple-200">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-copper-50 border border-copper-200">
               <div className="flex items-center gap-3">
-                <Heart className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-700">COLLABORATE</span>
+                <Heart className="w-4 h-4 text-copper-600" />
+                <span className="text-sm font-medium text-copper-700">COLLABORATE</span>
               </div>
-              <Badge className="bg-purple-600 hover:bg-purple-700">Active</Badge>
+              <Badge className="bg-copper-600 hover:bg-copper-700">Active</Badge>
             </div>
           </CardContent>
         </Card>
@@ -467,11 +452,11 @@ const AdminDashboardOverview: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Posts</p>
-                <p className="text-xl font-bold text-slate-900">
+                <p className="text-sm text-neutral-500">Total Posts</p>
+                <p className="text-xl font-bold text-neutral-900">
                   {stats?.content.total_posts?.toLocaleString() || 0}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-neutral-400 mt-1">
                   {stats?.content.posts_this_week || 0} this week
                 </p>
               </div>
@@ -486,16 +471,16 @@ const AdminDashboardOverview: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Total Events</p>
-                <p className="text-xl font-bold text-slate-900">
+                <p className="text-sm text-neutral-500">Total Events</p>
+                <p className="text-xl font-bold text-neutral-900">
                   {stats?.events.total?.toLocaleString() || 0}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-neutral-400 mt-1">
                   {stats?.events.this_week || 0} this week
                 </p>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-purple-600" />
+              <div className="w-8 h-8 rounded-lg bg-copper-100 flex items-center justify-center">
+                <Calendar className="w-4 h-4 text-copper-600" />
               </div>
             </div>
           </CardContent>
@@ -505,11 +490,11 @@ const AdminDashboardOverview: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Weekly Active</p>
-                <p className="text-xl font-bold text-slate-900">
+                <p className="text-sm text-neutral-500">Weekly Active</p>
+                <p className="text-xl font-bold text-neutral-900">
                   {stats?.users.wau?.toLocaleString() || 0}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-neutral-400 mt-1">
                   {stats?.users.mau || 0} monthly
                 </p>
               </div>
@@ -524,11 +509,11 @@ const AdminDashboardOverview: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-500">Resolved Flags</p>
-                <p className="text-xl font-bold text-slate-900">
+                <p className="text-sm text-neutral-500">Resolved Flags</p>
+                <p className="text-xl font-bold text-neutral-900">
                   {stats?.moderation.resolved_this_week?.toLocaleString() || 0}
                 </p>
-                <p className="text-xs text-slate-400 mt-1">this week</p>
+                <p className="text-xs text-neutral-400 mt-1">this week</p>
               </div>
               <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />

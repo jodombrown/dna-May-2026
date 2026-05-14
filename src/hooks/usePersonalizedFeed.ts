@@ -57,10 +57,13 @@ export const usePersonalizedFeed = (limit: number = 20) => {
       }
 
       // Map universal feed response to personalized format
-      return ((data as any[]) || []).map(item => ({
-        ...item,
-        personalization_score: 1.0, // Default score until ML is implemented
-      })) as PersonalizedPost[];
+      // Exclude the viewer's own posts from "For You"
+      return ((data as any[]) || [])
+        .filter((item) => item.author_id !== user.id)
+        .map((item) => ({
+          ...item,
+          personalization_score: 1.0, // Default score until ML is implemented
+        })) as PersonalizedPost[];
     },
     enabled: !!user,
     staleTime: 2 * 60 * 1000, // 2 minutes - personalized feed changes less frequently

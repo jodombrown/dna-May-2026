@@ -3,9 +3,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfileAccess } from '@/hooks/useProfileAccess';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { X, Sparkles, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ProfileMissingFields } from '@/components/profile/ProfileMissingFields';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ProfileStrengthBannerProps {
   minForFull?: number;
@@ -46,7 +47,7 @@ export const ProfileStrengthBanner = ({ minForFull = 40 }: ProfileStrengthBanner
     <div className="p-4 bg-gradient-to-r from-dna-copper/10 via-dna-gold/5 to-dna-emerald/10 border border-dna-copper/30 rounded-lg">
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 p-2 bg-dna-copper/20 rounded-full">
-          <Sparkles className="h-4 w-4 text-dna-copper" />
+          <Sankofa className="h-4 w-4 text-dna-copper" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">

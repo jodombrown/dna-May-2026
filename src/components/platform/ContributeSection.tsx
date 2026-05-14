@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, DollarSign, Clock, Users, Lightbulb, ArrowRight, Award, TrendingUp, Target } from 'lucide-react';
+import { Adinkrahene } from '@/components/icons/adinkra';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -83,8 +84,8 @@ const ContributeSection = () => {
   const renderCard = (contribution: typeof contributions[0]) => {
     const Icon = contribution.icon;
     return (
-      <div className={`bg-gradient-to-br ${contribution.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-        <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+      <div className={`bg-gradient-to-br ${contribution.gradient} rounded-xl p-1.5 shadow-2xl h-full w-full`}>
+        <div className="bg-white rounded-xl overflow-hidden h-full flex flex-col">
           <div className={`bg-gradient-to-r ${contribution.gradient} text-white p-6`}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold text-lg font-serif">{contribution.categoryTitle}</h3>
@@ -99,26 +100,26 @@ const ContributeSection = () => {
                 <Badge className="bg-dna-gold text-white text-xs">{contribution.badge}</Badge>
                 <Badge variant="outline" className="text-xs">{contribution.type}</Badge>
               </div>
-              <h4 className="font-bold text-xl text-gray-900 mb-1">{contribution.title}</h4>
+              <h4 className="font-bold text-xl text-neutral-900 mb-1">{contribution.title}</h4>
             </div>
 
             <div className="bg-dna-gold/5 rounded-xl p-4 border-2 border-dna-gold/30">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+              <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">
                 {contribution.type === 'Capital' ? 'Investment Range' : 'Time Commitment'}
               </p>
-              <p className="text-lg font-bold text-gray-900">
+              <p className="text-lg font-bold text-neutral-900">
                 {contribution.amount || contribution.commitment}
               </p>
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Contributing To</p>
+              <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Contributing To</p>
               <div className="flex items-center gap-2">
                 <div className="w-10 h-10 bg-gradient-to-br from-dna-emerald to-dna-forest rounded-lg flex items-center justify-center">
                   <Users className="w-5 h-5 text-white" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-900">{contribution.project}</p>
+                  <p className="font-semibold text-neutral-900">{contribution.project}</p>
                 </div>
               </div>
             </div>
@@ -126,17 +127,17 @@ const ContributeSection = () => {
             <div className="bg-dna-emerald/5 rounded-xl p-4 border-2 border-dna-emerald/30">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-4 h-4 text-dna-emerald" />
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Expected Impact</p>
+                <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Expected Impact</p>
               </div>
-              <p className="text-sm font-bold text-gray-900">{contribution.impact}</p>
+              <p className="text-sm font-bold text-neutral-900">{contribution.impact}</p>
             </div>
 
             <div className="bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 rounded-xl p-4 border-2 border-dna-copper/30">
               <div className="flex items-center gap-2">
                 <Award className="w-5 h-5 text-dna-copper" />
                 <div>
-                  <p className="text-xs font-semibold text-gray-500">You'll Earn</p>
-                  <p className="text-sm font-bold text-gray-900">{contribution.recognition}</p>
+                  <p className="text-xs font-semibold text-neutral-500">You'll Earn</p>
+                  <p className="text-sm font-bold text-neutral-900">{contribution.recognition}</p>
                 </div>
               </div>
             </div>
@@ -147,7 +148,7 @@ const ContributeSection = () => {
               Contribute Now
             </Button>
 
-            <p className="text-xs text-center text-gray-500">
+            <p className="text-xs text-center text-neutral-500">
               Track your impact and earn recognition →
             </p>
           </div>
@@ -157,7 +158,7 @@ const ContributeSection = () => {
   };
 
   return (
-    <section id="contribute-section" className="py-16 px-12 sm:px-10 lg:px-8 bg-gray-50">
+    <section id="contribute-section" className="py-16 px-12 sm:px-10 lg:px-8 bg-neutral-50">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
           {/* Left: Card Preview (Desktop) / Swipeable Cards (Mobile) */}
@@ -172,14 +173,14 @@ const ContributeSection = () => {
           <div className="order-1 lg:order-2">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-gold to-dna-ochre rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+                <Adinkrahene className="w-7 h-7 text-white" />
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Contribute</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-neutral-900">Contribute</h2>
             </div>
-            <p className="text-xl font-semibold text-gray-900 mb-3">
+            <p className="text-xl font-semibold text-neutral-900 mb-3">
               Give What You Have, Get What You Need
             </p>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg text-neutral-600 mb-6">
               Contribute your capital, expertise, time, knowledge, or network to the movement and watch your impact multiply. Every contribution is tracked, recognized, and often reciprocated. Whether you invest, mentor, share skills, or make connections, you strengthen the ecosystem while advancing your own goals.
             </p>
 
@@ -189,8 +190,8 @@ const ContributeSection = () => {
                   <Target className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Multiple Contribution Pathways</h3>
-                  <p className="text-sm text-gray-600">Deploy capital, expertise, time, knowledge, or network based on what you can give</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Multiple Contribution Pathways</h3>
+                  <p className="text-sm text-neutral-600">Deploy capital, expertise, time, knowledge, or network based on what you can give</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -198,8 +199,8 @@ const ContributeSection = () => {
                   <TrendingUp className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Measurable Impact</h3>
-                  <p className="text-sm text-gray-600">Track how your contributions create tangible outcomes for specific initiatives</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Measurable Impact</h3>
+                  <p className="text-sm text-neutral-600">Track how your contributions create tangible outcomes for specific initiatives</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -207,8 +208,8 @@ const ContributeSection = () => {
                   <Award className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Reciprocal Ecosystem</h3>
-                  <p className="text-sm text-gray-600">Today's contribution becomes tomorrow's received support. The more you give, the more you gain</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Reciprocal Ecosystem</h3>
+                  <p className="text-sm text-neutral-600">Today's contribution becomes tomorrow's received support. The more you give, the more you gain</p>
                 </div>
               </div>
             </div>

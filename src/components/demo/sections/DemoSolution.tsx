@@ -70,15 +70,15 @@ export const DemoSolution = forwardRef<HTMLElement, DemoSolutionProps>(
       <section 
         ref={ref}
         id={id}
-        className="min-h-screen py-16 md:py-20 bg-background"
+        className="min-h-screen py-16 md:py-12 bg-background"
       >
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
           <div ref={animationRef}>
             {/* Kente Border */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2 } as const}
             >
               <KenteBorder width="80px" height="3px" className="mb-8" />
             </motion.div>
@@ -87,9 +87,9 @@ export const DemoSolution = forwardRef<HTMLElement, DemoSolutionProps>(
             <motion.h2 
               className="font-cormorant font-semibold text-center text-foreground mb-4"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.1 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.1 } as const}
             >
               One Platform. <span className="text-dna-emerald">Five Dimensions.</span>
             </motion.h2>
@@ -97,9 +97,9 @@ export const DemoSolution = forwardRef<HTMLElement, DemoSolutionProps>(
             {/* Supporting Text */}
             <motion.p 
               className="font-outfit text-muted-foreground text-center max-w-2xl mx-auto mb-12 leading-relaxed text-base md:text-lg"
-              initial={{ opacity: 0, y: 30 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: 0.2 } as const}
+              initial={{ opacity: 0 }}
+              animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.2, delay: 0.2 } as const}
             >
               DNA unifies five essential activities into one interconnected system. 
               Each strengthens the others. Together, they transform scattered potential into coordinated power.
@@ -113,9 +113,9 @@ export const DemoSolution = forwardRef<HTMLElement, DemoSolutionProps>(
                   <motion.div 
                     key={c.name}
                     className="bg-background border border-border rounded-xl p-6 hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-                    transition={{ duration: 0.5, delay: 0.3 + index * 0.1 } as const}
+                    initial={{ opacity: 0 }}
+                    animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: 0.2, delay: 0.3 + index * 0.1 } as const}
                   >
                     {/* Icon Container */}
                     <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${c.bgColor}`}>

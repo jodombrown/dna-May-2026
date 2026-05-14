@@ -7,7 +7,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, CheckCircle, AlertCircle, Sparkles, RefreshCw } from 'lucide-react';
+import { Loader2, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface AISuggestion {
   username: string;
@@ -250,7 +251,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-dna-copper" />
+                <MateMasie className="w-4 h-4 text-dna-copper" />
                 <h4 className="font-medium text-foreground">AI Suggestions</h4>
               </div>
               <Button

@@ -34,17 +34,17 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ profile, onEdit }) =>
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-neutral-900">
                 {profile.full_name || 'Your Name'}
               </h1>
               {profile.professional_role && (
-                <div className="flex items-center text-gray-600 mt-1">
+                <div className="flex items-center text-neutral-600 mt-1">
                   <Briefcase className="w-4 h-4 mr-2" />
                   <span>{profile.professional_role}</span>
                 </div>
               )}
               {profile.current_country && (
-                <div className="flex items-center text-gray-600 mt-1">
+                <div className="flex items-center text-neutral-600 mt-1">
                   <MapPin className="w-4 h-4 mr-2" />
                   <span>{profile.current_country}</span>
                 </div>
@@ -65,14 +65,14 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ profile, onEdit }) =>
       <CardContent className="space-y-6">
         {profile.bio && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">About</h3>
-            <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">About</h3>
+            <p className="text-neutral-700 leading-relaxed">{profile.bio}</p>
           </div>
         )}
 
         {profile.interests && profile.interests.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-3 flex items-center gap-2">
               <Hash className="w-5 h-5 text-dna-copper" />
               Diaspora Interests
             </h3>
@@ -92,7 +92,7 @@ const UserProfileView: React.FC<UserProfileViewProps> = ({ profile, onEdit }) =>
 
         {!profile.bio && (!profile.interests || profile.interests.length === 0) && (
           <div className="text-center py-8">
-            <p className="text-gray-500 mb-4">Your profile is looking a bit empty!</p>
+            <p className="text-neutral-500 mb-4">Your profile is looking a bit empty!</p>
             <Button variant="default" onClick={onEdit}>
               Complete Your Profile
             </Button>

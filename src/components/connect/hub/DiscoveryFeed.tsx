@@ -530,7 +530,7 @@ function LaneSkeleton() {
       <div className="h-px bg-dna-emerald/20" />
       <div className="flex gap-4 overflow-hidden">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="min-w-[280px] space-y-3 p-4 border rounded-2xl">
+          <div key={i} className="min-w-[280px] space-y-3 p-4 border rounded-lg">
             <div className="flex gap-3">
               <Skeleton className="h-14 w-14 rounded-full" />
               <div className="flex-1 space-y-2">

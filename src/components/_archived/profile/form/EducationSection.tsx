@@ -92,22 +92,22 @@ const EducationSection: React.FC<EducationSectionProps> = ({
       </CardHeader>
       <CardContent className="space-y-4">
         {education.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            <GraduationCap className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+          <div className="text-center py-8 text-neutral-500">
+            <GraduationCap className="w-12 h-12 mx-auto mb-3 text-neutral-300" />
             <p>No education added yet</p>
             <p className="text-sm">Add your educational background to showcase your qualifications</p>
           </div>
         )}
 
         {education.map((edu) => (
-          <div key={edu.id} className="border rounded-lg p-4 bg-gray-50">
+          <div key={edu.id} className="border rounded-lg p-4 bg-neutral-50">
             <div className="flex items-center justify-between mb-3">
               <div className="flex-1 cursor-pointer" onClick={() => toggleExpanded(edu.id)}>
-                <h4 className="font-medium text-gray-900">
+                <h4 className="font-medium text-neutral-900">
                   {edu.institution || 'New Education Entry'}
                 </h4>
                 {edu.degree && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-neutral-600">
                     {edu.degree} {edu.field_of_study && `in ${edu.field_of_study}`}
                     {edu.start_year && edu.end_year && ` (${edu.start_year} - ${edu.end_year})`}
                   </p>
@@ -138,7 +138,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
               <div className="space-y-4 border-t pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-sm font-medium text-neutral-700">
                       Institution *
                     </Label>
                     <Input
@@ -150,7 +150,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-sm font-medium text-neutral-700">
                       Degree Type *
                     </Label>
                     <Select
@@ -172,7 +172,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-sm font-medium text-neutral-700">
                     Field of Study
                   </Label>
                   <Input
@@ -185,7 +185,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-sm font-medium text-neutral-700">
                       Start Year
                     </Label>
                     <Select
@@ -206,7 +206,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-sm font-medium text-neutral-700">
                       End Year
                     </Label>
                     <Select
@@ -229,7 +229,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-sm font-medium text-neutral-700">
                     Description (Optional)
                   </Label>
                   <Textarea

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Mpatapo } from '@/components/icons/adinkra';
 import {
   Sheet,
   SheetContent,
@@ -9,7 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { ArrowLeft, BarChart2, LogOut, LogIn, Loader2, HelpCircle, Bug, Lightbulb, MessageCircle, Heart, Sparkles } from 'lucide-react';
+import { ArrowLeft, BarChart2, LogOut, LogIn, Loader2, HelpCircle, Bug, Lightbulb, MessageCircle, Heart } from 'lucide-react';
 import { FeedbackMessageList, FeedbackComposer, FeedbackAnalytics } from '@/components/feedback';
 import { FeedbackHubTour } from '@/components/tours';
 import { useFeedbackMessages } from '@/hooks/useFeedbackMessages';
@@ -98,11 +99,11 @@ export default function FeedbackPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full rounded-2xl border border-border bg-card p-8 text-center shadow-lg"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="max-w-md w-full rounded-lg border border-border bg-card p-8 text-center shadow-lg"
         >
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-primary/10">
             <LogIn className="h-8 w-8 text-primary" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign In Required</h2>
@@ -122,9 +123,9 @@ export default function FeedbackPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full rounded-2xl border border-border bg-card p-8 text-center shadow-lg"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="max-w-md w-full rounded-lg border border-border bg-card p-8 text-center shadow-lg"
         >
           <div className="text-4xl mb-4">👋</div>
           <h2 className="text-xl font-semibold mb-2">You've opted out</h2>
@@ -164,9 +165,9 @@ export default function FeedbackPage() {
       title: 'Share Praise',
       description: "Tell us what's working well.",
       tag: 'praise' as UserTag,
-      gradient: 'from-pink-500/10 to-pink-500/5',
-      iconBg: 'bg-pink-500/15',
-      iconColor: 'text-pink-600 dark:text-pink-400',
+      gradient: 'from-copper-500/10 to-copper-500/5',
+      iconBg: 'bg-copper-500/15',
+      iconColor: 'text-copper-600 dark:text-copper-400',
     },
     {
       icon: MessageCircle,
@@ -244,16 +245,16 @@ export default function FeedbackPage() {
 
           {/* Hero content */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
             className="text-center mb-5 md:mb-8"
           >
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 mb-3">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <Mpatapo className="h-3.5 w-3.5 text-primary" />
               <span className="text-xs font-medium text-primary">Alpha Feedback</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+            <h1 className="text-h1 font-serif text-foreground mb-2">
               Help Shape DNA's Future
             </h1>
             <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
@@ -266,8 +267,8 @@ export default function FeedbackPage() {
             {HERO_CARDS.map((card, i) => (
               <motion.button
                 key={card.title}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
                 onClick={() => handleHeroCardClick(card.tag)}
                 className={cn(

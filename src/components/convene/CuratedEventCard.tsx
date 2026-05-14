@@ -4,7 +4,7 @@
  * Editorial / magazine-style card for DNA-curated events.
  * Visually distinct from user-hosted ConveneEventCard:
  *  - Emerald gradient top border (not amber left border)
- *  - "Curated by DNA" badge with Sparkles icon
+ *  - "Curated by DNA" badge with MateMasie icon
  *  - Source attribution line with ExternalLink icon
  *  - Compact thumbnail layout
  *  - Two CTAs: "Interested" toggle + "View Event" external link
@@ -14,11 +14,12 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Sparkles, ExternalLink, Calendar, MapPin, Video, Globe, Heart } from 'lucide-react';
+import { ExternalLink, Calendar, MapPin, Video, Globe, Heart } from 'lucide-react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { formatEventTime } from '@/utils/convene/formatEventTime';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 export interface CuratedEventCardProps {
   event: {
@@ -113,7 +114,7 @@ export function CuratedEventCard({
         <div className="p-4">
           {/* Curated badge */}
           <div className="flex items-center gap-1.5 mb-2">
-            <Sparkles className="h-3 w-3 text-[hsl(var(--module-connect))]" />
+            <Nkonsonkonson className="h-3 w-3 text-[hsl(var(--module-connect))]" />
             <span className="text-[11px] font-semibold text-[hsl(var(--module-connect))] uppercase tracking-wide">
               Curated by DNA
             </span>
@@ -169,7 +170,7 @@ export function CuratedEventCard({
   return (
     <Card
       className={cn(
-        'overflow-hidden hover:shadow-lg transition-all cursor-pointer group relative rounded-2xl',
+        'overflow-hidden hover:shadow-lg transition-all cursor-pointer group relative rounded-lg',
         'border-t-[3px] bg-gradient-to-b from-[hsl(var(--module-connect)/0.04)] via-transparent to-transparent',
         className,
       )}
@@ -179,7 +180,7 @@ export function CuratedEventCard({
       <div className="p-4 sm:p-5 flex flex-col h-full">
         {/* Curated badge */}
         <div className="flex items-center gap-1.5 mb-3">
-          <Sparkles className="h-3.5 w-3.5 text-[hsl(var(--module-connect))]" />
+          <Nkonsonkonson className="h-3.5 w-3.5 text-[hsl(var(--module-connect))]" />
           <span className="text-xs font-semibold text-[hsl(var(--module-connect))] uppercase tracking-wide">
             Curated by DNA
           </span>

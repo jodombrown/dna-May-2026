@@ -3,19 +3,10 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Search, 
-  Users, 
-  Calendar, 
-  Building2, 
-  MessageSquare, 
-  Sparkles,
-  Clock,
-  TrendingUp,
-  X
-} from 'lucide-react';
+import { Search, Users, Calendar, Building2, MessageSquare, Clock, TrendingUp, X } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { supabase } from '@/integrations/supabase/client';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface SearchSuggestion {
   id: string;
@@ -117,7 +108,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
             id: `ai-${suggestion}`,
             text: suggestion,
             type: 'suggestion',
-            icon: <Sparkles className="w-4 h-4 text-dna-emerald" />,
+            icon: <MateMasie className="w-4 h-4 text-dna-emerald" />,
             subtitle: 'AI suggestion'
           });
         });
@@ -156,7 +147,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
             id: `event-${event.id}`,
             text: event.title,
             type: 'event',
-            icon: <Calendar className="w-4 h-4 text-purple-600" />,
+            icon: <Calendar className="w-4 h-4 text-copper-600" />,
             subtitle: `${event.event_type} event`
           });
         });
@@ -171,7 +162,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
           id: `fallback-${term}`,
           text: term,
           type: 'suggestion' as const,
-          icon: <Search className="w-4 h-4 text-gray-500" />,
+          icon: <Search className="w-4 h-4 text-neutral-500" />,
           subtitle: 'Popular search'
         }));
       setSuggestions(fallbackSuggestions);
@@ -190,7 +181,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
         id: `recent-${search}`,
         text: search,
         type: 'recent',
-        icon: <Clock className="w-4 h-4 text-gray-400" />,
+        icon: <Clock className="w-4 h-4 text-neutral-400" />,
         subtitle: 'Recent search'
       }));
 
@@ -275,7 +266,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
         <Input
           ref={inputRef}
           value={value}
@@ -283,7 +274,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
           onFocus={handleInputFocus}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="pl-10 pr-4 py-3 text-base border-gray-200 focus:border-dna-emerald focus:ring-dna-emerald"
+          className="pl-10 pr-4 py-3 text-base border-neutral-200 focus:border-dna-emerald focus:ring-dna-emerald"
           disabled={disabled}
         />
         {loading && (
@@ -295,18 +286,18 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
 
       {/* Suggestions Dropdown */}
       {isOpen && (suggestions.length > 0 || recentSearches.length > 0) && (
-        <Card className="absolute top-full left-0 right-0 mt-1 z-50 max-h-96 overflow-y-auto shadow-lg border-gray-200">
+        <Card className="absolute top-full left-0 right-0 mt-1 z-50 max-h-96 overflow-y-auto shadow-lg border-neutral-200">
           <CardContent className="p-0">
             {/* Recent Searches Header */}
             {!value && recentSearches.length > 0 && (
-              <div className="flex items-center justify-between p-3 border-b bg-gray-50">
-                <span className="text-sm font-medium text-gray-700">Recent Searches</span>
+              <div className="flex items-center justify-between p-3 border-b bg-neutral-50">
+                <span className="text-sm font-medium text-neutral-700">Recent Searches</span>
                 {onClearRecent && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
                     onClick={onClearRecent}
-                    className="text-gray-500 hover:text-red-600"
+                    className="text-neutral-500 hover:text-red-600"
                   >
                     <X className="w-4 h-4" />
                     Clear
@@ -323,7 +314,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
                   className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${
                     index === highlightedIndex 
                       ? 'bg-dna-emerald/10 border-l-2 border-dna-emerald' 
-                      : 'hover:bg-gray-50'
+                      : 'hover:bg-neutral-50'
                   }`}
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
@@ -332,11 +323,11 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 truncate">
+                    <div className="font-medium text-neutral-900 truncate">
                       {suggestion.text}
                     </div>
                     {suggestion.subtitle && (
-                      <div className="text-sm text-gray-500 truncate">
+                      <div className="text-sm text-neutral-500 truncate">
                         {suggestion.subtitle}
                       </div>
                     )}
@@ -359,8 +350,8 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
 
             {/* Popular Searches Footer */}
             {!value && suggestions.length > 0 && (
-              <div className="border-t bg-gray-50 p-3">
-                <span className="text-sm text-gray-700">
+              <div className="border-t bg-neutral-50 p-3">
+                <span className="text-sm text-neutral-700">
                   💡 Try searching with natural language: "Find renewable energy investors in Nigeria"
                 </span>
               </div>

@@ -144,7 +144,7 @@ const SignalAnalyticsDashboard = () => {
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <MousePointer className="h-8 w-8 text-purple-500" />
+            <MousePointer className="h-8 w-8 text-copper-500" />
             <div>
               <p className="text-sm text-muted-foreground">Engagements</p>
               <p className="text-2xl font-bold">{metrics.total_engaged.toLocaleString()}</p>

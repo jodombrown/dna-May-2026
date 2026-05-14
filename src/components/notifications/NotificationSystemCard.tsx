@@ -16,18 +16,9 @@ import { formatDistanceToNow } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import {
-  UserPlus, UserCheck, Heart, MessageCircle, Repeat2, AtSign, Eye,
-  Calendar, CalendarClock, Radio, MapPin,
-  Users, ClipboardList, CheckSquare, AlertTriangle,
-  Briefcase, Target, Clock,
-  BookOpen, TrendingUp, UserRoundPlus,
-  Sparkles, BarChart3,
-  Shield, CreditCard, Bell as BellIcon,
-  Mail, MessageSquare,
-  X,
-} from 'lucide-react';
+import { UserPlus, UserCheck, Heart, MessageCircle, Repeat2, AtSign, Eye, Calendar, CalendarClock, Radio, MapPin, Users, ClipboardList, CheckSquare, AlertTriangle, Briefcase, Target, Clock, BookOpen, TrendingUp, UserRoundPlus, BarChart3, Shield, CreditCard, Bell as BellIcon, Mail, MessageSquare, X } from 'lucide-react';
 import type { NotificationRecord, NotificationIconType } from '@/types/notificationSystem';
+import { MateMasie } from '@/components/icons/adinkra';
 
 // ============================================================
 // ICON MAPPING
@@ -55,7 +46,7 @@ const ICON_MAP: Record<NotificationIconType, React.ReactNode> = {
   story_engage: <BookOpen className="h-4 w-4" />,
   follower: <UserRoundPlus className="h-4 w-4" />,
   trending: <TrendingUp className="h-4 w-4" />,
-  dia_insight: <Sparkles className="h-4 w-4" />,
+  dia_insight: <MateMasie className="h-4 w-4" />,
   dia_digest: <BarChart3 className="h-4 w-4" />,
   security: <Shield className="h-4 w-4" />,
   payment: <CreditCard className="h-4 w-4" />,

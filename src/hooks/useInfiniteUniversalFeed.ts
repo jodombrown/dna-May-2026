@@ -8,6 +8,14 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UniversalFeedItem, FeedFilters } from '@/types/feed';
 import { logHighError } from '@/lib/errorLogger';
+import { mapFeedRow, type FeedRpcRow } from '@/lib/feed/mapFeedRow';
+
+/**
+ * IMPORTANT: tabs differ ONLY by `tab` and `rankingMode` parameters passed
+ * to the RPC. Never apply tab-specific reordering, mapping, or shape
+ * overrides on the client. The shared `mapFeedRow` mapper guarantees that
+ * the same post renders identically on All / For You / Mine / etc.
+ */
 
 const PAGE_SIZE = 20;
 
@@ -21,46 +29,10 @@ interface UniversalFeedRpcParams {
   p_limit: number;
   p_offset: number;
   p_ranking_mode: string;
+  p_hashtag: string | null;
 }
 
-/** Raw row shape from the RPC result */
-interface FeedRpcRow {
-  id: string;
-  author_id: string;
-  author_username: string;
-  author_full_name: string;
-  author_avatar_url: string | null;
-  content: string;
-  title: string | null;
-  subtitle?: string | null;
-  image_url: string | null;
-  post_type: string;
-  story_type?: string | null;
-  privacy_level: string;
-  linked_entity_type: string | null;
-  linked_entity_id: string | null;
-  space_id: string | null;
-  event_id: string | null;
-  created_at: string;
-  updated_at: string;
-  likes_count: number | string;
-  comments_count: number | string;
-  user_has_liked: boolean;
-  user_has_bookmarked: boolean;
-  link_url?: string | null;
-  link_title?: string | null;
-  link_description?: string | null;
-  link_metadata?: Record<string, unknown> | null;
-  original_post_id?: string | null;
-  original_author_id?: string | null;
-  original_author_username?: string | null;
-  original_author_full_name?: string | null;
-  original_author_avatar_url?: string | null;
-  original_author_headline?: string | null;
-  original_content?: string | null;
-  original_image_url?: string | null;
-  original_created_at?: string | null;
-}
+// Raw row shape lives in src/lib/feed/mapFeedRow.ts (FeedRpcRow).
 
 export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'offset'>) => {
   const {
@@ -86,6 +58,7 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           p_limit: PAGE_SIZE,
           p_offset: offset,
           p_ranking_mode: filters.rankingMode || 'latest',
+          p_hashtag: filters.hashtag || null,
         };
 
         // Call RPC - spread params to match function signature
@@ -96,51 +69,10 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
           throw error;
         }
         
-        // Map RPC response to UniversalFeedItem with proper typing
+        // Map RPC response through the canonical mapper so every tab
+        // produces an identically-shaped UniversalFeedItem.
         const rawRows = (data || []) as FeedRpcRow[];
-        const items = rawRows.map((item) => ({
-          post_id: item.id,
-          author_id: item.author_id,
-          author_username: item.author_username,
-          author_display_name: item.author_full_name,
-          author_avatar_url: item.author_avatar_url,
-          content: item.content,
-          title: item.title,
-          subtitle: item.subtitle || null,
-          media_url: item.image_url,
-          post_type: item.post_type,
-          story_type: item.story_type || null,
-          privacy_level: item.privacy_level,
-          linked_entity_type: item.linked_entity_type,
-          linked_entity_id: item.linked_entity_id,
-          space_id: item.space_id,
-          space_title: null,
-          event_id: item.event_id,
-          event_title: null,
-          created_at: item.created_at,
-          updated_at: item.updated_at,
-          like_count: Number(item.likes_count),
-          comment_count: Number(item.comments_count),
-          share_count: 0,
-          view_count: 0,
-          bookmark_count: 0,
-          has_liked: item.user_has_liked,
-          has_bookmarked: item.user_has_bookmarked,
-          link_url: item.link_url || null,
-          link_title: item.link_title || null,
-          link_description: item.link_description || null,
-          link_metadata: item.link_metadata || null,
-          // Original post data for reshares
-          original_post_id: item.original_post_id || null,
-          original_author_id: item.original_author_id || null,
-          original_author_username: item.original_author_username || null,
-          original_author_full_name: item.original_author_full_name || null,
-          original_author_avatar_url: item.original_author_avatar_url || null,
-          original_author_headline: item.original_author_headline || null,
-          original_content: item.original_content || null,
-          original_image_url: item.original_image_url || null,
-          original_created_at: item.original_created_at || null,
-        })) as UniversalFeedItem[];
+        const items: UniversalFeedItem[] = rawRows.map(mapFeedRow);
 
         return items;
       } catch (error) {
@@ -165,9 +97,16 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
   // Filtering happens after flattening so per-page length reflects the true
   // DB page size (critical for pagination offsets to stay aligned).
   const flattened = data?.pages.flatMap((page) => page) || [];
+
+  // For You: hide the viewer's own posts. Mine and All are unaffected.
+  const tabFiltered =
+    filters.tab === 'for_you'
+      ? flattened.filter((item) => item.author_id !== filters.viewerId)
+      : flattened;
+
   const feedItems = filters.postType
-    ? flattened.filter((item) => item.post_type?.toLowerCase() === filters.postType.toLowerCase())
-    : flattened;
+    ? tabFiltered.filter((item) => item.post_type?.toLowerCase() === filters.postType.toLowerCase())
+    : tabFiltered;
 
   return {
     feedItems,

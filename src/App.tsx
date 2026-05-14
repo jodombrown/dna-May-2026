@@ -13,6 +13,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { usePresenceHeartbeat } from "@/hooks/messaging/usePresenceHeartbeat";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import React, { Suspense, lazy } from "react";
 import AfricaSpinner from "@/components/ui/AfricaSpinner";
@@ -57,6 +58,7 @@ const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
 const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
 const DnaFeedback = lazy(() => import("./pages/dna/feedback/FeedbackPage"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const IconUsageGuide = lazy(() => import("./pages/dna/IconUsageGuide"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const EngagementDashboard = lazy(() => import("./pages/admin/EngagementDashboard"));
 const AdminEngagement = lazy(() => import("./pages/admin/AdminEngagement"));
@@ -83,7 +85,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
-const Convene = lazy(() => import("./pages/Convene"));
+// Sprint A: legacy /convene marketing page archived → /convene now redirects to /dna/convene
 const Roadmap = lazy(() => import("./pages/Roadmap"));
 const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
 const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage"));
@@ -97,7 +99,7 @@ const Demo = lazy(() => import("./pages/Demo"));
 const ConnectExample = lazy(() => import("./pages/_archived/ConnectExample"));
 const CollaborateExample = lazy(() => import("./pages/_archived/CollaborationsExample"));
 const ContributeExample = lazy(() => import("./pages/_archived/ContributeExample"));
-const ConveyExample = lazy(() => import("./pages/_archived/ConveyExample"));
+// Sprint A: ConveyExample marketing page archived → /convey now redirects to /dna/convey
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
@@ -134,7 +136,7 @@ const EventSettingsPage = lazy(() => import("./components/convene/management/set
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
-const ComingSoonCollaborate = lazy(() => import("./pages/dna/collaborate/ComingSoonCollaborate"));
+// Sprint A: ComingSoonCollaborate orphan removed (violated "5 C's modules are OPEN" rule).
 const SpacesIndex = lazy(() => import("./pages/dna/collaborate/SpacesIndex"));
 const CollaborateSpaceDetail = lazy(() => import("./pages/dna/collaborate/SpaceDetail"));
 const SpaceBoard = lazy(() => import("./pages/dna/collaborate/SpaceBoard"));
@@ -144,13 +146,15 @@ const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 
 // Contribute M1-M2 pages
 const ContributeHub = lazy(() => import("./pages/dna/contribute/ContributeHub"));
-const ComingSoonContribute = lazy(() => import("./pages/dna/contribute/ComingSoonContribute"));
+// Sprint A: ComingSoonContribute orphan removed (violated "5 C's modules are OPEN" rule).
 const NeedsIndex = lazy(() => import("./pages/dna/contribute/NeedsIndex"));
 const NeedDetail = lazy(() => import("./pages/dna/contribute/NeedDetail"));
 const OpportunityDetail = lazy(() => import("./pages/dna/contribute/OpportunityDetail"));
 const MyContributions = lazy(() => import("./pages/dna/contribute/MyContributions"));
-const FulfillmentTrackerPage = lazy(() => import("./pages/dna/contribute/FulfillmentTracker"));
+const FulfillmentTrackerPage = lazy(() => import("./components/contribute/FulfillmentTracker"));
 const ImpactDashboardPage = lazy(() => import("./pages/dna/contribute/ImpactDashboard"));
+const ManifestEditorPage = lazy(() => import("./pages/dna/contribute/ManifestEditorPage"));
+const NeedComposerPage = lazy(() => import("./pages/dna/contribute/NeedComposerPage"));
 
 // Convey M1-M4 pages
 const Convey = lazy(() => import("./pages/dna/Convey"));
@@ -247,6 +251,12 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   return <>{children}</>;
 };
 
+// Mounts presence heartbeat for the authenticated user (Phase 1 messaging foundation)
+const PresenceHeartbeat = () => {
+  usePresenceHeartbeat();
+  return null;
+};
+
 const AppShell = ({ children }: { children: React.ReactNode }) => (
   <AuthGuard>
     {children}
@@ -289,6 +299,7 @@ function App() {
             <BrowserRouter>
               <ScrollToTop />
               <AuthProvider>
+                <PresenceHeartbeat />
                 <AccountDrawerProvider>
                   <ViewStateProvider>
                     <MessageProvider>
@@ -373,6 +384,8 @@ function App() {
               {/* Documentation Routes */}
               <Route path="/documentation/features" element={<FeaturesHub />} />
               <Route path="/documentation/features/:slug" element={<FeatureDetail />} />
+              <Route path="/documentation/icons" element={<IconUsageGuide />} />
+              <Route path="/dna/icons" element={<IconUsageGuide />} />
 
               {/* ========== RELEASES & FEATURES ========== */}
               <Route path="/releases" element={<ReleasesIndex />} />
@@ -407,7 +420,7 @@ function App() {
                   <Connect />
                 </OnboardingGuard>
               }>
-                <Route index element={<Navigate to="/dna/connect/discover" replace />} />
+                <Route index element={<ConnectDiscover />} />
                 <Route path="discover" element={<ConnectDiscover />} />
                 <Route path="network" element={<ConnectNetwork />} />
                 {/* Legacy route - now using /dna/messages as canonical */}
@@ -579,6 +592,16 @@ function App() {
                   <ContributeHub />
                 </OnboardingGuard>
               } />
+              <Route path="/dna/contribute/manifest" element={
+                <OnboardingGuard>
+                  <ManifestEditorPage />
+                </OnboardingGuard>
+              } />
+              <Route path="/dna/contribute/my-needs" element={
+                <OnboardingGuard>
+                  <NeedComposerPage />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/contribute/needs" element={
                 <OnboardingGuard>
                   <NeedsIndex />
@@ -717,13 +740,14 @@ function App() {
 
               {/* Public marketing pages - Five C's examples */}
               <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/convene" element={<Convene />} />
+              {/* Sprint A: legacy /convene + /convey marketing pages archived; redirect to canonical hubs */}
+              <Route path="/convene" element={<Navigate to="/dna/convene" replace />} />
               <Route path="/convene/category/:category" element={<ConveneCategoryPage />} />
               <Route path="/convene/featured-calendars" element={<FeaturedCalendarsPage />} />
               <Route path="/convene/local-events" element={<LocalEventsPage />} />
               <Route path="/collaborate" element={<CollaborateExample />} />
               <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/convey" element={<ConveyExample />} />
+              <Route path="/convey" element={<Navigate to="/dna/convey" replace />} />
               
               {/* New Admin Portal Routes */}
               <Route path="/admin-login" element={<AdminLogin />} />

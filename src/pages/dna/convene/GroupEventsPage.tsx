@@ -136,7 +136,7 @@ export default function GroupEventsPage() {
             
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold">{group?.name} Events</h1>
+                <h1 className="text-h1 font-serif">{group?.name} Events</h1>
                 <p className="text-muted-foreground mt-1">
                   Events hosted by this group
                 </p>

@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 // Placeholder components - will be built in Session 5
 const RegionHero = ({ metadata }: any) => (
-  <div className="h-[70vh] min-h-[400px] bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center">
+  <div className="h-[70vh] min-h-[400px] bg-gradient-to-b from-neutral-800 to-neutral-900 flex items-center justify-center">
     <div className="text-center text-white">
       <h1 className="text-5xl md:text-7xl font-bold mb-4">{metadata?.name?.toUpperCase()}</h1>
       <p className="text-xl italic opacity-90">"{metadata?.tagline}"</p>
@@ -15,10 +15,10 @@ const RegionHero = ({ metadata }: any) => (
 const HubMetrics = ({ metrics }: any) => (
   <div className="bg-white py-6">
     <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.members_connected?.toLocaleString()}</div><div className="text-sm text-gray-500">Members</div></div>
-      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.events_hosted?.toLocaleString()}</div><div className="text-sm text-gray-500">Events</div></div>
-      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.projects_active?.toLocaleString()}</div><div className="text-sm text-gray-500">Projects</div></div>
-      <div><div className="text-3xl font-bold text-emerald-600">${(metrics?.contributions_total / 1000000).toFixed(1)}M</div><div className="text-sm text-gray-500">Contributed</div></div>
+      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.members_connected?.toLocaleString()}</div><div className="text-sm text-neutral-500">Members</div></div>
+      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.events_hosted?.toLocaleString()}</div><div className="text-sm text-neutral-500">Events</div></div>
+      <div><div className="text-3xl font-bold text-emerald-600">{metrics?.projects_active?.toLocaleString()}</div><div className="text-sm text-neutral-500">Projects</div></div>
+      <div><div className="text-3xl font-bold text-emerald-600">${(metrics?.contributions_total / 1000000).toFixed(1)}M</div><div className="text-sm text-neutral-500">Contributed</div></div>
     </div>
   </div>
 );
@@ -30,33 +30,33 @@ const CountryCardGrid = ({ countries, regionSlug }: any) => {
   );
 
   return (
-    <div className="bg-gray-50 py-8">
+    <div className="bg-neutral-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+        <h3 className="text-lg font-semibold text-neutral-700 mb-4">
           Explore {sortedCountries.length} Countries
         </h3>
         <div className="relative">
-          <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-neutral-300 scrollbar-track-neutral-100">
             {sortedCountries.map((country: any) => (
               <a
                 key={country.id}
                 href={`/africa/${regionSlug}/${country.slug}`}
-                className="flex-shrink-0 w-32 bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow border border-gray-200"
+                className="flex-shrink-0 w-32 bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow border border-neutral-200"
               >
                 <img
                   src={country.flag_url}
                   alt={country.name}
                   className="w-12 h-8 object-cover mx-auto mb-2 rounded shadow-sm"
                 />
-                <div className="font-semibold text-sm text-gray-900 truncate">{country.name}</div>
+                <div className="font-semibold text-sm text-neutral-900 truncate">{country.name}</div>
                 {country.tagline && (
-                  <div className="text-xs text-gray-500 mt-1 line-clamp-2">{country.tagline}</div>
+                  <div className="text-xs text-neutral-500 mt-1 line-clamp-2">{country.tagline}</div>
                 )}
               </a>
             ))}
           </div>
           {/* Scroll fade indicators */}
-          <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none" />
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ const MemberCard = ({ member }: any) => {
   return (
     <a
       href={`/u/${username}`}
-      className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-lg hover:-translate-y-1 transition-all block"
+      className="bg-white rounded-lg border border-neutral-200 p-5 hover:shadow-lg hover:-translate-y-1 transition-all block"
     >
       <div className="text-center">
         {member.avatar_url ? (
@@ -90,10 +90,10 @@ const MemberCard = ({ member }: any) => {
             {initials}
           </div>
         )}
-        <h3 className="font-semibold text-gray-900">{member.display_name}</h3>
-        <p className="text-sm text-gray-600 line-clamp-2 mt-1">{member.headline}</p>
+        <h3 className="font-semibold text-neutral-900">{member.display_name}</h3>
+        <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{member.headline}</p>
         {member.location && (
-          <p className="text-xs text-gray-400 mt-1">{member.location}</p>
+          <p className="text-xs text-neutral-400 mt-1">{member.location}</p>
         )}
         {member.expertise_areas?.length > 0 && (
           <div className="flex flex-wrap gap-1 justify-center mt-2">
@@ -112,7 +112,7 @@ const MemberCard = ({ member }: any) => {
 const FeedSection = ({ type, feed, hubName }: any) => {
   const config: Record<string, { emoji: string; title: string; bgClass: string }> = {
     connect: { emoji: '🔗', title: 'CONNECT IN', bgClass: 'bg-white' },
-    convene: { emoji: '📅', title: 'CONVENE IN', bgClass: 'bg-gray-50' },
+    convene: { emoji: '📅', title: 'CONVENE IN', bgClass: 'bg-neutral-50' },
     collaborate: { emoji: '🤝', title: 'COLLABORATE IN', bgClass: 'bg-white' },
   };
   const { emoji, title, bgClass } = config[type] || { emoji: '📋', title: type.toUpperCase(), bgClass: 'bg-white' };
@@ -128,15 +128,15 @@ const FeedSection = ({ type, feed, hubName }: any) => {
             {type === 'connect'
               ? feed.items.map((member: any) => <MemberCard key={member.id} member={member} />)
               : feed.items.map((item: any) => (
-                  <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-5 hover:shadow-md transition-shadow">
-                    <h3 className="font-semibold text-gray-900">{item.title || item.display_name}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{item.description_short || item.headline}</p>
+                  <div key={item.id} className="bg-white rounded-lg border border-neutral-200 p-5 hover:shadow-md transition-shadow">
+                    <h3 className="font-semibold text-neutral-900">{item.title || item.display_name}</h3>
+                    <p className="text-sm text-neutral-600 mt-1">{item.description_short || item.headline}</p>
                   </div>
                 ))
             }
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12 text-neutral-400">
             No {type} items yet. Be the first to add one!
           </div>
         )}
@@ -147,9 +147,9 @@ const FeedSection = ({ type, feed, hubName }: any) => {
 
 const HubSkeleton = () => (
   <div className="animate-pulse">
-    <div className="h-[70vh] bg-gray-200" />
-    <div className="h-24 bg-gray-100" />
-    <div className="h-64 bg-gray-50" />
+    <div className="h-[70vh] bg-neutral-200" />
+    <div className="h-24 bg-neutral-100" />
+    <div className="h-64 bg-neutral-50" />
   </div>
 );
 
@@ -157,7 +157,7 @@ const HubError = ({ error }: any) => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
       <h1 className="text-2xl font-bold text-red-600 mb-2">Error Loading Hub</h1>
-      <p className="text-gray-500">{error?.message || 'Something went wrong'}</p>
+      <p className="text-neutral-500">{error?.message || 'Something went wrong'}</p>
     </div>
   </div>
 );

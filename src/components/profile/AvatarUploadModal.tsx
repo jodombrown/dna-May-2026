@@ -168,12 +168,12 @@ export function AvatarUploadModal({
             />
             <label
               htmlFor="avatar-upload"
-              className="cursor-pointer flex flex-col items-center gap-4 p-8 border-2 border-dashed border-warm-gray-300 rounded-lg hover:border-dna-emerald transition-colors w-full"
+              className="cursor-pointer flex flex-col items-center gap-4 p-8 border-2 border-dashed border-warm-neutral-300 rounded-lg hover:border-dna-emerald transition-colors w-full"
             >
-              <Upload className="h-12 w-12 text-warm-gray-400" />
+              <Upload className="h-12 w-12 text-warm-neutral-400" />
               <div className="text-center">
                 <p className="font-medium">Click to upload</p>
-                <p className="text-sm text-warm-gray-600 mt-1">
+                <p className="text-sm text-warm-neutral-600 mt-1">
                   Min 200×200px • Max 5MB • JPG, PNG, WebP
                 </p>
               </div>
@@ -182,7 +182,7 @@ export function AvatarUploadModal({
         ) : (
           <div className="space-y-4">
             {/* Cropper */}
-            <div className="relative h-80 sm:h-96 bg-warm-gray-100 rounded-lg overflow-hidden">
+            <div className="relative h-80 sm:h-96 bg-warm-neutral-100 rounded-lg overflow-hidden">
               <Cropper
                 image={imageSrc}
                 crop={crop}

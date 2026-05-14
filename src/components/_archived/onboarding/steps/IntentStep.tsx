@@ -60,7 +60,7 @@ const IntentStep: React.FC<IntentStepProps> = ({ data, updateData }) => {
         <h2 className="text-xl font-semibold text-dna-forest mb-2">
           Your Impact Intent
         </h2>
-        <p className="text-gray-600">
+        <p className="text-neutral-600">
           Help us understand how you want to contribute and what you're looking for in the community.
         </p>
       </div>
@@ -84,14 +84,14 @@ const IntentStep: React.FC<IntentStepProps> = ({ data, updateData }) => {
                   className={`p-3 rounded-lg border cursor-pointer transition-all ${
                     isSelected 
                       ? 'border-dna-emerald bg-dna-emerald/5' 
-                      : 'border-gray-200 hover:border-dna-emerald/50'
+                      : 'border-neutral-200 hover:border-dna-emerald/50'
                   }`}
                   onClick={() => toggleGiveOption(option.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium text-dna-forest">{option.label}</h4>
-                      <p className="text-sm text-gray-600">{option.description}</p>
+                      <p className="text-sm text-neutral-600">{option.description}</p>
                     </div>
                     {isSelected && (
                       <Badge variant="secondary" className="bg-dna-emerald text-white">
@@ -123,14 +123,14 @@ const IntentStep: React.FC<IntentStepProps> = ({ data, updateData }) => {
                   className={`p-3 rounded-lg border cursor-pointer transition-all ${
                     isSelected 
                       ? 'border-dna-copper bg-dna-copper/5' 
-                      : 'border-gray-200 hover:border-dna-copper/50'
+                      : 'border-neutral-200 hover:border-dna-copper/50'
                   }`}
                   onClick={() => toggleReceiveOption(option.id)}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium text-dna-forest">{option.label}</h4>
-                      <p className="text-sm text-gray-600">{option.description}</p>
+                      <p className="text-sm text-neutral-600">{option.description}</p>
                     </div>
                     {isSelected && (
                       <Badge variant="secondary" className="bg-dna-copper text-white">
@@ -145,7 +145,7 @@ const IntentStep: React.FC<IntentStepProps> = ({ data, updateData }) => {
         </Card>
       </div>
 
-      <div className="text-center text-sm text-gray-600">
+      <div className="text-center text-sm text-neutral-600">
         Selected to give: {whatToGive.length} • Selected to receive: {whatToReceive.length}
       </div>
     </div>

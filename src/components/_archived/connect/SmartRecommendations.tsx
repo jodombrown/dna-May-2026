@@ -3,11 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sparkles, TrendingUp, Users, MessageSquare, User } from 'lucide-react';
+import { TrendingUp, Users, MessageSquare, User } from 'lucide-react';
 import { matchingService, MatchScore } from '@/services/matchingService';
 import { Professional } from '@/types/search';
 import { useAuth } from '@/contexts/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface SmartRecommendationsProps {
   onConnect: (professionalId: string) => void;
@@ -69,7 +70,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
       <Card className={className}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-dna-emerald" />
+            <Sankofa className="w-5 h-5 text-dna-emerald" />
             Smart Recommendations
           </CardTitle>
         </CardHeader>
@@ -92,7 +93,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
     <Card className={className}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-dna-emerald" />
+          <Sankofa className="w-5 h-5 text-dna-emerald" />
           Smart Recommendations
           <Badge variant="secondary" className="ml-2">
             AI-Powered
@@ -169,7 +170,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
                       </Badge>
                     )}
                     {professional.looking_for_opportunities && (
-                      <Badge variant="outline" className="text-xs border-purple-200 text-purple-700">
+                      <Badge variant="outline" className="text-xs border-copper-200 text-copper-700">
                         Open to Opportunities
                       </Badge>
                     )}
@@ -215,7 +216,7 @@ export const SmartRecommendations: React.FC<SmartRecommendationsProps> = ({
             className="w-full border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white"
             onClick={loadRecommendations}
           >
-            <Sparkles className="w-4 h-4 mr-2" />
+            <Sankofa className="w-4 h-4 mr-2" />
             Refresh Recommendations
           </Button>
         )}

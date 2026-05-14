@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Search, Sparkles, Clock, Archive, Filter } from 'lucide-react';
+import { Search, Clock, Archive, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ReleaseCard } from '@/components/releases/ReleaseCard';
@@ -10,10 +10,11 @@ import { CategoryTag } from '@/components/releases/CategoryTag';
 import { useReleases, groupReleasesByMonth, type ReleaseCategory, type FilterType } from '@/hooks/useReleases';
 import AfricaSpinner from '@/components/ui/AfricaSpinner';
 import { cn } from '@/lib/utils';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const filterOptions: { value: FilterType; label: string; icon: React.ReactNode }[] = [
   { value: 'all', label: 'All', icon: <Filter className="w-4 h-4" /> },
-  { value: 'featured', label: 'New (30 days)', icon: <Sparkles className="w-4 h-4" /> },
+  { value: 'featured', label: 'New (30 days)', icon: <MateMasie className="w-4 h-4" /> },
   { value: 'recent', label: 'Recent (90 days)', icon: <Clock className="w-4 h-4" /> },
   { value: 'archived', label: 'Archived', icon: <Archive className="w-4 h-4" /> },
 ];
@@ -65,7 +66,7 @@ const ReleasesPage: React.FC = () => {
 
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
-        <section className="relative py-16 md:py-24 overflow-hidden">
+        <section className="relative py-16 md:py-12 overflow-hidden">
           {/* Kente pattern background */}
           <div className="absolute inset-0 opacity-[0.04]">
             <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -81,8 +82,8 @@ const ReleasesPage: React.FC = () => {
 
           <div className="container mx-auto px-4 relative z-10">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               className="text-center max-w-3xl mx-auto"
             >
               <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
@@ -188,8 +189,8 @@ const ReleasesPage: React.FC = () => {
                     {monthReleases.map((release, index) => (
                       <motion.div
                         key={release.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ delay: index * 0.1 }}
                       >
                         <ReleaseCard release={release} />

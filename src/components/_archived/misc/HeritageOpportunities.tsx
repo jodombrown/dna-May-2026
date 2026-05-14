@@ -6,18 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import {
-  Globe,
-  MapPin,
-  Flag,
-  ArrowRight,
-  Sparkles,
-  Users,
-  Briefcase,
-  Building2,
-} from 'lucide-react';
+import { Globe, MapPin, Flag, ArrowRight, Users, Briefcase, Building2 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useNavigate } from 'react-router-dom';
+import { Adinkrahene } from '@/components/icons/adinkra';
 import {
   Tooltip,
   TooltipContent,

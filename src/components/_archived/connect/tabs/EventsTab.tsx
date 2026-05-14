@@ -115,7 +115,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       name: 'Arts & Culture', 
       icon: '🎨', 
       count: '67 Events', 
-      color: 'bg-purple-500',
+      color: 'bg-copper-500',
       description: 'Art exhibitions, cultural festivals, music concerts, film screenings, and creative showcases'
     },
     { 
@@ -159,8 +159,8 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       {/* Header with Create Event Button */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Discover Events</h2>
-          <p className="text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-neutral-900">Discover Events</h2>
+          <p className="text-neutral-600 mt-1">
             Explore events near you, browse by category, or check out featured calendars
           </p>
         </div>
@@ -174,10 +174,10 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">
+            <h3 className="text-xl font-semibold text-neutral-900">
               Popular Events ({popularEvents.length})
             </h3>
-            <p className="text-sm text-gray-600">Trending events in your network</p>
+            <p className="text-sm text-neutral-600">Trending events in your network</p>
           </div>
           <Button variant="ghost" className="text-dna-emerald hover:text-dna-forest">
             View All <ArrowRight className="w-4 h-4 ml-1" />
@@ -213,7 +213,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
                           alt={event.creatorName}
                           className="w-5 h-5 rounded-full object-cover"
                         />
-                        <span className="text-xs font-medium text-gray-700 max-w-[60px] truncate">
+                        <span className="text-xs font-medium text-neutral-700 max-w-[60px] truncate">
                           {event.creatorName}
                         </span>
                       </div>
@@ -223,8 +223,8 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
                   <CardContent className="pt-8 pb-4">
                     <div className="space-y-3">
                       <div>
-                        <h4 className="font-semibold text-gray-900 line-clamp-1">{event.title}</h4>
-                        <p className="text-sm text-gray-600 line-clamp-2 mt-1">{event.description}</p>
+                        <h4 className="font-semibold text-neutral-900 line-clamp-1">{event.title}</h4>
+                        <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{event.description}</p>
                       </div>
                       
                       <div className="flex gap-2">
@@ -234,7 +234,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
                         )}
                       </div>
                       
-                      <div className="space-y-1 text-xs text-gray-500">
+                      <div className="space-y-1 text-xs text-neutral-500">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           <span>{event.date} at {event.time}</span>
@@ -262,8 +262,8 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       {/* Browse by Category Section */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">Browse by Category</h3>
-          <p className="text-sm text-gray-600">Find events that match your interests</p>
+          <h3 className="text-xl font-semibold text-neutral-900">Browse by Category</h3>
+          <p className="text-sm text-neutral-600">Find events that match your interests</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -276,8 +276,8 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
                       <div className={`w-12 h-12 ${category.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
                         <span className="text-2xl">{category.icon}</span>
                       </div>
-                      <h4 className="font-medium text-gray-900 text-sm">{category.name}</h4>
-                      <p className="text-xs text-gray-500 mt-1">{category.count}</p>
+                      <h4 className="font-medium text-neutral-900 text-sm">{category.name}</h4>
+                      <p className="text-xs text-neutral-500 mt-1">{category.count}</p>
                     </CardContent>
                   </Card>
                 </TooltipTrigger>
@@ -294,8 +294,8 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">Featured Calendars</h3>
-            <p className="text-sm text-gray-600">Curated event collections from community leaders</p>
+            <h3 className="text-xl font-semibold text-neutral-900">Featured Calendars</h3>
+            <p className="text-sm text-neutral-600">Curated event collections from community leaders</p>
           </div>
           <Button variant="ghost" className="text-dna-emerald hover:text-dna-forest">
             View All <ArrowRight className="w-4 h-4 ml-1" />
@@ -316,9 +316,9 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900 truncate">{calendar.name}</h4>
-                      <p className="text-sm text-gray-600 line-clamp-2 mt-1">{calendar.description}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                      <h4 className="font-semibold text-neutral-900 truncate">{calendar.name}</h4>
+                      <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{calendar.description}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-neutral-500">
                         <span>{calendar.eventCount} events</span>
                         <span>{calendar.followers} followers</span>
                       </div>
@@ -344,7 +344,7 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
                         </Tooltip>
                       </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-dna-emerald transition-colors" />
+                    <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-dna-emerald transition-colors" />
                   </div>
                 </CardContent>
               </Card>
@@ -356,8 +356,8 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
       {/* Explore Local Events Section */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">Explore Local Events</h3>
-          <p className="text-sm text-gray-600">Discover what's happening in major African cities and diaspora hubs</p>
+          <h3 className="text-xl font-semibold text-neutral-900">Explore Local Events</h3>
+          <p className="text-sm text-neutral-600">Discover what's happening in major African cities and diaspora hubs</p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -370,8 +370,8 @@ const EventsTab: React.FC<EventsTabProps> = ({ searchTerm }) => {
                       <div className={`w-12 h-12 ${location.color} rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform`}>
                         <span className="text-2xl">{location.flag}</span>
                       </div>
-                      <h4 className="font-medium text-gray-900 text-sm">{location.city}</h4>
-                      <p className="text-xs text-gray-500 mt-1">{location.count} Events</p>
+                      <h4 className="font-medium text-neutral-900 text-sm">{location.city}</h4>
+                      <p className="text-xs text-neutral-500 mt-1">{location.count} Events</p>
                     </CardContent>
                   </Card>
                 </TooltipTrigger>

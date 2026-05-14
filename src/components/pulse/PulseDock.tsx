@@ -12,18 +12,14 @@
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Grid3X3 } from 'lucide-react';
+import { Home, Grid3X3, type LucideIcon } from 'lucide-react';
+import { Sankofa, Nkonsonkonson, FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
 import { cn } from '@/lib/utils';
 import { usePulseNavigation, type MoreButtonState } from '@/hooks/usePulseNavigation';
 import type { PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useKeyboardDetection } from '@/hooks/useKeyboardDetection';
-import {
-  SankofaIcon,
-  NkonsonkonsonIcon,
-  FuntunfunefuIcon,
-} from '@/components/icons/adinkra';
 
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
@@ -31,23 +27,37 @@ import { PulseDockTray } from './PulseDockTray';
 interface PrimaryItemBase {
   key: string;
   label: string;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number | string }>;
+  icon: LucideIcon;
   href: string | null;
   isCenter?: boolean;
   isTrigger?: boolean;
+  isAdinkra?: boolean;
 }
 
 const PRIMARY_ITEMS: PrimaryItemBase[] = [
-  { key: 'connect', label: 'Connect', icon: SankofaIcon, href: '/dna/connect' },
-  { key: 'convene', label: 'Convene', icon: NkonsonkonsonIcon, href: '/dna/convene' },
+  { key: 'connect', label: 'Connect', icon: Sankofa, href: '/dna/connect', isAdinkra: true },
+  { key: 'convene', label: 'Convene', icon: Nkonsonkonson, href: '/dna/convene', isAdinkra: true },
   { key: 'feed', label: 'Feed', icon: Home, href: '/dna/feed', isCenter: true },
-  { key: 'collaborate', label: 'Collaborate', icon: FuntunfunefuIcon, href: '/dna/collaborate' },
+  { key: 'collaborate', label: 'Collaborate', icon: FuntunfunefuDenkyemfunefu, href: '/dna/collaborate', isAdinkra: true },
   { key: 'more', label: 'More', icon: Grid3X3, href: null, isTrigger: true },
 ];
 
 export function PulseDock() {
   const { isMobile } = useMobile();
   const { user } = useAuth();
+  const location = useLocation();
+
+  // Hide dock only in full-screen chat threads (Messages with active conversation)
+  const isFullScreenChat = location.pathname.includes('/dna/messages');
+
+  // CRITICAL PERF: bail before invoking heavy hooks (usePulseNavigation -> usePulseBar
+  // runs 5 parallel queries + 4 realtime channels). Desktop/non-auth/chat skips it all.
+  if (!isMobile || !user || isFullScreenChat) return null;
+
+  return <PulseDockInner />;
+}
+
+function PulseDockInner() {
   const [trayOpen, setTrayOpen] = useState(false);
   const pulseNav = usePulseNavigation();
   const location = useLocation();
@@ -55,13 +65,6 @@ export function PulseDock() {
 
   // Activate keyboard detection to auto-hide dock when typing
   useKeyboardDetection();
-
-  // Hide dock only in full-screen chat threads (Messages with active conversation)
-  const isFullScreenChat = location.pathname.includes('/dna/messages');
-
-  // Only render on mobile and for authenticated users
-  if (!isMobile || !user) return null;
-  if (isFullScreenChat) return null;
 
   const handleItemClick = (item: PrimaryItemBase) => {
     if (item.isTrigger) {

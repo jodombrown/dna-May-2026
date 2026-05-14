@@ -13,7 +13,7 @@ const PlatformOverview = () => {
     },
     {
       icon: Calendar,
-      color: "text-purple-500",
+      color: "text-copper-500",
       name: "CONVENE: Gather with Purpose",
       description: "Host or join events across the diaspora (virtual, in-person, or hybrid). Every gathering becomes a moment of connection, discovery, and movement.",
     },

@@ -8,10 +8,11 @@
  */
 
 import React, { useState } from 'react';
-import { Sparkles, Share2, Eye, EyeOff, RefreshCw } from 'lucide-react';
+import { Share2, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { UserTier } from '@/types/profileIdentityHub';
 import { PROFILE_TIER_GATES } from '@/types/profileIdentityHub';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface DIAInsightCardProps {
   insight: string | null;
@@ -41,7 +42,7 @@ export const DIAInsightCard: React.FC<DIAInsightCardProps> = ({
     return (
       <div className="rounded-xl p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100">
         <div className="flex items-start gap-2">
-          <Sparkles className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+          <MateMasie className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="text-sm font-semibold text-amber-900">
               What makes you unique on DNA?
@@ -68,7 +69,7 @@ export const DIAInsightCard: React.FC<DIAInsightCardProps> = ({
     return (
       <div className="rounded-xl p-4 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100">
         <div className="flex items-start gap-2">
-          <Sparkles className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+          <MateMasie className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="text-sm font-semibold text-emerald-900">
               DIA is learning about you
@@ -96,7 +97,7 @@ export const DIAInsightCard: React.FC<DIAInsightCardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
-          <Sparkles className="w-4 h-4 text-emerald-600" />
+          <MateMasie className="w-4 h-4 text-emerald-600" />
           <h3 className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">
             DIA Insight
           </h3>

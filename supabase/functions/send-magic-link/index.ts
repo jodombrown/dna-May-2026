@@ -28,6 +28,39 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Require authenticated admin caller
+    if (!supabaseAdmin) {
+      return new Response(JSON.stringify({ error: "Service not configured" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const authHeader = req.headers.get("Authorization") || "";
+    const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+    if (!token) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token);
+    if (userErr || !userRes?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const { data: isAdmin } = await supabaseAdmin.rpc("has_role", {
+      _user_id: userRes.user.id,
+      _role: "admin",
+    });
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     const body: MagicLinkRequest = await req.json();
     const email = (body.email || '').trim();
     const fullName = body.fullName;

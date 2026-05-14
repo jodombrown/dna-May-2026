@@ -151,12 +151,9 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: {
+        duration: 0.2,
         ease: "easeOut" as const
       }
     }
@@ -182,8 +179,8 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
       {/* Minimal Header */}
       <motion.header 
         initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
         className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
       >
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
@@ -209,7 +206,7 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.2 }}
         className="h-40 sm:h-52 md:h-64 w-full relative pt-14"
         style={getBannerStyle()}
       >
@@ -246,7 +243,7 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
               }}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.2, delay: 0.3 }}
             >
               <Avatar className="w-28 h-28 sm:w-36 sm:h-36 border-4 border-background">
                 <AvatarImage src={profile.avatar_url || undefined} alt={profile.full_name} />
@@ -398,9 +395,8 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
           <Card className="max-w-2xl mx-auto mb-12 bg-gradient-to-br from-primary/5 via-background to-secondary/5 border-primary/20 overflow-hidden">
             <CardContent className="pt-6 text-center relative">
               <motion.div 
-                className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4"
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 400 }}
+                className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-colors hover:bg-primary/20"
+                transition={{ duration: 0.12 }}
               >
                 <Users className="w-6 h-6 text-primary" />
               </motion.div>

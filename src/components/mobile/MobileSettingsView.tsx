@@ -126,11 +126,11 @@ const MobileSettingsView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
       <div className="bg-white p-6 border-b">
         <h1 className="text-2xl font-bold text-dna-forest">Settings</h1>
-        <p className="text-gray-600 mt-1">Manage your account and preferences</p>
+        <p className="text-neutral-600 mt-1">Manage your account and preferences</p>
       </div>
 
       {/* Settings Groups */}
@@ -147,12 +147,12 @@ const MobileSettingsView = () => {
               {group.items.map((item, index) => (
                 <div 
                   key={index}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 active:bg-gray-100 cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-neutral-50 active:bg-neutral-100 cursor-pointer"
                   onClick={item.type === 'toggle' ? undefined : item.action}
                 >
                   <div className="flex-1">
                     <p className="font-medium text-dna-forest">{item.label}</p>
-                    <p className="text-sm text-gray-600">{item.description}</p>
+                    <p className="text-sm text-neutral-600">{item.description}</p>
                   </div>
                   {item.type === 'toggle' ? (
                     <Switch
@@ -160,7 +160,7 @@ const MobileSettingsView = () => {
                       onCheckedChange={item.onChange as (value: boolean) => void}
                     />
                   ) : (
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <ChevronRight className="w-5 h-5 text-neutral-400" />
                   )}
                 </div>
               ))}
@@ -199,7 +199,7 @@ const MobileSettingsView = () => {
       </div>
 
       {/* App Info */}
-      <div className="p-4 text-center text-gray-500">
+      <div className="p-4 text-center text-neutral-500">
         <p className="text-sm">DNA Platform</p>
         <p className="text-xs mt-1">© 2024 Diaspora Network of Africa</p>
       </div>

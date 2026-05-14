@@ -45,10 +45,10 @@ const DNAQuickStatsCard: React.FC<DNAQuickStatsCardProps> = ({ profile }) => {
           {stats.map((stat, index) => {
             const IconComponent = stat.icon;
             return (
-              <div key={index} className="text-center p-3 rounded-lg bg-gray-50">
+              <div key={index} className="text-center p-3 rounded-lg bg-neutral-50">
                 <IconComponent className="w-6 h-6 mx-auto mb-2 text-dna-copper" />
                 <div className="text-2xl font-bold text-dna-forest">{stat.value}</div>
-                <div className="text-xs text-gray-600">{stat.description}</div>
+                <div className="text-xs text-neutral-600">{stat.description}</div>
               </div>
             );
           })}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, Sparkles, ClipboardCheck } from 'lucide-react';
+import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, ClipboardCheck } from 'lucide-react';
 import { useTourProgress } from '@/hooks/useTourProgress';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -325,7 +326,7 @@ export const AccountDrawer: React.FC = () => {
               className="w-full justify-start"
               onClick={handleTakeTour}
             >
-              <Sparkles className="h-4 w-4 mr-3" />
+              <MateMasie className="h-4 w-4 mr-3" />
               Take Platform Tour
             </Button>
 

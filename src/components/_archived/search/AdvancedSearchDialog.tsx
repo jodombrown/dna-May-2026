@@ -35,8 +35,8 @@ const AdvancedSearchDialog: React.FC<AdvancedSearchDialogProps> = ({ isOpen, onC
               <SearchFeaturePreview />
               <SearchFeedbackForm onClose={onClose} />
 
-              <div className="bg-gray-50 p-4 rounded-lg text-center">
-                <p className="text-sm text-gray-600">
+              <div className="bg-neutral-50 p-4 rounded-lg text-center">
+                <p className="text-sm text-neutral-600">
                   Want to try the current search functionality?
                 </p>
                 <Button 

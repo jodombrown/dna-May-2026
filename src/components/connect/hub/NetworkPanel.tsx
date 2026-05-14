@@ -9,30 +9,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Sankofa } from '@/components/icons/adinkra';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import {
-  Users,
-  TrendingUp,
-  Eye,
-  UserPlus,
-  Bell,
-  Calendar,
-  Handshake,
-  Lightbulb,
-  FileText,
-  ChevronRight,
-  ChevronDown,
-  Globe,
-  Zap,
-  Clock,
-  GitBranch,
-  Check,
-  MessageCircle,
-} from 'lucide-react';
+import { Users, TrendingUp, Eye, UserPlus, Bell, Calendar, Handshake, Lightbulb, FileText, ChevronRight, ChevronDown, Globe, Clock, GitBranch, Check, MessageCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
@@ -390,7 +373,7 @@ export function NetworkPanel({
                 onClick={handleViewNetwork}
               >
                 <div className="flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-amber-500" />
+                  <Sankofa className="h-4 w-4 text-amber-500" />
                   <span className="text-sm">Active connections</span>
                 </div>
                 <span className="text-xs text-muted-foreground">Messaged recently</span>

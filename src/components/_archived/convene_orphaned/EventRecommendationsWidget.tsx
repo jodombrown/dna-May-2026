@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Calendar, MapPin, ExternalLink, Sparkles, Users } from 'lucide-react';
+import { Calendar, MapPin, ExternalLink, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format, differenceInDays } from 'date-fns';
+import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 interface ScoredEvent {
   id: string;
@@ -286,7 +287,7 @@ export const EventRecommendationsWidget = () => {
                 </h4>
                 {event.score >= 75 && (
                   <Badge variant="default" className="shrink-0 text-xs">
-                    <Sparkles className="h-3 w-3 mr-1" />
+                    <Nkonsonkonson className="h-3 w-3 mr-1" />
                     Hot match
                   </Badge>
                 )}

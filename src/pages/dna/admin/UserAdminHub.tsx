@@ -1,21 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  Calendar, 
-  Handshake, 
-  Heart, 
-  BookOpen, 
-  BarChart3,
-  Users,
-  Settings,
-  ChevronRight,
-  Sparkles
-} from 'lucide-react';
+import { Calendar, Handshake, Heart, BookOpen, BarChart3, Users, Settings, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { MateMasie } from '@/components/icons/adinkra';
 
 /**
  * UserAdminHub - Personal management hub for all Five C's activities
@@ -62,7 +53,7 @@ const UserAdminHub: React.FC = () => {
       icon: Handshake,
       path: '/dna/collaborate/my-spaces',
       pillar: 'collaborate',
-      color: 'text-purple-600 bg-purple-100',
+      color: 'text-copper-600 bg-copper-100',
       items: [
         { label: 'My Spaces', path: '/dna/collaborate/my-spaces' },
         { label: 'Create Space', path: '/dna/collaborate/spaces/new' },
@@ -118,7 +109,7 @@ const UserAdminHub: React.FC = () => {
               <Settings className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">Admin</h1>
+              <h1 className="text-h1 font-serif">Admin</h1>
               <p className="text-muted-foreground text-sm">Manage your DNA activities</p>
             </div>
           </div>

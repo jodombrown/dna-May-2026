@@ -50,13 +50,13 @@ const CollaborationsDialogs: React.FC<CollaborationsDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-600">
               This feature will allow you to create and manage collaborative projects with other diaspora professionals. 
               You'll be able to define project goals, recruit team members, and track progress together.
             </p>
             <div className="bg-dna-emerald/10 p-4 rounded-lg border border-dna-emerald/20">
               <p className="text-sm font-medium text-dna-forest mb-2">Coming in MVP Phase:</p>
-              <ul className="text-xs text-gray-700 space-y-1">
+              <ul className="text-xs text-neutral-700 space-y-1">
                 <li>• Project creation workflow</li>
                 <li>• Team member recruitment</li>
                 <li>• Resource allocation tools</li>
@@ -86,13 +86,13 @@ const CollaborationsDialogs: React.FC<CollaborationsDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-600">
               Browse active projects from diaspora professionals and contribute your expertise to meaningful initiatives 
               across Africa and the diaspora community.
             </p>
             <div className="bg-dna-emerald/10 p-4 rounded-lg border border-dna-emerald/20">
               <p className="text-sm font-medium text-dna-forest mb-2">Features in Development:</p>
-              <ul className="text-xs text-gray-700 space-y-1">
+              <ul className="text-xs text-neutral-700 space-y-1">
                 <li>• Project discovery dashboard</li>
                 <li>• Skill-based matching</li>
                 <li>• Application and vetting process</li>
@@ -122,13 +122,13 @@ const CollaborationsDialogs: React.FC<CollaborationsDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-600">
               Access team discussions, share updates, brainstorm ideas, and coordinate project activities 
               with your collaborative partners in dedicated chat rooms.
             </p>
             <div className="bg-dna-copper/10 p-4 rounded-lg border border-dna-copper/20">
               <p className="text-sm font-medium text-dna-copper mb-2">Discussion Features:</p>
-              <ul className="text-xs text-gray-700 space-y-1">
+              <ul className="text-xs text-neutral-700 space-y-1">
                 <li>• Real-time messaging</li>
                 <li>• File sharing capabilities</li>
                 <li>• Voice and video calls</li>
@@ -158,13 +158,13 @@ const CollaborationsDialogs: React.FC<CollaborationsDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-600">
               Browse project documentation, shared resources, meeting notes, and collaborative files 
               organized by your team in a centralized document library.
             </p>
             <div className="bg-dna-emerald/10 p-4 rounded-lg border border-dna-emerald/20">
               <p className="text-sm font-medium text-dna-forest mb-2">Document Management:</p>
-              <ul className="text-xs text-gray-700 space-y-1">
+              <ul className="text-xs text-neutral-700 space-y-1">
                 <li>• Centralized file storage</li>
                 <li>• Version control system</li>
                 <li>• Collaborative editing tools</li>
@@ -194,13 +194,13 @@ const CollaborationsDialogs: React.FC<CollaborationsDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-600">
               Participate in scheduled team meetings, impromptu calls, and collaborative work sessions 
               through integrated video conferencing and screen sharing tools.
             </p>
             <div className="bg-dna-gold/10 p-4 rounded-lg border border-dna-gold/20">
               <p className="text-sm font-medium text-dna-gold mb-2">Meeting Features:</p>
-              <ul className="text-xs text-gray-700 space-y-1">
+              <ul className="text-xs text-neutral-700 space-y-1">
                 <li>• HD video conferencing</li>
                 <li>• Screen sharing capabilities</li>
                 <li>• Meeting recording</li>

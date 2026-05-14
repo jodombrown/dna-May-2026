@@ -80,7 +80,7 @@ export const HeritageCard: React.FC<HeritageCardProps> = ({ heritage, isCompact 
       {/* Heritage countries */}
       {heritage.heritageCountries?.length > 0 && (
         <div className="mb-3">
-          <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
+          <div className="flex items-center gap-1.5 text-sm font-medium text-neutral-700 mb-2">
             <Globe className="w-4 h-4" />
             <span>Heritage</span>
           </div>
@@ -95,7 +95,7 @@ export const HeritageCard: React.FC<HeritageCardProps> = ({ heritage, isCompact 
                 </span>
                 <span className="font-medium">{country.countryName}</span>
                 {!isCompact && (
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-neutral-500">
                     ({RELATIONSHIP_LABELS[country.relationship]})
                   </span>
                 )}
@@ -112,7 +112,7 @@ export const HeritageCard: React.FC<HeritageCardProps> = ({ heritage, isCompact 
 
       {/* Current country */}
       {heritage.currentCountry && !isCompact && (
-        <div className="mb-3 flex items-center gap-1.5 text-sm text-gray-600">
+        <div className="mb-3 flex items-center gap-1.5 text-sm text-neutral-600">
           <MapPin className="w-3.5 h-3.5" />
           <span>Currently in {heritage.currentCountry}</span>
         </div>
@@ -121,7 +121,7 @@ export const HeritageCard: React.FC<HeritageCardProps> = ({ heritage, isCompact 
       {/* Languages */}
       {heritage.languages?.length > 0 && (
         <div className="mb-3">
-          <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
+          <div className="flex items-center gap-1.5 text-sm font-medium text-neutral-700 mb-2">
             <Languages className="w-4 h-4" />
             <span>Languages</span>
           </div>
@@ -147,17 +147,17 @@ export const HeritageCard: React.FC<HeritageCardProps> = ({ heritage, isCompact 
       {/* Regional connections */}
       {heritage.regionalConnections?.length > 0 && !isCompact && (
         <div>
-          <div className="text-sm font-medium text-gray-700 mb-2">
+          <div className="text-sm font-medium text-neutral-700 mb-2">
             Regional Connections
           </div>
           <div className="flex flex-wrap gap-2">
             {heritage.regionalConnections.map((rc) => (
               <div
                 key={rc.region}
-                className="flex items-center gap-1 text-xs text-gray-600 bg-white/60 rounded-full px-2.5 py-1"
+                className="flex items-center gap-1 text-xs text-neutral-600 bg-white/60 rounded-full px-2.5 py-1"
               >
                 <span className="font-medium">{AFRICAN_REGION_LABELS[rc.region]}</span>
-                <span className="text-gray-400">·</span>
+                <span className="text-neutral-400">·</span>
                 <span>{rc.connectionCount} connections</span>
                 <span
                   className={`w-1.5 h-1.5 rounded-full ml-1 ${
@@ -165,7 +165,7 @@ export const HeritageCard: React.FC<HeritageCardProps> = ({ heritage, isCompact 
                       ? 'bg-emerald-500'
                       : rc.strength === 'moderate'
                         ? 'bg-amber-500'
-                        : 'bg-gray-400'
+                        : 'bg-neutral-400'
                   }`}
                 />
               </div>

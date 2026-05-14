@@ -2,18 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useWhatsNext } from '@/hooks/useWhatsNext';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Sparkles, Users, Calendar, FolderKanban, HandHeart, 
-  FileText, ArrowRight, Loader2 
-} from 'lucide-react';
+import { Users, Calendar, FolderKanban, HandHeart, FileText, ArrowRight, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Mpatapo } from '@/components/icons/adinkra';
 
 const PILLAR_COLORS = {
   connect: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
-  convene: 'bg-purple-500/10 text-purple-700 dark:text-purple-400',
+  convene: 'bg-copper-500/10 text-copper-700 dark:text-copper-400',
   collaborate: 'bg-green-500/10 text-green-700 dark:text-green-400',
   contribute: 'bg-orange-500/10 text-orange-700 dark:text-orange-400',
-  convey: 'bg-pink-500/10 text-pink-700 dark:text-pink-400',
+  convey: 'bg-copper-500/10 text-copper-700 dark:text-copper-400',
 };
 
 const ICON_MAP: Record<string, any> = {
@@ -34,7 +32,7 @@ export function WhatsNextModule() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Mpatapo className="h-5 w-5 text-primary" />
             What's Next
           </CardTitle>
         </CardHeader>
@@ -50,7 +48,7 @@ export function WhatsNextModule() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Mpatapo className="h-5 w-5 text-primary" />
             What's Next
           </CardTitle>
         </CardHeader>
@@ -67,13 +65,13 @@ export function WhatsNextModule() {
     <Card className="border-primary/20">
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
+          <Mpatapo className="h-5 w-5 text-primary" />
           What's Next
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {recommendations.map((rec) => {
-          const Icon = ICON_MAP[rec.icon] || Sparkles;
+          const Icon = ICON_MAP[rec.icon] || Mpatapo;
           return (
             <div
               key={rec.id}

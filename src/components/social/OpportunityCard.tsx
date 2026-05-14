@@ -29,11 +29,11 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, showInFe
           <Briefcase className="w-5 h-5 text-dna-gold" />
           <span className="font-semibold text-dna-gold">Opportunity</span>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900">{opportunity.title}</h3>
+        <h3 className="text-lg font-semibold text-neutral-900">{opportunity.title}</h3>
       </CardHeader>
       
       <CardContent className="space-y-3">
-        <div className="flex flex-wrap gap-2 text-sm text-gray-600">
+        <div className="flex flex-wrap gap-2 text-sm text-neutral-600">
           {opportunity.role_type && (
             <Badge variant="outline" className="border-dna-gold text-dna-gold">
               {opportunity.role_type}
@@ -56,7 +56,7 @@ const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, showInFe
         </div>
         
         {opportunity.description && (
-          <p className="text-gray-700 text-sm leading-relaxed">{opportunity.description}</p>
+          <p className="text-neutral-700 text-sm leading-relaxed">{opportunity.description}</p>
         )}
         
         {opportunity.deadline && (

@@ -7,12 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Briefcase, Users, Rocket, DollarSign, GraduationCap, Heart, ArrowRight, Sparkles } from 'lucide-react';
+import { Briefcase, Users, DollarSign, GraduationCap, Heart, ArrowRight } from 'lucide-react';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { MateMasie } from '@/components/icons/adinkra';
 
 const ROLES = [
   { id: 'professional', label: 'Professional', icon: Briefcase, description: 'Working in a career or field' },
-  { id: 'founder', label: 'Founder', icon: Rocket, description: 'Building a startup or business' },
+  { id: 'founder', label: 'Founder', icon: MateMasie, description: 'Building a startup or business' },
   { id: 'community_organizer', label: 'Community Organizer', icon: Users, description: 'Leading groups or initiatives' },
   { id: 'investor', label: 'Investor', icon: DollarSign, description: 'Funding projects and ventures' },
   { id: 'student', label: 'Student', icon: GraduationCap, description: 'Learning and growing' },
@@ -117,7 +118,7 @@ export function WelcomeWizard() {
       <Card className="w-full max-w-3xl">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
-            <Sparkles className="h-12 w-12 text-primary" />
+            <MateMasie className="h-12 w-12 text-primary" />
           </div>
           <CardTitle className="text-3xl">Welcome to DNA</CardTitle>
           <CardDescription>
@@ -205,7 +206,7 @@ export function WelcomeWizard() {
                   size="lg"
                 >
                   {isSubmitting ? 'Setting up...' : 'Complete Setup'}
-                  <Sparkles className="ml-2 h-4 w-4" />
+                  <MateMasie className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </div>

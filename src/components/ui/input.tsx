@@ -20,6 +20,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           "focus-visible:outline-none focus-visible:border-primary focus-visible:shadow-dna-focus",
           "disabled:cursor-not-allowed disabled:opacity-50",
           "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+          // Invalid state highlight (driven by aria-invalid="true")
+          "aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-destructive/30",
           // Size: 16px on mobile to prevent iOS zoom
           "h-11 px-4 text-base md:text-[15px]",
           // Variant styles

@@ -44,7 +44,7 @@ export function HappeningNowSection() {
   if (liveEvents.length === 0) return null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       {/* Header */}
       <div className="flex items-center gap-2">
         <span className="relative flex h-3 w-3">

@@ -41,7 +41,7 @@ export const ProfileRecentPosts: React.FC<ProfileRecentPostsProps> = ({ userId, 
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'story': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'story': return 'bg-copper-100 text-copper-800 dark:bg-copper-900 dark:text-copper-200';
       case 'update': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'impact': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
       default: return 'bg-muted text-foreground';

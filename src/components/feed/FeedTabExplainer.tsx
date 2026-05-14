@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Newspaper, Sparkles, Users, PenSquare, Bookmark } from 'lucide-react';
+import { Newspaper, UserPlus, PenSquare, Bookmark, Compass } from 'lucide-react';
 import { FeedTab } from '@/types/feed';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -28,13 +28,13 @@ const TAB_EXPLAINERS: Record<FeedTab, { title: string; description: string; icon
   for_you: {
     title: 'Personalized For You',
     description: 'These posts are selected based on your connections, interests, and engagement patterns',
-    icon: Sparkles,
+    icon: Compass,
     bgClass: 'bg-gradient-to-r from-dna-copper/10 to-dna-gold/10 border-dna-copper/20',
   },
   network: {
     title: 'My Network',
     description: 'Posts from your connections and people in your extended diaspora network',
-    icon: Users,
+    icon: UserPlus,
     bgClass: 'bg-gradient-to-r from-dna-emerald/10 to-dna-emerald/5 border-dna-emerald/20',
   },
   my_posts: {

@@ -6,7 +6,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Sparkles } from 'lucide-react';
+import { Sankofa } from '@/components/icons/adinkra';
 
 interface ConnectionRequestContextProps {
   currentUserId: string;
@@ -106,7 +106,7 @@ export function ConnectionRequestContext({ currentUserId, requesterId }: Connect
 
   return (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-      <Sparkles className="h-3 w-3 text-primary flex-shrink-0" />
+      <Sankofa className="h-3 w-3 text-primary flex-shrink-0" />
       <span>
         {parts.map((part, i) =>
           i % 2 === 1 ? (

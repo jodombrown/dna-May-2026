@@ -48,7 +48,7 @@ const NetworkingTabs = () => {
               Advanced
             </Button>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-neutral-600">
             Discover diaspora professionals, join purpose-driven communities, and connect with organizations making impact
           </p>
         </CardContent>

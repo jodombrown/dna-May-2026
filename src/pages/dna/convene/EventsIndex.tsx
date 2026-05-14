@@ -130,7 +130,7 @@ const EventsIndex = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">All Events</h1>
+            <h1 className="text-h1 font-serif text-foreground">All Events</h1>
             <p className="text-muted-foreground">
               Discover and join convenings across the diaspora network
             </p>

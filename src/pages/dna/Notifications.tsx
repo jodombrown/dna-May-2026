@@ -45,7 +45,7 @@ const DnaNotifications = () => {
         <div className="flex items-center justify-between mb-3 lg:mb-6">
           <div className="flex items-center gap-3">
             <Bell className="w-6 h-6 text-primary" />
-            <h1 className="text-2xl font-bold">Notifications</h1>
+            <h1 className="text-h2 font-serif">Notifications</h1>
           </div>
           <div className="flex gap-2">
             {unreadNotifications.length > 0 && (

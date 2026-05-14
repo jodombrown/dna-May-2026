@@ -1,5 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { MateMasie } from '@/components/icons/adinkra';
 
 import { ConnectNudges } from '@/components/connect/ConnectNudges';
 import { MyProfilePreview } from '@/components/profile/MyProfilePreview';
@@ -8,7 +9,7 @@ import { RecentActivity } from '@/components/profile/RecentActivity';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Users, Calendar, Rocket, TrendingUp, Eye, PenSquare } from 'lucide-react';
+import { Users, Calendar, TrendingUp, Eye, PenSquare } from 'lucide-react';
 
 const DnaMe = () => {
   const { user } = useAuth();
@@ -31,7 +32,7 @@ const DnaMe = () => {
     <div className="min-h-screen bg-background">
       <div className="container max-w-7xl mx-auto px-3 sm:px-4 py-3 lg:py-6">
         <div className="mb-3 lg:mb-6">
-          <h1 className="text-2xl lg:text-3xl font-bold mb-1">My DNA Hub</h1>
+          <h1 className="text-2xl lg:text-h1 font-serif mb-1">My DNA Hub</h1>
           <p className="text-sm text-muted-foreground">
             Your personal dashboard for the DNA platform
           </p>
@@ -117,7 +118,7 @@ const DnaMe = () => {
                     onClick={() => navigate('/dna/contribute/needs')}
                   >
                     <div className="flex items-center gap-2 w-full">
-                      <Rocket className="w-5 h-5 text-dna-gold" />
+                      <MateMasie className="w-5 h-5 text-dna-gold" />
                       <span className="font-semibold">Opportunities</span>
                     </div>
                     <span className="text-xs text-muted-foreground text-left">

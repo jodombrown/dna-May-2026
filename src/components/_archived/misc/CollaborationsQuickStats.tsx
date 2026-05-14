@@ -42,14 +42,14 @@ const CollaborationsQuickStats: React.FC<CollaborationsQuickStatsProps> = ({ sta
         <Card key={index} className="hover:shadow-md transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-2 bg-gray-50 rounded-lg">
+              <div className="p-2 bg-neutral-50 rounded-lg">
                 {stat.icon}
               </div>
             </div>
             <div>
-              <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm font-medium text-gray-700 mt-1">{stat.label}</p>
-              <p className="text-xs text-gray-500 mt-1">{stat.description}</p>
+              <p className="text-2xl font-bold text-neutral-900">{stat.value}</p>
+              <p className="text-sm font-medium text-neutral-700 mt-1">{stat.label}</p>
+              <p className="text-xs text-neutral-500 mt-1">{stat.description}</p>
             </div>
           </CardContent>
         </Card>

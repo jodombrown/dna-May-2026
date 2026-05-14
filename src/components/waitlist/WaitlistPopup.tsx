@@ -124,7 +124,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         isMobile 
           ? "w-[90vw] max-w-[340px] mx-2" 
           : "max-w-lg w-full mx-4"
-        } bg-white rounded-xl border-2 border-gray-200/50 max-h-[90vh] overflow-y-auto animate-scale-in`}
+        } bg-white rounded-xl border-2 border-neutral-200/50 max-h-[90vh] overflow-y-auto animate-scale-in`}
         style={{
           boxShadow: `
             0 32px 64px -12px rgba(0, 0, 0, 0.4),
@@ -142,10 +142,10 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-gray-100 hover:bg-dna-emerald/10 transition-colors duration-200 group"
+          className="absolute top-4 right-4 z-50 p-2 rounded-full bg-neutral-100 hover:bg-dna-emerald/10 transition-colors duration-200 group"
           aria-label="Close"
         >
-          <X className="h-4 w-4 text-gray-500 group-hover:text-dna-emerald transition-colors duration-200" />
+          <X className="h-4 w-4 text-neutral-500 group-hover:text-dna-emerald transition-colors duration-200" />
         </button>
 
         {/* Background Gradient */}
@@ -157,7 +157,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
             <h2 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-dna-forest`}>
               Join the DNA Beta Waitlist
             </h2>
-            <p className={`text-gray-600 ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
+            <p className={`text-neutral-600 ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
               Be among the first to connect, collaborate, and contribute with Africa's global diaspora.
             </p>
           </div>
@@ -222,7 +222,7 @@ const WaitlistPopup: React.FC<WaitlistPopupProps> = ({ isOpen, onClose }) => {
             </div>
           </form>
 
-          <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-500 text-center ${isMobile ? 'mt-3' : 'mt-4'}`}>
+          <p className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-neutral-500 text-center ${isMobile ? 'mt-3' : 'mt-4'}`}>
             We respect your{' '}
             <button 
               type="button"

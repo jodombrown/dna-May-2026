@@ -1,10 +1,11 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Handshake, ArrowRight, Users, DollarSign, Target, TrendingUp, Rocket } from 'lucide-react';
+import { Handshake, ArrowRight, Users, DollarSign, Target, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
 import SwipeableCardStack from './SwipeableCardStack';
+import { FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
 
 const CollaborateSection = () => {
   const navigate = useNavigate();
@@ -82,12 +83,12 @@ const CollaborateSection = () => {
   };
 
   const renderCard = (project: typeof projects[0]) => (
-    <div className={`bg-gradient-to-br ${project.gradient} rounded-3xl p-1.5 shadow-2xl h-full w-full`}>
-      <div className="bg-white rounded-[22px] overflow-hidden h-full flex flex-col">
+    <div className={`bg-gradient-to-br ${project.gradient} rounded-xl p-1.5 shadow-2xl h-full w-full`}>
+      <div className="bg-white rounded-xl overflow-hidden h-full flex flex-col">
         <div className={`bg-gradient-to-r ${project.gradient} text-white p-6`}>
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg font-serif">{project.categoryTitle}</h3>
-            <Handshake className="w-5 h-5" />
+            <FuntunfunefuDenkyemfunefu className="w-6 h-6" />
           </div>
           <p className="text-sm text-white/80">{project.categorySubtitle}</p>
         </div>
@@ -95,15 +96,15 @@ const CollaborateSection = () => {
         <div className="p-6 space-y-6 flex-1">
           <div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <h4 className="font-bold text-xl text-gray-900">{project.title}</h4>
+              <h4 className="font-bold text-xl text-neutral-900">{project.title}</h4>
               <Badge className="bg-dna-emerald text-white text-xs">{project.status}</Badge>
             </div>
-            <p className="text-sm text-gray-600 mb-3">{project.description}</p>
+            <p className="text-sm text-neutral-600 mb-3">{project.description}</p>
           </div>
           
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Progress</span>
+              <span className="text-neutral-600">Progress</span>
               <span className="font-semibold text-dna-copper">{project.progress}%</span>
             </div>
             <Progress value={project.progress} className="h-2" />
@@ -112,18 +113,18 @@ const CollaborateSection = () => {
           <div className="grid grid-cols-3 gap-3">
             <div className="text-center p-3 bg-dna-copper/10 rounded-lg">
               <Users className="w-4 h-4 mx-auto mb-1 text-dna-copper" />
-              <p className="text-sm font-bold text-gray-900">{project.team}</p>
-              <p className="text-xs text-gray-500">Team</p>
+              <p className="text-sm font-bold text-neutral-900">{project.team}</p>
+              <p className="text-xs text-neutral-500">Team</p>
             </div>
             <div className="text-center p-3 bg-dna-gold/10 rounded-lg">
               <Target className="w-4 h-4 mx-auto mb-1 text-dna-ochre" />
-              <p className="text-sm font-bold text-gray-900">{project.countries}</p>
-              <p className="text-xs text-gray-500">Countries</p>
+              <p className="text-sm font-bold text-neutral-900">{project.countries}</p>
+              <p className="text-xs text-neutral-500">Countries</p>
             </div>
             <div className="text-center p-3 bg-dna-emerald/10 rounded-lg">
               <DollarSign className="w-4 h-4 mx-auto mb-1 text-dna-emerald" />
-              <p className="text-sm font-bold text-gray-900">{project.pooled}</p>
-              <p className="text-xs text-gray-500">Pooled</p>
+              <p className="text-sm font-bold text-neutral-900">{project.pooled}</p>
+              <p className="text-xs text-neutral-500">Pooled</p>
             </div>
           </div>
 
@@ -133,7 +134,7 @@ const CollaborateSection = () => {
             Explore Collaboration
           </Button>
 
-          <p className="text-xs text-center text-gray-500">
+          <p className="text-xs text-center text-neutral-500">
             Join the team and pool resources →
           </p>
         </div>
@@ -149,14 +150,14 @@ const CollaborateSection = () => {
           <div>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-gradient-to-br from-dna-copper to-dna-gold rounded-xl flex items-center justify-center">
-                <Handshake className="w-6 h-6 text-white" />
+                <FuntunfunefuDenkyemfunefu className="w-7 h-7 text-white" />
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-gray-900">Collaborate</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-neutral-900">Collaborate</h2>
             </div>
-            <p className="text-xl font-semibold text-gray-900 mb-3">
+            <p className="text-xl font-semibold text-neutral-900 mb-3">
               Build Solutions Together
             </p>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className="text-lg text-neutral-600 mb-6">
               Transform ideas into funded ventures through structured collaboration. Co-create with fellow members, access shared resources, track milestones transparently, and participate in real initiatives solving Africa's challenges. Your contribution earns recognition, equity, and impact while building solutions that scale.
             </p>
 
@@ -166,8 +167,8 @@ const CollaborateSection = () => {
                   <Target className="w-4 h-4 text-dna-copper" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Structured Co-Creation</h3>
-                  <p className="text-sm text-gray-600">Clear workflows, defined roles, and milestone-based progress keep projects moving</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Structured Co-Creation</h3>
+                  <p className="text-sm text-neutral-600">Clear workflows, defined roles, and milestone-based progress keep projects moving</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -175,8 +176,8 @@ const CollaborateSection = () => {
                   <TrendingUp className="w-4 h-4 text-dna-gold" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Transparent Value Exchange</h3>
-                  <p className="text-sm text-gray-600">Contributions are tracked and rewarded with equity, recognition, or revenue share</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Transparent Value Exchange</h3>
+                  <p className="text-sm text-neutral-600">Contributions are tracked and rewarded with equity, recognition, or revenue share</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -184,8 +185,8 @@ const CollaborateSection = () => {
                   <Users className="w-4 h-4 text-dna-emerald" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Collective Problem-Solving</h3>
-                  <p className="text-sm text-gray-600">Combine diverse expertise to tackle challenges no one could solve alone</p>
+                  <h3 className="font-semibold text-neutral-900 mb-1">Collective Problem-Solving</h3>
+                  <p className="text-sm text-neutral-600">Combine diverse expertise to tackle challenges no one could solve alone</p>
                 </div>
               </div>
             </div>

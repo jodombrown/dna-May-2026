@@ -16,14 +16,8 @@ import { COMPOSER_MODE_CONFIG } from '@/config/composerModes';
 import { MODE_HANDLERS } from './modeHandlers';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
-import {
-  MessageSquare,
-  BookOpen,
-  Calendar,
-  Rocket,
-  Lightbulb,
-  LucideIcon,
-} from 'lucide-react';
+import { MessageSquare, BookOpen, Calendar, Lightbulb, LucideIcon } from 'lucide-react';
+import { MateMasie } from '@/components/icons/adinkra';
 
 interface ComposerModeSelectorProps {
   currentMode: ComposerMode;
@@ -41,7 +35,7 @@ const modeChips: ModeChipConfig[] = [
   { id: 'post', icon: MessageSquare, activeBgClass: 'bg-[#4A8D77]' },
   { id: 'story', icon: BookOpen, activeBgClass: 'bg-[#2A7A8C]' },
   { id: 'event', icon: Calendar, activeBgClass: 'bg-[#C4942A]' },
-  { id: 'space', icon: Rocket, activeBgClass: 'bg-[#2D5A3D]' },
+  { id: 'space', icon: MateMasie, activeBgClass: 'bg-[#2D5A3D]' },
   { id: 'need', icon: Lightbulb, activeBgClass: 'bg-[#B87333]' },
 ];
 
