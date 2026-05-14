@@ -735,8 +735,8 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* ROADMAP — DNA's annual flagship event */}
-              <Route path="/roadmap" element={<Roadmap />} />
+              {/* ROADMAP — hidden, work-in-progress */}
+              {/* <Route path="/roadmap" element={<Roadmap />} /> */}
 
               {/* Public marketing pages - Five C's examples */}
               <Route path="/connect" element={<ConnectExample />} />
