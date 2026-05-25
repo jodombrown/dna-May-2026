@@ -1,35 +1,54 @@
 ## Problem
 
-On every page, there's an empty ~56px band between the header navigation and the page content (visible in all three screenshots). The header looks "detached" from the hero/banner below it.
+The Post composer lets you attach multiple images (via `MultiAttachmentUploader`), and the form correctly tracks them as `mediaUrl` (first image) + `galleryUrls` (the rest). But when the post is submitted, the extra images are silently dropped, so the published post only ever shows one image.
 
-## Root Cause
+There are two breaks in the pipeline:
 
-`src/layouts/BaseLayout.tsx` renders a spacer div that always reserves space for **header + PulseBar**:
+1. **Submit handler drops gallery** - `MODE_HANDLERS.post.submit` in `src/components/composer/modeHandlers.ts` only passes `data.mediaUrl` to `createStandardPost`. It never forwards `data.galleryUrls`.
+2. **Writer never stores gallery** - `createStandardPost` in `src/lib/feedWriter.ts` has no `galleryUrls` parameter and doesn't write the `posts.gallery_urls` column (the column exists in the DB and is already used by stories).
+3. **PostCard only renders one image** - `src/components/posts/PostCard.tsx` only renders `post.image_url`. Even once we persist the gallery, a standard post will still look single-image.
 
-```
-height: calc(var(--roadmap-banner-height, 0px)
-           + var(--unified-header-height, 56px)
-           + var(--pulse-bar-height, 56px))
-```
+The DB already has `posts.gallery_urls` (text[]), and `feedService` already maps `image_url + gallery_urls` into a unified `media` array on read - so the read side mostly works; we just need to write the array and render it.
 
-`PulseBar` (`src/components/pulse/PulseBar.tsx`) returns `null` when there is no user (public/marketing pages like `/`, `/about`, `/connect` preview) and on mobile. On mobile it correctly sets `--pulse-bar-height: 0px`, but on **desktop when logged out** it never sets the variable, so the spacer falls back to the hard-coded `56px` default — producing the visible empty band.
+## Plan
 
-## Fix
+### 1. Persist the gallery on submit
 
-Single-file change in `src/components/pulse/PulseBar.tsx`:
+`src/lib/feedWriter.ts` - `createStandardPost`:
+- Add optional `galleryUrls?: string[]` param.
+- Include `gallery_urls: galleryUrls && galleryUrls.length ? galleryUrls : null` in the insert payload.
+- Include `gallery_urls` in the `.select(...)` projection.
+- Map it onto the returned `PostWithAuthor` (extend the type with `gallery_urls?: string[] | null` if not already present).
 
-Extend the existing effect so that whenever `PulseBar` is not rendered (mobile OR no user), `--pulse-bar-height` is forced to `0px`, and restored only when it actually renders.
+`src/components/composer/modeHandlers.ts` - `post.submit`:
+- Pass `galleryUrls: data.galleryUrls` into `createStandardPost`.
+- Include `gallery_urls` on the optimistic `createdPost` returned by `buildUniversalFeedItemForPost` so the new post shows all images immediately in the feed without a refetch.
+- Add `galleryUrls: []` to `post.getDefaultValues` so the field is initialized cleanly.
 
-Effectively: change the guard from `if (isMobile)` to `if (isMobile || !user)` so the CSS var is zeroed in both cases.
+### 2. Render multiple images in PostCard
 
-## Why this is the right scope
+`src/components/posts/PostCard.tsx`:
+- Where it currently renders the single `post.image_url` block (around line 352), branch on whether a gallery is present:
+  - If `post.gallery_urls?.length` (combined with `image_url`), render a small responsive image grid (1 image = current full-width treatment; 2 = side-by-side; 3 = one large + two stacked; 4+ = 2x2 with "+N" overlay on the last tile).
+  - Reuse the existing lightbox/click-to-open behavior already wired for `image_url`.
+- Keep video handling unchanged - galleries are images only (the composer's uploader is image-only for posts).
+- Update the `PostWithAuthor` type used by `PostCard` to include `gallery_urls?: string[] | null`, and ensure the mapping in `UniversalFeedItem.tsx` forwards it from `item.gallery_urls` / `feedService`'s `media` array.
 
-- Affects every page consistently (the spacer is global in `BaseLayout`).
-- No layout changes for authenticated users — `PulseBar` still renders and still reports its real height.
-- No hero/section padding edits needed; the gap goes away because the reserved space goes to 0 when there's no PulseBar.
+### 3. Verification
 
-## Verification
+- Create a post with 1, 2, 3, and 5 images via the composer.
+- Confirm all images appear in the feed card and reload-survives (DB row has the array).
+- Confirm single-image posts still render exactly as before (no visual regression).
+- Confirm reshare/quote rendering still works (only reshares of standard posts - reshare path can keep showing the primary `image_url` for now to avoid scope creep; flagged but not changed).
 
-- Public pages (`/`, `/about`, `/connect`) on desktop: header sits flush against hero/banner.
-- Authenticated `/dna/feed` desktop: PulseBar still appears directly below header, no overlap.
-- Mobile: unchanged (already 0).
+### Out of scope
+
+- Story gallery uploader (already works).
+- Reshare card multi-image rendering (single-image preserved; can be a follow-up).
+- Video galleries / mixed media.
+
+### Technical notes
+
+- DB column already exists: `posts.gallery_urls text[]` - no migration needed.
+- `feedService` already returns gallery URLs to the client; no read-path query change required.
+- Order matters: the composer treats the first image as the "primary" (`mediaUrl` -> `image_url`) and the rest as `galleryUrls` -> `gallery_urls`, preserving user-selected order.
