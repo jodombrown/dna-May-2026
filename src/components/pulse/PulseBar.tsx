@@ -38,15 +38,17 @@ export function PulseBar() {
   const pulseRef = useRef<HTMLDivElement>(null);
   useSetCSSHeaderHeight(pulseRef, '--pulse-bar-height');
 
-  // On mobile, force pulse-bar-height to 0 so layouts using --total-header-height don't reserve space.
+  // Force pulse-bar-height to 0 when the bar isn't rendered (mobile or logged out)
+  // so the global header spacer in BaseLayout doesn't reserve an empty band.
   React.useEffect(() => {
-    if (isMobile) {
+    if (isMobile || !user) {
       document.documentElement.style.setProperty('--pulse-bar-height', '0px');
       return () => {
         document.documentElement.style.removeProperty('--pulse-bar-height');
       };
     }
-  }, [isMobile]);
+  }, [isMobile, user]);
+
 
   if (isMobile || !user) return null;
 
