@@ -262,6 +262,7 @@ export async function createStandardPost(params: {
   authorId: string;
   content: string;
   mediaUrl?: string;
+  galleryUrls?: string[];
   privacyLevel?: 'public' | 'connections';
   spaceId?: string;
   eventId?: string;
@@ -271,7 +272,7 @@ export async function createStandardPost(params: {
   linkThumbnail?: string;
   linkProviderName?: string;
 }): Promise<PostWithAuthor> {
-  const { authorId, content, mediaUrl, spaceId, eventId, privacyLevel, linkUrl, linkTitle, linkDescription, linkThumbnail, linkProviderName } = params;
+  const { authorId, content, mediaUrl, galleryUrls, spaceId, eventId, privacyLevel, linkUrl, linkTitle, linkDescription, linkThumbnail, linkProviderName } = params;
 
   try {
     // Build link_metadata object for video/link embeds
@@ -282,12 +283,17 @@ export async function createStandardPost(params: {
       is_video: true,
     } : null;
 
+    const cleanedGallery = Array.isArray(galleryUrls)
+      ? galleryUrls.filter((u): u is string => typeof u === 'string' && u.length > 0)
+      : [];
+
     // Insert the post with correct post_type value
     const insertPayload = {
       author_id: authorId,
       content: content.trim(),
       post_type: 'post', // Valid post_type per database constraint
       image_url: mediaUrl || null,
+      gallery_urls: cleanedGallery.length ? cleanedGallery : null,
       space_id: spaceId || null,
       event_id: eventId || null,
       privacy_level: privacyLevel || 'public',
@@ -302,7 +308,7 @@ export async function createStandardPost(params: {
     const { data: postData, error: postError } = await supabase
       .from('posts')
       .insert(insertPayload)
-      .select('id, author_id, content, post_type, image_url, created_at, link_url, link_title, link_description, link_metadata')
+      .select('id, author_id, content, post_type, image_url, gallery_urls, created_at, link_url, link_title, link_description, link_metadata')
       .single();
 
     if (postError) {
@@ -333,6 +339,7 @@ export async function createStandardPost(params: {
       post_type: 'text' as any,
       privacy_level: 'public',
       image_url: postData.image_url || undefined,
+      gallery_urls: (postData as { gallery_urls?: string[] | null }).gallery_urls ?? null,
       created_at: postData.created_at,
       likes_count: 0,
       comments_count: 0,
