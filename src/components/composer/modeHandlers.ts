@@ -67,7 +67,7 @@ export interface ModeHandler {
 // ============================================================
 
 function buildUniversalFeedItemForPost(
-  post: { post_id: string; author_id: string; content: string; image_url?: string; created_at: string; author_username: string; author_full_name: string; author_avatar_url?: string; link_url?: string; link_title?: string; link_description?: string; link_metadata?: Record<string, unknown> | null },
+  post: { post_id: string; author_id: string; content: string; image_url?: string; gallery_urls?: string[] | null; created_at: string; author_username: string; author_full_name: string; author_avatar_url?: string; link_url?: string; link_title?: string; link_description?: string; link_metadata?: Record<string, unknown> | null },
   formData: ComposerFormData,
   context: ComposerSubmitContext
 ): UniversalFeedItem {
@@ -81,6 +81,7 @@ function buildUniversalFeedItemForPost(
     title: null,
     subtitle: null,
     media_url: post.image_url || null,
+    gallery_urls: post.gallery_urls ?? null,
     post_type: 'post',
     story_type: null,
     privacy_level: 'public',
@@ -206,6 +207,7 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         authorId: context.userId,
         content: data.content,
         mediaUrl: data.mediaUrl,
+        galleryUrls: data.galleryUrls,
         spaceId: context.spaceId,
         eventId: context.eventId,
         linkUrl: data.linkUrl,
@@ -218,7 +220,7 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
       const createdPost = buildUniversalFeedItemForPost(post, data, context);
       return { success: true, createdPost };
     },
-    getDefaultValues: () => ({ content: '', mediaUrl: undefined }),
+    getDefaultValues: () => ({ content: '', mediaUrl: undefined, galleryUrls: [] }),
     successMessage: 'Post shared!',
     errorMessage: "We couldn't publish this post. Your text is safe\u2014please try again.",
   },

@@ -27,6 +27,7 @@ export interface PostWithAuthor {
   post_type: PostType;
   privacy_level: PrivacyLevel;
   image_url?: string;
+  gallery_urls?: string[] | null;
   link_url?: string;
   link_title?: string;
   link_description?: string;

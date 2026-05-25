@@ -131,6 +131,7 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
             post_type: (item.post_type || 'post') as never,
             privacy_level: item.privacy_level as never,
             image_url: item.media_url || undefined,
+            gallery_urls: item.gallery_urls ?? null,
             created_at: item.created_at,
             likes_count: item.like_count || 0,
             comments_count: item.comment_count || 0,

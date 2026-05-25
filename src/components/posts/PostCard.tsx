@@ -62,6 +62,7 @@ export function PostCard({
   const [showLikedByModal, setShowLikedByModal] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
   const [showMediaLightbox, setShowMediaLightbox] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const [isContentExpanded, setIsContentExpanded] = useState(false);
   
   // Truncate content at ~200 characters
@@ -348,42 +349,105 @@ export function PostCard({
             )}
           </div>
 
-          {/* Media Display - Image or Video - Clickable to open lightbox */}
-          {post.image_url && (
-            <div 
-              className="mb-4 rounded-lg overflow-hidden border cursor-pointer hover:opacity-95 transition-opacity"
-              onClick={() => setShowMediaLightbox(true)}
-            >
-              {/* Check if it's a video based on file extension */}
-              {post.image_url.match(/\.(mp4|webm|mov|quicktime)$/i) ? (
-                <video
-                  src={post.image_url}
-                  className="w-full h-auto max-h-[32rem] object-cover"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowMediaLightbox(true);
-                  }}
+          {/* Media Display - supports single image/video or multi-image gallery */}
+          {(() => {
+            const isVideo = post.image_url ? /\.(mp4|webm|mov|quicktime)$/i.test(post.image_url) : false;
+            const galleryAll: string[] = [];
+            if (post.image_url && !isVideo) galleryAll.push(post.image_url);
+            if (Array.isArray(post.gallery_urls)) {
+              for (const u of post.gallery_urls) {
+                if (typeof u === 'string' && u && !galleryAll.includes(u)) galleryAll.push(u);
+              }
+            }
+
+            // Video posts: keep existing single-media behavior
+            if (isVideo && post.image_url) {
+              return (
+                <div
+                  className="mb-4 rounded-lg overflow-hidden border cursor-pointer hover:opacity-95 transition-opacity"
+                  onClick={() => { setLightboxIndex(0); setShowMediaLightbox(true); }}
                 >
-                  Your browser does not support the video tag.
-                </video>
-              ) : (
-                <img
-                  src={post.image_url}
-                  alt="Post media"
-                  className="w-full object-cover max-h-[32rem]"
-                  loading="eager"
-                  onError={(e) => {
-                    // Hide the container if image fails to load
-                    const target = e.currentTarget;
-                    target.style.display = 'none';
-                    if (target.parentElement) {
-                      target.parentElement.style.display = 'none';
-                    }
-                  }}
-                />
-              )}
-            </div>
-          )}
+                  <video
+                    src={post.image_url}
+                    className="w-full h-auto max-h-[32rem] object-cover"
+                    onClick={(e) => { e.stopPropagation(); setLightboxIndex(0); setShowMediaLightbox(true); }}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              );
+            }
+
+            if (galleryAll.length === 0) return null;
+
+            const openAt = (i: number) => { setLightboxIndex(i); setShowMediaLightbox(true); };
+
+            if (galleryAll.length === 1) {
+              return (
+                <div
+                  className="mb-4 rounded-lg overflow-hidden border cursor-pointer hover:opacity-95 transition-opacity"
+                  onClick={() => openAt(0)}
+                >
+                  <img
+                    src={galleryAll[0]}
+                    alt="Post media"
+                    className="w-full object-cover max-h-[32rem]"
+                    loading="eager"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      target.style.display = 'none';
+                      if (target.parentElement) target.parentElement.style.display = 'none';
+                    }}
+                  />
+                </div>
+              );
+            }
+
+            // Multi-image gallery layouts
+            const count = galleryAll.length;
+            const visible = galleryAll.slice(0, 4);
+            const extra = count - visible.length;
+
+            const gridClass =
+              count === 2
+                ? 'grid-cols-2'
+                : count === 3
+                  ? 'grid-cols-2 grid-rows-2'
+                  : 'grid-cols-2 grid-rows-2';
+
+            return (
+              <div className={cn('mb-4 grid gap-1 rounded-lg overflow-hidden border', gridClass)}>
+                {visible.map((url, idx) => {
+                  const isFirstOfThree = count === 3 && idx === 0;
+                  const isLastTile = idx === visible.length - 1;
+                  const showOverlay = isLastTile && extra > 0;
+                  return (
+                    <button
+                      type="button"
+                      key={`${url}-${idx}`}
+                      onClick={() => openAt(idx)}
+                      className={cn(
+                        'relative block overflow-hidden bg-muted hover:opacity-95 transition-opacity',
+                        isFirstOfThree && 'row-span-2',
+                      )}
+                    >
+                      <img
+                        src={url}
+                        alt={`Post media ${idx + 1}`}
+                        className="w-full h-full object-cover aspect-square"
+                        loading={idx === 0 ? 'eager' : 'lazy'}
+                      />
+                      {showOverlay && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <span className="text-white text-2xl font-semibold">+{extra}</span>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
           {/* Link/Video Preview - Uses LinkPreviewCard which only shows play button for videos */}
           {post.link_url && (
@@ -574,14 +638,26 @@ export function PostCard({
       />
 
       {/* Media Lightbox */}
-      {post.image_url && (
-        <MediaLightbox
-          open={showMediaLightbox}
-          onOpenChange={setShowMediaLightbox}
-          mediaUrl={post.image_url}
-          alt={`Media from ${post.author_full_name}'s post`}
-        />
-      )}
+      {(() => {
+        const isVideo = post.image_url ? /\.(mp4|webm|mov|quicktime)$/i.test(post.image_url) : false;
+        const all: string[] = [];
+        if (post.image_url) all.push(post.image_url);
+        if (!isVideo && Array.isArray(post.gallery_urls)) {
+          for (const u of post.gallery_urls) {
+            if (typeof u === 'string' && u && !all.includes(u)) all.push(u);
+          }
+        }
+        const url = all[lightboxIndex] ?? all[0];
+        if (!url) return null;
+        return (
+          <MediaLightbox
+            open={showMediaLightbox}
+            onOpenChange={setShowMediaLightbox}
+            mediaUrl={url}
+            alt={`Media from ${post.author_full_name}'s post`}
+          />
+        );
+      })()}
     </Card>
   );
 }
