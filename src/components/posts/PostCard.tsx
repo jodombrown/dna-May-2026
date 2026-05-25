@@ -638,14 +638,26 @@ export function PostCard({
       />
 
       {/* Media Lightbox */}
-      {post.image_url && (
-        <MediaLightbox
-          open={showMediaLightbox}
-          onOpenChange={setShowMediaLightbox}
-          mediaUrl={post.image_url}
-          alt={`Media from ${post.author_full_name}'s post`}
-        />
-      )}
+      {(() => {
+        const isVideo = post.image_url ? /\.(mp4|webm|mov|quicktime)$/i.test(post.image_url) : false;
+        const all: string[] = [];
+        if (post.image_url) all.push(post.image_url);
+        if (!isVideo && Array.isArray(post.gallery_urls)) {
+          for (const u of post.gallery_urls) {
+            if (typeof u === 'string' && u && !all.includes(u)) all.push(u);
+          }
+        }
+        const url = all[lightboxIndex] ?? all[0];
+        if (!url) return null;
+        return (
+          <MediaLightbox
+            open={showMediaLightbox}
+            onOpenChange={setShowMediaLightbox}
+            mediaUrl={url}
+            alt={`Media from ${post.author_full_name}'s post`}
+          />
+        );
+      })()}
     </Card>
   );
 }
