@@ -13750,6 +13750,7 @@ export type Database = {
           content: string
           created_at: string
           event_id: string
+          gallery_urls: string[]
           id: string
           image_url: string
           likes_count: number
