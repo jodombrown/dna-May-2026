@@ -14828,6 +14828,7 @@ export type Database = {
         | "declined"
         | "completed"
       contribution_type: "time" | "expertise" | "network" | "capital"
+      dna_identity_role: "returnee" | "anchor" | "ally" | "exploring"
       event_format: "in_person" | "virtual" | "hybrid"
       event_type:
         | "conference"
@@ -15071,6 +15072,7 @@ export const Constants = {
         "completed",
       ],
       contribution_type: ["time", "expertise", "network", "capital"],
+      dna_identity_role: ["returnee", "anchor", "ally", "exploring"],
       event_format: ["in_person", "virtual", "hybrid"],
       event_type: [
         "conference",
