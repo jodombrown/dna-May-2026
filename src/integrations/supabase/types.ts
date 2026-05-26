@@ -7951,6 +7951,7 @@ export type Database = {
           phone: string | null
           phone_number: string | null
           pinned_activity_ids: Json | null
+          place_declared_at: string | null
           preferred_contact: string | null
           preferred_contact_method: string | null
           profession: string | null
@@ -7970,6 +7971,8 @@ export type Database = {
           region_tags: Json | null
           regional_expertise: string[] | null
           return_intentions: string | null
+          role: Database["public"]["Enums"]["dna_identity_role"]
+          role_declared_at: string | null
           roles: string[] | null
           sdg_focus: string[] | null
           sector_tags: Json | null
@@ -8169,6 +8172,7 @@ export type Database = {
           phone?: string | null
           phone_number?: string | null
           pinned_activity_ids?: Json | null
+          place_declared_at?: string | null
           preferred_contact?: string | null
           preferred_contact_method?: string | null
           profession?: string | null
@@ -8188,6 +8192,8 @@ export type Database = {
           region_tags?: Json | null
           regional_expertise?: string[] | null
           return_intentions?: string | null
+          role?: Database["public"]["Enums"]["dna_identity_role"]
+          role_declared_at?: string | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sector_tags?: Json | null
@@ -8387,6 +8393,7 @@ export type Database = {
           phone?: string | null
           phone_number?: string | null
           pinned_activity_ids?: Json | null
+          place_declared_at?: string | null
           preferred_contact?: string | null
           preferred_contact_method?: string | null
           profession?: string | null
@@ -8406,6 +8413,8 @@ export type Database = {
           region_tags?: Json | null
           regional_expertise?: string[] | null
           return_intentions?: string | null
+          role?: Database["public"]["Enums"]["dna_identity_role"]
+          role_declared_at?: string | null
           roles?: string[] | null
           sdg_focus?: string[] | null
           sector_tags?: Json | null
