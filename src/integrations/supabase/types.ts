@@ -11962,6 +11962,8 @@ export type Database = {
           banner_url: string | null
           bio: string | null
           company: string | null
+          continent: string | null
+          country: string | null
           country_of_origin: string | null
           created_at: string | null
           current_city: string | null
@@ -11988,6 +11990,7 @@ export type Database = {
           profession: string | null
           professional_role: string | null
           profile_picture_url: string | null
+          role: Database["public"]["Enums"]["dna_identity_role"] | null
           sdg_focus: string[] | null
           sectors: string[] | null
           skills: string[] | null
@@ -12002,6 +12005,8 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           company?: string | null
+          continent?: string | null
+          country?: string | null
           country_of_origin?: string | null
           created_at?: string | null
           current_city?: string | null
@@ -12028,6 +12033,7 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          role?: Database["public"]["Enums"]["dna_identity_role"] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
           skills?: string[] | null
@@ -12042,6 +12048,8 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           company?: string | null
+          continent?: string | null
+          country?: string | null
           country_of_origin?: string | null
           created_at?: string | null
           current_city?: string | null
@@ -12068,6 +12076,7 @@ export type Database = {
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
+          role?: Database["public"]["Enums"]["dna_identity_role"] | null
           sdg_focus?: string[] | null
           sectors?: string[] | null
           skills?: string[] | null
