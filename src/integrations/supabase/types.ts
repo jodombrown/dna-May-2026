@@ -7845,9 +7845,11 @@ export type Database = {
           consent_partner_intros: boolean | null
           consent_public_search: boolean | null
           contact_number_visibility: string
+          continent: string | null
           contribution_style: string | null
           contribution_tags: Json | null
           contribution_types: string[] | null
+          country: string | null
           country_of_origin: string | null
           country_of_origin_id: string | null
           country_origin: string | null
@@ -8061,9 +8063,11 @@ export type Database = {
           consent_partner_intros?: boolean | null
           consent_public_search?: boolean | null
           contact_number_visibility?: string
+          continent?: string | null
           contribution_style?: string | null
           contribution_tags?: Json | null
           contribution_types?: string[] | null
+          country?: string | null
           country_of_origin?: string | null
           country_of_origin_id?: string | null
           country_origin?: string | null
@@ -8277,9 +8281,11 @@ export type Database = {
           consent_partner_intros?: boolean | null
           consent_public_search?: boolean | null
           contact_number_visibility?: string
+          continent?: string | null
           contribution_style?: string | null
           contribution_tags?: Json | null
           contribution_types?: string[] | null
+          country?: string | null
           country_of_origin?: string | null
           country_of_origin_id?: string | null
           country_origin?: string | null
