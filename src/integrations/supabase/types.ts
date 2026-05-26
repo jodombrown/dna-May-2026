@@ -740,6 +740,65 @@ export type Database = {
         }
         Relationships: []
       }
+      affirmations: {
+        Row: {
+          affirmed_at: string
+          created_at: string
+          id: string
+          profile_id: string
+          role_at_affirm: Database["public"]["Enums"]["dna_identity_role"]
+          statement: string | null
+          witness_id: string | null
+        }
+        Insert: {
+          affirmed_at?: string
+          created_at?: string
+          id?: string
+          profile_id: string
+          role_at_affirm: Database["public"]["Enums"]["dna_identity_role"]
+          statement?: string | null
+          witness_id?: string | null
+        }
+        Update: {
+          affirmed_at?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+          role_at_affirm?: Database["public"]["Enums"]["dna_identity_role"]
+          statement?: string | null
+          witness_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affirmations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affirmations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affirmations_witness_id_fkey"
+            columns: ["witness_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affirmations_witness_id_fkey"
+            columns: ["witness_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alpha_feedback: {
         Row: {
           area: string | null
