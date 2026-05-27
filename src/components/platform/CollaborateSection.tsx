@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Handshake, ArrowRight, Users, DollarSign, Target, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
 import SwipeableCardStack from './SwipeableCardStack';
 import { FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const CollaborateSection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const projects = [
     {
@@ -78,8 +78,8 @@ const CollaborateSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/collaborate');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (project: typeof projects[0]) => (
@@ -192,7 +192,7 @@ const CollaborateSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/collaborate')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-copper hover:bg-dna-gold text-white inline-flex items-center gap-2"
             >
               Explore Active Collaborations
@@ -209,6 +209,7 @@ const CollaborateSection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="collaborate" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };

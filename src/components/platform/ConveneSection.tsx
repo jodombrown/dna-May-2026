@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, MapPin, Users, ArrowRight, Clock, Globe, Video } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SwipeableCardStack from './SwipeableCardStack';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const ConveneSection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const events = [
     {
@@ -87,8 +87,8 @@ const ConveneSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/convene');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (event: typeof events[0]) => (
@@ -223,7 +223,7 @@ const ConveneSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/convene')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-copper hover:bg-dna-gold text-white inline-flex items-center gap-2"
             >
               Explore Events
@@ -232,6 +232,7 @@ const ConveneSection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="convene" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };

@@ -1,38 +1,46 @@
-## Fix plan
+## Goal
 
-1. **Stop the `history.replaceState` loop**
-   - Remove the global `history.pushState` / `history.replaceState` monkey patch from `useSetCSSHeaderHeight`.
-   - Replace it with a safe route-aware recalculation that listens to React Router location changes instead of patching browser history.
-   - Make `OnboardingGuard` redirects idempotent so it never calls `navigate(..., { replace: true })` when the app is already at the intended path and query string.
+On the public landing page, the five pillar sections (Connect, Convene, Collaborate, Contribute, Convey) currently route to `/connect`, `/convene`, etc. Those routes were already redirected to `/`, so the cards and Explore buttons effectively bounce users home. We will:
 
-2. **Stabilize the onboarding completion flow**
-   - After Step 7 saves, invalidate the onboarding/profile queries before routing to `/dna/feed`.
-   - Use `replace: true` for the final onboarding navigation so the browser stack does not bounce back into `/onboarding`.
-   - Remove the delayed `setTimeout` navigation and reduce the confetti/toast behavior that is visually colliding with the wizard and bottom nav.
-   - Keep the D054 data guarantees intact: partial mode still only updates role/place fields and does not touch `diaspora_status`.
+1. Make the cards non-interactive (no navigation, no hover-click).
+2. Replace each Explore button's navigate call with opening a right-side slide-out panel that contains a rich, self-contained explanation of that pillar.
 
-3. **Correct the welcome message**
-   - Change the completion toast from `Welcome to DNA!` to `Welcome to the Diaspora Network of Africa`.
-   - Replace the party icon with the actual DNA logo so the logo carries the short `DNA` brand while the text spells out the full name.
+Scope is limited to the 5 platform section components on the landing page. No routing, auth, or business logic changes.
 
-4. **Fix the first-time walkthrough content and icon mapping**
-   - Update `FirstTimeWalkthrough` so the cards are named by the actual surface/module, not `DNA Connect`, `DNA Feed`, or `DNA Convey`.
-   - Use the proper module/icon system:
-     - Feed: platform feed icon and title `Feed`
-     - Connect: Sankofa / Connect icon and title `Connect`
-     - Convene: Nkonsonkonson / Convene icon and title `Convene`
-     - Collaborate: Funtunfunefu Denkyemfunefu / Collaborate icon and title `Collaborate`
-     - Contribute: Adinkrahene / Contribute icon and title `Contribute`
-     - Convey: Mpatapo / Convey icon and title `Convey`
-   - Remove the obsolete `Coming After Beta` slide because Convene, Collaborate, and Contribute are open in the current architecture.
+## Files to change
 
-5. **Verify the affected flow**
-   - Re-test completing onboarding on mobile viewport.
-   - Confirm no `replaceState` SecurityError appears.
-   - Confirm no import-module failure screen appears during the walkthrough.
-   - Confirm the welcome message, logo, slide titles, and icons match the corrected DNA architecture.
-   - Then re-run the `seed-01` SQL verification for Path B if you have completed Steps 6 and 7.
+- `src/components/platform/ConnectSection.tsx`
+- `src/components/platform/ConveneSection.tsx`
+- `src/components/platform/CollaborateSection.tsx`
+- `src/components/platform/ContributeSection.tsx`
+- `src/components/platform/ConveySection.tsx`
 
-<presentation-actions>
-<presentation-link url="https://docs.lovable.dev/tips-tricks/troubleshooting">Troubleshooting docs</presentation-link>
-</presentation-actions>
+## New file
+
+- `src/components/platform/PillarInfoSheet.tsx` - shared right-side slide-out built on the existing `Sheet` primitive (`side="right"`, `w-full sm:max-w-xl`), accepting `{ open, onOpenChange, pillar }` and rendering a structured explainer (overview, what you can do, who it is for, how it connects to the other C's, what is coming) sourced from a local `pillarContent` map.
+
+## Implementation steps
+
+1. Create `PillarInfoSheet.tsx`
+   - Uses `Sheet` / `SheetContent side="right"` from `@/components/ui/sheet`.
+   - Internal `PILLAR_CONTENT` record keyed by `'connect' | 'convene' | 'collaborate' | 'contribute' | 'convey'` with: title, tagline, Adinkra icon (Sankofa, Nkonsonkonson, FuntunfunefuDenkyemfunefu, Adinkrahene, Mpatapo), accent color token, sections: Overview, What you can do (bullet list), Who it is for, How it connects to the other C's, Roadmap / coming soon. Copy follows project knowledge (no em dashes, Lora for headings, Inter for body).
+   - No CTA buttons that link out; the panel is purely informational. Close button comes from `SheetContent`.
+
+2. In each `*Section.tsx`:
+   - Add `const [infoOpen, setInfoOpen] = useState(false)`.
+   - Replace any card-level `onClick={() => navigate('/connect')}` (and equivalents) so cards no longer navigate. Remove the `cursor-pointer` / hover-affordance classes tied to navigation. Keep visual styling otherwise unchanged.
+   - Repoint every "Explore ..." button's `onClick` to `setInfoOpen(true)` instead of `navigate(...)`.
+   - Render `<PillarInfoSheet pillar="connect" open={infoOpen} onOpenChange={setInfoOpen} />` at the bottom of the section.
+   - Remove now-unused `useNavigate` imports where applicable.
+
+3. Leave `HeroTriangleSection.tsx` untouched (its buttons scroll to in-page sections, not marketing routes).
+
+4. Sanity pass: `rg -n "navigate\('/(connect|convene|collaborate|contribute|convey)'\)" src/components/platform` should return no results after the edit.
+
+## Notes / constraints honored
+
+- Right-side slide-out per request (Radix Dialog via `Sheet`, already used elsewhere).
+- No em dashes anywhere in new copy.
+- Adinkra icons reserved for the five C's, per memory.
+- No new routes added; marketing pages stay redirected.
+- Mobile: sheet defaults to `w-[90vw] max-w-sm`; we widen to `sm:max-w-xl` for readable explainer copy.

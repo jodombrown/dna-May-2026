@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart, DollarSign, Clock, Users, Lightbulb, ArrowRight, Award, TrendingUp, Target } from 'lucide-react';
 import { Adinkrahene } from '@/components/icons/adinkra';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SwipeableCardStack from './SwipeableCardStack';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const ContributeSection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const contributions = [
     {
@@ -77,8 +77,8 @@ const ContributeSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/contribute');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (contribution: typeof contributions[0]) => {
@@ -215,7 +215,7 @@ const ContributeSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/contribute')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-gold hover:bg-dna-ochre text-white inline-flex items-center gap-2"
             >
               Explore Pathways to Impact
@@ -224,6 +224,7 @@ const ContributeSection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="contribute" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };

@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Users, MapPin, Briefcase, ArrowRight, Network } from 'lucide-react';
 import { Sankofa } from '@/components/icons/adinkra';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SwipeableCardStack from './SwipeableCardStack';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const ConnectSection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const professionals = [
     {
@@ -83,8 +83,8 @@ const ConnectSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/connect');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (professional: typeof professionals[0]) => (
@@ -203,7 +203,7 @@ const ConnectSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/connect')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-forest hover:bg-dna-emerald text-white inline-flex items-center gap-2"
             >
               Explore Network
@@ -220,6 +220,7 @@ const ConnectSection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="connect" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };
