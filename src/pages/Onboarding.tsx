@@ -94,7 +94,7 @@ const Onboarding = () => {
   // Redirect if user is not authenticated
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate('/auth', { replace: true });
     }
   }, [user, navigate]);
 
@@ -107,7 +107,7 @@ const Onboarding = () => {
       profileAny?.role_declared_at &&
       profileAny?.place_declared_at
     ) {
-      navigate('/dna/feed');
+      navigate('/dna/feed', { replace: true });
     }
   }, [profile, profileAny, partialMode, navigate]);
 
