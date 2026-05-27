@@ -83,8 +83,8 @@ const ConnectSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/connect');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (professional: typeof professionals[0]) => (
