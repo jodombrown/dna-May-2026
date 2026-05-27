@@ -40,7 +40,10 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
       return;
     }
 
-    const hasCompletedOnboarding = !!(profile?.onboarding_completed_at || profile?.username);
+    // Only `onboarding_completed_at` proves the wizard finished. A username
+    // alone can be auto-seeded by the handle_new_user trigger and must NOT
+    // be treated as completion (would skip Steps 1-5 for brand-new users).
+    const hasCompletedOnboarding = !!profile?.onboarding_completed_at;
     // D054 / BD008: every logged-in user must have role + place declared.
     const needsRole = !profile?.role_declared_at;
     const needsPlace = !profile?.place_declared_at;
