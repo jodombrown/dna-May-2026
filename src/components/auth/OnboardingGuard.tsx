@@ -12,22 +12,19 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['onboarding-check', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      
+
       const { data, error } = await supabase
         .from('profiles')
-        .select('onboarding_completed_at, username')
+        .select('onboarding_completed_at, username, role_declared_at, place_declared_at')
         .eq('id', user.id)
         .single();
 
-      if (error) {
-        return null;
-      }
-      
+      if (error) return null;
       return data;
     },
     enabled: !!user?.id,
@@ -44,15 +41,30 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
     }
 
     const hasCompletedOnboarding = !!(profile?.onboarding_completed_at || profile?.username);
+    // D054 / BD008: every logged-in user must have role + place declared.
+    const needsRole = !profile?.role_declared_at;
+    const needsPlace = !profile?.place_declared_at;
+    const onOnboarding = location.pathname === '/onboarding';
 
-    // If onboarding not completed and not already on onboarding page, redirect
-    if (!hasCompletedOnboarding && location.pathname !== '/onboarding') {
+    // Brand-new user (no initial onboarding) → full wizard.
+    if (!hasCompletedOnboarding && !onOnboarding) {
       navigate('/onboarding', { replace: true });
       return;
     }
 
-    // If onboarding completed but trying to access onboarding page, redirect to discover
-    if (hasCompletedOnboarding && location.pathname === '/onboarding') {
+    // Pre-D054 user with completed onboarding but missing role/place →
+    // push them into the wizard at the appropriate step.
+    if (hasCompletedOnboarding && (needsRole || needsPlace) && !onOnboarding) {
+      const step = needsRole ? 6 : 7;
+      navigate(`/onboarding?step=${step}`, {
+        replace: true,
+        state: { from: location.pathname },
+      });
+      return;
+    }
+
+    // Fully done and somehow still on /onboarding → kick to discover.
+    if (hasCompletedOnboarding && !needsRole && !needsPlace && onOnboarding) {
       navigate('/dna/connect/discover', { replace: true });
     }
   }, [profile, user, authLoading, profileLoading, navigate, location.pathname]);
