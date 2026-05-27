@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,28 +11,57 @@ import IdentityStep from '@/components/onboarding/steps/IdentityStep';
 import DiasporaOriginStep from '@/components/onboarding/steps/DiasporaOriginStep';
 import DiscoveryStep from '@/components/onboarding/steps/DiscoveryStep';
 import UsernameStep from '@/components/onboarding/steps/UsernameStep';
+import RoleDeclarationStep, { type DnaIdentityRole } from '@/components/onboarding/RoleDeclarationStep';
+import PlaceDeclarationStep from '@/components/onboarding/PlaceDeclarationStep';
+import type { ContinentCode } from '@/data/continentCountries';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getErrorMessage } from '@/lib/errorLogger';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 7;
 
 const STEP_TITLES = [
   'How are you joining?',
   'Basic Identity',
   'Connection to Africa',
   'Your Interests & Goals',
-  'Claim Your Username'
+  'Claim Your Username',
+  'Declare Your Role',
+  'Where You Are',
 ];
 
 const Onboarding = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(0);
+
+  // Read ?step= param so OnboardingGuard can route existing users straight
+  // into Step 6 (role) or Step 7 (place) per D054/BD008.
+  const initialStep = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const raw = parseInt(params.get('step') || '', 10);
+    if (!Number.isNaN(raw) && raw >= 1 && raw <= TOTAL_STEPS) return raw - 1;
+    return 0;
+  }, [location.search]);
+
+  const profileAny = profile as any;
+  const alreadyCompleted = !!profileAny?.onboarding_completed_at;
+  const partialMode = alreadyCompleted && initialStep >= 5;
+
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // D054 fields - tracked outside useOnboardingForm so we don't touch its shape.
+  const [role, setRole] = useState<DnaIdentityRole | ''>(
+    (profileAny?.role as DnaIdentityRole | undefined) || ''
+  );
+  const [continentCode, setContinentCode] = useState<ContinentCode | ''>(
+    (profileAny?.continent as ContinentCode | undefined) || ''
+  );
+  const [countryCode, setCountryCode] = useState<string>(profileAny?.country || '');
 
   // Initialize form with any existing profile data
   const { formData, updateField } = useOnboardingForm({
@@ -66,24 +95,44 @@ const Onboarding = () => {
     }
   }, [user, navigate]);
 
-  // If profile already has onboarding_completed_at, redirect to dashboard
+  // Redirect away only if onboarding is fully done AND we're not in partial mode
+  // (i.e., user was sent back in to declare role/place per BD008).
   useEffect(() => {
-    if (profile?.onboarding_completed_at) {
+    if (
+      profile?.onboarding_completed_at &&
+      !partialMode &&
+      profileAny?.role_declared_at &&
+      profileAny?.place_declared_at
+    ) {
       navigate('/dna/feed');
     }
-  }, [profile, navigate]);
+  }, [profile, profileAny, partialMode, navigate]);
+
+  const validateD054Step = (step: number): { field: string; message: string }[] => {
+    if (step === 5) {
+      if (!role) return [{ field: 'role', message: 'Please choose a role to continue' }];
+    }
+    if (step === 6) {
+      const errs: { field: string; message: string }[] = [];
+      if (!continentCode) errs.push({ field: 'continent', message: 'Please select a continent' });
+      if (!countryCode) errs.push({ field: 'country', message: 'Please select a country' });
+      return errs;
+    }
+    return [];
+  };
 
   const handleNext = async () => {
     // Validate current step
-    const validationErrors = validateStep(currentStep, formData);
-    
+    const validationErrors =
+      currentStep >= 5 ? validateD054Step(currentStep) : validateStep(currentStep, formData);
+
     if (validationErrors.length > 0) {
       const errorMap: Record<string, string> = {};
       validationErrors.forEach(err => {
         errorMap[err.field] = err.message;
       });
       setErrors(errorMap);
-      
+
       toast({
         title: "Please complete required fields",
         description: validationErrors[0].message,
@@ -102,7 +151,7 @@ const Onboarding = () => {
       return;
     }
 
-    // On final step (username), submit and go to feed
+    // On final step (place), submit
     await handleSubmit();
   };
 
@@ -120,9 +169,44 @@ const Onboarding = () => {
     setIsSubmitting(true);
 
     try {
+      const nowIso = new Date().toISOString();
+
+      // ── PARTIAL MODE: existing pre-D054 user re-entering to declare role/place.
+      // We only touch the new D054 fields; never overwrite their established profile.
+      if (partialMode) {
+        const slim: Record<string, any> = { updated_at: nowIso };
+
+        if (role) {
+          slim.role = role;
+          if (!profileAny?.role_declared_at) slim.role_declared_at = nowIso;
+        }
+        if (continentCode && countryCode) {
+          slim.continent = continentCode;
+          slim.country = countryCode;
+          if (!profileAny?.place_declared_at) slim.place_declared_at = nowIso;
+        }
+
+        const { error: slimErr } = await supabase
+          .from('profiles')
+          .update(slim)
+          .eq('id', user.id);
+        if (slimErr) throw slimErr;
+
+        await refreshProfile();
+
+        toast({
+          title: 'Thank you',
+          description: 'Your declaration has been recorded.',
+        });
+
+        const returnTo = (location.state as any)?.from || '/dna/feed';
+        navigate(returnTo, { replace: true });
+        return;
+      }
+
+      // ── FULL SIGNUP FLOW
       const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim();
 
-      // Prepare profile data - only include fields that exist in DB
       const profileData: any = {
         id: user.id,
         email: user.email,
@@ -147,8 +231,17 @@ const Onboarding = () => {
         regional_expertise: formData.regional_expertise || [],
         industries: formData.industries || [],
         engagement_intentions: formData.engagement_intentions || [],
+        // D054 fields (always set on full signup; both timestamps written transactionally)
+        role: role || null,
+        role_declared_at: role ? (profileAny?.role_declared_at || nowIso) : null,
+        continent: continentCode || null,
+        country: countryCode || null,
+        place_declared_at:
+          continentCode && countryCode
+            ? (profileAny?.place_declared_at || nowIso)
+            : null,
         is_public: true,
-        updated_at: new Date().toISOString()
+        updated_at: nowIso,
       };
 
       // Upsert profile
@@ -164,7 +257,7 @@ const Onboarding = () => {
             variant: "destructive"
           });
           setIsSubmitting(false);
-          setCurrentStep(3); // Go back to username step
+          setCurrentStep(4); // Go back to username step
           return;
         } else {
           throw upsertError;
@@ -175,15 +268,14 @@ const Onboarding = () => {
       await new Promise(resolve => setTimeout(resolve, 300));
 
       // Calculate profile completion percentage
-      const { data: completionData, error: completionError } = await supabase
-        .rpc('calculate_profile_completion_percentage', { profile_id: user.id });
+      await supabase.rpc('calculate_profile_completion_percentage', { profile_id: user.id });
 
       // Mark onboarding as complete
       const { error: completeError } = await supabase
         .from('profiles')
         .update({
-          onboarding_completed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          onboarding_completed_at: nowIso,
+          updated_at: nowIso,
         })
         .eq('id', user.id);
 
@@ -291,6 +383,24 @@ const Onboarding = () => {
             }}
           />
         );
+      case 5:
+        return (
+          <RoleDeclarationStep
+            value={role}
+            onChange={(v) => setRole(v)}
+            error={errors.role}
+          />
+        );
+      case 6:
+        return (
+          <PlaceDeclarationStep
+            continent={continentCode}
+            country={countryCode}
+            onContinentChange={(v) => setContinentCode(v)}
+            onCountryChange={(v) => setCountryCode(v)}
+            errors={{ continent: errors.continent, country: errors.country }}
+          />
+        );
       default:
         return null;
     }
@@ -321,7 +431,7 @@ const Onboarding = () => {
           <Button
             variant="outline"
             onClick={handleBack}
-            disabled={currentStep === 0 || isSubmitting}
+            disabled={currentStep === 0 || currentStep <= initialStep || isSubmitting}
             className="flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />

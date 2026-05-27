@@ -65,6 +65,7 @@
     "emoji-picker-react": "^4.15.0",
     "framer-motion": "^12.23.26",
     "html2canvas": "^1.4.1",
+    "i18n-iso-countries": "^7.14.0",
     "ics": "^3.7.6",
     "input-otp": "^1.2.4",
     "jspdf": "^4.0.0",
