@@ -383,6 +383,24 @@ const Onboarding = () => {
             }}
           />
         );
+      case 5:
+        return (
+          <RoleDeclarationStep
+            value={role}
+            onChange={(v) => setRole(v)}
+            error={errors.role}
+          />
+        );
+      case 6:
+        return (
+          <PlaceDeclarationStep
+            continent={continentCode}
+            country={countryCode}
+            onContinentChange={(v) => setContinentCode(v)}
+            onCountryChange={(v) => setCountryCode(v)}
+            errors={{ continent: errors.continent, country: errors.country }}
+          />
+        );
       default:
         return null;
     }
@@ -413,7 +431,7 @@ const Onboarding = () => {
           <Button
             variant="outline"
             onClick={handleBack}
-            disabled={currentStep === 0 || isSubmitting}
+            disabled={currentStep === 0 || currentStep <= initialStep || isSubmitting}
             className="flex items-center justify-center gap-2 min-h-[44px] w-full sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />
