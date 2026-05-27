@@ -215,7 +215,7 @@ const ContributeSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/contribute')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-gold hover:bg-dna-ochre text-white inline-flex items-center gap-2"
             >
               Explore Pathways to Impact
@@ -224,6 +224,7 @@ const ContributeSection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="contribute" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };
