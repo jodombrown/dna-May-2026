@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,6 +38,7 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Read ?step= param so OnboardingGuard can route existing users straight
   // into Step 6 (role) or Step 7 (place) per D054/BD008.
@@ -92,7 +94,7 @@ const Onboarding = () => {
   // Redirect if user is not authenticated
   useEffect(() => {
     if (!user) {
-      navigate('/auth');
+      navigate('/auth', { replace: true });
     }
   }, [user, navigate]);
 
@@ -105,7 +107,7 @@ const Onboarding = () => {
       profileAny?.role_declared_at &&
       profileAny?.place_declared_at
     ) {
-      navigate('/dna/feed');
+      navigate('/dna/feed', { replace: true });
     }
   }, [profile, profileAny, partialMode, navigate]);
 
@@ -199,7 +201,16 @@ const Onboarding = () => {
           .eq('id', user.id);
         if (slimErr) throw slimErr;
 
+        const onboardingSnapshot = {
+          onboarding_completed_at: profileAny?.onboarding_completed_at || null,
+          username: profileAny?.username || null,
+          role_declared_at: slim.role_declared_at || profileAny?.role_declared_at || null,
+          place_declared_at: slim.place_declared_at || profileAny?.place_declared_at || null,
+        };
+
+        queryClient.setQueryData(['onboarding-check', user.id], onboardingSnapshot);
         await refreshProfile();
+        await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
 
         toast({
           title: 'Thank you',
@@ -294,8 +305,16 @@ const Onboarding = () => {
 
       if (completeError) throw completeError;
 
+      queryClient.setQueryData(['onboarding-check', user.id], {
+        onboarding_completed_at: nowIso,
+        username: formData.username,
+        role_declared_at: role ? (profileAny?.role_declared_at || nowIso) : null,
+        place_declared_at: continentCode && countryCode ? (profileAny?.place_declared_at || nowIso) : null,
+      });
+
       // Refresh profile
       await refreshProfile();
+      await queryClient.invalidateQueries({ queryKey: ['profile', user.id] });
 
       // Confetti celebration
       confetti({
