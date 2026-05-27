@@ -77,8 +77,8 @@ const ContributeSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/contribute');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (contribution: typeof contributions[0]) => {
