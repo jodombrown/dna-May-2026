@@ -38,6 +38,13 @@ interface LogErrorOptions {
 export function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
   if (typeof err === 'string') return err;
+  if (err && typeof err === 'object') {
+    const anyErr = err as Record<string, unknown>;
+    // Supabase PostgrestError shape: { message, details, hint, code }
+    const parts = [anyErr.message, anyErr.details, anyErr.hint]
+      .filter((v): v is string => typeof v === 'string' && v.length > 0);
+    if (parts.length > 0) return parts.join(' - ');
+  }
   return 'An unexpected error occurred';
 }
 
