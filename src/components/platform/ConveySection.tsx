@@ -79,8 +79,8 @@ const ConveySection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/convey');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (story: typeof stories[0]) => (
@@ -219,7 +219,7 @@ const ConveySection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/convey')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-forest hover:bg-dna-emerald text-white inline-flex items-center gap-2"
             >
               Explore Impact Stories
@@ -236,6 +236,7 @@ const ConveySection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="convey" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };
