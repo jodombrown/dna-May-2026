@@ -192,7 +192,7 @@ const CollaborateSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/collaborate')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-copper hover:bg-dna-gold text-white inline-flex items-center gap-2"
             >
               Explore Active Collaborations
@@ -209,6 +209,7 @@ const CollaborateSection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="collaborate" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };
