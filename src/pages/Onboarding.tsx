@@ -95,24 +95,44 @@ const Onboarding = () => {
     }
   }, [user, navigate]);
 
-  // If profile already has onboarding_completed_at, redirect to dashboard
+  // Redirect away only if onboarding is fully done AND we're not in partial mode
+  // (i.e., user was sent back in to declare role/place per BD008).
   useEffect(() => {
-    if (profile?.onboarding_completed_at) {
+    if (
+      profile?.onboarding_completed_at &&
+      !partialMode &&
+      profileAny?.role_declared_at &&
+      profileAny?.place_declared_at
+    ) {
       navigate('/dna/feed');
     }
-  }, [profile, navigate]);
+  }, [profile, profileAny, partialMode, navigate]);
+
+  const validateD054Step = (step: number): { field: string; message: string }[] => {
+    if (step === 5) {
+      if (!role) return [{ field: 'role', message: 'Please choose a role to continue' }];
+    }
+    if (step === 6) {
+      const errs: { field: string; message: string }[] = [];
+      if (!continentCode) errs.push({ field: 'continent', message: 'Please select a continent' });
+      if (!countryCode) errs.push({ field: 'country', message: 'Please select a country' });
+      return errs;
+    }
+    return [];
+  };
 
   const handleNext = async () => {
     // Validate current step
-    const validationErrors = validateStep(currentStep, formData);
-    
+    const validationErrors =
+      currentStep >= 5 ? validateD054Step(currentStep) : validateStep(currentStep, formData);
+
     if (validationErrors.length > 0) {
       const errorMap: Record<string, string> = {};
       validationErrors.forEach(err => {
         errorMap[err.field] = err.message;
       });
       setErrors(errorMap);
-      
+
       toast({
         title: "Please complete required fields",
         description: validationErrors[0].message,
@@ -131,7 +151,7 @@ const Onboarding = () => {
       return;
     }
 
-    // On final step (username), submit and go to feed
+    // On final step (place), submit
     await handleSubmit();
   };
 
