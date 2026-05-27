@@ -5,13 +5,8 @@ export type PublicNavItem = {
   badge?: string;
 };
 
-export const publicNavItems: PublicNavItem[] = [
-  { name: 'Connect', path: '/connect' },
-  { name: 'Convene', path: '/convene' },
-  { name: 'Collaborate', path: '/collaborate' },
-  { name: 'Contribute', path: '/contribute' },
-  { name: 'Convey', path: '/convey' },
-];
+// Five C's marketing pages temporarily removed from public nav pending redesign.
+export const publicNavItems: PublicNavItem[] = [];
 
 export const aboutUsDropdown = [
   { name: 'About Us', path: '/about' },
