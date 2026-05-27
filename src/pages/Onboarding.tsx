@@ -309,6 +309,10 @@ const Onboarding = () => {
         navigate('/dna/feed');
       }, 1800);
     } catch (error: unknown) {
+      // Surface the real Supabase error so we don't silently fall back to
+      // a generic toast (PostgrestError isn't an Error instance).
+      // eslint-disable-next-line no-console
+      console.error('[onboarding] submit failed', error);
       toast({
         title: "Error",
         description: getErrorMessage(error) || "Failed to complete onboarding. Please try again.",
