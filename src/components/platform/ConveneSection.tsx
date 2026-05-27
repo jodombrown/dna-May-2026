@@ -87,8 +87,8 @@ const ConveneSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/convene');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (event: typeof events[0]) => (
