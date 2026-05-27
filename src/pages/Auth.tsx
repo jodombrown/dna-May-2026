@@ -476,9 +476,11 @@ const Auth = () => {
           <div className="w-full max-w-md space-y-8">
             {/* Header */}
             <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold text-foreground">Welcome</h2>
+              <h2 className="text-3xl font-bold text-foreground">
+                {isSignUp ? 'Create Account' : 'Welcome'}
+              </h2>
               <p className="text-muted-foreground">
-                Sign in to your account
+                {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
               </p>
             </div>
 
