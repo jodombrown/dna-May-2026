@@ -233,7 +233,7 @@ const CountryHubPage = lazy(() => import("./pages/africa/CountryHubPage"));
 
 // Auth guard component to prevent authenticated users from accessing auth-specific pages only
 const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNode; redirectAuth?: boolean }) => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   
   if (loading) {
     return (
@@ -245,7 +245,7 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   
   // Redirect authenticated users away from auth-only pages (login/signup)
   if (user && redirectAuth) {
-    return <Navigate to="/dna/feed" replace />;
+    return <Navigate to={profile?.onboarding_completed_at ? "/dna/feed" : "/onboarding"} replace />;
   }
   
   return <>{children}</>;
