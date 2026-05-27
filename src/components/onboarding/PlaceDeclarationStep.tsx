@@ -1,14 +1,11 @@
 import React, { useMemo } from 'react';
 import { Label } from '@/components/ui/label';
 import { AlertCircle } from 'lucide-react';
-import countries from 'i18n-iso-countries';
-import enLocale from 'i18n-iso-countries/langs/en.json';
-import { CONTINENTS, CONTINENT_COUNTRIES, type ContinentCode } from '@/data/continentCountries';
-
-// Register English locale once.
-if (!countries.getNames('en')) {
-  countries.registerLocale(enLocale);
-}
+import {
+  CONTINENTS,
+  getCountriesForContinent,
+  type ContinentCode,
+} from '@/lib/dna-place';
 
 interface PlaceDeclarationStepProps {
   continent: ContinentCode | '';
@@ -28,19 +25,13 @@ const PlaceDeclarationStep: React.FC<PlaceDeclarationStepProps> = ({
   onCountryChange,
   errors = {},
 }) => {
-  const countryOptions = useMemo(() => {
-    if (!continent) return [];
-    const alpha2List = CONTINENT_COUNTRIES[continent] || [];
-    return alpha2List
-      .map((alpha2) => {
-        const alpha3 = countries.alpha2ToAlpha3(alpha2);
-        const name = countries.getName(alpha2, 'en');
-        if (!alpha3 || !name) return null;
-        return { alpha3, name };
-      })
-      .filter((c): c is { alpha3: string; name: string } => !!c)
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [continent]);
+  const countryOptions = useMemo(
+    () =>
+      [...getCountriesForContinent(continent)].sort((a, b) =>
+        a.name.localeCompare(b.name)
+      ),
+    [continent]
+  );
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto px-4">
@@ -62,7 +53,6 @@ const PlaceDeclarationStep: React.FC<PlaceDeclarationStepProps> = ({
             onChange={(e) => {
               const next = e.target.value as ContinentCode | '';
               onContinentChange(next);
-              // Reset country when continent changes
               onCountryChange('');
             }}
             className={`${selectClass} ${errors.continent ? 'border-destructive' : ''}`}
