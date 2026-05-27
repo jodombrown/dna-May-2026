@@ -34,10 +34,34 @@ const STEP_TITLES = [
 const Onboarding = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(0);
+
+  // Read ?step= param so OnboardingGuard can route existing users straight
+  // into Step 6 (role) or Step 7 (place) per D054/BD008.
+  const initialStep = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const raw = parseInt(params.get('step') || '', 10);
+    if (!Number.isNaN(raw) && raw >= 1 && raw <= TOTAL_STEPS) return raw - 1;
+    return 0;
+  }, [location.search]);
+
+  const profileAny = profile as any;
+  const alreadyCompleted = !!profileAny?.onboarding_completed_at;
+  const partialMode = alreadyCompleted && initialStep >= 5;
+
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // D054 fields - tracked outside useOnboardingForm so we don't touch its shape.
+  const [role, setRole] = useState<DnaIdentityRole | ''>(
+    (profileAny?.role as DnaIdentityRole | undefined) || ''
+  );
+  const [continentCode, setContinentCode] = useState<ContinentCode | ''>(
+    (profileAny?.continent as ContinentCode | undefined) || ''
+  );
+  const [countryCode, setCountryCode] = useState<string>(profileAny?.country || '');
 
   // Initialize form with any existing profile data
   const { formData, updateField } = useOnboardingForm({
