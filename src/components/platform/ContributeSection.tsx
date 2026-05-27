@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart, DollarSign, Clock, Users, Lightbulb, ArrowRight, Award, TrendingUp, Target } from 'lucide-react';
 import { Adinkrahene } from '@/components/icons/adinkra';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import SwipeableCardStack from './SwipeableCardStack';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const ContributeSection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const contributions = [
     {
