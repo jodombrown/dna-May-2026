@@ -79,8 +79,8 @@ const ConveySection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/convey');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (story: typeof stories[0]) => (
