@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Megaphone, Share2, MessageCircle, Eye, Heart, ArrowRight, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SwipeableCardStack from './SwipeableCardStack';
 import { Mpatapo } from '@/components/icons/adinkra';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const ConveySection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
+
 
   const stories = [
     {
