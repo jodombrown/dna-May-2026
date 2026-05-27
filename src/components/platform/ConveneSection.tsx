@@ -223,7 +223,7 @@ const ConveneSection = () => {
             </div>
 
             <Button 
-              onClick={() => navigate('/convene')}
+              onClick={() => setInfoOpen(true)}
               className="bg-dna-copper hover:bg-dna-gold text-white inline-flex items-center gap-2"
             >
               Explore Events
@@ -232,6 +232,7 @@ const ConveneSection = () => {
           </div>
         </div>
       </div>
+      <PillarInfoSheet pillar="convene" open={infoOpen} onOpenChange={setInfoOpen} />
     </section>
   );
 };
