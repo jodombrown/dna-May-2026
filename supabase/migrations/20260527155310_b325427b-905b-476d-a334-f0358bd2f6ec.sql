@@ -1,0 +1,1 @@
+UPDATE public.profiles SET diaspora_status = 'returnee' WHERE username = 'seed-01';
