@@ -78,8 +78,8 @@ const CollaborateSection = () => {
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    navigate('/collaborate');
+  const handleCardClick = (_index: number) => {
+    setInfoOpen(true);
   };
 
   const renderCard = (project: typeof projects[0]) => (
