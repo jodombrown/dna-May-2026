@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,19 +11,24 @@ import IdentityStep from '@/components/onboarding/steps/IdentityStep';
 import DiasporaOriginStep from '@/components/onboarding/steps/DiasporaOriginStep';
 import DiscoveryStep from '@/components/onboarding/steps/DiscoveryStep';
 import UsernameStep from '@/components/onboarding/steps/UsernameStep';
+import RoleDeclarationStep, { type DnaIdentityRole } from '@/components/onboarding/RoleDeclarationStep';
+import PlaceDeclarationStep from '@/components/onboarding/PlaceDeclarationStep';
+import type { ContinentCode } from '@/data/continentCountries';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getErrorMessage } from '@/lib/errorLogger';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 7;
 
 const STEP_TITLES = [
   'How are you joining?',
   'Basic Identity',
   'Connection to Africa',
   'Your Interests & Goals',
-  'Claim Your Username'
+  'Claim Your Username',
+  'Declare Your Role',
+  'Where You Are',
 ];
 
 const Onboarding = () => {
