@@ -35,9 +35,7 @@ export const validateIdentityStep = (data: Partial<OnboardingFormData>): Validat
     errors.push({ field: 'avatar_url', message: 'Profile photo is required' });
   }
 
-  if (!data.current_country?.trim()) {
-    errors.push({ field: 'current_country', message: 'Current country is required' });
-  }
+  // current_country is collected in Step 6 (Place) — not required here
 
   // Professional headline is optional but validate length if provided
   if (data.headline?.trim() && data.headline.trim().length > 200) {

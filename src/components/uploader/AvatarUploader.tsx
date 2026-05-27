@@ -49,7 +49,8 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) =>
     setUploading(true);
     try {
       const clean = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-      const path = `user-avatars/${uid}/${Date.now()}_${clean}`;
+      // Storage RLS requires the first folder segment to equal auth.uid().
+      const path = `${uid}/${Date.now()}_${clean}`;
       const { error } = await supabase.storage.from("avatars").upload(path, file, {
         cacheControl: "3600",
         upsert: false,
