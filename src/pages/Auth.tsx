@@ -403,7 +403,7 @@ const Auth = () => {
                 <Globe className="w-7 h-7 text-white" />
               </div>
               <CardTitle className="text-2xl font-bold text-foreground">
-                Join DNA
+                {isSignUp ? 'Join DNA' : 'Welcome Back'}
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
                 Connect with the global African diaspora
