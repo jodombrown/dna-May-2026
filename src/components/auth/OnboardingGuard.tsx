@@ -4,12 +4,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+interface OnboardingCheckProfile {
+  onboarding_completed_at: string | null;
+  username: string | null;
+  role_declared_at?: string | null;
+  place_declared_at?: string | null;
+}
+
 interface OnboardingGuardProps {
   children: React.ReactNode;
 }
 
 export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile: authProfile, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,6 +37,8 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
     enabled: !!user?.id,
   });
 
+  const effectiveProfile = (authProfile || profile) as OnboardingCheckProfile | null;
+
   useEffect(() => {
     // Wait for auth and profile to load
     if (authLoading || profileLoading) return;
@@ -43,14 +52,15 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
     // Only `onboarding_completed_at` proves the wizard finished. A username
     // alone can be auto-seeded by the handle_new_user trigger and must NOT
     // be treated as completion (would skip Steps 1-5 for brand-new users).
-    const hasCompletedOnboarding = !!profile?.onboarding_completed_at;
+    const hasCompletedOnboarding = !!effectiveProfile?.onboarding_completed_at;
     // D054 / BD008: every logged-in user must have role + place declared.
-    const needsRole = !profile?.role_declared_at;
-    const needsPlace = !profile?.place_declared_at;
+    const needsRole = !effectiveProfile?.role_declared_at;
+    const needsPlace = !effectiveProfile?.place_declared_at;
     const onOnboarding = location.pathname === '/onboarding';
+    const currentTarget = `${location.pathname}${location.search}`;
 
     // Brand-new user (no initial onboarding) → full wizard.
-    if (!hasCompletedOnboarding && !onOnboarding) {
+    if (!hasCompletedOnboarding && !onOnboarding && currentTarget !== '/onboarding') {
       navigate('/onboarding', { replace: true });
       return;
     }
@@ -59,18 +69,21 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
     // push them into the wizard at the appropriate step.
     if (hasCompletedOnboarding && (needsRole || needsPlace) && !onOnboarding) {
       const step = needsRole ? 6 : 7;
-      navigate(`/onboarding?step=${step}`, {
-        replace: true,
-        state: { from: location.pathname },
-      });
+      const target = `/onboarding?step=${step}`;
+      if (currentTarget !== target) {
+        navigate(target, {
+          replace: true,
+          state: { from: location.pathname },
+        });
+      }
       return;
     }
 
     // Fully done and somehow still on /onboarding → kick to discover.
-    if (hasCompletedOnboarding && !needsRole && !needsPlace && onOnboarding) {
+    if (hasCompletedOnboarding && !needsRole && !needsPlace && onOnboarding && currentTarget !== '/dna/connect/discover') {
       navigate('/dna/connect/discover', { replace: true });
     }
-  }, [profile, user, authLoading, profileLoading, navigate, location.pathname]);
+  }, [effectiveProfile, user, authLoading, profileLoading, navigate, location.pathname, location.search]);
 
   // Show loading spinner while checking
   if (authLoading || profileLoading) {
