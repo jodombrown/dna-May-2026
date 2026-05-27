@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Handshake, ArrowRight, Users, DollarSign, Target, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { Progress } from '@/components/ui/progress';
 import SwipeableCardStack from './SwipeableCardStack';
 import { FuntunfunefuDenkyemfunefu } from '@/components/icons/adinkra';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const CollaborateSection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const projects = [
     {
