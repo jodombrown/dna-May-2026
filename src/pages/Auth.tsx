@@ -28,9 +28,18 @@ const Auth = () => {
   const [signInEmail, setSignInEmail] = useState('');
   const [signInPassword, setSignInPassword] = useState('');
   const [isSignInLoading, setIsSignInLoading] = useState(false);
-  
+
+  // Sign Up State
+  const [signUpFullName, setSignUpFullName] = useState('');
+  const [signUpEmail, setSignUpEmail] = useState('');
+  const [signUpPassword, setSignUpPassword] = useState('');
+  const [signUpConfirmPassword, setSignUpConfirmPassword] = useState('');
+  const [isSignUpLoading, setIsSignUpLoading] = useState(false);
+
   // Password visibility toggles
   const [showSignInPassword, setShowSignInPassword] = useState(false);
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+  const [showSignUpConfirm, setShowSignUpConfirm] = useState(false);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
