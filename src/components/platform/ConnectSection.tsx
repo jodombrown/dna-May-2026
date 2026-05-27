@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Users, MapPin, Briefcase, ArrowRight, Network } from 'lucide-react';
 import { Sankofa } from '@/components/icons/adinkra';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import SwipeableCardStack from './SwipeableCardStack';
+import PillarInfoSheet from './PillarInfoSheet';
 
 const ConnectSection = () => {
-  const navigate = useNavigate();
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const professionals = [
     {
