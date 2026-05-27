@@ -14,6 +14,7 @@ import UsernameStep from '@/components/onboarding/steps/UsernameStep';
 import RoleDeclarationStep, { type DnaIdentityRole } from '@/components/onboarding/RoleDeclarationStep';
 import PlaceDeclarationStep from '@/components/onboarding/PlaceDeclarationStep';
 import type { ContinentCode } from '@/data/continentCountries';
+import { isValidAlpha3 } from '@/lib/dna-place';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -115,7 +116,13 @@ const Onboarding = () => {
     if (step === 6) {
       const errs: { field: string; message: string }[] = [];
       if (!continentCode) errs.push({ field: 'continent', message: 'Please select a continent' });
-      if (!countryCode) errs.push({ field: 'country', message: 'Please select a country' });
+      if (!countryCode) {
+        errs.push({ field: 'country', message: 'Please select a country' });
+      } else if (!isValidAlpha3(countryCode)) {
+        // Mirrors profiles_country_alpha3_check on the DB; should be unreachable
+        // through the dropdown but guards against any tampered/legacy value.
+        errs.push({ field: 'country', message: 'Country must be a valid 3-letter ISO code' });
+      }
       return errs;
     }
     return [];
@@ -440,7 +447,10 @@ const Onboarding = () => {
 
           <Button
             onClick={handleNext}
-            disabled={isSubmitting}
+            disabled={
+              isSubmitting ||
+              (currentStep === 6 && (!continentCode || !isValidAlpha3(countryCode)))
+            }
             className="bg-dna-copper hover:bg-dna-gold text-white flex items-center justify-center gap-2 px-6 min-h-[44px] w-full sm:w-auto"
           >
             {isSubmitting ? (

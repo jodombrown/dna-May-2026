@@ -149,3 +149,15 @@ export function getCountriesForContinent(code: ContinentCode | ''): CountryOptio
   if (!code) return [];
   return CONTINENT_COUNTRY_LIST[code] ?? [];
 }
+
+// Precomputed set of every alpha-3 we ship in the dropdown, used by frontend
+// validation to mirror the profiles_country_alpha3_check DB constraint.
+export const KNOWN_ALPHA3: ReadonlySet<string> = new Set(
+  Object.values(CONTINENT_COUNTRY_LIST).flat().map((c) => c.alpha3)
+);
+
+// Strict ISO 3166-1 alpha-3 shape: exactly 3 uppercase A-Z chars.
+// Mirrors the profiles_country_alpha3_check CHECK constraint on the DB side.
+export function isValidAlpha3(value: unknown): value is string {
+  return typeof value === 'string' && /^[A-Z]{3}$/.test(value) && KNOWN_ALPHA3.has(value);
+}
