@@ -5,13 +5,8 @@ export type PublicNavItem = {
   badge?: string;
 };
 
-export const publicNavItems: PublicNavItem[] = [
-  { name: 'Connect', path: '/connect' },
-  { name: 'Convene', path: '/convene' },
-  { name: 'Collaborate', path: '/collaborate' },
-  { name: 'Contribute', path: '/contribute' },
-  { name: 'Convey', path: '/convey' },
-];
+// Five C's marketing pages temporarily removed from public nav pending redesign.
+export const publicNavItems: PublicNavItem[] = [];
 
 export const aboutUsDropdown = [
   { name: 'About Us', path: '/about' },
@@ -80,9 +75,5 @@ export const phases = [
   { name: 'Go-to-Market', path: '/phase-6/go-to-market' },
 ] as const;
 
-// Example pages for landing page showcase
-export const examplePages = [
-  { name: 'Connect', path: '/connect' },
-  { name: 'Collaborate', path: '/collaborate' },
-  { name: 'Contribute', path: '/contribute' },
-];
+// Example pages for landing page showcase (Five C's marketing pages temporarily hidden).
+export const examplePages: { name: string; path: string }[] = [];

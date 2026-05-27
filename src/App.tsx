@@ -738,15 +738,17 @@ function App() {
               {/* ROADMAP — hidden, work-in-progress */}
               {/* <Route path="/roadmap" element={<Roadmap />} /> */}
 
-              {/* Public marketing pages - Five C's examples */}
-              <Route path="/connect" element={<ConnectExample />} />
-              <Route path="/convene" element={<Convene />} />
-              <Route path="/convene/category/:category" element={<ConveneCategoryPage />} />
-              <Route path="/convene/featured-calendars" element={<FeaturedCalendarsPage />} />
-              <Route path="/convene/local-events" element={<LocalEventsPage />} />
-              <Route path="/collaborate" element={<CollaborateExample />} />
-              <Route path="/contribute" element={<ContributeExample />} />
-              <Route path="/convey" element={<ConveyExample />} />
+              {/* Public marketing pages - Five C's examples temporarily disabled pending redesign.
+                  All links redirect home so no in-progress page is exposed. */}
+              <Route path="/connect" element={<Navigate to="/" replace />} />
+              <Route path="/convene" element={<Navigate to="/" replace />} />
+              <Route path="/convene/category/:category" element={<Navigate to="/" replace />} />
+              <Route path="/convene/featured-calendars" element={<Navigate to="/" replace />} />
+              <Route path="/convene/local-events" element={<Navigate to="/" replace />} />
+              <Route path="/collaborate" element={<Navigate to="/" replace />} />
+              <Route path="/contribute" element={<Navigate to="/" replace />} />
+              <Route path="/convey" element={<Navigate to="/" replace />} />
+
               
               {/* New Admin Portal Routes */}
               <Route path="/admin-login" element={<AdminLogin />} />
