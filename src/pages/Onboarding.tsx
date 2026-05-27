@@ -25,7 +25,7 @@ const TOTAL_STEPS = 7;
 const STEP_TITLES = [
   'How are you joining?',
   'Basic Identity',
-  'Connection to Africa',
+  'Your Heritage',
   'Your Interests & Goals',
   'Claim Your Username',
   'Declare Your Role',
@@ -214,6 +214,13 @@ const Onboarding = () => {
       // ── FULL SIGNUP FLOW
       const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim();
 
+      // user_type is collected via Step 1, which only exposes 'individual'
+      // and 'organization' (the latter is disabled). diaspora_status is no
+      // longer collected in the wizard (BD014) — omitted from the payload so
+      // legacy values on existing users are never overwritten.
+      const safeUserType: 'individual' | 'organization' =
+        formData.user_type === 'organization' ? 'organization' : 'individual';
+
       const profileData: any = {
         id: user.id,
         email: user.email,
@@ -224,14 +231,13 @@ const Onboarding = () => {
         avatar_url: formData.avatar_url,
         current_country: formData.current_country,
         headline: formData.headline || null,
-        user_type: formData.user_type || 'individual',
+        user_type: safeUserType,
         profession: formData.profession || null,
         professional_role: formData.professional_role || null,
         professional_sectors: formData.professional_sectors || [],
         skills: formData.skills || [],
         years_experience: formData.years_experience ? parseInt(formData.years_experience.split('-')[0]) : null,
         country_of_origin: formData.country_of_origin,
-        diaspora_status: formData.diaspora_status || null,
         interests: formData.interests || [],
         my_dna_statement: formData.my_dna_statement || null,
         focus_areas: formData.focus_areas || [],
