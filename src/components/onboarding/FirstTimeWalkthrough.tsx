@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, MessageCircle, PenSquare, BookOpen, ArrowRight } from 'lucide-react';
+import { Newspaper, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useTourProgress } from '@/hooks/useTourProgress';
-import { MateMasie } from '@/components/icons/adinkra';
+import {
+  Sankofa,
+  Nkonsonkonson,
+  FuntunfunefuDenkyemfunefu,
+  Adinkrahene,
+  Mpatapo,
+  MateMasie,
+} from '@/components/icons/adinkra';
+import dnaLogo from '@/assets/dna-logo.png';
 
 interface WalkthroughStep {
   id: string;
@@ -19,82 +27,96 @@ interface WalkthroughStep {
 const walkthroughSteps: WalkthroughStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to DNA',
-    description: 'The Diaspora Network of Africa connects you with a global community of professionals committed to Africa\'s development.',
-    icon: <MateMasie className="h-12 w-12 text-dna-emerald" />,
+    title: 'Welcome to the Diaspora Network of Africa',
+    description: 'A global community of professionals committed to Africa\'s development. DNA is built on the Five C\'s.',
+    icon: <img src={dnaLogo} alt="DNA" className="h-14 w-auto" />,
     highlight: 'Your journey starts here',
     tips: [
-      'DNA is built on the Five C\'s: Connect, Convene, Collaborate, Contribute, and Convey',
+      'Connect, Convene, Collaborate, Contribute, and Convey',
       'Each action you take creates value that flows into your next opportunity',
-      'During beta, you\'ll have access to Feed, Connect, and Convey'
-    ]
+      'Explore at your own pace. DIA will guide you along the way',
+    ],
   },
   {
     id: 'feed',
-    title: 'DNA Feed',
+    title: 'Feed',
     description: 'Your home base for discovering what\'s happening across the diaspora network.',
-    icon: <PenSquare className="h-12 w-12 text-dna-emerald" />,
+    icon: <Newspaper className="h-12 w-12 text-dna-emerald" />,
     highlight: 'Share your story, engage with others',
     tips: [
       'Create posts to share updates, insights, and questions',
       'Use the tabs to filter: All, For You, My Network, Mine, Saved',
-      'Like, comment, and bookmark posts that resonate with you',
-      'Share posts with your network to amplify important voices'
-    ]
+      'React, comment, and bookmark posts that resonate with you',
+      'Share posts with your network to amplify important voices',
+    ],
   },
   {
     id: 'connect',
-    title: 'DNA Connect',
-    description: 'Build your professional network across borders with people who share your commitment to Africa\'s development.',
-    icon: <Users className="h-12 w-12 text-dna-emerald" />,
+    title: 'Connect',
+    description: 'Build your professional network across borders with people who share your commitment to Africa.',
+    icon: <Sankofa className="h-12 w-12 text-dna-emerald" />,
     highlight: 'Find your people, grow your network',
     tips: [
       'Discover members by skills, location, heritage, and interests',
       'Send connection requests with personalized messages',
       'View profiles to learn about potential collaborators',
-      'Your connections appear in your network feed'
-    ]
+      'Your connections appear in your network feed',
+    ],
   },
   {
-    id: 'messaging',
-    title: 'Messaging',
-    description: 'Have direct conversations with your connections. Build relationships that turn into action.',
-    icon: <MessageCircle className="h-12 w-12 text-dna-emerald" />,
-    highlight: 'Real conversations, real impact',
+    id: 'convene',
+    title: 'Convene',
+    description: 'Discover and host events that bring the diaspora together. Online, in person, or hybrid.',
+    icon: <Nkonsonkonson className="h-12 w-12 text-dna-emerald" />,
+    highlight: 'Gather with purpose',
     tips: [
-      'Message any of your connections directly',
-      'Start conversations from profiles or the messages inbox',
-      'Keep discussions going across time zones',
-      'Access all your conversations from the Messages tab'
-    ]
+      'Browse events by region, focus area, and format',
+      'RSVP and add events to your calendar',
+      'Host your own events from the Convene hub',
+      'Use event check-in to track attendance',
+    ],
+  },
+  {
+    id: 'collaborate',
+    title: 'Collaborate',
+    description: 'Launch and join Spaces - shared work surfaces where the diaspora builds together.',
+    icon: <FuntunfunefuDenkyemfunefu className="h-12 w-12 text-dna-emerald" />,
+    highlight: 'Build together across borders',
+    tips: [
+      'Join Spaces aligned with your skills and interests',
+      'Use boards and tasks to coordinate distributed teams',
+      'Invite members from your network into Spaces',
+      'Track progress and accountability in one place',
+    ],
+  },
+  {
+    id: 'contribute',
+    title: 'Contribute',
+    description: 'A purpose-driven marketplace where the diaspora exchanges value with Africa.',
+    icon: <Adinkrahene className="h-12 w-12 text-dna-emerald" />,
+    highlight: 'Offer what you have, find what you need',
+    tips: [
+      'Post Needs or Offers across capital, expertise, network, and time',
+      'Discover opportunities matched to your sectors',
+      'Track fulfillment and impact from your profile',
+      'Your contributions become part of your living record',
+    ],
   },
   {
     id: 'convey',
-    title: 'DNA Convey',
+    title: 'Convey',
     description: 'Share your diaspora story, insights, and knowledge with a community that wants to hear it.',
-    icon: <BookOpen className="h-12 w-12 text-dna-emerald" />,
+    icon: <Mpatapo className="h-12 w-12 text-dna-emerald" />,
     highlight: 'Your voice amplified',
     tips: [
       'Create impact stories that inspire and educate',
       'Choose from story templates: Personal Journey, Case Study, Opinion, and more',
       'Browse stories by type, region, and focus areas',
-      'Engage with stories that resonate. Your engagement shapes recommendations'
-    ]
+      'Engage with stories that resonate. Your engagement shapes recommendations',
+    ],
   },
-  {
-    id: 'coming-soon',
-    title: 'Coming After Beta',
-    description: 'Three more C\'s are on the way. Convene, Collaborate, and Contribute will complete your DNA experience.',
-    icon: <ArrowRight className="h-12 w-12 text-dna-amber" />,
-    highlight: 'The best is yet to come',
-    tips: [
-      'Convene: Discover and host events that bring the diaspora together',
-      'Collaborate: Launch projects with distributed teams across the globe',
-      'Contribute: Access a purpose-driven marketplace for diaspora commerce',
-      'Each C feeds the next. Your beta activity builds momentum for what\'s coming'
-    ]
-  }
 ];
+
 
 export function FirstTimeWalkthrough() {
   const { 

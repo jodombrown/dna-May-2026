@@ -38,21 +38,11 @@ export function useSetCSSHeaderHeight(
     ro.observe(el);
     window.addEventListener('resize', update);
     window.addEventListener('orientationchange', update);
-    // Re-run after route changes (history navigation in SPA)
+    // popstate covers browser back/forward. ResizeObserver covers any
+    // size changes triggered by SPA navigation. We intentionally do NOT
+    // patch history.pushState / replaceState — that creates feedback loops
+    // with React Router and can exceed the browser's 100-calls/10s quota.
     window.addEventListener('popstate', update);
-    // pushState/replaceState don't fire events; patch once for SPA nav
-    const origPush = history.pushState;
-    const origReplace = history.replaceState;
-    history.pushState = function (...args) {
-      const r = origPush.apply(this, args as Parameters<typeof origPush>);
-      update();
-      return r;
-    };
-    history.replaceState = function (...args) {
-      const r = origReplace.apply(this, args as Parameters<typeof origReplace>);
-      update();
-      return r;
-    };
 
     return () => {
       cancelAnimationFrame(raf);
@@ -60,8 +50,6 @@ export function useSetCSSHeaderHeight(
       window.removeEventListener('resize', update);
       window.removeEventListener('orientationchange', update);
       window.removeEventListener('popstate', update);
-      history.pushState = origPush;
-      history.replaceState = origReplace;
       document.documentElement.style.removeProperty(varName);
     };
   }, [ref, varName]);

@@ -297,23 +297,20 @@ const Onboarding = () => {
       // Refresh profile
       await refreshProfile();
 
-      // 🎉 CONFETTI CELEBRATION!
+      // Confetti celebration
       confetti({
-        particleCount: 150,
-        spread: 80,
+        particleCount: 120,
+        spread: 70,
         origin: { y: 0.6 },
         colors: ['#D4AF37', '#C87533', '#2F5233', '#3D8B40', '#FFD700']
       });
 
       toast({
-        title: "🎉 Welcome to DNA!",
-        description: `You're all set, @${formData.username}! Let's connect with the diaspora.`,
+        title: 'Welcome to the Diaspora Network of Africa',
+        description: `You're all set, @${formData.username}.`,
       });
 
-      // Go to feed after celebration
-      setTimeout(() => {
-        navigate('/dna/feed');
-      }, 1800);
+      navigate('/dna/feed', { replace: true });
     } catch (error: unknown) {
       // Surface the real Supabase error so we don't silently fall back to
       // a generic toast (PostgrestError isn't an Error instance).
