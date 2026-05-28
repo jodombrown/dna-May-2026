@@ -3,6 +3,8 @@
  * Type definitions for the Diaspora Impact Dashboard
  */
 
+import type { Database } from '@/integrations/supabase/types';
+
 export type VerificationStatus = 'pending_verification' | 'soft_verified' | 'fully_verified';
 
 export type ConnectionStatus = 'none' | 'pending_sent' | 'pending_received' | 'accepted' | 'declined';
@@ -46,6 +48,8 @@ export interface ProfileV2Data {
   verification_status: VerificationStatus;
   verification_updated_at?: string | null;
   created_at?: string;
+  // Identity model (D054): role is the canonical identity field
+  role?: Database["public"]["Enums"]["dna_identity_role"] | null;
   // Diaspora connection fields
   diaspora_status?: string | null;
   ethnic_heritage?: string[] | null;

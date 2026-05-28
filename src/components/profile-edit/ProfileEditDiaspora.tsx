@@ -3,14 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TagMultiSelect } from '@/components/profile/TagMultiSelect';
-import { 
-  CONNECTION_TYPE_OPTIONS, 
-  DIASPORA_NETWORK_OPTIONS, 
+import {
+  DIASPORA_NETWORK_OPTIONS,
   ENGAGEMENT_INTENTION_OPTIONS,
   ETHNIC_HERITAGE_OPTIONS,
   RETURN_INTENTIONS_OPTIONS,
   AFRICAN_CAUSES_OPTIONS,
-  VISIT_FREQUENCY_OPTIONS 
+  VISIT_FREQUENCY_OPTIONS
 } from '@/data/profileOptions';
 
 const MENTORSHIP_AREA_OPTIONS = [
@@ -29,7 +28,6 @@ const MENTORSHIP_AREA_OPTIONS = [
 ] as const;
 
 interface ProfileEditDiasporaProps {
-  diasporaStatus: string;
   diasporaNetworks: string[];
   engagementIntentions: string[];
   mentorshipAreas: string[];
@@ -37,7 +35,6 @@ interface ProfileEditDiasporaProps {
   returnIntentions: string;
   africanCauses: string[];
   visitFrequency: string;
-  onDiasporaStatusChange: (value: string) => void;
   onNetworksChange: (networks: string[]) => void;
   onIntentionsChange: (intentions: string[]) => void;
   onMentorshipAreasChange: (areas: string[]) => void;
@@ -48,7 +45,6 @@ interface ProfileEditDiasporaProps {
 }
 
 const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
-  diasporaStatus,
   diasporaNetworks,
   engagementIntentions,
   mentorshipAreas,
@@ -56,7 +52,6 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
   returnIntentions,
   africanCauses,
   visitFrequency,
-  onDiasporaStatusChange,
   onNetworksChange,
   onIntentionsChange,
   onMentorshipAreasChange,
@@ -72,26 +67,6 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
         <CardDescription>Whether diaspora, continental African, or ally, tell us how you connect</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Connection Type */}
-        <div>
-          <Label htmlFor="connection_type">How do you connect to Africa?</Label>
-          <Select value={diasporaStatus} onValueChange={onDiasporaStatusChange}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Select your connection type" />
-            </SelectTrigger>
-            <SelectContent className="bg-popover border shadow-lg z-50">
-              {CONNECTION_TYPE_OPTIONS.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  <div className="flex flex-col">
-                    <span>{option.label}</span>
-                    <span className="text-xs text-muted-foreground">{option.description}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Ethnic Heritage */}
         <TagMultiSelect
           label="Ethnic/Tribal Heritage"

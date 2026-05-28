@@ -31,6 +31,8 @@ import { cn } from '@/lib/utils';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { getFlag } from '@/lib/countryFlags';
+import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
+import type { Database } from '@/integrations/supabase/types';
 
 // Sector color mapping
 const SECTOR_COLORS: Record<string, string> = {
@@ -81,7 +83,7 @@ interface EnhancedMemberCardProps {
     skills?: string[];
     languages?: string[];
     available_for?: string[];
-    diaspora_status?: string;
+    role?: Database["public"]["Enums"]["dna_identity_role"] | null;
     regional_expertise?: string[];
     ethnic_heritage?: string[];
     is_mentor?: boolean;
@@ -343,7 +345,7 @@ export function EnhancedMemberCard({
                       </TooltipTrigger>
                       <TooltipContent side="top" className="text-xs">
                         Heritage: {member.country_of_origin}
-                        {member.diaspora_status && ` · ${member.diaspora_status}`}
+                        {getRoleLabel(member.role) && ` · ${getRoleLabel(member.role)}`}
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -526,8 +528,8 @@ export function EnhancedMemberCard({
                           <Badge variant="outline" className="text-[11px] font-normal border-dna-ochre/30 bg-dna-ochre/5 text-foreground gap-1">
                             <span>{heritageFlag}</span>
                             {member.country_of_origin}
-                            {member.diaspora_status && (
-                              <span className="text-muted-foreground/60 ml-0.5">· {member.diaspora_status}</span>
+                            {getRoleLabel(member.role) && (
+                              <span className="text-muted-foreground/60 ml-0.5">· {getRoleLabel(member.role)}</span>
                             )}
                           </Badge>
                         )}

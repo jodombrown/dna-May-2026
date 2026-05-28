@@ -38,6 +38,7 @@ import {
   PublicProfileFooter,
 } from '@/components/public-profile';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
 
 // About section component with read more functionality
 const AboutSection = ({ bio }: { bio: string }) => {
@@ -192,6 +193,7 @@ const PublicProfilePage = () => {
 
   const displayName = profile.full_name || profile.username || 'DNA Member';
   const displayRole = profile.profession || profile.headline;
+  const roleLabel = getRoleLabel(profile.role);
 
   // Derive first name for CTAs
   const firstName = displayName.split(' ')[0] || displayName;
@@ -365,12 +367,12 @@ const PublicProfilePage = () => {
               )}
 
               {/* My Connection to Africa */}
-              {(profile.diaspora_status || profile.ethnic_heritage?.length > 0 || profile.african_causes?.length > 0 || profile.engagement_intentions?.length > 0) && (
+              {(roleLabel || profile.ethnic_heritage?.length > 0 || profile.african_causes?.length > 0 || profile.engagement_intentions?.length > 0) && (
                 <div className="mb-6 p-4 rounded-lg bg-dna-forest/5 border border-dna-forest/10">
                   <h3 className="font-semibold mb-3 text-dna-forest">My Connection to Africa</h3>
-                  {profile.diaspora_status && (
+                  {roleLabel && (
                     <p className="text-sm text-muted-foreground mb-2">
-                      <span className="font-medium">Connection Type:</span> {profile.diaspora_status}
+                      <span className="font-medium">Connection Type:</span> {roleLabel}
                     </p>
                   )}
                   {profile.ethnic_heritage && profile.ethnic_heritage.length > 0 && (

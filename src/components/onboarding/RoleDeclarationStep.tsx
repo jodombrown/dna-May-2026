@@ -38,6 +38,13 @@ const ROLES: RoleOption[] = [
   },
 ];
 
+/** Human label for a profiles.role enum value, reusing the role declaration copy. */
+export const getRoleLabel = (role: string | null | undefined): string | null => {
+  if (!role) return null;
+  const match = ROLES.find((r) => r.value === role);
+  return match ? match.heading : null;
+};
+
 interface RoleDeclarationStepProps {
   value: DnaIdentityRole | '';
   onChange: (value: DnaIdentityRole) => void;
