@@ -7,9 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useOnboardingForm } from '@/components/onboarding/hooks/useOnboardingForm';
 import { OnboardingProgressBar } from '@/components/onboarding/OnboardingProgressBar';
-import UserTypeStep from '@/components/onboarding/steps/UserTypeStep';
 import IdentityStep from '@/components/onboarding/steps/IdentityStep';
-import DiasporaOriginStep from '@/components/onboarding/steps/DiasporaOriginStep';
 import DiscoveryStep from '@/components/onboarding/steps/DiscoveryStep';
 import UsernameStep from '@/components/onboarding/steps/UsernameStep';
 import RoleDeclarationStep, { type DnaIdentityRole } from '@/components/onboarding/RoleDeclarationStep';
@@ -21,12 +19,10 @@ import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getErrorMessage } from '@/lib/errorLogger';
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 5;
 
 const STEP_TITLES = [
-  'How are you joining?',
   'Basic Identity',
-  'Your Heritage',
   'Your Interests & Goals',
   'Claim Your Username',
   'Declare Your Role',
@@ -41,7 +37,7 @@ const Onboarding = () => {
   const queryClient = useQueryClient();
 
   // Read ?step= param so OnboardingGuard can route existing users straight
-  // into Step 6 (role) or Step 7 (place) per D054/BD008.
+  // into Step 4 (role) or Step 5 (place) per D054/BD008.
   const initialStep = useMemo(() => {
     const params = new URLSearchParams(location.search);
     const raw = parseInt(params.get('step') || '', 10);
@@ -51,7 +47,7 @@ const Onboarding = () => {
 
   const profileAny = profile as any;
   const alreadyCompleted = !!profileAny?.onboarding_completed_at;
-  const partialMode = alreadyCompleted && initialStep >= 5;
+  const partialMode = alreadyCompleted && initialStep >= 3;
 
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +64,6 @@ const Onboarding = () => {
 
   // Initialize form with any existing profile data
   const { formData, updateField } = useOnboardingForm({
-    user_type: ((profile as any)?.user_type as any) || 'individual',
     first_name: profile?.first_name || user?.user_metadata?.full_name?.split(' ')[0] || '',
     last_name: profile?.last_name || user?.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
     avatar_url: profile?.avatar_url || user?.user_metadata?.picture || '',
@@ -76,7 +71,6 @@ const Onboarding = () => {
     headline: profile?.headline || '',
     username: profile?.username || '',
     country_of_origin: profile?.country_of_origin || '',
-    diaspora_status: profile?.diaspora_status || '',
     // Deferred fields - kept for profile completion later
     profession: profile?.profession || '',
     professional_role: profile?.professional_role || '',
@@ -112,10 +106,10 @@ const Onboarding = () => {
   }, [profile, profileAny, partialMode, navigate]);
 
   const validateD054Step = (step: number): { field: string; message: string }[] => {
-    if (step === 5) {
+    if (step === 3) {
       if (!role) return [{ field: 'role', message: 'Please choose a role to continue' }];
     }
-    if (step === 6) {
+    if (step === 4) {
       const errs: { field: string; message: string }[] = [];
       if (!continentCode) errs.push({ field: 'continent', message: 'Please select a continent' });
       if (!countryCode) {
@@ -133,7 +127,7 @@ const Onboarding = () => {
   const handleNext = async () => {
     // Validate current step
     const validationErrors =
-      currentStep >= 5 ? validateD054Step(currentStep) : validateStep(currentStep, formData);
+      currentStep >= 3 ? validateD054Step(currentStep) : validateStep(currentStep, formData);
 
     if (validationErrors.length > 0) {
       const errorMap: Record<string, string> = {};
@@ -225,13 +219,9 @@ const Onboarding = () => {
       // ── FULL SIGNUP FLOW
       const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim();
 
-      // user_type is collected via Step 1, which only exposes 'individual'
-      // and 'organization' (the latter is disabled). diaspora_status is no
-      // longer collected in the wizard (BD014) — omitted from the payload so
-      // legacy values on existing users are never overwritten.
-      const safeUserType: 'individual' | 'organization' =
-        formData.user_type === 'organization' ? 'organization' : 'individual';
-
+      // D054: identity is captured solely via role (Step 4) and place (Step 5).
+      // The retired identity fields (user_type, diaspora_status) are never
+      // written here so legacy values on existing users are left untouched.
       const profileData: any = {
         id: user.id,
         email: user.email,
@@ -242,7 +232,6 @@ const Onboarding = () => {
         avatar_url: formData.avatar_url,
         current_country: formData.current_country,
         headline: formData.headline || null,
-        user_type: safeUserType,
         profession: formData.profession || null,
         professional_role: formData.professional_role || null,
         professional_sectors: formData.professional_sectors || [],
@@ -358,36 +347,13 @@ const Onboarding = () => {
     switch (currentStep) {
       case 0:
         return (
-          <UserTypeStep
-            data={{
-              user_type: formData.user_type,
-              organization_name: '',
-              organization_category: '',
-            }}
-            onUpdate={(field, value) => updateField(field as any, value)}
-            errors={errors}
-          />
-        );
-      case 1:
-        return (
           <IdentityStep
             data={formData}
             onUpdate={updateField}
             errors={errors}
           />
         );
-      case 2:
-        return (
-          <DiasporaOriginStep
-            data={{
-              country_of_origin: formData.country_of_origin,
-              diaspora_status: formData.diaspora_status,
-            }}
-            onUpdate={(field, value) => updateField(field as any, value)}
-            errors={errors}
-          />
-        );
-      case 3:
+      case 1:
         return (
           <DiscoveryStep
             data={{
@@ -399,7 +365,7 @@ const Onboarding = () => {
             onUpdate={(field, value) => updateField(field as any, value)}
           />
         );
-      case 4:
+      case 2:
         return (
           <UsernameStep
             data={{
@@ -416,7 +382,7 @@ const Onboarding = () => {
             }}
           />
         );
-      case 5:
+      case 3:
         return (
           <RoleDeclarationStep
             value={role}
@@ -424,7 +390,7 @@ const Onboarding = () => {
             error={errors.role}
           />
         );
-      case 6:
+      case 4:
         return (
           <PlaceDeclarationStep
             continent={continentCode}
@@ -475,7 +441,7 @@ const Onboarding = () => {
             onClick={handleNext}
             disabled={
               isSubmitting ||
-              (currentStep === 6 && (!continentCode || !isValidAlpha3(countryCode)))
+              (currentStep === 4 && (!continentCode || !isValidAlpha3(countryCode)))
             }
             className="bg-dna-copper hover:bg-dna-gold text-white flex items-center justify-center gap-2 px-6 min-h-[44px] w-full sm:w-auto"
           >

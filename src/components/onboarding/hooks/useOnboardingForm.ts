@@ -1,22 +1,18 @@
 import { useState } from 'react';
 
 export interface OnboardingFormData {
-  // Step 0: User Type (must match DB constraint: individual, organization, diaspora_professional, founder, ally)
-  user_type: 'individual' | 'organization' | 'diaspora_professional' | 'founder' | 'ally';
-
-  // Step 1: Identity
+  // Identity
   first_name: string;
   last_name: string;
   avatar_url: string;
   current_country: string;
   headline: string;
 
-  // Step 2: Username
+  // Username
   username: string;
 
-  // Step 3: Connection to Africa
+  // Retained profile fields (no longer captured as identity in the wizard)
   country_of_origin: string;
-  diaspora_status: string;
   interests: string[];
   my_dna_statement: string;
 
@@ -34,22 +30,18 @@ export interface OnboardingFormData {
 
 export const useOnboardingForm = (initialData?: Partial<OnboardingFormData>) => {
   const [formData, setFormData] = useState<OnboardingFormData>({
-    // Step 0
-    user_type: initialData?.user_type || 'individual',
-
-    // Step 1
+    // Identity
     first_name: initialData?.first_name || '',
     last_name: initialData?.last_name || '',
     avatar_url: initialData?.avatar_url || '',
     current_country: initialData?.current_country || '',
     headline: initialData?.headline || '',
 
-    // Step 2
+    // Username
     username: initialData?.username || '',
 
-    // Step 3
+    // Retained profile fields
     country_of_origin: initialData?.country_of_origin || '',
-    diaspora_status: initialData?.diaspora_status || '',
     interests: initialData?.interests || [],
     my_dna_statement: initialData?.my_dna_statement || '',
 
