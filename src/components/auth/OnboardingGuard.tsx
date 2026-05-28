@@ -68,7 +68,7 @@ export const OnboardingGuard = ({ children }: OnboardingGuardProps) => {
     // Pre-D054 user with completed onboarding but missing role/place →
     // push them into the wizard at the appropriate step.
     if (hasCompletedOnboarding && (needsRole || needsPlace) && !onOnboarding) {
-      const step = needsRole ? 6 : 7;
+      const step = needsRole ? 4 : 5;
       const target = `/onboarding?step=${step}`;
       if (currentTarget !== target) {
         navigate(target, {

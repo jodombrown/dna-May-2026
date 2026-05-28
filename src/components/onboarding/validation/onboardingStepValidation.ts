@@ -5,17 +5,6 @@ export interface ValidationError {
   message: string;
 }
 
-export const validateUserTypeStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
-  const errors: ValidationError[] = [];
-
-  if (!data.user_type) {
-    errors.push({ field: 'user_type', message: 'Please select how you are joining DNA' });
-  }
-
-  // Organization type is disabled for now, so no org-specific validation needed
-  return errors;
-};
-
 export const validateIdentityStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   const errors: ValidationError[] = [];
 
@@ -67,17 +56,6 @@ export const validateProfessionalStep = (data: Partial<OnboardingFormData>): Val
   return []; // All fields optional - deferred to profile completion
 };
 
-// Simplified - only country_of_origin required now
-export const validateDiasporaImpactStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
-  const errors: ValidationError[] = [];
-
-  if (!data.country_of_origin?.trim()) {
-    errors.push({ field: 'country_of_origin', message: 'Country of origin is required' });
-  }
-
-  return errors;
-};
-
 // Discovery step has no required fields - all optional
 export const validateDiscoveryStep = (data: Partial<OnboardingFormData>): ValidationError[] => {
   return []; // No validation needed - all fields optional
@@ -86,14 +64,10 @@ export const validateDiscoveryStep = (data: Partial<OnboardingFormData>): Valida
 export const validateStep = (step: number, data: Partial<OnboardingFormData>): ValidationError[] => {
   switch (step) {
     case 0:
-      return validateUserTypeStep(data);
-    case 1:
       return validateIdentityStep(data);
-    case 2:
-      return validateDiasporaImpactStep(data);
-    case 3:
+    case 1:
       return validateDiscoveryStep(data); // Optional step
-    case 4:
+    case 2:
       return validateUsernameStep(data);
     default:
       return [];
