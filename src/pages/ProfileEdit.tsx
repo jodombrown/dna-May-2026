@@ -84,7 +84,6 @@ const ProfileEdit = () => {
   const [professionalSectors, setProfessionalSectors] = useState<string[]>([]);
 
   // Diaspora state
-  const [diasporaStatus, setDiasporaStatus] = useState('');
   const [diasporaNetworks, setDiasporaNetworks] = useState<string[]>([]);
   const [engagementIntentions, setEngagementIntentions] = useState<string[]>([]);
   const [mentorshipAreas, setMentorshipAreas] = useState<string[]>([]);
@@ -152,7 +151,6 @@ const ProfileEdit = () => {
       setProfessionalSectors(Array.isArray(profile.professional_sectors) ? profile.professional_sectors : []);
 
       // Diaspora
-      setDiasporaStatus(profile.diaspora_status || '');
       setDiasporaNetworks(Array.isArray(profile.diaspora_networks) ? profile.diaspora_networks : []);
       setEngagementIntentions(Array.isArray(profile.engagement_intentions) ? profile.engagement_intentions : []);
       setMentorshipAreas(Array.isArray(profile.mentorship_areas) ? profile.mentorship_areas : []);
@@ -305,7 +303,6 @@ const ProfileEdit = () => {
       professional_sectors: professionalSectors,
 
       // Diaspora
-      diaspora_status: diasporaStatus,
       diaspora_networks: diasporaNetworks,
       engagement_intentions: engagementIntentions,
       mentorship_areas: mentorshipAreas,
@@ -582,7 +579,6 @@ const ProfileEdit = () => {
 
           {/* African Diaspora Identity */}
           <ProfileEditDiaspora
-            diasporaStatus={diasporaStatus}
             diasporaNetworks={diasporaNetworks}
             engagementIntentions={engagementIntentions}
             mentorshipAreas={mentorshipAreas}
@@ -590,7 +586,6 @@ const ProfileEdit = () => {
             returnIntentions={returnIntentions}
             africanCauses={africanCauses}
             visitFrequency={visitFrequency}
-            onDiasporaStatusChange={setDiasporaStatus}
             onNetworksChange={setDiasporaNetworks}
             onIntentionsChange={setEngagementIntentions}
             onMentorshipAreasChange={setMentorshipAreas}

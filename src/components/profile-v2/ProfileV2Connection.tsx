@@ -4,17 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Heart, Languages, Users, Globe, Plane, Target, MapPin, Compass } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  CONNECTION_TYPE_OPTIONS, 
+import {
   isAfricanLanguage,
   RETURN_INTENTIONS_OPTIONS,
   AFRICAN_CAUSES_OPTIONS,
-  VISIT_FREQUENCY_OPTIONS 
+  VISIT_FREQUENCY_OPTIONS
 } from '@/data/profileOptions';
+import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
+import type { Database } from '@/integrations/supabase/types';
 
 interface ProfileV2ConnectionProps {
   profile: {
-    diaspora_status?: string | null;
+    role?: Database["public"]["Enums"]["dna_identity_role"] | null;
     languages?: string[] | null;
     diaspora_networks?: string[] | null;
     engagement_intentions?: string[] | null;
@@ -33,13 +34,8 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
   onEdit,
 }) => {
   const navigate = useNavigate();
-  
-  // Get label from value for select options
-  const getConnectionLabel = (value: string | null | undefined) => {
-    if (!value) return null;
-    const option = CONNECTION_TYPE_OPTIONS.find(o => o.value === value);
-    return option ? option.label : value;
-  };
+
+  const roleLabel = getRoleLabel(profile.role);
 
   const getReturnIntentionsLabel = (value: string | null | undefined) => {
     if (!value) return null;
@@ -61,7 +57,7 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
   // Filter to only show African languages in this section
   const africanLanguages = (profile.languages || []).filter(isAfricanLanguage);
 
-  const hasContent = profile.diaspora_status || 
+  const hasContent = roleLabel ||
     africanLanguages.length > 0 ||
     (profile.diaspora_networks && profile.diaspora_networks.length > 0) ||
     (profile.engagement_intentions && profile.engagement_intentions.length > 0) ||
@@ -101,14 +97,14 @@ const ProfileV2Connection: React.FC<ProfileV2ConnectionProps> = ({
         {hasContent ? (
           <div className="space-y-4">
             {/* Connection Type */}
-            {profile.diaspora_status && (
+            {roleLabel && (
               <div className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
                 <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Heart className="w-4 h-4 text-primary" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs text-muted-foreground">Connection Type</div>
-                  <div className="font-medium text-sm">{getConnectionLabel(profile.diaspora_status)}</div>
+                  <div className="font-medium text-sm">{roleLabel}</div>
                 </div>
               </div>
             )}
