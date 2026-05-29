@@ -17,7 +17,6 @@ interface TestProfile {
   interests: string[];
   years_experience: number;
   years_in_diaspora: number;
-  user_type: string;
   intro_text: string;
   selected_pillars: string[];
 }
