@@ -11910,7 +11910,6 @@ export type Database = {
           company: string | null
           continent: string | null
           country: string | null
-          country_of_origin: string | null
           created_at: string | null
           current_city: string | null
           current_country: string | null
@@ -11932,7 +11931,7 @@ export type Database = {
           needs: string[] | null
           networking_goals: string[] | null
           offers: string[] | null
-          origin_country_name: string | null
+          primary_origin_country: string | null
           profession: string | null
           professional_role: string | null
           profile_picture_url: string | null
@@ -11953,7 +11952,6 @@ export type Database = {
           company?: string | null
           continent?: string | null
           country?: string | null
-          country_of_origin?: string | null
           created_at?: string | null
           current_city?: string | null
           current_country?: string | null
@@ -11975,7 +11973,7 @@ export type Database = {
           needs?: string[] | null
           networking_goals?: string[] | null
           offers?: string[] | null
-          origin_country_name?: string | null
+          primary_origin_country?: never
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
@@ -11996,7 +11994,6 @@ export type Database = {
           company?: string | null
           continent?: string | null
           country?: string | null
-          country_of_origin?: string | null
           created_at?: string | null
           current_city?: string | null
           current_country?: string | null
@@ -12018,7 +12015,7 @@ export type Database = {
           needs?: string[] | null
           networking_goals?: string[] | null
           offers?: string[] | null
-          origin_country_name?: string | null
+          primary_origin_country?: never
           profession?: string | null
           professional_role?: string | null
           profile_picture_url?: string | null
@@ -12411,7 +12408,6 @@ export type Database = {
           banner_type: string
           banner_url: string
           calc_match_score: number
-          country_of_origin: string
           created_at: string
           ethnic_heritage: string[]
           focus_areas: string[]
@@ -12421,6 +12417,7 @@ export type Database = {
           industries: string[]
           last_seen_at: string
           location: string
+          primary_origin_country: string
           profession: string
           profile_comp: number
           regional_expertise: string[]
@@ -13511,7 +13508,6 @@ export type Database = {
           banner_url: string
           bio: string
           company: string
-          country_of_origin: string
           created_at: string
           current_city: string
           current_country: string
@@ -13537,8 +13533,8 @@ export type Database = {
           needs: string[]
           networking_goals: string[]
           offers: string[]
-          origin_country_name: string
           preferred_contact: string
+          primary_origin_country: string
           profession: string
           professional_role: string
           profile_picture_url: string
@@ -13584,7 +13580,6 @@ export type Database = {
         Args: { p_limit?: number; p_user_id: string }
         Returns: {
           avatar_url: string
-          country_of_origin: string
           focus_areas: string[]
           full_name: string
           headline: string
@@ -13592,6 +13587,7 @@ export type Database = {
           industries: string[]
           location: string
           match_score: number
+          primary_origin_country: string
           profession: string
           skills: string[]
           username: string

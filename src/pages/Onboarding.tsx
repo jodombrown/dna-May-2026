@@ -18,6 +18,7 @@ import { validateStep } from '@/components/onboarding/validation/onboardingStepV
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { upsertPrimaryOrigin } from '@/lib/memberHeritage';
 
 const TOTAL_STEPS = 5;
 
@@ -236,7 +237,7 @@ const Onboarding = () => {
         professional_sectors: formData.professional_sectors || [],
         skills: formData.skills || [],
         years_experience: formData.years_experience ? parseInt(formData.years_experience.split('-')[0]) : null,
-        country_of_origin: formData.country_of_origin,
+        // BD038: country_of_origin moved to member_heritage (written below)
         interests: formData.interests || [],
         my_dna_statement: formData.my_dna_statement || null,
         focus_areas: formData.focus_areas || [],
@@ -273,6 +274,16 @@ const Onboarding = () => {
           return;
         } else {
           throw upsertError;
+        }
+      }
+
+      // BD038: persist primary origin to member_heritage (was profiles.country_of_origin).
+      // formData.country_of_origin now carries an ISO code from DiasporaImpactStep.
+      if (formData.country_of_origin) {
+        try {
+          await upsertPrimaryOrigin(user.id, formData.country_of_origin);
+        } catch (mhErr) {
+          console.error('Failed to write primary origin to member_heritage', mhErr);
         }
       }
 

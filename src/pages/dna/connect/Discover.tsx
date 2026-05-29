@@ -14,6 +14,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import { useMobile } from '@/hooks/useMobile';
 import { logger } from '@/lib/logger';
+import { originNameToCode } from '@/lib/memberHeritage';
 
 interface FilterState {
   country_of_origin?: string;
@@ -120,7 +121,7 @@ export default function Discover() {
           p_focus_areas: filters.focus_areas?.length ? filters.focus_areas : null,
           p_regional_expertise: filters.regional_expertise?.length ? filters.regional_expertise : null,
           p_industries: filters.industries?.length ? filters.industries : null,
-          p_country_of_origin: filters.country_of_origin || null,
+          p_country_of_origin: filters.country_of_origin ? (originNameToCode(filters.country_of_origin) || filters.country_of_origin) : null,
           p_location_country: filters.current_country || null,
           p_skills: filters.skills?.length ? filters.skills : null,
           p_search_query: searchQuery || null,

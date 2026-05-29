@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
+import { originCodeToName } from '@/lib/memberHeritage';
 
 interface AISuggestion {
   username: string;
@@ -64,11 +65,14 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
     setLoadingSuggestions(true);
     
     try {
+      // BD038: data.country_of_origin is now an ISO code in storage; map to
+      // a human-readable name so the suggester seeds off a recognizable token.
+      const countryOriginName = originCodeToName(data.country_of_origin) || data.country_of_origin;
       const { data: suggestions, error } = await supabase.functions.invoke('suggest-usernames', {
         body: {
           fullName: data.full_name,
           industry: data.industry || 'Professional',
-          countryOrigin: data.country_of_origin,
+          countryOrigin: countryOriginName,
           currentLocation: data.current_country
         }
       });
