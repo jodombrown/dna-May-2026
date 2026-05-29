@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
+import { originCodeToName } from '@/lib/memberHeritage';
 
 interface AISuggestion {
   username: string;
