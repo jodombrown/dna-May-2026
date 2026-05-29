@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     // Fetch user profile to check eligibility - use actual profile fields for calculation
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('id, user_type, avatar_url, full_name, headline, profession, bio, linkedin_url, skills, focus_areas, interests, country_of_origin, current_country, languages, banner_url, industries')
+      .select('id, avatar_url, full_name, headline, profession, bio, linkedin_url, skills, focus_areas, interests, country_of_origin, current_country, languages, banner_url, industries')
       .eq('id', user.id)
       .maybeSingle();
 
