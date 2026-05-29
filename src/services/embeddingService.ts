@@ -39,7 +39,7 @@ export async function generateUserEmbedding(userId: string): Promise<number[]> {
     // Get user profile data
     const { data: profile } = await supabase
       .from('profiles')
-      .select('intents, user_role, skills, interests')
+      .select('intents, skills, interests')
       .eq('id', userId)
       .single();
 
@@ -107,7 +107,6 @@ export async function generateEntityEmbedding(
       skills?: string[];
       interests?: string[];
       event_type?: string;
-      user_role?: string;
       post_type?: string;
       type?: string;
     }
@@ -160,7 +159,7 @@ export async function generateEntityEmbedding(
       case 'profile':
         const { data: profile } = await supabase
           .from('profiles')
-          .select('intents, user_role, skills, interests')
+          .select('intents, skills, interests')
           .eq('id', entityId)
           .single();
         entityData = profile;
@@ -191,7 +190,6 @@ export async function generateEntityEmbedding(
 
     // Add type/role
     if (entityData.event_type) features.push(entityData.event_type);
-    if (entityData.user_role) features.push(entityData.user_role);
     if (entityData.post_type) features.push(entityData.post_type);
     if (entityData.type) features.push(entityData.type);
 
@@ -283,7 +281,6 @@ export function cosineSimilarity(vec1: number[], vec2: number[]): number {
 
 interface ProfileEmbeddingData {
   intents?: string[];
-  user_role?: string;
   skills?: string[];
   interests?: string[];
 }
@@ -293,7 +290,6 @@ function generateProfileBasedVector(profile: ProfileEmbeddingData): number[] {
   const features: string[] = [];
 
   if (profile.intents) features.push(...(profile.intents || []));
-  if (profile.user_role) features.push(profile.user_role);
   if (profile.skills) features.push(...(profile.skills || []));
   if (profile.interests) features.push(...(profile.interests || []));
 
