@@ -32,7 +32,7 @@ const DiasporaImpactStep: React.FC<DiasporaImpactStepProps> = ({ data, onUpdate,
             <Label htmlFor="country_of_origin" className="text-base">Country of Origin *</Label>
             <CountryCombobox
               value={data.country_of_origin}
-              onChange={(code, name) => onUpdate('country_of_origin', name)}
+              onChange={(code, _name) => onUpdate('country_of_origin', code)}
               africanOnly={true}
               placeholder="Select your country of origin"
               error={!!errors.country_of_origin}

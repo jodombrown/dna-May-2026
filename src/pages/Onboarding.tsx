@@ -236,7 +236,7 @@ const Onboarding = () => {
         professional_sectors: formData.professional_sectors || [],
         skills: formData.skills || [],
         years_experience: formData.years_experience ? parseInt(formData.years_experience.split('-')[0]) : null,
-        country_of_origin: formData.country_of_origin,
+        // BD038: country_of_origin moved to member_heritage (written below)
         interests: formData.interests || [],
         my_dna_statement: formData.my_dna_statement || null,
         focus_areas: formData.focus_areas || [],
