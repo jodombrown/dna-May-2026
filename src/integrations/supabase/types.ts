@@ -3283,7 +3283,7 @@ export type Database = {
             foreignKeyName: "event_analytics_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -3374,7 +3374,7 @@ export type Database = {
             foreignKeyName: "event_blasts_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -3532,7 +3532,7 @@ export type Database = {
             foreignKeyName: "event_registration_questions_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -3591,7 +3591,7 @@ export type Database = {
             foreignKeyName: "event_registrations_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
           {
@@ -3687,7 +3687,7 @@ export type Database = {
             foreignKeyName: "event_reports_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
           {
@@ -3791,7 +3791,7 @@ export type Database = {
             foreignKeyName: "event_ticket_holds_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
           {
@@ -3871,7 +3871,7 @@ export type Database = {
             foreignKeyName: "event_ticket_types_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -3962,7 +3962,7 @@ export type Database = {
             foreignKeyName: "event_waitlist_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
-            referencedRelation: "events_old"
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
