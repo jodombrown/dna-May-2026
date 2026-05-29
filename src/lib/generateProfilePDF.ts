@@ -37,7 +37,6 @@ interface ProfileData {
   years_experience?: number;
   company?: string;
   // Diaspora connection fields
-  diaspora_status?: string | null;
   ethnic_heritage?: string[] | null;
   african_causes?: string[] | null;
   engagement_intentions?: string[] | null;
@@ -53,11 +52,7 @@ interface ProfileData {
 }
 
 // Helper functions to get labels from values
-const getConnectionLabel = (value: string | null | undefined): string => {
-  if (!value) return '';
-  const option = CONNECTION_TYPE_OPTIONS.find(o => o.value === value);
-  return option ? option.label : value;
-};
+
 
 const getReturnIntentionsLabel = (value: string | null | undefined): string => {
   if (!value) return '';
@@ -191,8 +186,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   }
   
   // My Connection to Africa Section (Enhanced Heritage Section)
-  const hasConnectionData = profile.diaspora_status || 
-    profile.country_of_origin || 
+  const hasConnectionData = profile.country_of_origin || 
     (profile.languages && profile.languages.length > 0) ||
     (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) ||
     (profile.diaspora_networks && profile.diaspora_networks.length > 0);
@@ -200,9 +194,6 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   if (hasConnectionData && hasSidebarSpace(20)) {
     sidebarY = drawSidebarSection(doc, 'AFRICA CONNECTION', sidebarY, sidebarWidth, margin);
     
-    if (profile.diaspora_status && hasSidebarSpace(10)) {
-      sidebarY = drawSidebarItem(doc, 'Type:', getConnectionLabel(profile.diaspora_status), sidebarY, sidebarWidth, margin);
-    }
     if (profile.country_of_origin && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Origin:', profile.country_of_origin, sidebarY, sidebarWidth, margin);
     }

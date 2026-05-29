@@ -51,7 +51,6 @@ export interface ProfileV2Data {
   // Identity model (D054): role is the canonical identity field
   role?: Database["public"]["Enums"]["dna_identity_role"] | null;
   // Diaspora connection fields
-  diaspora_status?: string | null;
   ethnic_heritage?: string[] | null;
   african_causes?: string[] | null;
   engagement_intentions?: string[] | null;

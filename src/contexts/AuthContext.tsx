@@ -27,7 +27,6 @@ export interface UserProfile {
   current_city?: string | null;
   country_of_origin?: string | null;
   diaspora_origin?: string | null;
-  diaspora_status?: string | null;
   verification_status?: string | null;
   current_role?: string | null;
   professional_title?: string | null;

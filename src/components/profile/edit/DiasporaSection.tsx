@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { TagMultiSelect } from '@/components/ui/TagMultiSelect';
 import { ProfileEditSectionProps } from './types';
 import { LANGUAGES } from '@/data/languages';
-import { CONNECTION_TYPE_OPTIONS, DIASPORA_NETWORK_OPTIONS } from '@/data/profileOptions';
+import { DIASPORA_NETWORK_OPTIONS } from '@/data/profileOptions';
 
 export function DiasporaSection({
   formData,
@@ -53,32 +53,7 @@ export function DiasporaSection({
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Connection Type */}
-        <div>
-          <Label htmlFor="diaspora_status">How do you connect to Africa? *</Label>
-          <Select
-            value={formData.diaspora_status || ''}
-            onValueChange={(value) => onUpdate('diaspora_status', value)}
-            disabled={disabled}
-          >
-            <SelectTrigger className={errors.diaspora_status ? 'border-destructive' : ''}>
-              <SelectValue placeholder="Select your connection type" />
-            </SelectTrigger>
-            <SelectContent>
-              {CONNECTION_TYPE_OPTIONS.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  <div className="flex flex-col py-1">
-                    <span className="font-medium">{option.label}</span>
-                    <span className="text-xs text-muted-foreground">{option.description}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.diaspora_status && (
-            <p className="text-sm text-destructive mt-1">{errors.diaspora_status}</p>
-          )}
-        </div>
+
 
         {/* Languages */}
         <div>

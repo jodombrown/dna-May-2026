@@ -38,7 +38,7 @@ const FIELD_TO_COLUMN: Record<ProfileField, string> = {
   interests: 'interests',
   location: 'location',
   languages: 'languages',
-  diaspora_heritage: 'diaspora_status',
+  diaspora_heritage: 'ethnic_heritage',
   professional_background: 'profession',
   education: 'education',
 };
