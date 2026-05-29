@@ -68,7 +68,7 @@ export function useWhatsNext() {
       // 3. Check for spaces user can join based on their role/interests
       const { data: profile } = await supabase
         .from('profiles')
-        .select('user_role, intents')
+        .select('intents')
         .eq('id', user.id)
         .single();
 
