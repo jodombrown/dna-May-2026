@@ -14,6 +14,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import { useMobile } from '@/hooks/useMobile';
 import { logger } from '@/lib/logger';
+import { originNameToCode } from '@/lib/memberHeritage';
 
 interface FilterState {
   country_of_origin?: string;
