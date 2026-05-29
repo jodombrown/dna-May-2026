@@ -55,14 +55,6 @@ const AFRICAN_REGIONS: Record<string, string[]> = {
   'Central Africa': ['cameroon', 'democratic republic of congo', 'drc', 'congo', 'gabon', 'equatorial guinea', 'central african republic', 'chad']
 };
 
-// Complementary diaspora status pairs for meaningful connections
-const DIASPORA_COMPLEMENTARY_PAIRS: [string, string, string][] = [
-  ['returnee', 'continental_african', 'Returnee connecting with local'],
-  ['1st_gen_diaspora', '2nd_gen_diaspora', 'Cross-generational diaspora'],
-  ['1st_gen_diaspora', 'continental_african', 'Diaspora-continental bridge'],
-  ['ally', 'continental_african', 'Ally supporting Africa'],
-  ['returnee', '1st_gen_diaspora', 'Return journey connection'],
-];
 
 class MatchingService {
   /**
@@ -219,16 +211,8 @@ class MatchingService {
       }
     }
 
-    // 8. Diaspora status complementary matching (7%)
-    const { score: diasporaScore, reason: diasporaReason } = this.calculateDiasporaMatch(
-      currentUser.diaspora_status,
-      professional.diaspora_status
-    );
-    details.diasporaMatch = diasporaScore;
-    totalScore += diasporaScore * 0.07;
-    if (diasporaReason) {
-      reasons.push(diasporaReason);
-    }
+    // (Diaspora-status complementary matching removed — column retired BD033)
+
 
     // 9. Regional expertise overlap (5%)
     const regionalScore = this.calculateArrayMatch(
