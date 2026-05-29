@@ -8052,7 +8052,6 @@ export type Database = {
           twitter_handle: string | null
           twitter_url: string | null
           updated_at: string
-          user_type: string | null
           username: string
           username_change_count: number | null
           username_changes: number | null
@@ -8271,7 +8270,6 @@ export type Database = {
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
-          user_type?: string | null
           username: string
           username_change_count?: number | null
           username_changes?: number | null
@@ -8490,7 +8488,6 @@ export type Database = {
           twitter_handle?: string | null
           twitter_url?: string | null
           updated_at?: string
-          user_type?: string | null
           username?: string
           username_change_count?: number | null
           username_changes?: number | null
