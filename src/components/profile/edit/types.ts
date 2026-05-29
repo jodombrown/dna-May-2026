@@ -25,7 +25,6 @@ export interface ProfileEditFormData {
   interests: string[];
 
   // Diaspora Info
-  diaspora_status: string;
   languages: string[];
 
   // Engagement

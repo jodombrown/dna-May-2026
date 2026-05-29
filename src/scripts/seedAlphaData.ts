@@ -51,7 +51,6 @@ interface SeedProfile {
   current_country: string;
   current_city: string;
   country_of_origin: string;
-  diaspora_status: string;
   profession: string;
   industry: string;
   skills: string[];
