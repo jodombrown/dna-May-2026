@@ -103,25 +103,8 @@ export default function CreateStory() {
     }
   }, [requestedType, impactSummary, prefillData]);
 
-  // Check if user is admin
-  const { data: profile } = useQuery({
-    queryKey: ['profile-for-story-auth'],
-    queryFn: async () => {
-      const { data: { user } } = await supabaseClient.auth.getUser();
-      if (!user) return null;
-
-      const { data, error } = await supabaseClient
-        .from('profiles')
-        .select('user_type')
-        .eq('id', user.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const isAdmin = profile?.user_type === 'admin';
+  // Check if user is admin (canonical RPC-based check)
+  const { isAdmin } = useIsAdmin();
 
   const handleSubmit = async (formData: any) => {
     const data = {
