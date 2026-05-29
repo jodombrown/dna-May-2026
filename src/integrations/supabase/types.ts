@@ -12362,7 +12362,6 @@ export type Database = {
           calc_match_score: number
           country_of_origin: string
           created_at: string
-          diaspora_status: string
           ethnic_heritage: string[]
           focus_areas: string[]
           full_name: string
