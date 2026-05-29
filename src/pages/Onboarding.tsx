@@ -276,6 +276,16 @@ const Onboarding = () => {
         }
       }
 
+      // BD038: persist primary origin to member_heritage (was profiles.country_of_origin).
+      // formData.country_of_origin now carries an ISO code from DiasporaImpactStep.
+      if (formData.country_of_origin) {
+        try {
+          await upsertPrimaryOrigin(user.id, formData.country_of_origin);
+        } catch (mhErr) {
+          console.error('Failed to write primary origin to member_heritage', mhErr);
+        }
+      }
+
       // Wait for DB to commit
       await new Promise(resolve => setTimeout(resolve, 300));
 
