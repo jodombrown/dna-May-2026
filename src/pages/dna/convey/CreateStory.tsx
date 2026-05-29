@@ -12,6 +12,7 @@ import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 export default function CreateStory() {
   const navigate = useNavigate();
