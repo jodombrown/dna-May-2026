@@ -5708,6 +5708,60 @@ export type Database = {
         }
         Relationships: []
       }
+      member_heritage: {
+        Row: {
+          created_at: string
+          diaspora_networks: string[]
+          ethnic_heritage: string[]
+          heritage_notes: string | null
+          id: string
+          is_primary: boolean
+          origin_country: string
+          profile_id: string
+          source_archive_ref: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          diaspora_networks?: string[]
+          ethnic_heritage?: string[]
+          heritage_notes?: string | null
+          id?: string
+          is_primary?: boolean
+          origin_country: string
+          profile_id: string
+          source_archive_ref?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          diaspora_networks?: string[]
+          ethnic_heritage?: string[]
+          heritage_notes?: string | null
+          id?: string
+          is_primary?: boolean
+          origin_country?: string
+          profile_id?: string
+          source_archive_ref?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_heritage_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_heritage_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_mentions: {
         Row: {
           conversation_id: string
