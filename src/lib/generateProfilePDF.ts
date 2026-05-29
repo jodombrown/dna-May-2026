@@ -37,7 +37,6 @@ interface ProfileData {
   years_experience?: number;
   company?: string;
   // Diaspora connection fields
-  diaspora_status?: string | null;
   ethnic_heritage?: string[] | null;
   african_causes?: string[] | null;
   engagement_intentions?: string[] | null;

@@ -48,7 +48,6 @@ interface MemberCardProps {
     skills?: string[];
     languages?: string[];
     available_for?: string[];
-    diaspora_status?: string;
     regional_expertise?: string[];
     is_mentor?: boolean;
     is_investor?: boolean;
