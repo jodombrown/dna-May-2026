@@ -545,30 +545,8 @@ class MatchingService {
     return Math.min(100, score);
   }
 
-  /**
-   * Diaspora status complementary matching
-   */
-  private calculateDiasporaMatch(userStatus: string, profStatus: string): { score: number; reason: string | null } {
-    if (!userStatus || !profStatus) return { score: 30, reason: null };
 
-    const u = userStatus.toLowerCase();
-    const p = profStatus.toLowerCase();
 
-    // Same status - moderate match
-    if (u === p) {
-      return { score: 60, reason: null };
-    }
-
-    // Check for complementary pairs
-    for (const [status1, status2, reason] of DIASPORA_COMPLEMENTARY_PAIRS) {
-      if ((u.includes(status1) && p.includes(status2)) ||
-          (u.includes(status2) && p.includes(status1))) {
-        return { score: 90, reason };
-      }
-    }
-
-    return { score: 40, reason: null };
-  }
 
   /**
    * Mentorship match - considers both offering and seeking
