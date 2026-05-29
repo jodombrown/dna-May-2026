@@ -219,9 +219,8 @@ const Onboarding = () => {
       // ── FULL SIGNUP FLOW
       const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`.trim();
 
-      // D054: identity is captured solely via role (Step 4) and place (Step 5).
-      // The retired identity fields (user_type, diaspora_status) are never
-      // written here so legacy values on existing users are left untouched.
+      // D054 / BD033: identity is captured solely via role (Step 4) and place (Step 5).
+      // diaspora_status is retired; user_type is never written here.
       const profileData: any = {
         id: user.id,
         email: user.email,
