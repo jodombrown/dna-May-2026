@@ -7771,7 +7771,6 @@ export type Database = {
           dia_insight_updated_at: string | null
           diaspora_networks: string[] | null
           diaspora_origin: string | null
-          diaspora_status: string | null
           diaspora_story: string | null
           diaspora_tags: Json | null
           display_name: string | null
@@ -7989,7 +7988,6 @@ export type Database = {
           dia_insight_updated_at?: string | null
           diaspora_networks?: string[] | null
           diaspora_origin?: string | null
-          diaspora_status?: string | null
           diaspora_story?: string | null
           diaspora_tags?: Json | null
           display_name?: string | null
@@ -8207,7 +8205,6 @@ export type Database = {
           dia_insight_updated_at?: string | null
           diaspora_networks?: string[] | null
           diaspora_origin?: string | null
-          diaspora_status?: string | null
           diaspora_story?: string | null
           diaspora_tags?: Json | null
           display_name?: string | null
