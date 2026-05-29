@@ -34,7 +34,6 @@ const testProfiles: TestProfile[] = [
     interests: ['African Innovation', 'Financial Inclusion', 'Mentorship', 'Tech Policy'],
     years_experience: 8,
     years_in_diaspora: 12,
-    user_type: 'founder',
     intro_text: 'Building the future of African financial services from London. Always excited to connect with fellow entrepreneurs working on impact-driven solutions.',
     selected_pillars: ['collaborate', 'contribute']
   },
@@ -50,7 +49,6 @@ const testProfiles: TestProfile[] = [
     interests: ['Climate Change', 'Sustainable Development', 'Education', 'Policy Advocacy'],
     years_experience: 12,
     years_in_diaspora: 8,
-    user_type: 'professional',
     intro_text: 'Dedicated to developing clean energy solutions that can transform African communities. Looking to collaborate on research and implementation projects.',
     selected_pillars: ['contribute', 'connect']
   },
@@ -66,7 +64,6 @@ const testProfiles: TestProfile[] = [
     interests: ['African Art', 'Cultural Preservation', 'Youth Mentorship', 'Creative Economy'],
     years_experience: 10,
     years_in_diaspora: 15,
-    user_type: 'founder',
     intro_text: 'Bridging African creativity with global audiences. Passionate about empowering the next generation of African artists and creatives.',
     selected_pillars: ['connect', 'contribute']
   },
@@ -82,7 +79,6 @@ const testProfiles: TestProfile[] = [
     interests: ['Global Health', 'Healthcare Access', 'Digital Innovation', 'Policy Reform'],
     years_experience: 15,
     years_in_diaspora: 10,
-    user_type: 'professional',
     intro_text: 'Working to revolutionize healthcare delivery across Africa through innovative digital solutions and policy reform.',
     selected_pillars: ['contribute', 'collaborate']
   },
@@ -98,7 +94,6 @@ const testProfiles: TestProfile[] = [
     interests: ['Water Security', 'Rural Development', 'Environmental Justice', 'STEM Education'],
     years_experience: 3,
     years_in_diaspora: 5,
-    user_type: 'student',
     intro_text: 'Passionate about solving water access challenges in rural Africa. Always eager to learn from experienced professionals and find research collaborations.',
     selected_pillars: ['connect', 'contribute']
   },
@@ -114,7 +109,6 @@ const testProfiles: TestProfile[] = [
     interests: ['African Startups', 'Impact Investing', 'Entrepreneurship', 'Economic Development'],
     years_experience: 18,
     years_in_diaspora: 22,
-    user_type: 'investor',
     intro_text: 'Committed to funding the next generation of African entrepreneurs. Always looking for innovative startups solving real African problems.',
     selected_pillars: ['collaborate', 'contribute']
   },
@@ -130,7 +124,6 @@ const testProfiles: TestProfile[] = [
     interests: ['Sustainable Agriculture', 'Food Security', 'Rural Innovation', 'Farmer Education'],
     years_experience: 9,
     years_in_diaspora: 11,
-    user_type: 'professional',
     intro_text: 'Leveraging technology to help African farmers increase productivity and sustainability. Interested in partnerships and knowledge exchange.',
     selected_pillars: ['contribute', 'collaborate']
   },
@@ -146,7 +139,6 @@ const testProfiles: TestProfile[] = [
     interests: ['Trade Policy', 'Economic Development', 'Governance', 'Regional Integration'],
     years_experience: 14,
     years_in_diaspora: 18,
-    user_type: 'professional',
     intro_text: 'Advocating for policies that promote African economic growth and integration. Always interested in evidence-based policy discussions.',
     selected_pillars: ['contribute', 'connect']
   },
@@ -162,7 +154,6 @@ const testProfiles: TestProfile[] = [
     interests: ['Educational Access', 'Digital Learning', 'Teacher Empowerment', 'Youth Development'],
     years_experience: 7,
     years_in_diaspora: 9,
-    user_type: 'founder',
     intro_text: 'Building technology to democratize quality education across Africa. Looking for partners, mentors, and funding opportunities.',
     selected_pillars: ['collaborate', 'contribute']
   },
@@ -178,7 +169,6 @@ const testProfiles: TestProfile[] = [
     interests: ['African Storytelling', 'Media Representation', 'Content Creation', 'Digital Platforms'],
     years_experience: 6,
     years_in_diaspora: 8,
-    user_type: 'professional',
     intro_text: 'Amplifying African voices and stories through digital media. Passionate about authentic representation and creator empowerment.',
     selected_pillars: ['connect', 'contribute']
   }
