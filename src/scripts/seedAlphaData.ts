@@ -699,7 +699,6 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
       current_country: p.current_country,
       current_city: p.current_city,
       country_of_origin: p.country_of_origin,
-      diaspora_status: p.diaspora_status,
       profession: p.profession,
       industry: p.industry,
       skills: p.skills,
