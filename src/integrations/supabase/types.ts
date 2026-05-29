@@ -8032,7 +8032,6 @@ export type Database = {
           return_intentions: string | null
           role: Database["public"]["Enums"]["dna_identity_role"]
           role_declared_at: string | null
-          roles: string[] | null
           sdg_focus: string[] | null
           sector_tags: Json | null
           sectors: string[] | null
@@ -8252,7 +8251,6 @@ export type Database = {
           return_intentions?: string | null
           role?: Database["public"]["Enums"]["dna_identity_role"]
           role_declared_at?: string | null
-          roles?: string[] | null
           sdg_focus?: string[] | null
           sector_tags?: Json | null
           sectors?: string[] | null
@@ -8472,7 +8470,6 @@ export type Database = {
           return_intentions?: string | null
           role?: Database["public"]["Enums"]["dna_identity_role"]
           role_declared_at?: string | null
-          roles?: string[] | null
           sdg_focus?: string[] | null
           sector_tags?: Json | null
           sectors?: string[] | null
