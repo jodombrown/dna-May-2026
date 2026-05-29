@@ -260,7 +260,7 @@ async function matchProfilesToProfile(
 ): Promise<MatchResult[]> {
   const { data: profile } = await supabase
     .from('profiles')
-    .select('skills, interests, location, profession, diaspora_status')
+    .select('skills, interests, location, profession')
     .eq('id', userId)
     .single();
 
@@ -269,7 +269,7 @@ async function matchProfilesToProfile(
   // Build query for candidate profiles
   let query = supabase
     .from('profiles')
-    .select('id, full_name, skills, interests, location, profession, diaspora_status')
+    .select('id, full_name, skills, interests, location, profession')
     .neq('id', userId)
     .limit(100);
 
