@@ -269,7 +269,6 @@ Deno.serve(async (req) => {
         interests: profile.interests,
         years_experience: profile.years_experience,
         years_in_diaspora: profile.years_in_diaspora,
-        user_type: profile.user_type,
         intro_text: profile.intro_text,
         selected_pillars: profile.selected_pillars,
         is_seeded: true,
