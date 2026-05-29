@@ -18,6 +18,7 @@ import { validateStep } from '@/components/onboarding/validation/onboardingStepV
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { upsertPrimaryOrigin } from '@/lib/memberHeritage';
 
 const TOTAL_STEPS = 5;
 
