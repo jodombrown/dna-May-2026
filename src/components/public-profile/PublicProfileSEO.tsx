@@ -42,9 +42,9 @@ export const PublicProfileSEO = ({
   const derivedFirstName = firstName || nameParts[0] || '';
   const derivedLastName = lastName || nameParts.slice(1).join(' ') || '';
 
-  // Build description
+  // Build description (cap at 160 chars total, including ellipsis)
   const description = bio
-    ? bio.slice(0, 160) + (bio.length > 160 ? '...' : '')
+    ? (bio.length > 160 ? bio.slice(0, 157).trimEnd() + '...' : bio)
     : headline
       ? `${headline} - Connect with ${derivedFirstName} on DNA, the platform mobilizing the Global African Diaspora.`
       : `Connect with ${derivedFirstName} on DNA, the platform mobilizing the Global African Diaspora.`;
