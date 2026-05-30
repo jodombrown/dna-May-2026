@@ -87,6 +87,8 @@ const HeroSection = () => {
                   width={800}
                   height={600}
                   loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                 />
               </div>
             </div>
