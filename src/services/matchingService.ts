@@ -174,9 +174,11 @@ class MatchingService {
     }
 
     // 4. Cultural/Heritage background (10%)
+    // 4. Cultural/Heritage background (10%) — both sides are alpha-3 codes
+    //    hydrated from member_heritage in findMatches.
     const culturalScore = this.calculateCulturalMatch(
-      (currentUser as any).primary_origin_country,
-      (professional as any).primary_origin_country
+      currentUser.primary_origin_country,
+      professional.primary_origin_country
     );
 
     details.culturalMatch = culturalScore;
