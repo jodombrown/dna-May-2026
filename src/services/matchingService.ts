@@ -1,9 +1,11 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Professional } from '@/types/search';
 import type { Tables } from '@/integrations/supabase/types';
+import { getPrimaryOriginCodes } from '@/lib/memberHeritage';
 
-// Profile type from database
-type ProfileRow = Tables<'profiles'>;
+// Profile type from database, hydrated with the alpha-3 primary origin code
+// sourced from member_heritage (profiles no longer carries this column).
+type ProfileRow = Tables<'profiles'> & { primary_origin_country: string | null };
 
 export interface MatchingCriteria {
   skills?: string[];
