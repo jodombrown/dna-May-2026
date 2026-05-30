@@ -697,7 +697,7 @@ const CommunicationsHub: React.FC = () => {
               <p className="font-medium">{emailSubject || '(No subject)'}</p>
             </div>
             <div className="prose prose-sm dark:prose-invert max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: emailBody.replace(/\n/g, '<br/>') }} />
+              <div style={{ whiteSpace: 'pre-wrap' }}>{emailBody}</div>
             </div>
           </div>
           <DialogFooter>
