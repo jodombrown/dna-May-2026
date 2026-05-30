@@ -99,7 +99,7 @@ export function useWhatsNext() {
         .from('space_members')
         .select('space_id')
         .eq('user_id', user.id)
-        .eq('status', 'approved');
+        .eq('status', 'active');
 
       if (memberSpaces && memberSpaces.length > 0) {
         const spaceIds = memberSpaces.map((m: { space_id: string }) => m.space_id).filter(Boolean);

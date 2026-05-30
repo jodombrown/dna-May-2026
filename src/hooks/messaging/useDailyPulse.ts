@@ -145,7 +145,7 @@ export function useDailyPulse(enabled: boolean) {
         .from('space_members')
         .select('space_id')
         .eq('user_id', uid)
-        .eq('status', 'approved')
+        .eq('status', 'active')
         .limit(50);
 
       const spaceIds = (memberSpacesRes.data ?? [])
