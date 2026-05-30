@@ -1,9 +1,11 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Professional } from '@/types/search';
 import type { Tables } from '@/integrations/supabase/types';
+import { getPrimaryOriginCodes } from '@/lib/memberHeritage';
 
-// Profile type from database
-type ProfileRow = Tables<'profiles'>;
+// Profile type from database, hydrated with the alpha-3 primary origin code
+// sourced from member_heritage (profiles no longer carries this column).
+type ProfileRow = Tables<'profiles'> & { primary_origin_country: string | null };
 
 export interface MatchingCriteria {
   skills?: string[];
@@ -82,9 +84,22 @@ class MatchingService {
 
       if (!professionals) return [];
 
+      // Hydrate alpha-3 primary origin codes from member_heritage for both
+      // sides so calculateCulturalMatch compares code-vs-code at runtime.
+      const ids = [currentUserId, ...professionals.map((p) => p.id)];
+      const originMap = await getPrimaryOriginCodes(ids);
+      const hydratedUser: ProfileRow = {
+        ...currentUser,
+        primary_origin_country: originMap.get(currentUserId) ?? null,
+      };
+      const hydratedPros: ProfileRow[] = professionals.map((p) => ({
+        ...p,
+        primary_origin_country: originMap.get(p.id) ?? null,
+      }));
+
       // Calculate match scores for each professional
-      const matches = professionals
-        .map((prof) => this.calculateMatchScore(currentUser, prof, criteria))
+      const matches = hydratedPros
+        .map((prof) => this.calculateMatchScore(hydratedUser, prof, criteria))
         .filter(match => match.score > 20) // Filter out very low matches
         .sort((a, b) => b.score - a.score)
         .slice(0, 50); // Return top 50 matches
@@ -159,9 +174,11 @@ class MatchingService {
     }
 
     // 4. Cultural/Heritage background (10%)
+    // 4. Cultural/Heritage background (10%) — both sides are alpha-3 codes
+    //    hydrated from member_heritage in findMatches.
     const culturalScore = this.calculateCulturalMatch(
-      (currentUser as any).primary_origin_country,
-      (professional as any).primary_origin_country
+      currentUser.primary_origin_country,
+      professional.primary_origin_country
     );
 
     details.culturalMatch = culturalScore;
@@ -495,7 +512,7 @@ class MatchingService {
   /**
    * Cultural match based on country of origin with region awareness
    */
-  private calculateCulturalMatch(userCountry: string, profCountry: string): number {
+  private calculateCulturalMatch(userCountry: string | null, profCountry: string | null): number {
     if (!userCountry || !profCountry) return 30;
 
     const u = userCountry.toLowerCase();
