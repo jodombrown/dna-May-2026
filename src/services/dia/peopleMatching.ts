@@ -15,6 +15,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { getPrimaryOriginCodes } from '@/lib/memberHeritage';
 import {
   PeopleMatchType,
   MatchSurface,
@@ -26,6 +27,7 @@ import {
   type MatchReasonType,
 } from '@/types/diaEngine';
 import { relationshipStrengthService } from './relationshipStrength';
+
 
 /** Weights for people match signals — sums to 1.0 */
 const MATCH_WEIGHTS: Record<keyof PeopleMatchSignals, number> = {
