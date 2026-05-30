@@ -39,9 +39,7 @@ const REQUIRED_FIELDS: (keyof TestProfile)[] = [
   'country_of_origin',
 
   // Diaspora-specific
-  'diaspora_origin',
   'diaspora_status',
-  'diaspora_story',
   'diaspora_networks',
   'ethnic_heritage',
   'african_causes',
@@ -53,7 +51,6 @@ const REQUIRED_FIELDS: (keyof TestProfile)[] = [
   'profession',
   'industry',
   'years_experience',
-  'years_in_diaspora',
 
   // Tags and skills
   'skills',
@@ -114,7 +111,6 @@ const MIN_LENGTH_FIELDS: Partial<Record<keyof TestProfile, number>> = {
   bio: 100, // At least 100 characters for bio
   intro_text: 50, // At least 50 characters for intro
   headline: 20, // At least 20 characters for headline
-  diaspora_story: 50, // At least 50 characters for diaspora story
 };
 
 export interface ValidationResult {

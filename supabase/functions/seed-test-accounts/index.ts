@@ -16,7 +16,6 @@ interface TestProfile {
   skills: string[];
   interests: string[];
   years_experience: number;
-  years_in_diaspora: number;
   intro_text: string;
   selected_pillars: string[];
 }
@@ -33,7 +32,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Fintech', 'Product Strategy', 'Fundraising', 'Team Leadership', 'Cross-border Payments'],
     interests: ['African Innovation', 'Financial Inclusion', 'Mentorship', 'Tech Policy'],
     years_experience: 8,
-    years_in_diaspora: 12,
     intro_text: 'Building the future of African financial services from London. Always excited to connect with fellow entrepreneurs working on impact-driven solutions.',
     selected_pillars: ['collaborate', 'contribute']
   },
@@ -48,7 +46,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Research & Development', 'Solar Technology', 'Grant Writing', 'Data Analysis', 'Public Speaking'],
     interests: ['Climate Change', 'Sustainable Development', 'Education', 'Policy Advocacy'],
     years_experience: 12,
-    years_in_diaspora: 8,
     intro_text: 'Dedicated to developing clean energy solutions that can transform African communities. Looking to collaborate on research and implementation projects.',
     selected_pillars: ['contribute', 'connect']
   },
@@ -63,7 +60,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Creative Direction', 'Curation', 'Cultural Programming', 'Community Building', 'Digital Marketing'],
     interests: ['African Art', 'Cultural Preservation', 'Youth Mentorship', 'Creative Economy'],
     years_experience: 10,
-    years_in_diaspora: 15,
     intro_text: 'Bridging African creativity with global audiences. Passionate about empowering the next generation of African artists and creatives.',
     selected_pillars: ['connect', 'contribute']
   },
@@ -78,7 +74,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Digital Health', 'Program Management', 'Policy Development', 'Stakeholder Engagement', 'Healthcare Systems'],
     interests: ['Global Health', 'Healthcare Access', 'Digital Innovation', 'Policy Reform'],
     years_experience: 15,
-    years_in_diaspora: 10,
     intro_text: 'Working to revolutionize healthcare delivery across Africa through innovative digital solutions and policy reform.',
     selected_pillars: ['contribute', 'collaborate']
   },
@@ -93,7 +88,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Environmental Engineering', 'Research', 'Water Treatment', 'Lab Management', 'Technical Writing'],
     interests: ['Water Security', 'Rural Development', 'Environmental Justice', 'STEM Education'],
     years_experience: 3,
-    years_in_diaspora: 5,
     intro_text: 'Passionate about solving water access challenges in rural Africa. Always eager to learn from experienced professionals and find research collaborations.',
     selected_pillars: ['connect', 'contribute']
   },
@@ -108,7 +102,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Investment Analysis', 'Due Diligence', 'Portfolio Management', 'Startup Mentoring', 'Market Research'],
     interests: ['African Startups', 'Impact Investing', 'Entrepreneurship', 'Economic Development'],
     years_experience: 18,
-    years_in_diaspora: 22,
     intro_text: 'Committed to funding the next generation of African entrepreneurs. Always looking for innovative startups solving real African problems.',
     selected_pillars: ['collaborate', 'contribute']
   },
@@ -123,7 +116,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Agricultural Technology', 'IoT Systems', 'Drone Technology', 'Product Management', 'Farmer Training'],
     interests: ['Sustainable Agriculture', 'Food Security', 'Rural Innovation', 'Farmer Education'],
     years_experience: 9,
-    years_in_diaspora: 11,
     intro_text: 'Leveraging technology to help African farmers increase productivity and sustainability. Interested in partnerships and knowledge exchange.',
     selected_pillars: ['contribute', 'collaborate']
   },
@@ -138,7 +130,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Policy Research', 'Economic Analysis', 'Advocacy', 'Report Writing', 'Stakeholder Engagement'],
     interests: ['Trade Policy', 'Economic Development', 'Governance', 'Regional Integration'],
     years_experience: 14,
-    years_in_diaspora: 18,
     intro_text: 'Advocating for policies that promote African economic growth and integration. Always interested in evidence-based policy discussions.',
     selected_pillars: ['contribute', 'connect']
   },
@@ -153,7 +144,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Educational Technology', 'Curriculum Development', 'Software Development', 'Teacher Training', 'Learning Analytics'],
     interests: ['Educational Access', 'Digital Learning', 'Teacher Empowerment', 'Youth Development'],
     years_experience: 7,
-    years_in_diaspora: 9,
     intro_text: 'Building technology to democratize quality education across Africa. Looking for partners, mentors, and funding opportunities.',
     selected_pillars: ['collaborate', 'contribute']
   },
@@ -168,7 +158,6 @@ const testProfiles: TestProfile[] = [
     skills: ['Content Strategy', 'Digital Marketing', 'Video Production', 'Social Media', 'Brand Development'],
     interests: ['African Storytelling', 'Media Representation', 'Content Creation', 'Digital Platforms'],
     years_experience: 6,
-    years_in_diaspora: 8,
     intro_text: 'Amplifying African voices and stories through digital media. Passionate about authentic representation and creator empowerment.',
     selected_pillars: ['connect', 'contribute']
   }
@@ -258,7 +247,6 @@ Deno.serve(async (req) => {
         skills: profile.skills,
         interests: profile.interests,
         years_experience: profile.years_experience,
-        years_in_diaspora: profile.years_in_diaspora,
         intro_text: profile.intro_text,
         selected_pillars: profile.selected_pillars,
         is_seeded: true,
