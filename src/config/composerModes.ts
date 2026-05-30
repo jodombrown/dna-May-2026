@@ -54,10 +54,10 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
   },
   space: {
     id: 'space',
-    enabled: true,
+    enabled: false,
     tested: true,
     optimisticFeedInjection: true,
-    notes: 'Space creation with type selector, visibility, and skills needed',
+    notes: 'Disabled: collaboration_spaces table retired; composer space creation is out of scope (canonical creation lives under /dna/collaborate, Arc 4). submitSpace throws until re-enabled.',
   },
   community: {
     id: 'community',
