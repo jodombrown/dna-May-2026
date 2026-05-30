@@ -5,6 +5,7 @@ import { Professional } from '@/types/search';
 import { MapPin, Link as LinkIcon, Globe, Award, Languages, Briefcase } from 'lucide-react';
 import { demoCommunities } from '@/data/demoSearchData';
 import { canView } from '@/utils/privacy';
+import { originCodeToName } from '@/lib/memberHeritage';
 
 interface ProfessionalProfilePreviewProps {
   professional: Professional;
