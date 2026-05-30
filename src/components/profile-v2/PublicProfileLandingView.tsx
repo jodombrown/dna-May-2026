@@ -29,6 +29,7 @@ import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradi
 import { PublicProfileSEO } from '@/components/public-profile';
 import { motion } from 'framer-motion';
 import { getFlag } from '@/lib/countryFlags';
+import { originCodeToName } from '@/lib/memberHeritage';
 
 const getCountryFlag = getFlag;
 
