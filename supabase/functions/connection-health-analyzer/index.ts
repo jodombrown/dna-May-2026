@@ -112,6 +112,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+  const internal = requireInternal(req);
+  if (!internal.ok) return internal.response;
+
+
+
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
