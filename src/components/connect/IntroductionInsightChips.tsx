@@ -10,6 +10,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sankofa } from '@/components/icons/adinkra';
+import { getPrimaryOriginCodes, originCodeToName } from '@/lib/memberHeritage';
+
 
 interface Insight {
   id: string;
