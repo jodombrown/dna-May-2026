@@ -268,6 +268,14 @@ serve(async (req) => {
       );
     }
 
+    // SSRF guard: reject non-https or private/internal targets
+    if (!isSafePublicUrl(targetUrl)) {
+      return new Response(
+        JSON.stringify({ error: 'URL not allowed' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     console.log(`[link-preview] Fetching preview for: ${targetUrl}`);
 
     const { isVideo, provider } = isVideoProvider(targetUrl);
