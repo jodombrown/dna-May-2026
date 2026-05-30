@@ -67,7 +67,7 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
   // Step 2: Fetch user profile for comparison
   const { data: userProfile } = await supabase
     .from('profiles')
-    .select('skills, interests, location, profession, ethnic_heritage, country_of_origin')
+    .select('skills, interests, location, profession, ethnic_heritage, primary_origin_country')
     .eq('id', userId)
     .single();
 
@@ -77,7 +77,7 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
   const candidateIds = candidates.slice(0, 100); // Cap at 100 for performance
   const { data: candidateProfiles } = await supabase
     .from('profiles')
-    .select('id, full_name, skills, interests, location, profession, ethnic_heritage, country_of_origin')
+    .select('id, full_name, skills, interests, location, profession, ethnic_heritage, primary_origin_country')
     .in('id', candidateIds);
 
   if (!candidateProfiles) return [];
@@ -205,13 +205,13 @@ function computeSignals(
   // Industry alignment
   const industryAlignment = userProfile.profession === candidateProfile.profession ? 1.0 : 0.2;
 
-  // Heritage match: ethnic_heritage array overlap OR country_of_origin equality
+  // Heritage match: ethnic_heritage array overlap OR primary_origin_country equality
   const userHeritage = (userProfile.ethnic_heritage || []) as string[];
   const candHeritage = (candidateProfile.ethnic_heritage || []) as string[];
   const heritageOverlap = userHeritage.some(h => candHeritage.includes(h));
   const sameOrigin =
-    !!userProfile.country_of_origin &&
-    userProfile.country_of_origin === candidateProfile.country_of_origin;
+    !!userProfile.primary_origin_country &&
+    userProfile.primary_origin_country === candidateProfile.primary_origin_country;
   const heritageMatch = heritageOverlap || sameOrigin ? 1.0 : 0.0;
 
   // Regional proximity

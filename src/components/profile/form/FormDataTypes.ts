@@ -25,7 +25,7 @@ export interface FormData {
   certifications: string;
   
   // Cultural & Diaspora
-  country_of_origin: string;
+  primary_origin_country: string;
   current_country: string;
   diaspora_origin: string;
   years_in_diaspora: string;

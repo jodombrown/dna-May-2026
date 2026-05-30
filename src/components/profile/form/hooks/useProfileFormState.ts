@@ -35,7 +35,7 @@ export const useProfileFormState = ({ profile, user }: UseProfileFormStateProps)
     certifications: profile?.certifications || '',
     
     // Cultural & Diaspora
-    country_of_origin: profile?.country_of_origin || '',
+    primary_origin_country: profile?.primary_origin_country || '',
     current_country: profile?.current_country || '',
     diaspora_origin: profile?.diaspora_origin || '',
     years_in_diaspora: profile?.years_in_diaspora || '',

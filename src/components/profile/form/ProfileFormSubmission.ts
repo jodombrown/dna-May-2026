@@ -10,9 +10,9 @@ export const handleProfileSubmission = async (
   avatarUrl: string,
   bannerUrl: string
 ) => {
-  // BD038: origin country no longer lives on profiles.country_of_origin.
+  // BD038: origin country no longer lives on profiles.primary_origin_country.
   // Strip it from the profiles update; persist via member_heritage instead.
-  const { country_of_origin: rawOrigin, ...formRest } = formData;
+  const { primary_origin_country: rawOrigin, ...formRest } = formData;
 
   // Convert string numbers to actual numbers for database compatibility
   const processedData = {

@@ -20,7 +20,7 @@ interface UsernameStepProps {
   data: {
     full_name?: string;
     username?: string;
-    country_of_origin?: string;
+    primary_origin_country?: string;
     current_country?: string;
     industry?: string;
   };
@@ -43,7 +43,7 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
     if (data.full_name) {
       generateAISuggestions();
     }
-  }, [data.full_name, data.country_of_origin, data.industry]);
+  }, [data.full_name, data.primary_origin_country, data.industry]);
 
   useEffect(() => {
     if (username.length < 3) {
@@ -65,14 +65,14 @@ const UsernameStep: React.FC<UsernameStepProps> = ({ data, updateData }) => {
     setLoadingSuggestions(true);
     
     try {
-      // BD038: data.country_of_origin is now an ISO code in storage; map to
+      // BD038: data.primary_origin_country is now an ISO code in storage; map to
       // a human-readable name so the suggester seeds off a recognizable token.
-      const countryOriginName = originCodeToName(data.country_of_origin) || data.country_of_origin;
+      const countryOriginName = originCodeToName(data.primary_origin_country) || data.primary_origin_country;
       const { data: suggestions, error } = await supabase.functions.invoke('suggest-usernames', {
         body: {
           fullName: data.full_name,
           industry: data.industry || 'Professional',
-          countryOrigin: countryOriginName,
+          primaryOriginCountry: countryOriginName,
           currentLocation: data.current_country
         }
       });

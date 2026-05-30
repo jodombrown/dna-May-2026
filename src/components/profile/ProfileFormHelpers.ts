@@ -7,7 +7,7 @@ export const getFieldMaxLength = (fieldName: string): number => {
     company: 100,
     location: 100,
     bio: 1000,
-    country_of_origin: 50,
+    primary_origin_country: 50,
     current_country: 50,
     linkedin_url: 200
   };

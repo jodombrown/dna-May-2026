@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface FilterState {
-  country_of_origin?: string;
+  primary_origin_country?: string;
   current_country?: string;
   focus_areas?: string[];
   regional_expertise?: string[];
@@ -155,7 +155,7 @@ export const DiscoverFilterSheet: React.FC<DiscoverFilterSheetProps> = ({
 
   const countActiveFilters = (f: FilterState) => {
     let count = 0;
-    if (f.country_of_origin) count++;
+    if (f.primary_origin_country) count++;
     if (f.current_country) count++;
     if (f.focus_areas?.length) count += f.focus_areas.length;
     if (f.regional_expertise?.length) count += f.regional_expertise.length;
@@ -191,11 +191,11 @@ export const DiscoverFilterSheet: React.FC<DiscoverFilterSheetProps> = ({
                   Country of Origin
                 </Label>
                 <CountryCombobox
-                  value={pendingFilters.country_of_origin ?? ''}
+                  value={pendingFilters.primary_origin_country ?? ''}
                   onValueChange={(value) =>
                     setPendingFilters({
                       ...pendingFilters,
-                      country_of_origin: value || undefined,
+                      primary_origin_country: value || undefined,
                     })
                   }
                   placeholder="Any country"

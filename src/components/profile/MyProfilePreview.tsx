@@ -13,7 +13,7 @@ interface MyProfilePreviewProps {
     headline: string | null;
     professional_role: string | null;
     current_country: string | null;
-    country_of_origin: string | null;
+    primary_origin_country: string | null;
   };
 }
 
@@ -55,8 +55,8 @@ export const MyProfilePreview: React.FC<MyProfilePreviewProps> = ({ profile }) =
               <div className="flex items-center text-sm text-muted-foreground mt-1">
                 <MapPin className="w-3 h-3 mr-1" />
                 <span>{profile.current_country}</span>
-                {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (
-                  <span className="ml-2 text-xs">• From {profile.country_of_origin}</span>
+                {profile.primary_origin_country && profile.primary_origin_country !== profile.current_country && (
+                  <span className="ml-2 text-xs">• From {profile.primary_origin_country}</span>
                 )}
               </div>
             )}

@@ -46,7 +46,7 @@ export function IntroductionInsightChips({
         // Fetch both profiles with skills, interests, heritage
         const { data: profiles } = await supabase
           .from('profiles')
-          .select('id, skills, interests, country_of_origin, ethnic_heritage')
+          .select('id, skills, interests, primary_origin_country, ethnic_heritage')
           .in('id', [personAId, personBId]);
 
         if (cancelled || !profiles || profiles.length < 2) {
@@ -99,11 +99,11 @@ export function IntroductionInsightChips({
         }
 
         // Same country of origin
-        if (pA.country_of_origin && pA.country_of_origin === pB.country_of_origin) {
+        if (pA.primary_origin_country && pA.primary_origin_country === pB.primary_origin_country) {
           results.push({
             id: 'country',
-            label: `Both from ${pA.country_of_origin}`,
-            sentence: `You're both from ${pA.country_of_origin} — I thought you should know each other!`,
+            label: `Both from ${pA.primary_origin_country}`,
+            sentence: `You're both from ${pA.primary_origin_country} — I thought you should know each other!`,
           });
         }
 

@@ -37,7 +37,7 @@ interface ProfileData {
   avatar_url: string | null;
   headline: string | null;
   username: string | null;
-  country_of_origin: string | null;
+  primary_origin_country: string | null;
 }
 
 interface IntroductionModalProps {
@@ -77,7 +77,7 @@ export function IntroductionModal({
     const fetchProfiles = async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('id, full_name, avatar_url, headline, username, country_of_origin')
+        .select('id, full_name, avatar_url, headline, username, primary_origin_country')
         .in('id', [personAId, personBId]);
 
       if (data) {
@@ -275,10 +275,10 @@ export function IntroductionModal({
                         {profileA.headline}
                       </p>
                     )}
-                    {profileA?.country_of_origin && (
+                    {profileA?.primary_origin_country && (
                       <p className="text-[11px] text-muted-foreground flex items-center gap-0.5 mt-1">
                         <MapPin className="w-2.5 h-2.5 shrink-0" />
-                        <span>{profileA.country_of_origin}</span>
+                        <span>{profileA.primary_origin_country}</span>
                       </p>
                     )}
                   </div>
@@ -311,10 +311,10 @@ export function IntroductionModal({
                         {profileB.headline}
                       </p>
                     )}
-                    {profileB?.country_of_origin && (
+                    {profileB?.primary_origin_country && (
                       <p className="text-[11px] text-muted-foreground flex items-center gap-0.5 mt-1">
                         <MapPin className="w-2.5 h-2.5 shrink-0" />
-                        <span>{profileB.country_of_origin}</span>
+                        <span>{profileB.primary_origin_country}</span>
                       </p>
                     )}
                   </div>

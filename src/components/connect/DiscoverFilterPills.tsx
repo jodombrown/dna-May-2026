@@ -4,7 +4,7 @@ import { SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FilterState {
-  country_of_origin?: string;
+  primary_origin_country?: string;
   current_country?: string;
   focus_areas?: string[];
   regional_expertise?: string[];

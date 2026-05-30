@@ -142,8 +142,8 @@ async function fetchRawRelationshipData(
     // Shared spaces
     fetchSharedSpaceData(userId, connectedUserId),
     // Profiles
-    supabase.from('profiles').select('skills, interests, location, country_of_origin').eq('id', userId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
-    supabase.from('profiles').select('skills, interests, location, country_of_origin').eq('id', connectedUserId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
+    supabase.from('profiles').select('skills, interests, location, primary_origin_country').eq('id', userId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
+    supabase.from('profiles').select('skills, interests, location, primary_origin_country').eq('id', connectedUserId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
     // Connection counts
     fetchConnectionCounts(userId, connectedUserId),
     // Mutual connections
@@ -173,8 +173,8 @@ async function fetchRawRelationshipData(
     connectedUserSkills: (connectedProfile.skills || []) as string[],
     userRegion: extractRegion((userProfile.location || '') as string),
     connectedUserRegion: extractRegion((connectedProfile.location || '') as string),
-    userHeritage: (userProfile.country_of_origin || null) as string | null,
-    connectedUserHeritage: (connectedProfile.country_of_origin || null) as string | null,
+    userHeritage: (userProfile.primary_origin_country || null) as string | null,
+    connectedUserHeritage: (connectedProfile.primary_origin_country || null) as string | null,
     userToConnectedActions: engagementData.userToConnected,
     connectedToUserActions: engagementData.connectedToUser,
     responseCount: messageData.responseCount,

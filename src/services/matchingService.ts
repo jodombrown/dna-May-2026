@@ -160,8 +160,8 @@ class MatchingService {
 
     // 4. Cultural/Heritage background (10%)
     const culturalScore = this.calculateCulturalMatch(
-      currentUser.country_of_origin,
-      professional.country_of_origin
+      currentUser.primary_origin_country,
+      professional.primary_origin_country
     );
     details.culturalMatch = culturalScore;
     totalScore += culturalScore * 0.10;

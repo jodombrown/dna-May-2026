@@ -17,7 +17,7 @@ export async function generateUniquenessInsight(userId: string): Promise<string>
     const [profileResult, impactScores, networkStats] = await Promise.all([
       supabase
         .from('profiles')
-        .select('skills, ethnic_heritage, current_country, country_of_origin, professional_sectors, bio, profession')
+        .select('skills, ethnic_heritage, current_country, primary_origin_country, professional_sectors, bio, profession')
         .eq('id', userId)
         .single(),
       getOrComputeImpactScores(userId),
@@ -73,10 +73,10 @@ export async function generateUniquenessInsight(userId: string): Promise<string>
     }
 
     // Location-heritage bridge
-    if (profile.current_country && profile.country_of_origin &&
-        profile.current_country !== profile.country_of_origin) {
+    if (profile.current_country && profile.primary_origin_country &&
+        profile.current_country !== profile.primary_origin_country) {
       insights.push(
-        `Living in ${profile.current_country} with roots in ${profile.country_of_origin} gives you a unique bridge between both worlds.`
+        `Living in ${profile.current_country} with roots in ${profile.primary_origin_country} gives you a unique bridge between both worlds.`
       );
     }
 

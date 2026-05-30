@@ -31,7 +31,7 @@ const getFieldIcon = (field: string): React.ReactNode => {
     skills: <Heart className="h-4 w-4" />,
     focus_areas: <Globe className="h-4 w-4" />,
     interests: <Heart className="h-4 w-4" />,
-    country_of_origin: <Globe className="h-4 w-4" />,
+    primary_origin_country: <Globe className="h-4 w-4" />,
     current_country: <MapPin className="h-4 w-4" />,
     languages: <Languages className="h-4 w-4" />,
     banner_url: <Image className="h-4 w-4" />,

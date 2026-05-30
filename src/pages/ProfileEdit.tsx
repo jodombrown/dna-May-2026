@@ -129,7 +129,7 @@ const ProfileEdit = () => {
       setHeadline(profile.headline || '');
       setBio(profile.bio || '');
       setLocation(profile.location || '');
-      setCountryOfOrigin(profile.country_of_origin || '');
+      setCountryOfOrigin(profile.primary_origin_country || '');
       setCurrentCountry(profile.current_country || '');
       setPronouns((profile as any).pronouns || '');
 
@@ -281,7 +281,7 @@ const ProfileEdit = () => {
       headline,
       bio,
       location,
-      country_of_origin: countryOfOrigin,
+      primary_origin_country: countryOfOrigin,
       current_country: currentCountry,
       pronouns,
 

@@ -15,7 +15,7 @@ export interface ProfileEditFormData {
   bio: string;
   current_location: string;
   current_country: string;
-  country_of_origin: string;
+  primary_origin_country: string;
 
   // Professional Info
   profession: string;

@@ -21,7 +21,7 @@ interface ProfileCardProps {
     website_url?: string;
     avatar_url?: string;
     years_experience?: string;
-    country_of_origin?: string;
+    primary_origin_country?: string;
     skills?: string;
     interests?: string;
     availability_for_mentoring?: boolean;
@@ -121,10 +121,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ profile, onClick }) => {
                 </div>
               )}
 
-              {profile.country_of_origin && (
+              {profile.primary_origin_country && (
                 <div className="flex items-center text-neutral-600 text-xs">
                   <Heart className="w-3 h-3 mr-1 flex-shrink-0 text-dna-crimson" />
-                  <span className="truncate">From {profile.country_of_origin}</span>
+                  <span className="truncate">From {profile.primary_origin_country}</span>
                 </div>
               )}
 
