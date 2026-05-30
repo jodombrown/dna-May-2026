@@ -141,7 +141,7 @@ export default function Discover() {
         try {
           let q = supabase
             .from('profiles')
-            .select('id, full_name, username, avatar_url, headline, profession, location, primary_origin_country, current_country, focus_areas, industries, skills, languages, available_for, regional_expertise, is_mentor, is_investor, updated_at')
+            .select('id, full_name, username, avatar_url, headline, profession, location, current_country, focus_areas, industries, skills, languages, available_for, regional_expertise, is_mentor, is_investor, updated_at')
             .neq('id', user.id)
             .eq('is_public', true);
 
@@ -150,8 +150,9 @@ export default function Discover() {
           if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
           if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
           if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
-          // Use exact match for country filters (consistent with updated RPC)
-          if (filters?.primary_origin_country) q = q.eq('primary_origin_country', filters.primary_origin_country);
+          // BD038/BD039: origin filter intentionally dropped from fallback; canonical
+          // filtering routes through the RPC (member_heritage join, alpha-3 code-vs-code).
+
           if (filters?.current_country) q = q.eq('current_country_name', filters.current_country);
           if (searchQuery) {
             q = q.or(
