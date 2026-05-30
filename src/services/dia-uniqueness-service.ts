@@ -85,6 +85,10 @@ export async function generateUniquenessInsight(userId: string): Promise<string>
       );
     }
 
+    const result = insights.slice(0, 3).join(' ');
+
+
+
 
     // Cache the insight
     try {
