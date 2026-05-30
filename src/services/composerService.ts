@@ -347,25 +347,9 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: SpaceModeFields
   ): Promise<string> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase.from('collaboration_spaces') as any)
-      .insert({
-        title: fields.name,
-        description: fields.description || base.body,
-        image_url: fields.coverImage?.url ?? base.media[0]?.url ?? null,
-        visibility: fields.visibility === 'open' ? 'public' : 'private',
-        space_type: fields.spaceType,
-        roles_needed: fields.rolesNeeded,
-        initial_tasks: fields.initialTasks ?? [],
-        regional_focus: fields.regionalFocus,
-        related_event_id: fields.relatedEventId,
-        composer_mode: 'space',
-      })
-      .select('id')
-      .single();
-
-    if (error || !data) throw error || new Error('Failed to create space');
-    return data.id;
+    // collaboration_spaces table retired; creating a space from the composer is
+    // out of scope (canonical space creation lives under /dna/collaborate).
+    throw new Error('Space creation is not available.');
   },
 
   async submitOpportunity(

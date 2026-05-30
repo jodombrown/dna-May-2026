@@ -142,7 +142,7 @@ export function useDailyPulse(enabled: boolean) {
 
       // 3. Open contribution needs in spaces I belong to
       const memberSpacesRes = await supabase
-        .from('collaboration_memberships')
+        .from('space_members')
         .select('space_id')
         .eq('user_id', uid)
         .eq('status', 'approved')

@@ -31,7 +31,7 @@ export const FeedActiveSpaces: React.FC = () => {
 
       // Get spaces the user is a member of
       const { data: memberships } = await supabase
-        .from('collaboration_memberships')
+        .from('space_members')
         .select('space_id')
         .eq('user_id', user.id)
         .eq('status', 'active')

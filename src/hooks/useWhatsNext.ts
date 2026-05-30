@@ -96,7 +96,7 @@ export function useWhatsNext() {
       // 4. Check for spaces user is member of with open needs
       // Two-step fetch pattern to avoid PostgREST FK resolution issues
       const { data: memberSpaces } = await supabase
-        .from('collaboration_memberships')
+        .from('space_members')
         .select('space_id')
         .eq('user_id', user.id)
         .eq('status', 'approved');

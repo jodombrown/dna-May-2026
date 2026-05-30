@@ -31,7 +31,7 @@ export const FeedLeftPanel: React.FC = () => {
       const [connections, events, spaces, posts] = await Promise.all([
         supabase.from('connections').select('id', { count: 'exact', head: true }).or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`).eq('status', 'accepted'),
         supabase.from('event_attendees').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('collaboration_memberships').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'active'),
+        supabase.from('space_members').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'active'),
         supabase.from('posts').select('id', { count: 'exact', head: true }).eq('author_id', user.id),
       ]);
 
