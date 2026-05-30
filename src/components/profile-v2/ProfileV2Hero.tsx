@@ -302,7 +302,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
 
             {/* Diaspora Region Tag */}
             {(() => {
-              const tag = getDiasporaRegionTag(profile.country_of_origin, profile.current_country);
+              const tag = getDiasporaRegionTag(originCodeToName(profile.primary_origin_country) || null, profile.current_country);
               return tag ? (
                 <p className="text-xs text-muted-foreground">{tag}</p>
               ) : null;
