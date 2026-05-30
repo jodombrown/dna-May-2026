@@ -7821,9 +7821,6 @@ export type Database = {
           dia_insight: string | null
           dia_insight_updated_at: string | null
           diaspora_networks: string[] | null
-          diaspora_origin: string | null
-          diaspora_story: string | null
-          diaspora_tags: Json | null
           display_name: string | null
           education: string | null
           email: string | null
@@ -7968,8 +7965,6 @@ export type Database = {
           whatsapp_number: string | null
           why_contribute: string | null
           years_experience: number | null
-          years_in_diaspora: number | null
-          years_in_diaspora_text: string | null
           years_of_experience: number | null
         }
         Insert: {
@@ -8033,9 +8028,6 @@ export type Database = {
           dia_insight?: string | null
           dia_insight_updated_at?: string | null
           diaspora_networks?: string[] | null
-          diaspora_origin?: string | null
-          diaspora_story?: string | null
-          diaspora_tags?: Json | null
           display_name?: string | null
           education?: string | null
           email?: string | null
@@ -8180,8 +8172,6 @@ export type Database = {
           whatsapp_number?: string | null
           why_contribute?: string | null
           years_experience?: number | null
-          years_in_diaspora?: number | null
-          years_in_diaspora_text?: string | null
           years_of_experience?: number | null
         }
         Update: {
@@ -8245,9 +8235,6 @@ export type Database = {
           dia_insight?: string | null
           dia_insight_updated_at?: string | null
           diaspora_networks?: string[] | null
-          diaspora_origin?: string | null
-          diaspora_story?: string | null
-          diaspora_tags?: Json | null
           display_name?: string | null
           education?: string | null
           email?: string | null
@@ -8392,8 +8379,6 @@ export type Database = {
           whatsapp_number?: string | null
           why_contribute?: string | null
           years_experience?: number | null
-          years_in_diaspora?: number | null
-          years_in_diaspora_text?: string | null
           years_of_experience?: number | null
         }
         Relationships: [
@@ -12142,9 +12127,6 @@ export type Database = {
           dia_insight: string | null
           dia_insight_updated_at: string | null
           diaspora_networks: string[] | null
-          diaspora_origin: string | null
-          diaspora_story: string | null
-          diaspora_tags: Json | null
           display_name: string | null
           education: string | null
           email: string | null
@@ -12289,8 +12271,6 @@ export type Database = {
           whatsapp_number: string | null
           why_contribute: string | null
           years_experience: number | null
-          years_in_diaspora: number | null
-          years_in_diaspora_text: string | null
           years_of_experience: number | null
         }[]
         SetofOptions: {
@@ -13546,9 +13526,6 @@ export type Database = {
           dia_insight: string | null
           dia_insight_updated_at: string | null
           diaspora_networks: string[] | null
-          diaspora_origin: string | null
-          diaspora_story: string | null
-          diaspora_tags: Json | null
           display_name: string | null
           education: string | null
           email: string | null
@@ -13693,8 +13670,6 @@ export type Database = {
           whatsapp_number: string | null
           why_contribute: string | null
           years_experience: number | null
-          years_in_diaspora: number | null
-          years_in_diaspora_text: string | null
           years_of_experience: number | null
         }[]
         SetofOptions: {

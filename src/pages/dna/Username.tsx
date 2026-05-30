@@ -312,22 +312,6 @@ const DnaUserDashboard = () => {
           </TabsList>
 
           <TabsContent value="profile" className="space-y-6 mt-6">
-            {/* Diaspora Story */}
-            {profile.diaspora_story && (
-              <Card className="border-l-4 border-l-primary">
-                <CardHeader>
-                  <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <Globe className="w-5 h-5" />
-                    Diaspora Story
-                  </h2>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-base leading-relaxed whitespace-pre-wrap">
-                    {profile.diaspora_story}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Professional Background */}
             {(profile.bio || profile.profession) && (
