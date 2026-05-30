@@ -520,9 +520,13 @@ class MatchingService {
 
     if (u === p) return 100;
 
-    // Same African region bonus
-    const userRegion = this.getAfricanRegion(u);
-    const profRegion = this.getAfricanRegion(p);
+    // Resolve alpha-3 codes to country names at the boundary so the
+    // name-keyed getAfricanRegion lookup keeps working post re-point.
+    const uName = (originCodeToName(userCountry) || '').toLowerCase();
+    const pName = (originCodeToName(profCountry) || '').toLowerCase();
+
+    const userRegion = uName ? this.getAfricanRegion(uName) : null;
+    const profRegion = pName ? this.getAfricanRegion(pName) : null;
 
     if (userRegion && profRegion) {
       if (userRegion === profRegion) return 85;
@@ -531,6 +535,7 @@ class MatchingService {
 
     return 40;
   }
+
 
   /**
    * Language matching with African language priority
