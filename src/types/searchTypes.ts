@@ -12,7 +12,8 @@ export interface SearchResult {
   is_investor?: boolean;
   looking_for_opportunities?: boolean;
   years_experience?: number;
-  country_of_origin?: string;
+  /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
+  primary_origin_country?: string;
 }
 
 export interface SearchFilters {

@@ -7,7 +7,8 @@ export interface Professional {
   profession?: string;
   company?: string;
   location?: string;
-  country_of_origin?: string;
+  /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
+  primary_origin_country?: string;
   expertise?: string[];
   bio?: string;
   years_experience?: number;

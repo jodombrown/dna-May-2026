@@ -15,7 +15,8 @@ export interface Professional {
   created_at: string;
   updated_at: string;
   skills?: string[];
-  country_of_origin?: string;
+  /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
+  primary_origin_country?: string;
 }
 
 export interface Community {
