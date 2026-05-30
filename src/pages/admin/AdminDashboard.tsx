@@ -11,7 +11,7 @@ export default function AdminDashboard() {
       const [users, posts, spaces, opportunities] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact' }),
         supabase.from('posts').select('id', { count: 'exact' }),
-        supabase.from('collaboration_spaces').select('id', { count: 'exact' }),
+        Promise.resolve({ count: 0 }), // collaboration_spaces retired (admin beyond-minimum, out of scope)
         supabase.from('opportunities').select('id', { count: 'exact' })
       ]);
 

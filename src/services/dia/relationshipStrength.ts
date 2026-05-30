@@ -435,28 +435,8 @@ async function fetchSharedEventData(userId: string, connectedUserId: string) {
 }
 
 async function fetchSharedSpaceData(userId: string, connectedUserId: string): Promise<SharedSpaceData[]> {
-  const { data: spacesA } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userId)
-    .eq('status', 'active');
-
-  const { data: spacesB } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', connectedUserId)
-    .eq('status', 'active');
-
-  const setA = new Set((spacesA || []).map(s => s.space_id));
-  const sharedSpaceIds = (spacesB || []).filter(s => setA.has(s.space_id)).map(s => s.space_id);
-
-  return sharedSpaceIds.map(spaceId => ({
-    spaceId,
-    sharedTaskCount: 0,
-    totalTasks: 0,
-    mutualCommentCount: 0,
-    totalComments: 0,
-  }));
+  // collaboration_memberships table retired (DIA/ADIN out of scope) — return none.
+  return [];
 }
 
 async function fetchConnectionCounts(userId: string, connectedUserId: string) {

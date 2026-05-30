@@ -74,8 +74,8 @@ export function useWhatsNext() {
 
       if (profile?.intents && profile.intents.length > 0) {
         const { data: relevantSpaces } = await supabase
-          .from('collaboration_spaces')
-          .select('id, title')
+          .from('spaces')
+          .select('id, name')
           .eq('visibility', 'public')
           .eq('status', 'active')
           .limit(1);
@@ -84,7 +84,7 @@ export function useWhatsNext() {
           recommendations.push({
             id: 'join_space',
             title: 'Spaces Matching Your Interests',
-            description: `Explore ${relevantSpaces[0].title} and similar projects`,
+            description: `Explore ${relevantSpaces[0].name} and similar projects`,
             pillar: 'collaborate',
             route: '/dna/collaborate',
             priority: 6,

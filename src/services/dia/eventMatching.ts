@@ -405,13 +405,8 @@ async function fetchPastEventCategories(userId: string): Promise<Set<string>> {
 }
 
 async function fetchUserSpaceIds(userId: string): Promise<Set<string>> {
-  const { data } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userId)
-    .eq('status', 'active');
-
-  return new Set((data || []).map(m => m.space_id));
+  // collaboration_memberships table retired (DIA/ADIN out of scope) — return empty.
+  return new Set<string>();
 }
 
 export const eventMatchingService = {

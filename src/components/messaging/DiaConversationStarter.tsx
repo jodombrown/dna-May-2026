@@ -55,19 +55,8 @@ export function DiaConversationStarter({
         if (title) return `They recently attended ${title}`;
       }
 
-      // Check recent space joins
-      const { data: recentSpaces } = await supabase
-        .from('collaboration_memberships')
-        .select('collaboration_spaces!inner(title)')
-        .eq('user_id', otherUserId)
-        .eq('status', 'active')
-        .order('joined_at', { ascending: false })
-        .limit(1);
-
-      if (recentSpaces && recentSpaces.length > 0) {
-        const title = (recentSpaces[0].collaboration_spaces as unknown as { title: string })?.title;
-        if (title) return `You both joined the ${title} space`;
-      }
+      // Check recent space joins — removed: collaboration_spaces/collaboration_memberships
+      // tables retired (DIA/ADIN out of scope).
 
       // Check their industry/role
       const { data: profile } = await supabase

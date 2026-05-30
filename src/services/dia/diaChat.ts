@@ -478,7 +478,7 @@ async function handlePersonalAnalytics(
   const [postCount, eventCount, spaceCount, oppCount] = await Promise.all([
     supabase.from('posts').select('*', { count: 'exact', head: true }).eq('author_id', context.userId),
     supabase.from('event_registrations').select('*', { count: 'exact', head: true }).eq('user_id', context.userId),
-    supabase.from('collaboration_memberships').select('*', { count: 'exact', head: true }).eq('user_id', context.userId).eq('status', 'active'),
+    Promise.resolve({ count: 0 }), // collaboration_memberships retired (DIA/ADIN out of scope)
     supabase.from('contribution_needs').select('*', { count: 'exact', head: true }).eq('created_by', context.userId),
   ]);
 

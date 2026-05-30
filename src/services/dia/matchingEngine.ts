@@ -196,57 +196,9 @@ async function matchEventsToInterests(userId: string, limit: number): Promise<Ma
  * Match collaboration spaces to a user's skills.
  */
 async function matchSpacesToSkills(userId: string, limit: number): Promise<MatchResult[]> {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('skills, interests, profession')
-    .eq('id', userId)
-    .single();
-
-  if (!profile) return [];
-
-  // Get spaces user is NOT already a member of
-  const { data: mySpaces } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userId);
-
-  const mySpaceIds = new Set((mySpaces || []).map(m => m.space_id));
-
-  const { data: spaces } = await supabase
-    .from('collaboration_spaces')
-    .select('id, title, description, visibility')
-    .eq('visibility', 'public')
-    .limit(50);
-
-  if (!spaces) return [];
-
-  const userSkills = new Set((profile.skills || []).map((s: string) => s.toLowerCase()));
-
-  return spaces
-    .filter(s => !mySpaceIds.has(s.id))
-    .map(space => {
-      const desc = `${space.title} ${space.description || ''}`.toLowerCase();
-      const skillHits = Array.from(userSkills).filter(s => desc.includes(s));
-      const score = Math.min(100, skillHits.length * 25 + 20);
-
-      return {
-        entity_id: space.id,
-        entity_type: 'space' as const,
-        match_score: score,
-        match_factors: [{
-          factor: 'skills',
-          weight: 1,
-          score,
-          detail: skillHits.join(', ') || 'Explore new areas',
-        }],
-        match_reason: skillHits.length > 0
-          ? `Your ${skillHits.slice(0, 2).join(' and ')} skills match this space`
-          : 'Recommended based on your interests',
-        tier_gated: false,
-      };
-    })
-    .sort((a, b) => b.match_score - a.match_score)
-    .slice(0, limit);
+  // collaboration_spaces/collaboration_memberships tables retired (DIA/ADIN out
+  // of scope) — space recommendations disabled; return no matches.
+  return [];
 }
 
 /**

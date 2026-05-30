@@ -42,8 +42,8 @@ export const FeedActiveSpaces: React.FC = () => {
       const spaceIds = memberships.map((m) => m.space_id);
 
       const { data: spaceData } = await supabase
-        .from('collaboration_spaces')
-        .select('id, title, status, updated_at')
+        .from('spaces')
+        .select('id, name, status, updated_at')
         .in('id', spaceIds)
         .eq('status', 'active')
         .order('updated_at', { ascending: false })
@@ -53,7 +53,7 @@ export const FeedActiveSpaces: React.FC = () => {
 
       return spaceData.map((s) => ({
         id: s.id,
-        title: s.title,
+        title: s.name,
         status: s.status,
         updated_at: s.updated_at,
         member_count: 0,

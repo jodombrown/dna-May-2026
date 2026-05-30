@@ -108,13 +108,8 @@ async function getRegionalEventStats(region: string) {
  * Get collaboration space stats for a region.
  */
 async function getRegionalSpaceStats(region: string) {
-  // Spaces don't have a direct region, so we count by creator location
-  const { count: activeCount } = await supabase
-    .from('collaboration_spaces')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'active');
-
-  return { activeCount: activeCount || 0 };
+  // collaboration_spaces table retired (DIA/ADIN out of scope) — stub to 0.
+  return { activeCount: 0 };
 }
 
 /**
