@@ -39,40 +39,40 @@ serve(async (req) => {
 
     const htmlContent = `
       <h2>DNA Market Validation Survey Response</h2>
-      
+
       <h3>Section 1: About You</h3>
-      <p><strong>Age Group:</strong> ${age_group}</p>
-      <p><strong>Gender:</strong> ${gender}</p>
-      <p><strong>Current Country:</strong> ${current_country}</p>
-      <p><strong>Country of Origin:</strong> ${country_of_origin}</p>
-      <p><strong>Education:</strong> ${education}</p>
-      <p><strong>Occupation:</strong> ${occupation}</p>
-      
+      <p><strong>Age Group:</strong> ${escapeHtml(age_group)}</p>
+      <p><strong>Gender:</strong> ${escapeHtml(gender)}</p>
+      <p><strong>Current Country:</strong> ${escapeHtml(current_country)}</p>
+      <p><strong>Country of Origin:</strong> ${escapeHtml(country_of_origin)}</p>
+      <p><strong>Education:</strong> ${escapeHtml(education)}</p>
+      <p><strong>Occupation:</strong> ${escapeHtml(occupation)}</p>
+
       <h3>Section 2: Digital Habits & Community Engagement</h3>
-      <p><strong>Connection Methods:</strong> ${connection_methods.join(', ')}</p>
-      <p><strong>Participation Frequency:</strong> ${participation_frequency}</p>
-      
+      <p><strong>Connection Methods:</strong> ${escapeHtml((connection_methods || []).join(', '))}</p>
+      <p><strong>Participation Frequency:</strong> ${escapeHtml(participation_frequency)}</p>
+
       <h3>Section 3: Platform Needs & Interest</h3>
-      <p><strong>Challenges:</strong> ${challenges}</p>
+      <p><strong>Challenges:</strong> ${escapeHtml(challenges)}</p>
       <p><strong>Platform Interest:</strong></p>
       <ul>
-        <li>Connect: ${platform_interest.connect}/5</li>
-        <li>Collaborate: ${platform_interest.collaborate}/5</li>
-        <li>Contribute: ${platform_interest.contribute}/5</li>
+        <li>Connect: ${escapeHtml(platform_interest?.connect)}/5</li>
+        <li>Collaborate: ${escapeHtml(platform_interest?.collaborate)}/5</li>
+        <li>Contribute: ${escapeHtml(platform_interest?.contribute)}/5</li>
       </ul>
-      <p><strong>Valuable Features:</strong> ${valuable_features.join(', ')}</p>
-      <p><strong>Motivation:</strong> ${motivation}</p>
-      <p><strong>Concerns:</strong> ${concerns}</p>
-      
+      <p><strong>Valuable Features:</strong> ${escapeHtml((valuable_features || []).join(', '))}</p>
+      <p><strong>Motivation:</strong> ${escapeHtml(motivation)}</p>
+      <p><strong>Concerns:</strong> ${escapeHtml(concerns)}</p>
+
       <h3>Section 4: Final Thoughts</h3>
       <p><strong>Follow-up Interest:</strong> ${follow_up ? 'Yes' : 'No'}</p>
       ${follow_up ? `
-        <p><strong>First Name:</strong> ${first_name}</p>
-        <p><strong>Last Name:</strong> ${last_name}</p>
-        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>First Name:</strong> ${escapeHtml(first_name)}</p>
+        <p><strong>Last Name:</strong> ${escapeHtml(last_name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
       ` : ''}
-      <p><strong>Additional Comments:</strong> ${additional_comments}</p>
-      
+      <p><strong>Additional Comments:</strong> ${escapeHtml(additional_comments)}</p>
+
       <hr>
       <p><em>Survey submitted via DNA Platform</em></p>
     `
