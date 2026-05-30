@@ -129,7 +129,7 @@ const ProfileEdit = () => {
       setHeadline(profile.headline || '');
       setBio(profile.bio || '');
       setLocation(profile.location || '');
-      setCountryOfOrigin(profile.primary_origin_country || '');
+      setCountryOfOrigin((profile as any).primary_origin_country || '');
       setCurrentCountry(profile.current_country || '');
       setPronouns((profile as any).pronouns || '');
 
