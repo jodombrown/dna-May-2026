@@ -76,14 +76,15 @@ export async function generateUniquenessInsight(userId: string): Promise<string>
     }
 
     // Location-heritage bridge
-    if (profile.current_country && profile.primary_origin_country &&
-        profile.current_country !== profile.primary_origin_country) {
+    // Location-heritage bridge (primary origin from member_heritage, alpha-3)
+    const originName = originCodeToName(originCode);
+    if (profile.current_country && originName &&
+        profile.current_country !== originName) {
       insights.push(
-        `Living in ${profile.current_country} with roots in ${profile.primary_origin_country} gives you a unique bridge between both worlds.`
+        `Living in ${profile.current_country} with roots in ${originName} gives you a unique bridge between both worlds.`
       );
     }
 
-    const result = insights.slice(0, 3).join(' ');
 
     // Cache the insight
     try {
