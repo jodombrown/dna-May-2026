@@ -180,22 +180,55 @@ const PublicPostPage = () => {
 
   const authorName = post.author?.full_name || 'DNA Member';
   const authorUsername = post.author?.username;
-  const contentPreview = post.content?.slice(0, 160) || '';
+  const SITE_URL = 'https://diasporanetwork.africa';
+  const rawContent = (post.content || '').trim();
+  const contentPreview = rawContent.length >= 50
+    ? (rawContent.length > 160 ? rawContent.slice(0, 157).trimEnd() + '...' : rawContent)
+    : `Read this post by ${authorName} on DNA, the operating system mobilizing the Global African Diaspora for Africa's economic transformation.`;
+  const postUrl = `${SITE_URL}/post/${postId}`;
+  const ogImage = post.image_url || post.author?.avatar_url || `${SITE_URL}/og-image.png`;
+  const absoluteOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
+  const postTitle = `${authorName} on DNA | Diaspora Network of Africa`;
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: `${authorName} on DNA`,
+    description: contentPreview,
+    image: absoluteOgImage,
+    url: postUrl,
+    datePublished: post.created_at,
+    dateModified: post.updated_at || post.created_at,
+    author: {
+      '@type': 'Person',
+      name: authorName,
+      ...(authorUsername ? { url: `${SITE_URL}/dna/${authorUsername}` } : {}),
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Diaspora Network of Africa',
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/icons/icon-512.png` },
+    },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
+  };
 
   return (
     <>
       {/* SEO Meta Tags */}
       <Helmet>
-        <title>{authorName} on DNA | Diaspora Network of Africa</title>
+        <title>{postTitle}</title>
         <meta name="description" content={contentPreview} />
+        <link rel="canonical" href={postUrl} />
         <meta property="og:title" content={`${authorName} on DNA`} />
         <meta property="og:description" content={contentPreview} />
-        <meta property="og:image" content={post.image_url || post.author?.avatar_url || '/og-image.png'} />
-        <meta property="og:url" content={`${window.location.origin}/post/${postId}`} />
+        <meta property="og:image" content={absoluteOgImage} />
+        <meta property="og:url" content={postUrl} />
         <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Diaspora Network of Africa" />
         <meta name="twitter:card" content={post.image_url ? 'summary_large_image' : 'summary'} />
         <meta name="twitter:title" content={`${authorName} on DNA`} />
         <meta name="twitter:description" content={contentPreview} />
+        <meta name="twitter:image" content={absoluteOgImage} />
+        <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
