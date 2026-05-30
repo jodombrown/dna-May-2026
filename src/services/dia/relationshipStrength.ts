@@ -134,7 +134,9 @@ async function fetchRawRelationshipData(
     profileB,
     connectionCounts,
     mutualConnectionData,
+    originCodes,
   ] = await Promise.all([
+
     // Message counts (90-day window)
     fetchMessageData(userId, connectedUserId, ninetyDaysAgo),
     // Content engagement
