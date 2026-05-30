@@ -319,12 +319,12 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
                 </span>
               </div>
             )}
-            {profile.country_of_origin && (
+            {originName && (
               <div className="flex items-center gap-1.5">
                 <Globe className="w-4 h-4" />
                 <span>
                   From {originFlag && <span className="mr-1">{originFlag}</span>}
-                  {profile.country_of_origin}
+                  {originName}
                 </span>
               </div>
             )}
