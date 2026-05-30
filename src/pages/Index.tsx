@@ -34,7 +34,7 @@ const Index = () => {
   const structuredData = [getOrganizationSchema(), getWebsiteSchema()];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-dvh bg-white">
       <PageSEO
         title="DNA: Connect the African Diaspora to Drive Africa's Growth"
         description="Join 200M+ diaspora members on DNA, the platform for African professionals to connect, collaborate, and contribute to Africa's economic transformation."
