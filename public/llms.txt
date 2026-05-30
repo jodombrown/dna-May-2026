@@ -1,0 +1,33 @@
+# Diaspora Network of Africa (DNA)
+
+> The operating system for mobilizing the Global African Diaspora toward Africa's economic transformation. DNA connects 200M+ diaspora members worldwide through five integrated modules: Connect, Convene, Collaborate, Contribute, and Convey.
+
+DNA is an integrated value circulation platform. Professional networking surfaces events, events surface projects, projects surface marketplace needs, transactions generate content, and content reveals new connections. The five modules feed each other, creating compound network effects rather than siloed features.
+
+## Pages
+
+- [Home](/): Overview of DNA and the Five C's methodology.
+- [About](/about): Mission, vision, and the team behind DNA.
+- [Contact](/contact): Get in touch with the DNA team.
+- [Fact Sheet](/fact-sheet): Key facts, metrics, and platform summary.
+- [Connect](/connect): Professional networking for the Global African Diaspora.
+- [Convene](/convene): Discover and host diaspora events worldwide.
+- [Collaborate](/collaborate): Project spaces, tasks, and accountability for diaspora-led initiatives.
+- [Contribute](/contribute): Marketplace for money, time, network, and knowledge contributions.
+- [Convey](/convey): Native publishing for diaspora stories, insights, and journalism.
+- [Releases](/releases): Product releases and platform changelog.
+- [Waitlist](/waitlist): Join the DNA waitlist.
+
+## Convene categories
+
+- [Technology events](/convene/technology): Diaspora tech meetups, conferences, and summits.
+- [Culture events](/convene/culture): Heritage celebrations, art, and cultural gatherings.
+- [Business events](/convene/business): Professional mixers, investment forums, trade shows.
+- [Education events](/convene/education): Workshops, training, and academic programs.
+- [Social events](/convene/social): Community meetups and social gatherings.
+
+## Optional
+
+- [Terms of Service](/terms-of-service): Platform terms and conditions.
+- [Privacy Policy](/privacy-policy): How DNA handles user data.
+- [Sign in](/auth): Account login and sign-up.

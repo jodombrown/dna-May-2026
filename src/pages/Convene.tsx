@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Footer from '@/components/Footer';
 import ConnectEventsTab from '@/components/connect/tabs/ConnectEventsTab';
 import EventRegistrationSidebar from '@/components/connect/EventRegistrationSidebar';
@@ -98,8 +99,38 @@ const Convene = () => {
     }
   };
 
+  const SITE_URL = 'https://diasporanetwork.africa';
+  const conveneUrl = `${SITE_URL}/convene`;
+  const collectionJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Convene - Diaspora events worldwide',
+    description: 'Discover and host events that bring the Global African Diaspora together. Conferences, summits, mixers, and gatherings across the world.',
+    url: conveneUrl,
+    isPartOf: { '@type': 'WebSite', name: 'Diaspora Network of Africa', url: SITE_URL },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: events.slice(0, 10).map((ev, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: ev.title,
+      })),
+    },
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Convene - Diaspora events worldwide | DNA</title>
+        <meta name="description" content="Discover and host events that bring the Global African Diaspora together. Conferences, summits, mixers, and gatherings across the world." />
+        <link rel="canonical" href={conveneUrl} />
+        <meta property="og:title" content="Convene - Diaspora events worldwide" />
+        <meta property="og:description" content="Discover and host events that bring the Global African Diaspora together. Conferences, summits, mixers, and gatherings across the world." />
+        <meta property="og:url" content={conveneUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={`${SITE_URL}/og-image.png`} />
+        <script type="application/ld+json">{JSON.stringify(collectionJsonLd)}</script>
+      </Helmet>
       <main className="container mx-auto px-4 py-8 pt-24">
         <ConnectEventsTab
           events={events as Event[]}
