@@ -109,8 +109,7 @@ serve(async (req) => {
     
     return new Response(
       JSON.stringify({ 
-        error: 'Failed to fetch embed data',
-        details: (error as Error).message 
+        error: 'An unexpected error occurred. Please try again.'
       }),
       { 
         status: 500, 
