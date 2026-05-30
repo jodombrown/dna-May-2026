@@ -3,7 +3,8 @@ export interface SeedUser {
   full_name: string;
   email: string;
   diaspora_identity: string;
-  country_of_origin: string;
+  /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
+  primary_origin_country: string;
   country_of_residence: string;
   last_seen_at: string;
 }

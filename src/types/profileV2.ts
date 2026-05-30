@@ -38,7 +38,8 @@ export interface ProfileV2Data {
   current_country: string | null;
   current_city?: string | null;
   location: string | null;
-  country_of_origin: string | null;
+  /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
+  primary_origin_country: string | null;
   diaspora_origin: string | null;
   bio: string | null;
   profession: string | null;

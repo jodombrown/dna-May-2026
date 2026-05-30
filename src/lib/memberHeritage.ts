@@ -66,3 +66,44 @@ export function originNameToCode(name: string | null | undefined): string {
   const hit = COUNTRIES.find((c) => c.name.toLowerCase() === lower);
   return hit?.code ?? '';
 }
+
+/**
+ * Fetch the primary origin country code for a single profile.
+ * Returns null when no primary row exists.
+ */
+export async function getPrimaryOriginCode(
+  profileId: string,
+): Promise<string | null> {
+  if (!profileId) return null;
+  const { data } = await supabase
+    .from('member_heritage')
+    .select('origin_country')
+    .eq('profile_id', profileId)
+    .eq('is_primary', true)
+    .maybeSingle();
+  const code = (data?.origin_country ?? '').trim();
+  return code ? code : null;
+}
+
+/**
+ * Batch-fetch primary origin codes for many profiles. Returns a
+ * Map<profileId, codeOrNull>. Used by equality/match readers to
+ * avoid N+1 queries while comparing code-vs-code on both sides.
+ */
+export async function getPrimaryOriginCodes(
+  profileIds: string[],
+): Promise<Map<string, string | null>> {
+  const out = new Map<string, string | null>();
+  if (!profileIds.length) return out;
+  const { data } = await supabase
+    .from('member_heritage')
+    .select('profile_id, origin_country')
+    .in('profile_id', profileIds)
+    .eq('is_primary', true);
+  for (const row of data ?? []) {
+    const code = (row.origin_country ?? '').trim();
+    out.set(row.profile_id, code ? code : null);
+  }
+  for (const id of profileIds) if (!out.has(id)) out.set(id, null);
+  return out;
+}

@@ -15,7 +15,8 @@ export interface Professional {
   created_at: string;
   updated_at: string;
   skills?: string[];
-  country_of_origin?: string;
+  /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
+  primary_origin_country?: string;
 }
 
 export interface Community {
@@ -57,7 +58,6 @@ const demoProfessionals: Professional[] = [
     profession: 'FinTech CEO',
     company: 'AfriPay Solutions',
     location: 'London, UK',
-    country_of_origin: 'Nigeria',
     bio: 'Leading fintech innovation across Africa and Europe with over 10 years of experience.',
     skills: ['Financial Technology', 'Digital Payments', 'Blockchain', 'Leadership'],
     avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400',
@@ -73,7 +73,6 @@ const demoProfessionals: Professional[] = [
     profession: 'AgriTech Researcher',
     company: 'Ghana Institute of Technology',
     location: 'Toronto, Canada',
-    country_of_origin: 'Ghana',
     bio: 'Pioneering sustainable agriculture solutions for smallholder farmers across Africa.',
     skills: ['Agricultural Technology', 'Climate Science', 'Sustainable Farming', 'Research'],
     avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
@@ -89,7 +88,6 @@ const demoProfessionals: Professional[] = [
     profession: 'Healthcare Innovation Director',
     company: 'MedTech Africa',
     location: 'Berlin, Germany',
-    country_of_origin: 'Kenya',
     bio: 'Transforming healthcare delivery through digital innovation and telemedicine solutions.',
     skills: ['Healthcare Technology', 'Digital Health', 'Product Management', 'Strategy'],
     avatar_url: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=400',
@@ -105,7 +103,6 @@ const demoProfessionals: Professional[] = [
     profession: 'Renewable Energy Engineer',
     company: 'SolarTech Solutions',
     location: 'Paris, France',
-    country_of_origin: 'Senegal',
     bio: 'Developing solar energy infrastructure to power African communities sustainably.',
     skills: ['Solar Energy', 'Engineering', 'Project Management', 'Sustainability'],
     avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
@@ -121,7 +118,6 @@ const demoProfessionals: Professional[] = [
     profession: 'EdTech Entrepreneur',
     company: 'LearnAfrica',
     location: 'Dubai, UAE',
-    country_of_origin: 'Morocco',
     bio: 'Building educational technology platforms to improve access to quality education.',
     skills: ['Education Technology', 'Entrepreneurship', 'Mobile Development', 'UI/UX'],
     avatar_url: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400',
@@ -137,7 +133,6 @@ const demoProfessionals: Professional[] = [
     profession: 'AI Research Scientist',
     company: 'Google DeepMind',
     location: 'San Francisco, USA',
-    country_of_origin: 'Nigeria',
     bio: 'Advancing artificial intelligence research with applications for African development.',
     skills: ['Artificial Intelligence', 'Machine Learning', 'Data Science', 'Research'],
     avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400',
@@ -153,7 +148,6 @@ const demoProfessionals: Professional[] = [
     profession: 'Impact Investment Manager',
     company: 'Africa Growth Fund',
     location: 'Amsterdam, Netherlands',
-    country_of_origin: 'Mali',
     bio: 'Directing capital towards sustainable development projects across West Africa.',
     skills: ['Impact Investing', 'Finance', 'Venture Capital', 'ESG'],
     avatar_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
@@ -169,7 +163,6 @@ const demoProfessionals: Professional[] = [
     profession: 'Creative Director',
     company: 'Afrocentric Media',
     location: 'New York, USA',
-    country_of_origin: 'Ghana',
     bio: 'Creating compelling visual narratives that celebrate African culture and diaspora stories.',
     skills: ['Creative Direction', 'Branding', 'Film Production', 'Digital Media'],
     avatar_url: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400',
