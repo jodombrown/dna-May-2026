@@ -15,6 +15,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { getPrimaryOriginCodes } from '@/lib/memberHeritage';
 import {
   PeopleMatchType,
   MatchSurface,
@@ -26,6 +27,7 @@ import {
   type MatchReasonType,
 } from '@/types/diaEngine';
 import { relationshipStrengthService } from './relationshipStrength';
+
 
 /** Weights for people match signals — sums to 1.0 */
 const MATCH_WEIGHTS: Record<keyof PeopleMatchSignals, number> = {
@@ -67,7 +69,7 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
   // Step 2: Fetch user profile for comparison
   const { data: userProfile } = await supabase
     .from('profiles')
-    .select('skills, interests, location, profession, ethnic_heritage, country_of_origin')
+    .select('skills, interests, location, profession, ethnic_heritage')
     .eq('id', userId)
     .single();
 
@@ -77,10 +79,15 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
   const candidateIds = candidates.slice(0, 100); // Cap at 100 for performance
   const { data: candidateProfiles } = await supabase
     .from('profiles')
-    .select('id, full_name, skills, interests, location, profession, ethnic_heritage, country_of_origin')
+    .select('id, full_name, skills, interests, location, profession, ethnic_heritage')
     .in('id', candidateIds);
 
   if (!candidateProfiles) return [];
+
+  // BD038/BD039: primary origin (alpha-3) sourced from member_heritage,
+  // batch fetched once for user + all candidates so equality is code-vs-code.
+  const originCodes = await getPrimaryOriginCodes([userId, ...candidateIds]);
+  const userOriginCode = originCodes.get(userId) ?? null;
 
   // Step 4: Compute signals and score each candidate
   const mutualCounts = await fetchMutualConnectionCounts(userId, candidateIds);
@@ -89,12 +96,13 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
 
   const scoredCandidates: PeopleMatchResult[] = candidateProfiles.map(candidate => {
     const signals = computeSignals(
-      userProfile,
-      candidate,
+      { ...userProfile, primary_origin_country: userOriginCode },
+      { ...candidate, primary_origin_country: originCodes.get(candidate.id) ?? null },
       mutualCounts.get(candidate.id) || 0,
       sharedSpaceCounts.get(candidate.id) || 0,
       sharedEventCounts.get(candidate.id) || 0,
     );
+
     const score = computeScore(signals);
     const matchType = classifyMatchType(signals);
     const reasons = generateReasons(signals, candidate);
@@ -205,13 +213,13 @@ function computeSignals(
   // Industry alignment
   const industryAlignment = userProfile.profession === candidateProfile.profession ? 1.0 : 0.2;
 
-  // Heritage match: ethnic_heritage array overlap OR country_of_origin equality
+  // Heritage match: ethnic_heritage array overlap OR primary_origin_country equality
   const userHeritage = (userProfile.ethnic_heritage || []) as string[];
   const candHeritage = (candidateProfile.ethnic_heritage || []) as string[];
   const heritageOverlap = userHeritage.some(h => candHeritage.includes(h));
   const sameOrigin =
-    !!userProfile.country_of_origin &&
-    userProfile.country_of_origin === candidateProfile.country_of_origin;
+    !!userProfile.primary_origin_country &&
+    userProfile.primary_origin_country === candidateProfile.primary_origin_country;
   const heritageMatch = heritageOverlap || sameOrigin ? 1.0 : 0.0;
 
   // Regional proximity

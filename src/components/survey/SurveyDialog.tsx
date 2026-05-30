@@ -19,7 +19,7 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
     age_group: '',
     gender: '',
     current_country: '',
-    country_of_origin: '',
+    primary_origin_country: '',
     education: '',
     occupation: '',
     connection_methods: [] as string[],
@@ -67,7 +67,7 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
         age_group: '',
         gender: '',
         current_country: '',
-        country_of_origin: '',
+        primary_origin_country: '',
         education: '',
         occupation: '',
         connection_methods: [],
@@ -176,11 +176,11 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
                 />
               </div>
               <div>
-                <Label htmlFor="country_of_origin">Country of Origin</Label>
+                <Label htmlFor="primary_origin_country">Country of Origin</Label>
                 <Input
-                  id="country_of_origin"
-                  value={formData.country_of_origin}
-                  onChange={(e) => setFormData(prev => ({ ...prev, country_of_origin: e.target.value }))}
+                  id="primary_origin_country"
+                  value={formData.primary_origin_country}
+                  onChange={(e) => setFormData(prev => ({ ...prev, primary_origin_country: e.target.value }))}
                   placeholder="Your country of origin"
                 />
               </div>

@@ -12,7 +12,7 @@ export interface OnboardingFormData {
   username: string;
 
   // Retained profile fields (no longer captured as identity in the wizard)
-  country_of_origin: string;
+  primary_origin_country: string;
   interests: string[];
   my_dna_statement: string;
 
@@ -41,7 +41,7 @@ export const useOnboardingForm = (initialData?: Partial<OnboardingFormData>) => 
     username: initialData?.username || '',
 
     // Retained profile fields
-    country_of_origin: initialData?.country_of_origin || '',
+    primary_origin_country: initialData?.primary_origin_country || '',
     interests: initialData?.interests || [],
     my_dna_statement: initialData?.my_dna_statement || '',
 

@@ -22,7 +22,7 @@ interface ProfileData {
   bio?: string;
   location?: string;
   current_country?: string;
-  country_of_origin?: string;
+  primary_origin_country?: string;
   email?: string;
   phone_number?: string;
   whatsapp_number?: string;
@@ -186,7 +186,7 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   }
   
   // My Connection to Africa Section (Enhanced Heritage Section)
-  const hasConnectionData = profile.country_of_origin || 
+  const hasConnectionData = profile.primary_origin_country || 
     (profile.languages && profile.languages.length > 0) ||
     (profile.ethnic_heritage && profile.ethnic_heritage.length > 0) ||
     (profile.diaspora_networks && profile.diaspora_networks.length > 0);
@@ -194,8 +194,8 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   if (hasConnectionData && hasSidebarSpace(20)) {
     sidebarY = drawSidebarSection(doc, 'AFRICA CONNECTION', sidebarY, sidebarWidth, margin);
     
-    if (profile.country_of_origin && hasSidebarSpace(10)) {
-      sidebarY = drawSidebarItem(doc, 'Origin:', profile.country_of_origin, sidebarY, sidebarWidth, margin);
+    if (profile.primary_origin_country && hasSidebarSpace(10)) {
+      sidebarY = drawSidebarItem(doc, 'Origin:', profile.primary_origin_country, sidebarY, sidebarWidth, margin);
     }
     if (profile.ethnic_heritage && profile.ethnic_heritage.length > 0 && hasSidebarSpace(10)) {
       sidebarY = drawSidebarItem(doc, 'Heritage:', profile.ethnic_heritage.slice(0, 2).join(', '), sidebarY, sidebarWidth, margin);

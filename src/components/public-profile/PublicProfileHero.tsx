@@ -28,7 +28,7 @@ interface PublicProfileHeroProps {
     profession?: string | null;
     current_country?: string | null;
     current_city?: string | null;
-    country_of_origin?: string | null;
+    primary_origin_country?: string | null;
     ethnic_heritage?: string[] | null;
     linkedin_url?: string | null;
     website_url?: string | null;
@@ -67,7 +67,7 @@ export const PublicProfileHero = ({
 
   // Build heritage display
   const heritageDisplay = [
-    profile.country_of_origin,
+    profile.primary_origin_country,
     ...(profile.ethnic_heritage || []),
   ].filter(Boolean).slice(0, 3);
 

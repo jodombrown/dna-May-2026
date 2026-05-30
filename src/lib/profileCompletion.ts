@@ -11,7 +11,7 @@ interface ProfileForCompletion {
   skills?: string[] | null;
   focus_areas?: string[] | null;
   interests?: string[] | null;
-  country_of_origin?: string | null;
+  primary_origin_country?: string | null;
   current_country?: string | null;
   languages?: string[] | null;
   banner_url?: string | null;
@@ -121,9 +121,9 @@ export function getProfileFieldChecks(profile: ProfileForCompletion | null): Pro
 
     // Pillar 4: Diaspora Context (15 pts)
     {
-      field: 'country_of_origin',
+      field: 'primary_origin_country',
       label: 'Country of origin',
-      complete: hasContent(profile.country_of_origin),
+      complete: hasContent(profile.primary_origin_country),
       points: 5,
       priority: 1,
       pillar: 'Diaspora Context',

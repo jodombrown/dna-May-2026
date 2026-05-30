@@ -7,6 +7,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getOrComputeImpactScores, type ImpactScores } from '@/services/impact-score-service';
+import { getPrimaryOriginCode, originCodeToName } from '@/lib/memberHeritage';
 import { logger } from '@/lib/logger';
 
 /**
@@ -14,15 +15,17 @@ import { logger } from '@/lib/logger';
  */
 export async function generateUniquenessInsight(userId: string): Promise<string> {
   try {
-    const [profileResult, impactScores, networkStats] = await Promise.all([
+    const [profileResult, impactScores, networkStats, originCode] = await Promise.all([
       supabase
         .from('profiles')
-        .select('skills, ethnic_heritage, current_country, country_of_origin, professional_sectors, bio, profession')
+        .select('skills, ethnic_heritage, current_country, professional_sectors, bio, profession')
         .eq('id', userId)
         .single(),
       getOrComputeImpactScores(userId),
       getNetworkCountrySpan(userId),
+      getPrimaryOriginCode(userId),
     ]);
+
 
     const profile = profileResult.data;
     if (!profile) return '';
@@ -73,14 +76,19 @@ export async function generateUniquenessInsight(userId: string): Promise<string>
     }
 
     // Location-heritage bridge
-    if (profile.current_country && profile.country_of_origin &&
-        profile.current_country !== profile.country_of_origin) {
+    // Location-heritage bridge (primary origin from member_heritage, alpha-3)
+    const originName = originCodeToName(originCode);
+    if (profile.current_country && originName &&
+        profile.current_country !== originName) {
       insights.push(
-        `Living in ${profile.current_country} with roots in ${profile.country_of_origin} gives you a unique bridge between both worlds.`
+        `Living in ${profile.current_country} with roots in ${originName} gives you a unique bridge between both worlds.`
       );
     }
 
     const result = insights.slice(0, 3).join(' ');
+
+
+
 
     // Cache the insight
     try {

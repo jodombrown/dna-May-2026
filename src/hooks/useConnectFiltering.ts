@@ -21,7 +21,7 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
       profession: prof.title,
       company: prof.company,
       location: prof.location,
-      country_of_origin: prof.origin,
+      primary_origin_country: prof.origin,
       bio: prof.bio,
       skills: prof.skills,
       avatar_url: prof.avatar,
@@ -39,7 +39,7 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
     // Professionals
     let filteredProfessionals = convertedProfessionals.filter(prof => (
       // AND of individual matches
-      textMatch(prof.full_name) || textMatch(prof.profession) || textMatch(prof.company) || textMatch(prof.location) || textMatch(prof.country_of_origin) || textMatch(prof.bio)
+      textMatch(prof.full_name) || textMatch(prof.profession) || textMatch(prof.company) || textMatch(prof.location) || textMatch(prof.primary_origin_country) || textMatch(prof.bio)
     ) && locationMatch(prof.location) && skillsMatch(prof.skills));
 
     // Graceful fallback: if none, relax progressively
@@ -50,7 +50,7 @@ export const useConnectFiltering = (searchTerm: string, filters: FilterState) =>
     if (filteredProfessionals.length === 0) {
       // Try text only
       filteredProfessionals = convertedProfessionals.filter(prof => (
-        textMatch(prof.full_name) || textMatch(prof.profession) || textMatch(prof.company) || textMatch(prof.location) || textMatch(prof.country_of_origin) || textMatch(prof.bio)
+        textMatch(prof.full_name) || textMatch(prof.profession) || textMatch(prof.company) || textMatch(prof.location) || textMatch(prof.primary_origin_country) || textMatch(prof.bio)
       ));
     }
     if (filteredProfessionals.length === 0) {

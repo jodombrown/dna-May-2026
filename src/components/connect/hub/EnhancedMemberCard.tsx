@@ -76,7 +76,7 @@ interface EnhancedMemberCardProps {
     headline?: string;
     profession?: string;
     location?: string;
-    country_of_origin?: string;
+    primary_origin_country?: string;
     current_country?: string;
     focus_areas?: string[];
     industries?: string[];
@@ -132,7 +132,7 @@ export function EnhancedMemberCard({
     : SECTOR_COLORS.DEFAULT;
 
   // Heritage flag
-  const heritageFlag = getFlag(member.country_of_origin);
+  const heritageFlag = getFlag(member.primary_origin_country);
   const heritageCountries = member.ethnic_heritage?.slice(0, 3) || [];
 
   // Activity signal
@@ -339,12 +339,12 @@ export function EnhancedMemberCard({
                   {heritageFlag && (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <span className="text-sm shrink-0 cursor-help" role="img" aria-label={member.country_of_origin || 'Heritage'}>
+                        <span className="text-sm shrink-0 cursor-help" role="img" aria-label={member.primary_origin_country || 'Heritage'}>
                           {heritageFlag}
                         </span>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="text-xs">
-                        Heritage: {member.country_of_origin}
+                        Heritage: {member.primary_origin_country}
                         {getRoleLabel(member.role) && ` · ${getRoleLabel(member.role)}`}
                       </TooltipContent>
                     </Tooltip>
@@ -521,19 +521,19 @@ export function EnhancedMemberCard({
                 >
                   <div className="pt-3 space-y-3">
                     {/* Heritage row */}
-                    {(member.country_of_origin || heritageCountries.length > 0) && (
+                    {(member.primary_origin_country || heritageCountries.length > 0) && (
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">Heritage</span>
-                        {member.country_of_origin && (
+                        {member.primary_origin_country && (
                           <Badge variant="outline" className="text-[11px] font-normal border-dna-ochre/30 bg-dna-ochre/5 text-foreground gap-1">
                             <span>{heritageFlag}</span>
-                            {member.country_of_origin}
+                            {member.primary_origin_country}
                             {getRoleLabel(member.role) && (
                               <span className="text-muted-foreground/60 ml-0.5">· {getRoleLabel(member.role)}</span>
                             )}
                           </Badge>
                         )}
-                        {heritageCountries.filter(h => h !== member.country_of_origin).map((h, i) => (
+                        {heritageCountries.filter(h => h !== member.primary_origin_country).map((h, i) => (
                           <Badge key={i} variant="outline" className="text-[11px] font-normal border-border/50 gap-1">
                             <span>{getFlag(h)}</span>
                             {h}

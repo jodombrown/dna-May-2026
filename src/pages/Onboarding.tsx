@@ -71,7 +71,7 @@ const Onboarding = () => {
     current_country: profile?.current_country || '',
     headline: profile?.headline || '',
     username: profile?.username || '',
-    country_of_origin: profile?.primary_origin_country || '',
+    primary_origin_country: profile?.primary_origin_country || '',
     // Deferred fields - kept for profile completion later
     profession: profile?.profession || '',
     professional_role: profile?.professional_role || '',
@@ -237,7 +237,7 @@ const Onboarding = () => {
         professional_sectors: formData.professional_sectors || [],
         skills: formData.skills || [],
         years_experience: formData.years_experience ? parseInt(formData.years_experience.split('-')[0]) : null,
-        // BD038: country_of_origin moved to member_heritage (written below)
+        // BD038: primary_origin_country moved to member_heritage (written below)
         interests: formData.interests || [],
         my_dna_statement: formData.my_dna_statement || null,
         focus_areas: formData.focus_areas || [],
@@ -277,11 +277,11 @@ const Onboarding = () => {
         }
       }
 
-      // BD038: persist primary origin to member_heritage (was profiles.country_of_origin).
-      // formData.country_of_origin now carries an ISO code from DiasporaImpactStep.
-      if (formData.country_of_origin) {
+      // BD038: persist primary origin to member_heritage (was profiles.primary_origin_country).
+      // formData.primary_origin_country now carries an ISO code from DiasporaImpactStep.
+      if (formData.primary_origin_country) {
         try {
-          await upsertPrimaryOrigin(user.id, formData.country_of_origin);
+          await upsertPrimaryOrigin(user.id, formData.primary_origin_country);
         } catch (mhErr) {
           console.error('Failed to write primary origin to member_heritage', mhErr);
         }
@@ -381,7 +381,7 @@ const Onboarding = () => {
             data={{
               full_name: `${formData.first_name} ${formData.last_name}`,
               username: formData.username,
-              country_of_origin: formData.country_of_origin,
+              primary_origin_country: formData.primary_origin_country,
               current_country: formData.current_country,
               industry: formData.profession,
             }}

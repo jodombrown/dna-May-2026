@@ -44,7 +44,7 @@ const DnaMe = () => {
         <div className="grid lg:grid-cols-3 gap-6 mt-6">
           {/* Left Column - Profile & Strength */}
           <div className="space-y-6">
-            <MyProfilePreview profile={profile} />
+            <MyProfilePreview profile={{ ...profile, primary_origin_country: '' }} />
             
             {/* View/Edit Profile Actions */}
             <Card>

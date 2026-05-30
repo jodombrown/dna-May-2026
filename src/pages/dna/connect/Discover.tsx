@@ -17,7 +17,7 @@ import { logger } from '@/lib/logger';
 import { originNameToCode } from '@/lib/memberHeritage';
 
 interface FilterState {
-  country_of_origin?: string;
+  primary_origin_country?: string;
   current_country?: string;
   focus_areas?: string[];
   regional_expertise?: string[];
@@ -83,7 +83,7 @@ export default function Discover() {
   // Count active filters
   const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (filters.country_of_origin) count++;
+    if (filters.primary_origin_country) count++;
     if (filters.current_country) count++;
     if (filters.focus_areas?.length) count += filters.focus_areas.length;
     if (filters.regional_expertise?.length) count += filters.regional_expertise.length;
@@ -121,7 +121,7 @@ export default function Discover() {
           p_focus_areas: filters.focus_areas?.length ? filters.focus_areas : null,
           p_regional_expertise: filters.regional_expertise?.length ? filters.regional_expertise : null,
           p_industries: filters.industries?.length ? filters.industries : null,
-          p_country_of_origin: filters.country_of_origin ? (originNameToCode(filters.country_of_origin) || filters.country_of_origin) : null,
+          p_country_of_origin: filters.primary_origin_country ? (originNameToCode(filters.primary_origin_country) || filters.primary_origin_country) : null,
           p_location_country: filters.current_country || null,
           p_skills: filters.skills?.length ? filters.skills : null,
           p_search_query: searchQuery || null,
@@ -141,7 +141,7 @@ export default function Discover() {
         try {
           let q = supabase
             .from('profiles')
-            .select('id, full_name, username, avatar_url, headline, profession, location, country_of_origin, current_country, focus_areas, industries, skills, languages, available_for, regional_expertise, is_mentor, is_investor, updated_at')
+            .select('id, full_name, username, avatar_url, headline, profession, location, current_country, focus_areas, industries, skills, languages, available_for, regional_expertise, is_mentor, is_investor, updated_at')
             .neq('id', user.id)
             .eq('is_public', true);
 
@@ -150,8 +150,9 @@ export default function Discover() {
           if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
           if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
           if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
-          // Use exact match for country filters (consistent with updated RPC)
-          if (filters?.country_of_origin) q = q.eq('country_of_origin', filters.country_of_origin);
+          // BD038/BD039: origin filter intentionally dropped from fallback; canonical
+          // filtering routes through the RPC (member_heritage join, alpha-3 code-vs-code).
+
           if (filters?.current_country) q = q.eq('current_country_name', filters.current_country);
           if (searchQuery) {
             q = q.or(

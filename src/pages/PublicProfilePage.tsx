@@ -245,10 +245,10 @@ const PublicProfilePage = () => {
                         <span className="break-words">{profile.current_country}</span>
                       </div>
                     )}
-                    {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (
+                    {profile.primary_origin_country && profile.primary_origin_country !== profile.current_country && (
                       <div className="flex items-center">
                         <Globe2 className="w-4 h-4 mr-1 shrink-0" />
-                        <span className="break-words">From {profile.country_of_origin}</span>
+                        <span className="break-words">From {profile.primary_origin_country}</span>
                       </div>
                     )}
                   </div>

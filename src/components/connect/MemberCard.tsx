@@ -41,7 +41,7 @@ interface MemberCardProps {
     headline?: string;
     profession?: string;
     location?: string;
-    country_of_origin?: string;
+    primary_origin_country?: string;
     current_country?: string;
     focus_areas?: string[];
     industries?: string[];
@@ -192,7 +192,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onConnectionSent
     const parts: string[] = [];
     if (member.location) parts.push(member.location);
     if (hasMutualConnections) parts.push(`${mutualCount} mutual${mutualCount !== 1 ? 's' : ''}`);
-    if (member.country_of_origin && !member.location) parts.push(member.country_of_origin);
+    if (member.primary_origin_country && !member.location) parts.push(member.primary_origin_country);
     return parts.join(' · ');
   };
 

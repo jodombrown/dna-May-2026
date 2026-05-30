@@ -6,7 +6,7 @@ import { AlertCircle, Heart } from 'lucide-react';
 
 interface DiasporaImpactStepProps {
   data: {
-    country_of_origin: string;
+    primary_origin_country: string;
   };
   onUpdate: (field: string, value: any) => void;
   errors?: Record<string, string>;
@@ -29,21 +29,21 @@ const DiasporaImpactStep: React.FC<DiasporaImpactStepProps> = ({ data, onUpdate,
         <CardContent className="p-4 sm:p-6 space-y-6">
           {/* Country of Origin */}
           <div className="space-y-2">
-            <Label htmlFor="country_of_origin" className="text-base">Country of Origin *</Label>
+            <Label htmlFor="primary_origin_country" className="text-base">Country of Origin *</Label>
             <CountryCombobox
-              value={data.country_of_origin}
-              onChange={(code, _name) => onUpdate('country_of_origin', code)}
+              value={data.primary_origin_country}
+              onChange={(code, _name) => onUpdate('primary_origin_country', code)}
               africanOnly={true}
               placeholder="Select your country of origin"
-              error={!!errors.country_of_origin}
+              error={!!errors.primary_origin_country}
             />
             <p className="text-xs text-muted-foreground">
               The African country you identify with or have roots in. This helps us connect you with others from your diaspora community.
             </p>
-            {errors.country_of_origin && (
+            {errors.primary_origin_country && (
               <p className="text-sm text-destructive flex items-center gap-1">
                 <AlertCircle className="h-4 w-4" />
-                {errors.country_of_origin}
+                {errors.primary_origin_country}
               </p>
             )}
           </div>

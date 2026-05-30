@@ -10,6 +10,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Sankofa } from '@/components/icons/adinkra';
+import { getPrimaryOriginCodes, originCodeToName } from '@/lib/memberHeritage';
+
 
 interface Insight {
   id: string;
@@ -43,11 +45,14 @@ export function IntroductionInsightChips({
 
     async function fetchCommonalities() {
       try {
-        // Fetch both profiles with skills, interests, heritage
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, skills, interests, country_of_origin, ethnic_heritage')
-          .in('id', [personAId, personBId]);
+        // Fetch both profiles + primary origin codes from member_heritage (BD038/BD039)
+        const [{ data: profiles }, originCodes] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('id, skills, interests, ethnic_heritage')
+            .in('id', [personAId, personBId]),
+          getPrimaryOriginCodes([personAId, personBId]),
+        ]);
 
         if (cancelled || !profiles || profiles.length < 2) {
           setLoading(false);
@@ -98,14 +103,18 @@ export function IntroductionInsightChips({
           });
         }
 
-        // Same country of origin
-        if (pA.country_of_origin && pA.country_of_origin === pB.country_of_origin) {
+        // Same primary origin (code-vs-code, alpha-3 both sides, BD039)
+        const codeA = originCodes.get(personAId);
+        const codeB = originCodes.get(personBId);
+        if (codeA && codeA === codeB) {
+          const displayName = originCodeToName(codeA) || codeA;
           results.push({
             id: 'country',
-            label: `Both from ${pA.country_of_origin}`,
-            sentence: `You're both from ${pA.country_of_origin} — I thought you should know each other!`,
+            label: `Both from ${displayName}`,
+            sentence: `You're both from ${displayName} — I thought you should know each other!`,
           });
         }
+
 
         if (!cancelled) setInsights(results);
       } catch {

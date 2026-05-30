@@ -18,7 +18,7 @@ interface DiscoveryMember {
   headline?: string;
   profession?: string;
   location?: string;
-  country_of_origin?: string;
+  primary_origin_country?: string;
   current_country?: string;
   focus_areas?: string[];
   industries?: string[];

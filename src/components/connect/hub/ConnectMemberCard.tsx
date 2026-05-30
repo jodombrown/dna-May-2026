@@ -22,7 +22,7 @@ interface ConnectMemberCardProps {
     headline?: string;
     profession?: string;
     location?: string;
-    country_of_origin?: string;
+    primary_origin_country?: string;
     current_country?: string;
     focus_areas?: string[];
     industries?: string[];
@@ -68,7 +68,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
   }, [member.industries, member.focus_areas]);
 
   // --- Country flag ---
-  const flag = member.country_of_origin ? getFlag(member.country_of_origin) || null : null;
+  const flag = member.primary_origin_country ? getFlag(member.primary_origin_country) || null : null;
 
   // --- Value line: first sentence of bio, max 60 chars ---
   const valueLine = useMemo(() => {
@@ -155,7 +155,7 @@ export function ConnectMemberCard({ member, onConnectionSent, onMessage }: Conne
     >
       {/* Country flag — top right */}
       {flag && (
-        <span className="absolute top-3 right-3 text-lg" role="img" aria-label={member.country_of_origin || ''}>
+        <span className="absolute top-3 right-3 text-lg" role="img" aria-label={member.primary_origin_country || ''}>
           {flag}
         </span>
       )}

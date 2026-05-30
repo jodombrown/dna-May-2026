@@ -316,12 +316,13 @@ const PublicProfile = () => {
                         </span>
                       </div>
                     )}
-                    {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (
+                    {(profile as any).primary_origin_country && (profile as any).primary_origin_country !== profile.current_country && (
                       <div className="flex items-center">
                         <Globe2 className="w-4 h-4 mr-1" />
-                        <span>From {profile.country_of_origin}</span>
+                        <span>From {(profile as any).primary_origin_country}</span>
                       </div>
                     )}
+
                   </div>
                 </div>
               </div>

@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, Check, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { getPrimaryOriginCodes, originCodeToName } from '@/lib/memberHeritage';
+
 import {
   sendGroupIntroduction,
   generateIntroMessage,
@@ -37,7 +39,7 @@ interface ProfileData {
   avatar_url: string | null;
   headline: string | null;
   username: string | null;
-  country_of_origin: string | null;
+  primary_origin_country: string | null;
 }
 
 interface IntroductionModalProps {
@@ -75,19 +77,29 @@ export function IntroductionModal({
     if (!open) return;
 
     const fetchProfiles = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url, headline, username, country_of_origin')
-        .in('id', [personAId, personBId]);
+      const [{ data }, originCodes] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, headline, username')
+          .in('id', [personAId, personBId]),
+        getPrimaryOriginCodes([personAId, personBId]),
+      ]);
 
       if (data) {
-        setProfileA(data.find(p => p.id === personAId) || null);
-        setProfileB(data.find(p => p.id === personBId) || null);
+        const hydrate = (id: string): ProfileData | null => {
+          const row = data.find(p => p.id === id);
+          if (!row) return null;
+          const code = originCodes.get(id) ?? null;
+          return { ...row, primary_origin_country: code };
+        };
+        setProfileA(hydrate(personAId));
+        setProfileB(hydrate(personBId));
       }
     };
 
     fetchProfiles();
   }, [open, personAId, personBId]);
+
 
   // Generate default message when profiles load
   useEffect(() => {
@@ -275,10 +287,10 @@ export function IntroductionModal({
                         {profileA.headline}
                       </p>
                     )}
-                    {profileA?.country_of_origin && (
+                    {profileA?.primary_origin_country && (
                       <p className="text-[11px] text-muted-foreground flex items-center gap-0.5 mt-1">
                         <MapPin className="w-2.5 h-2.5 shrink-0" />
-                        <span>{profileA.country_of_origin}</span>
+                        <span>{profileA.primary_origin_country}</span>
                       </p>
                     )}
                   </div>
@@ -311,10 +323,10 @@ export function IntroductionModal({
                         {profileB.headline}
                       </p>
                     )}
-                    {profileB?.country_of_origin && (
+                    {profileB?.primary_origin_country && (
                       <p className="text-[11px] text-muted-foreground flex items-center gap-0.5 mt-1">
                         <MapPin className="w-2.5 h-2.5 shrink-0" />
-                        <span>{profileB.country_of_origin}</span>
+                        <span>{profileB.primary_origin_country}</span>
                       </p>
                     )}
                   </div>

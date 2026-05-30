@@ -12,12 +12,14 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { getPrimaryOriginCodes } from '@/lib/memberHeritage';
 import type {
   RelationshipSignals,
   RawRelationshipData,
   SharedSpaceData,
   CommunicationFrequency,
 } from '@/types/diaEngine';
+
 
 /** Weights for each relationship signal — sums to 1.0 */
 const SIGNAL_WEIGHTS: Record<keyof RelationshipSignals, number> = {
@@ -132,7 +134,9 @@ async function fetchRawRelationshipData(
     profileB,
     connectionCounts,
     mutualConnectionData,
+    originCodes,
   ] = await Promise.all([
+
     // Message counts (90-day window)
     fetchMessageData(userId, connectedUserId, ninetyDaysAgo),
     // Content engagement
@@ -142,12 +146,15 @@ async function fetchRawRelationshipData(
     // Shared spaces
     fetchSharedSpaceData(userId, connectedUserId),
     // Profiles
-    supabase.from('profiles').select('skills, interests, location, country_of_origin').eq('id', userId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
-    supabase.from('profiles').select('skills, interests, location, country_of_origin').eq('id', connectedUserId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
+    // Profiles
+    supabase.from('profiles').select('skills, interests, location').eq('id', userId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
+    supabase.from('profiles').select('skills, interests, location').eq('id', connectedUserId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
     // Connection counts
     fetchConnectionCounts(userId, connectedUserId),
     // Mutual connections
     fetchMutualConnectionCount(userId, connectedUserId),
+    // BD038/BD039: primary origin (alpha-3) sourced from member_heritage, code-vs-code.
+    getPrimaryOriginCodes([userId, connectedUserId]),
   ]);
 
   const userProfile = (profileA.data || {}) as Record<string, unknown>;
@@ -173,8 +180,9 @@ async function fetchRawRelationshipData(
     connectedUserSkills: (connectedProfile.skills || []) as string[],
     userRegion: extractRegion((userProfile.location || '') as string),
     connectedUserRegion: extractRegion((connectedProfile.location || '') as string),
-    userHeritage: (userProfile.country_of_origin || null) as string | null,
-    connectedUserHeritage: (connectedProfile.country_of_origin || null) as string | null,
+    userHeritage: originCodes.get(userId) ?? null,
+    connectedUserHeritage: originCodes.get(connectedUserId) ?? null,
+
     userToConnectedActions: engagementData.userToConnected,
     connectedToUserActions: engagementData.connectedToUser,
     responseCount: messageData.responseCount,
