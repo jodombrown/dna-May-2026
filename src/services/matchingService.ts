@@ -512,7 +512,7 @@ class MatchingService {
   /**
    * Cultural match based on country of origin with region awareness
    */
-  private calculateCulturalMatch(userCountry: string, profCountry: string): number {
+  private calculateCulturalMatch(userCountry: string | null, profCountry: string | null): number {
     if (!userCountry || !profCountry) return 30;
 
     const u = userCountry.toLowerCase();
