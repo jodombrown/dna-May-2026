@@ -136,7 +136,8 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
   const displayInterests = tags?.interests?.slice(0, 4) || tags?.impact_areas?.slice(0, 4) || [];
 
   // Get heritage flag
-  const originFlag = getCountryFlag(profile.country_of_origin);
+  const originName = originCodeToName(profile.primary_origin_country) || profile.primary_origin_country || '';
+  const originFlag = getCountryFlag(originName);
   const locationFlag = getCountryFlag(profile.current_country || profile.location);
 
   // Animation variants
