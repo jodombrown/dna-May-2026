@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Footer from '@/components/Footer';
 import ConnectEventsTab from '@/components/connect/tabs/ConnectEventsTab';
 import EventRegistrationSidebar from '@/components/connect/EventRegistrationSidebar';
