@@ -42,6 +42,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  const __auth = await requireUser(req);
+  if (!__auth.ok) return __auth.response;
+
   try {
     const { audioUrl, audioBase64 } = await req.json()
     

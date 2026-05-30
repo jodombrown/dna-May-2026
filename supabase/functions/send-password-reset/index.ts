@@ -23,6 +23,9 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const __auth = await requireUser(req);
+  if (!__auth.ok) return __auth.response;
+
   try {
     const { email, resetUrl }: PasswordResetRequest = await req.json();
 

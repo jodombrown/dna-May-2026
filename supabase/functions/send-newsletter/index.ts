@@ -26,6 +26,9 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const __auth = await requireAdmin(req);
+  if (!__auth.ok) return __auth.response;
+
   try {
     const { newsletterId }: NewsletterEmailRequest = await req.json();
 

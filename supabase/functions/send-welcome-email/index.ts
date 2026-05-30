@@ -159,6 +159,9 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const __auth = requireInternal(req);
+  if (!__auth.ok) return __auth.response;
+
   try {
     const { userId, userEmail, userName, selectedPillars = [], completedSteps = [] }: WelcomeEmailRequest = await req.json();
 

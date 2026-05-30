@@ -12,6 +12,9 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const __auth = await requireUser(req);
+  if (!__auth.ok) return __auth.response;
+
   try {
     const { fullName, industry, countryOrigin, currentLocation } = await req.json();
 

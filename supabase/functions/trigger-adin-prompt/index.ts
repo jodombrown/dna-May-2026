@@ -13,6 +13,14 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
+  const __internal = requireInternal(req);
+  let __callerUserId: string | null = null;
+  if (!__internal.ok) {
+    const __auth = await requireUser(req);
+    if (!__auth.ok) return __auth.response;
+    __callerUserId = __auth.userId;
+  }
+
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
