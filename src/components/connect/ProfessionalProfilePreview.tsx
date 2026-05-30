@@ -91,14 +91,14 @@ const ProfessionalProfilePreview: React.FC<ProfessionalProfilePreviewProps> = ({
               <p className="text-neutral-600">{professional.company}</p>
             )}
             <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-neutral-600">
-              {canView(visibility, 'location', { isSelf: false, isConnection: false }) && (professional.location || professional.country_of_origin) && (
+              {canView(visibility, 'location', { isSelf: false, isConnection: false }) && (professional.location || professional.primary_origin_country) && (
                 <span className="inline-flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
                   {professional.location}
-                  {professional.country_of_origin && (
+                  {professional.primary_origin_country && (
                     <>
                       <span>•</span>
-                      <span>Originally from {professional.country_of_origin}</span>
+                      <span>Originally from {originCodeToName(professional.primary_origin_country) || professional.primary_origin_country}</span>
                     </>
                   )}
                 </span>
