@@ -16,12 +16,12 @@ export const filterProfessionals = (
       prof.company?.toLowerCase().includes(searchLower) ||
       prof.bio?.toLowerCase().includes(searchLower) ||
       prof.location?.toLowerCase().includes(searchLower) ||
-      prof.country_of_origin?.toLowerCase().includes(searchLower) ||
+      prof.primary_origin_country?.toLowerCase().includes(searchLower) ||
       prof.skills?.some(skill => skill.toLowerCase().includes(searchLower));
 
     const matchesLocation = !filters.location || 
       prof.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
-      prof.country_of_origin?.toLowerCase().includes(filters.location.toLowerCase());
+      prof.primary_origin_country?.toLowerCase().includes(filters.location.toLowerCase());
 
     const matchesSkills = filters.skills.length === 0 ||
       filters.skills.some(skill => prof.skills?.some(profSkill => 

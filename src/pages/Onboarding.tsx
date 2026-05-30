@@ -71,7 +71,7 @@ const Onboarding = () => {
     current_country: profile?.current_country || '',
     headline: profile?.headline || '',
     username: profile?.username || '',
-    country_of_origin: profile?.country_of_origin || '',
+    country_of_origin: profile?.primary_origin_country || '',
     // Deferred fields - kept for profile completion later
     profession: profile?.profession || '',
     professional_role: profile?.professional_role || '',

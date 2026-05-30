@@ -703,7 +703,7 @@ class MatchingService {
         profession: p.profession,
         company: p.company,
         location: p.current_country || p.location,
-        country_of_origin: p.country_of_origin,
+        // primary_origin_country sourced from member_heritage; not selected here
         expertise: p.skills,
         bio: p.bio,
         years_experience: p.years_experience,

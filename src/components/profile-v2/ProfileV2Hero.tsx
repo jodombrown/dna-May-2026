@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck, Users, Calendar } from 'lucide-react';
 import { ProfileV2Data, ProfileV2Permissions, VerificationStatus, ConnectionStatus } from '@/types/profileV2';
 import { getFlag, getDiasporaRegionTag } from '@/lib/countryFlags';
+import { originCodeToName } from '@/lib/memberHeritage';
 import { ProfilePresenceDot } from './ProfilePresenceDot';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown';
@@ -248,18 +249,22 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                   )}
                 </div>
               )}
-              {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (
-                <div className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="truncate max-w-[150px] sm:max-w-none">
-                    <span className="text-muted-foreground/70">From </span>
-                    {profile.country_of_origin}
-                  </span>
-                  <span className="text-2xl leading-none" aria-label={profile.country_of_origin}>
-                    {getFlag(profile.country_of_origin)}
-                  </span>
-                </div>
-              )}
+              {profile.primary_origin_country && (() => {
+                const originName = originCodeToName(profile.primary_origin_country) || profile.primary_origin_country;
+                if (originName === profile.current_country) return null;
+                return (
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span className="truncate max-w-[150px] sm:max-w-none">
+                      <span className="text-muted-foreground/70">From </span>
+                      {originName}
+                    </span>
+                    <span className="text-2xl leading-none" aria-label={originName}>
+                      {getFlag(originName)}
+                    </span>
+                  </div>
+                );
+              })()}
               {/* Connection & follower counts */}
               {(connectionsCount > 0 || followerCount > 0 || followingCount > 0) && (
                 <div className="flex items-center gap-1.5">
@@ -297,7 +302,7 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
 
             {/* Diaspora Region Tag */}
             {(() => {
-              const tag = getDiasporaRegionTag(profile.country_of_origin, profile.current_country);
+              const tag = getDiasporaRegionTag(originCodeToName(profile.primary_origin_country) || null, profile.current_country);
               return tag ? (
                 <p className="text-xs text-muted-foreground">{tag}</p>
               ) : null;

@@ -29,6 +29,7 @@ import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradi
 import { PublicProfileSEO } from '@/components/public-profile';
 import { motion } from 'framer-motion';
 import { getFlag } from '@/lib/countryFlags';
+import { originCodeToName } from '@/lib/memberHeritage';
 
 const getCountryFlag = getFlag;
 
@@ -135,7 +136,8 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
   const displayInterests = tags?.interests?.slice(0, 4) || tags?.impact_areas?.slice(0, 4) || [];
 
   // Get heritage flag
-  const originFlag = getCountryFlag(profile.country_of_origin);
+  const originName = originCodeToName(profile.primary_origin_country) || profile.primary_origin_country || '';
+  const originFlag = getCountryFlag(originName);
   const locationFlag = getCountryFlag(profile.current_country || profile.location);
 
   // Animation variants
@@ -317,12 +319,12 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
                 </span>
               </div>
             )}
-            {profile.country_of_origin && (
+            {originName && (
               <div className="flex items-center gap-1.5">
                 <Globe className="w-4 h-4" />
                 <span>
                   From {originFlag && <span className="mr-1">{originFlag}</span>}
-                  {profile.country_of_origin}
+                  {originName}
                 </span>
               </div>
             )}
