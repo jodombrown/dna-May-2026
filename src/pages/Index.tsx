@@ -54,22 +54,25 @@ const Index = () => {
 
       {/* ROADMAP banner hidden — work-in-progress */}
 
-      {/* Hero Section with improved layout */}
-      <HeroSection />
+      <main id="main-content">
+        {/* Hero Section with improved layout */}
+        <HeroSection />
 
-      {/* Lazy-loaded below-the-fold sections */}
-      <Suspense fallback={<SectionFallback />}>
-        {/* Platform Feature Showcase - DNA Framework with all 5 pillars in order */}
-        <PlatformFeatureShowcase />
+        {/* Lazy-loaded below-the-fold sections */}
+        <Suspense fallback={<SectionFallback />}>
+          {/* Platform Feature Showcase - DNA Framework with all 5 pillars in order */}
+          <PlatformFeatureShowcase />
 
-        {/* Building Together Section */}
-        <BuildingTogetherSection />
+          {/* Building Together Section */}
+          <BuildingTogetherSection />
 
-        {/* Who is DNA for Section */}
-        <WhoIsDNAForSection />
+          {/* Who is DNA for Section */}
+          <WhoIsDNAForSection />
 
-        <Footer />
-      </Suspense>
+          <Footer />
+        </Suspense>
+      </main>
+      
       
       <Suspense fallback={null}>
         <WaitlistPopup 
