@@ -59,12 +59,11 @@ export default function UserManagement() {
 
     setLoading(true);
     try {
-      // Search profiles by email, name, or username
-      const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .or(`email.ilike.%${searchQuery}%,full_name.ilike.%${searchQuery}%,username.ilike.%${searchQuery}%`)
-        .limit(50);
+      // Search profiles by email, name, or username via admin RPC (sensitive cols are revoked from direct SELECT)
+      const { data: profiles, error } = await (supabase.rpc as any)('admin_search_profiles', {
+        p_query: searchQuery,
+        p_limit: 50,
+      });
 
       if (error) throw error;
       setSearchResults(profiles || []);
