@@ -11893,7 +11893,6 @@ export type Database = {
           current_country: string | null
           current_country_name: string | null
           current_region: string | null
-          diaspora_origin: string | null
           display_name: string | null
           first_name: string | null
           full_name: string | null
@@ -11935,7 +11934,6 @@ export type Database = {
           current_country?: string | null
           current_country_name?: string | null
           current_region?: string | null
-          diaspora_origin?: string | null
           display_name?: string | null
           first_name?: string | null
           full_name?: string | null
@@ -11977,7 +11975,6 @@ export type Database = {
           current_country?: string | null
           current_country_name?: string | null
           current_region?: string | null
-          diaspora_origin?: string | null
           display_name?: string | null
           first_name?: string | null
           full_name?: string | null
@@ -13942,7 +13939,6 @@ export type Database = {
           current_country_name: string
           current_location: string
           current_region: string
-          diaspora_origin: string
           display_name: string
           email: string
           first_name: string
