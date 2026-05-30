@@ -69,7 +69,7 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
   // Step 2: Fetch user profile for comparison
   const { data: userProfile } = await supabase
     .from('profiles')
-    .select('skills, interests, location, profession, ethnic_heritage, primary_origin_country')
+    .select('skills, interests, location, profession, ethnic_heritage')
     .eq('id', userId)
     .single();
 
@@ -79,10 +79,15 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
   const candidateIds = candidates.slice(0, 100); // Cap at 100 for performance
   const { data: candidateProfiles } = await supabase
     .from('profiles')
-    .select('id, full_name, skills, interests, location, profession, ethnic_heritage, primary_origin_country')
+    .select('id, full_name, skills, interests, location, profession, ethnic_heritage')
     .in('id', candidateIds);
 
   if (!candidateProfiles) return [];
+
+  // BD038/BD039: primary origin (alpha-3) sourced from member_heritage,
+  // batch fetched once for user + all candidates so equality is code-vs-code.
+  const originCodes = await getPrimaryOriginCodes([userId, ...candidateIds]);
+  const userOriginCode = originCodes.get(userId) ?? null;
 
   // Step 4: Compute signals and score each candidate
   const mutualCounts = await fetchMutualConnectionCounts(userId, candidateIds);
@@ -91,12 +96,13 @@ async function computeMatches(userId: string, limit = 20): Promise<PeopleMatchRe
 
   const scoredCandidates: PeopleMatchResult[] = candidateProfiles.map(candidate => {
     const signals = computeSignals(
-      userProfile,
-      candidate,
+      { ...userProfile, primary_origin_country: userOriginCode },
+      { ...candidate, primary_origin_country: originCodes.get(candidate.id) ?? null },
       mutualCounts.get(candidate.id) || 0,
       sharedSpaceCounts.get(candidate.id) || 0,
       sharedEventCounts.get(candidate.id) || 0,
     );
+
     const score = computeScore(signals);
     const matchType = classifyMatchType(signals);
     const reasons = generateReasons(signals, candidate);
