@@ -67,12 +67,23 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  
-  <!-- Public Content (Dynamic - crawlers will discover these) -->
+  <url>
+    <loc>https://diasporanetwork.africa/waitlist</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Convene categories -->
+  <url><loc>https://diasporanetwork.africa/convene/technology</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://diasporanetwork.africa/convene/culture</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://diasporanetwork.africa/convene/business</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://diasporanetwork.africa/convene/education</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://diasporanetwork.africa/convene/social</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+
+  <!-- Dynamic public content (per-row URLs served by /api/sitemap edge function, see robots.txt) -->
   <!-- Public profiles: /dna/:username -->
   <!-- Public posts: /post/:postId -->
   <!-- Public events: /event/:slugOrId -->
-  <!-- Releases: /releases -->
   <url>
     <loc>https://diasporanetwork.africa/releases</loc>
     <changefreq>weekly</changefreq>
