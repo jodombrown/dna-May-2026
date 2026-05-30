@@ -106,12 +106,11 @@ export default function ContributionModeration() {
 
       let creatorMap: Record<string, { full_name: string; email: string }> = {};
       if (creatorIds.length > 0) {
-        const { data: creators } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
-          .in('id', creatorIds as string[]);
+        const { data: creators } = await (supabase.rpc as any)('admin_get_profile_contacts', {
+          p_ids: creatorIds as string[],
+        });
 
-        creators?.forEach((c: any) => {
+        (creators || []).forEach((c: any) => {
           creatorMap[c.id] = { full_name: c.full_name || 'Unknown', email: c.email || '' };
         });
       }

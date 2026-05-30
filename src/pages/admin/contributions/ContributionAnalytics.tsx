@@ -234,12 +234,11 @@ export default function ContributionAnalytics() {
       let profileMap: Record<string, { full_name: string; email: string }> = {};
 
       if (contributorIds.length > 0) {
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, full_name, email')
-          .in('id', contributorIds as string[]);
+        const { data: profiles } = await (supabase.rpc as any)('admin_get_profile_contacts', {
+          p_ids: contributorIds as string[],
+        });
 
-        profiles?.forEach((p: any) => {
+        (profiles || []).forEach((p: any) => {
           profileMap[p.id] = { full_name: p.full_name || 'Unknown', email: p.email || '' };
         });
       }

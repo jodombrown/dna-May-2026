@@ -12066,6 +12066,14 @@ export type Database = {
         }
         Returns: string
       }
+      admin_get_profile_contacts: {
+        Args: { p_ids: string[] }
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+        }[]
+      }
       admin_get_user_roles: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -12073,6 +12081,227 @@ export type Database = {
       admin_lookup_user_id_by_email: {
         Args: { _email: string }
         Returns: string
+      }
+      admin_search_profiles: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          account_visibility: string | null
+          achievements: string | null
+          adin_mode: string | null
+          adin_prompt_status: string | null
+          advocacy_interests: string[] | null
+          africa_focus_areas: string[] | null
+          africa_visit_frequency: string | null
+          african_causes: string[] | null
+          agrees_to_values: boolean | null
+          allow_profile_sharing: boolean | null
+          auto_connect_enabled: boolean | null
+          availability_for_mentoring: boolean | null
+          availability_hours_per_month: number | null
+          availability_tags: Json | null
+          availability_visible: boolean | null
+          available_for: string[] | null
+          available_hours_per_month: number | null
+          avatar_position: Json | null
+          avatar_url: string | null
+          banner_gradient: string | null
+          banner_overlay: boolean | null
+          banner_type: string | null
+          banner_url: string | null
+          beta_expires_at: string | null
+          beta_features_tested: string[] | null
+          beta_feedback_count: number | null
+          beta_phase: string | null
+          beta_signup_data: Json | null
+          beta_status: string | null
+          bio: string | null
+          certifications: string | null
+          city: string | null
+          collaboration_needs: string[] | null
+          collaboration_tags: Json | null
+          community_involvement: string | null
+          company: string | null
+          connection_count: number | null
+          consent_event_invites: boolean | null
+          consent_marketing_emails: boolean | null
+          consent_partner_intros: boolean | null
+          consent_public_search: boolean | null
+          contact_number_visibility: string
+          continent: string | null
+          contribution_style: string | null
+          contribution_tags: Json | null
+          contribution_types: string[] | null
+          country: string | null
+          created_at: string
+          current_city: string | null
+          current_country: string | null
+          current_country_code: string | null
+          current_country_id: string | null
+          current_country_name: string | null
+          current_location: string | null
+          current_region: string | null
+          dashboard_version: string | null
+          deleted_at: string | null
+          dia_insight: string | null
+          dia_insight_updated_at: string | null
+          diaspora_networks: string[] | null
+          diaspora_origin: string | null
+          diaspora_story: string | null
+          diaspora_tags: Json | null
+          display_name: string | null
+          education: string | null
+          email: string | null
+          email_notifications: boolean | null
+          email_visible: boolean | null
+          engagement_intentions: string[] | null
+          ethnic_heritage: string[] | null
+          event_interest_tags: Json | null
+          facebook_url: string | null
+          first_action_completed: boolean | null
+          first_action_type: string | null
+          first_name: string | null
+          focus_areas: string[] | null
+          follower_count: number | null
+          following_count: number | null
+          full_name: string | null
+          fundraising_status: string | null
+          github_url: string | null
+          giving_back_initiatives: string | null
+          headline: string | null
+          hidden_activity_ids: Json | null
+          home_country_projects: string | null
+          id: string
+          impact_areas: string[] | null
+          impact_goals: string[] | null
+          impact_regions: string[] | null
+          impact_scores: Json | null
+          impact_scores_updated_at: string | null
+          industries: string[] | null
+          industry: string | null
+          industry_sectors: string[] | null
+          innovation_pathways: string | null
+          instagram_url: string | null
+          intent_tags: Json | null
+          intentions: string[] | null
+          intents: string[] | null
+          interest_tags: string[] | null
+          interests: string[] | null
+          intro_audio_url: string | null
+          intro_text: string | null
+          intro_video_url: string | null
+          is_admin: boolean | null
+          is_beta_tester: boolean | null
+          is_public: boolean | null
+          is_test_account: boolean | null
+          language_tags: Json | null
+          languages: string[] | null
+          last_active: string | null
+          last_active_at: string | null
+          last_name: string | null
+          last_seen_at: string | null
+          linkedin_url: string | null
+          location: string | null
+          location_preference: string | null
+          looking_for_opportunities: boolean | null
+          mentorship_areas: string[] | null
+          mentorship_interest: string[] | null
+          mentorship_offering: boolean | null
+          middle_initial: string | null
+          my_dna_statement: string | null
+          needs: string[] | null
+          networking_goals: string[] | null
+          newsletter_emails: boolean | null
+          notification_preferences: Json | null
+          notifications_enabled: boolean | null
+          offers: string[] | null
+          onboarding_completed: boolean | null
+          onboarding_completed_at: string | null
+          onboarding_progress: Json
+          onboarding_recommendations_viewed: boolean | null
+          onboarding_stage: string | null
+          open_to_opportunities: boolean | null
+          organization: string | null
+          organization_category: string | null
+          organization_name: string | null
+          past_contributions: string | null
+          phone: string | null
+          phone_number: string | null
+          pinned_activity_ids: Json | null
+          place_declared_at: string | null
+          preferred_contact: string | null
+          preferred_contact_method: string | null
+          profession: string | null
+          professional_role: string | null
+          professional_sectors: string[] | null
+          professional_summary: string | null
+          profile_completeness_score: number | null
+          profile_completion_percentage: number | null
+          profile_completion_score: number | null
+          profile_picture_url: string | null
+          profile_views_count: number | null
+          profile_visibility_settings: Json | null
+          pronouns: string | null
+          recent_searches: string[] | null
+          referral_code: string | null
+          referrer_id: string | null
+          region_tags: Json | null
+          regional_expertise: string[] | null
+          return_intentions: string | null
+          role: Database["public"]["Enums"]["dna_identity_role"]
+          role_declared_at: string | null
+          sdg_focus: string[] | null
+          sector_tags: Json | null
+          sectors: string[] | null
+          seeking_mentorship: boolean | null
+          selected_pillars: string[] | null
+          show_presence: boolean
+          show_read_receipts: boolean
+          skill_tags: Json | null
+          skills: string[] | null
+          skills_needed: string[] | null
+          skills_offered: string[] | null
+          support_areas: string[] | null
+          timezone: string | null
+          tour_completed_at: string | null
+          tour_current_step: number | null
+          tour_last_shown_at: string | null
+          tour_skipped_at: string | null
+          twitter_handle: string | null
+          twitter_url: string | null
+          updated_at: string
+          username: string
+          username_change_count: number | null
+          username_changes: number | null
+          username_changes_count: number | null
+          username_changes_left: number | null
+          username_history: Json | null
+          venture_name: string | null
+          venture_stage: string | null
+          verification_method: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verification_updated_at: string | null
+          verified: boolean | null
+          verified_at: string | null
+          visibility: Json | null
+          volunteer_experience: string | null
+          website_url: string | null
+          what_to_give: string[] | null
+          what_to_receive: string[] | null
+          whatsapp_number: string | null
+          why_contribute: string | null
+          years_experience: number | null
+          years_in_diaspora: number | null
+          years_in_diaspora_text: string | null
+          years_of_experience: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       admin_verify_user: {
         Args: { admin_user_id: string; target_user_id: string }
@@ -13257,6 +13486,227 @@ export type Database = {
             Args: { p_days_back: number; p_organizer_id: string }
             Returns: Json
           }
+      get_own_profile: {
+        Args: never
+        Returns: {
+          account_visibility: string | null
+          achievements: string | null
+          adin_mode: string | null
+          adin_prompt_status: string | null
+          advocacy_interests: string[] | null
+          africa_focus_areas: string[] | null
+          africa_visit_frequency: string | null
+          african_causes: string[] | null
+          agrees_to_values: boolean | null
+          allow_profile_sharing: boolean | null
+          auto_connect_enabled: boolean | null
+          availability_for_mentoring: boolean | null
+          availability_hours_per_month: number | null
+          availability_tags: Json | null
+          availability_visible: boolean | null
+          available_for: string[] | null
+          available_hours_per_month: number | null
+          avatar_position: Json | null
+          avatar_url: string | null
+          banner_gradient: string | null
+          banner_overlay: boolean | null
+          banner_type: string | null
+          banner_url: string | null
+          beta_expires_at: string | null
+          beta_features_tested: string[] | null
+          beta_feedback_count: number | null
+          beta_phase: string | null
+          beta_signup_data: Json | null
+          beta_status: string | null
+          bio: string | null
+          certifications: string | null
+          city: string | null
+          collaboration_needs: string[] | null
+          collaboration_tags: Json | null
+          community_involvement: string | null
+          company: string | null
+          connection_count: number | null
+          consent_event_invites: boolean | null
+          consent_marketing_emails: boolean | null
+          consent_partner_intros: boolean | null
+          consent_public_search: boolean | null
+          contact_number_visibility: string
+          continent: string | null
+          contribution_style: string | null
+          contribution_tags: Json | null
+          contribution_types: string[] | null
+          country: string | null
+          created_at: string
+          current_city: string | null
+          current_country: string | null
+          current_country_code: string | null
+          current_country_id: string | null
+          current_country_name: string | null
+          current_location: string | null
+          current_region: string | null
+          dashboard_version: string | null
+          deleted_at: string | null
+          dia_insight: string | null
+          dia_insight_updated_at: string | null
+          diaspora_networks: string[] | null
+          diaspora_origin: string | null
+          diaspora_story: string | null
+          diaspora_tags: Json | null
+          display_name: string | null
+          education: string | null
+          email: string | null
+          email_notifications: boolean | null
+          email_visible: boolean | null
+          engagement_intentions: string[] | null
+          ethnic_heritage: string[] | null
+          event_interest_tags: Json | null
+          facebook_url: string | null
+          first_action_completed: boolean | null
+          first_action_type: string | null
+          first_name: string | null
+          focus_areas: string[] | null
+          follower_count: number | null
+          following_count: number | null
+          full_name: string | null
+          fundraising_status: string | null
+          github_url: string | null
+          giving_back_initiatives: string | null
+          headline: string | null
+          hidden_activity_ids: Json | null
+          home_country_projects: string | null
+          id: string
+          impact_areas: string[] | null
+          impact_goals: string[] | null
+          impact_regions: string[] | null
+          impact_scores: Json | null
+          impact_scores_updated_at: string | null
+          industries: string[] | null
+          industry: string | null
+          industry_sectors: string[] | null
+          innovation_pathways: string | null
+          instagram_url: string | null
+          intent_tags: Json | null
+          intentions: string[] | null
+          intents: string[] | null
+          interest_tags: string[] | null
+          interests: string[] | null
+          intro_audio_url: string | null
+          intro_text: string | null
+          intro_video_url: string | null
+          is_admin: boolean | null
+          is_beta_tester: boolean | null
+          is_public: boolean | null
+          is_test_account: boolean | null
+          language_tags: Json | null
+          languages: string[] | null
+          last_active: string | null
+          last_active_at: string | null
+          last_name: string | null
+          last_seen_at: string | null
+          linkedin_url: string | null
+          location: string | null
+          location_preference: string | null
+          looking_for_opportunities: boolean | null
+          mentorship_areas: string[] | null
+          mentorship_interest: string[] | null
+          mentorship_offering: boolean | null
+          middle_initial: string | null
+          my_dna_statement: string | null
+          needs: string[] | null
+          networking_goals: string[] | null
+          newsletter_emails: boolean | null
+          notification_preferences: Json | null
+          notifications_enabled: boolean | null
+          offers: string[] | null
+          onboarding_completed: boolean | null
+          onboarding_completed_at: string | null
+          onboarding_progress: Json
+          onboarding_recommendations_viewed: boolean | null
+          onboarding_stage: string | null
+          open_to_opportunities: boolean | null
+          organization: string | null
+          organization_category: string | null
+          organization_name: string | null
+          past_contributions: string | null
+          phone: string | null
+          phone_number: string | null
+          pinned_activity_ids: Json | null
+          place_declared_at: string | null
+          preferred_contact: string | null
+          preferred_contact_method: string | null
+          profession: string | null
+          professional_role: string | null
+          professional_sectors: string[] | null
+          professional_summary: string | null
+          profile_completeness_score: number | null
+          profile_completion_percentage: number | null
+          profile_completion_score: number | null
+          profile_picture_url: string | null
+          profile_views_count: number | null
+          profile_visibility_settings: Json | null
+          pronouns: string | null
+          recent_searches: string[] | null
+          referral_code: string | null
+          referrer_id: string | null
+          region_tags: Json | null
+          regional_expertise: string[] | null
+          return_intentions: string | null
+          role: Database["public"]["Enums"]["dna_identity_role"]
+          role_declared_at: string | null
+          sdg_focus: string[] | null
+          sector_tags: Json | null
+          sectors: string[] | null
+          seeking_mentorship: boolean | null
+          selected_pillars: string[] | null
+          show_presence: boolean
+          show_read_receipts: boolean
+          skill_tags: Json | null
+          skills: string[] | null
+          skills_needed: string[] | null
+          skills_offered: string[] | null
+          support_areas: string[] | null
+          timezone: string | null
+          tour_completed_at: string | null
+          tour_current_step: number | null
+          tour_last_shown_at: string | null
+          tour_skipped_at: string | null
+          twitter_handle: string | null
+          twitter_url: string | null
+          updated_at: string
+          username: string
+          username_change_count: number | null
+          username_changes: number | null
+          username_changes_count: number | null
+          username_changes_left: number | null
+          username_history: Json | null
+          venture_name: string | null
+          venture_stage: string | null
+          verification_method: string | null
+          verification_status:
+            | Database["public"]["Enums"]["verification_status"]
+            | null
+          verification_updated_at: string | null
+          verified: boolean | null
+          verified_at: string | null
+          visibility: Json | null
+          volunteer_experience: string | null
+          website_url: string | null
+          what_to_give: string[] | null
+          what_to_receive: string[] | null
+          whatsapp_number: string | null
+          why_contribute: string | null
+          years_experience: number | null
+          years_in_diaspora: number | null
+          years_in_diaspora_text: string | null
+          years_of_experience: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_pending_hashtag_requests: {
         Args: { p_owner_id: string }
         Returns: {
