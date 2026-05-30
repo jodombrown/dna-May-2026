@@ -7808,9 +7808,6 @@ export type Database = {
           contribution_tags: Json | null
           contribution_types: string[] | null
           country: string | null
-          country_of_origin: string | null
-          country_of_origin_id: string | null
-          country_origin: string | null
           created_at: string
           current_city: string | null
           current_country: string | null
@@ -7902,8 +7899,6 @@ export type Database = {
           organization: string | null
           organization_category: string | null
           organization_name: string | null
-          origin_country_code: string | null
-          origin_country_name: string | null
           past_contributions: string | null
           phone: string | null
           phone_number: string | null
@@ -8025,9 +8020,6 @@ export type Database = {
           contribution_tags?: Json | null
           contribution_types?: string[] | null
           country?: string | null
-          country_of_origin?: string | null
-          country_of_origin_id?: string | null
-          country_origin?: string | null
           created_at?: string
           current_city?: string | null
           current_country?: string | null
@@ -8119,8 +8111,6 @@ export type Database = {
           organization?: string | null
           organization_category?: string | null
           organization_name?: string | null
-          origin_country_code?: string | null
-          origin_country_name?: string | null
           past_contributions?: string | null
           phone?: string | null
           phone_number?: string | null
@@ -8242,9 +8232,6 @@ export type Database = {
           contribution_tags?: Json | null
           contribution_types?: string[] | null
           country?: string | null
-          country_of_origin?: string | null
-          country_of_origin_id?: string | null
-          country_origin?: string | null
           created_at?: string
           current_city?: string | null
           current_country?: string | null
@@ -8336,8 +8323,6 @@ export type Database = {
           organization?: string | null
           organization_category?: string | null
           organization_name?: string | null
-          origin_country_code?: string | null
-          origin_country_name?: string | null
           past_contributions?: string | null
           phone?: string | null
           phone_number?: string | null
@@ -8412,13 +8397,6 @@ export type Database = {
           years_of_experience?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "profiles_country_of_origin_id_fkey"
-            columns: ["country_of_origin_id"]
-            isOneToOne: false
-            referencedRelation: "countries"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "profiles_current_country_id_fkey"
             columns: ["current_country_id"]
@@ -14682,16 +14660,6 @@ export type Database = {
       }
       update_profile_contributions: {
         Args: { p_contribution_tags: Json; p_user_id: string }
-        Returns: Json
-      }
-      update_profile_diaspora: {
-        Args: {
-          p_country_of_origin?: string
-          p_current_country?: string
-          p_diaspora_origin?: string
-          p_diaspora_tags?: Json
-          p_user_id: string
-        }
         Returns: Json
       }
       update_profile_identity: {
