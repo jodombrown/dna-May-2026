@@ -184,14 +184,13 @@ const EngagementDashboard = () => {
       
       if (logsError) throw logsError;
 
-      // Get user details separately to avoid join issues
+      // Get user details separately to avoid join issues (sensitive cols via admin RPC)
       const userIds = [...new Set((logsData || []).map(log => log.user_id))];
-      const { data: usersData } = await supabase
-        .from('profiles')
-        .select('id, email, full_name')
-        .in('id', userIds);
+      const { data: usersData } = await (supabase.rpc as any)('admin_get_profile_contacts', {
+        p_ids: userIds as string[],
+      });
 
-      const userMap = new Map(usersData?.map(user => [user.id, user]) || []);
+      const userMap = new Map((usersData || []).map((user: any) => [user.id, user]));
 
       return (logsData || []).map(log => {
         const user = userMap.get(log.user_id);
