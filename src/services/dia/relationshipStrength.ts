@@ -142,12 +142,15 @@ async function fetchRawRelationshipData(
     // Shared spaces
     fetchSharedSpaceData(userId, connectedUserId),
     // Profiles
-    supabase.from('profiles').select('skills, interests, location, primary_origin_country').eq('id', userId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
-    supabase.from('profiles').select('skills, interests, location, primary_origin_country').eq('id', connectedUserId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
+    // Profiles
+    supabase.from('profiles').select('skills, interests, location').eq('id', userId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
+    supabase.from('profiles').select('skills, interests, location').eq('id', connectedUserId).single() as unknown as Promise<{ data: Record<string, unknown> | null; error: unknown }>,
     // Connection counts
     fetchConnectionCounts(userId, connectedUserId),
     // Mutual connections
     fetchMutualConnectionCount(userId, connectedUserId),
+    // BD038/BD039: primary origin (alpha-3) sourced from member_heritage, code-vs-code.
+    getPrimaryOriginCodes([userId, connectedUserId]),
   ]);
 
   const userProfile = (profileA.data || {}) as Record<string, unknown>;
@@ -173,8 +176,9 @@ async function fetchRawRelationshipData(
     connectedUserSkills: (connectedProfile.skills || []) as string[],
     userRegion: extractRegion((userProfile.location || '') as string),
     connectedUserRegion: extractRegion((connectedProfile.location || '') as string),
-    userHeritage: (userProfile.primary_origin_country || null) as string | null,
-    connectedUserHeritage: (connectedProfile.primary_origin_country || null) as string | null,
+    userHeritage: originCodes.get(userId) ?? null,
+    connectedUserHeritage: originCodes.get(connectedUserId) ?? null,
+
     userToConnectedActions: engagementData.userToConnected,
     connectedToUserActions: engagementData.connectedToUser,
     responseCount: messageData.responseCount,
