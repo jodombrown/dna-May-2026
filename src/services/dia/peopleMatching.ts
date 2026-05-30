@@ -485,24 +485,8 @@ async function getSecondDegreeConnections(
 }
 
 async function getSpaceCoMembers(userId: string): Promise<string[]> {
-  const { data: mySpaces } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userId)
-    .eq('status', 'active');
-
-  if (!mySpaces || mySpaces.length === 0) return [];
-
-  const spaceIds = mySpaces.map(s => s.space_id);
-  const { data: members } = await supabase
-    .from('collaboration_memberships')
-    .select('user_id')
-    .in('space_id', spaceIds)
-    .neq('user_id', userId)
-    .eq('status', 'active')
-    .limit(100);
-
-  return [...new Set((members || []).map(m => m.user_id))];
+  // collaboration_memberships table retired (DIA/ADIN out of scope) — return none.
+  return [];
 }
 
 async function getEventCoAttendees(userId: string): Promise<string[]> {
@@ -586,30 +570,8 @@ async function fetchSharedSpaceCounts(
   userId: string,
   candidateIds: string[],
 ): Promise<Map<string, number>> {
-  const { data: mySpaces } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userId)
-    .eq('status', 'active');
-
-  const mySpaceSet = new Set((mySpaces || []).map(s => s.space_id));
-  const result = new Map<string, number>();
-
-  if (mySpaceSet.size === 0) return result;
-
-  const { data: memberships } = await supabase
-    .from('collaboration_memberships')
-    .select('user_id, space_id')
-    .in('user_id', candidateIds.slice(0, 100))
-    .eq('status', 'active');
-
-  for (const m of memberships || []) {
-    if (mySpaceSet.has(m.space_id)) {
-      result.set(m.user_id, (result.get(m.user_id) || 0) + 1);
-    }
-  }
-
-  return result;
+  // collaboration_memberships table retired (DIA/ADIN out of scope) — return empty.
+  return new Map<string, number>();
 }
 
 async function fetchSharedEventCounts(

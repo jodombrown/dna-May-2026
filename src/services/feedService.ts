@@ -242,7 +242,7 @@ export const feedService = {
       post: 'posts',
       story: 'posts', // Stories are stored in posts table
       event: 'events',
-      space: 'collaboration_spaces',
+      space: 'spaces',
       opportunity: 'opportunities',
     };
     return map[contentType] || contentType;
@@ -395,9 +395,9 @@ export const feedService = {
       case 'space':
         return {
           type: 'space',
-          name: (raw.title as string) || '',
+          name: (raw.name as string) || '',
           description: ((raw.description as string) || '').slice(0, 200),
-          coverImageUrl: (raw.image_url as string) || null,
+          coverImageUrl: (raw.cover_image_url as string) || null,
           spaceType: (raw.space_type as SpaceType) || 'project',
           visibility: ((raw.visibility as string) === 'public' ? 'open' : 'request') as SpaceVisibility,
           memberCount: 0,
@@ -413,7 +413,7 @@ export const feedService = {
           memberPreview: [],
           connectionMemberCount: 0,
           relatedEvent: null,
-          regionalFocus: (raw.regional_focus as string) || null,
+          regionalFocus: (raw.region as string) || null,
           isMember: false,
           membershipStatus: null,
         } as SpaceFeedContent;

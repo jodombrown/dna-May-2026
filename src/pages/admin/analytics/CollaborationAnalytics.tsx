@@ -124,26 +124,10 @@ export default function CollaborationAnalytics() {
     try {
       setLoading(true);
 
-      // Fetch all spaces
-      const { data: spacesData, error: spacesError } = await (supabase as any)
-        .from('collaboration_spaces')
-        .select(`
-          id,
-          title,
-          status,
-          created_at,
-          updated_at,
-          created_by,
-          creator:profiles!collaboration_spaces_created_by_fkey(full_name, email)
-        `);
-
-      if (spacesError) throw spacesError;
-
-      // Fetch all memberships
-      const { data: membershipsData } = await (supabase as any)
-        .from('collaboration_memberships')
-        .select('space_id, user_id, status')
-        .eq('status', 'approved');
+      // collaboration_spaces/collaboration_memberships tables retired (admin
+      // beyond-minimum, out of scope) — no collaboration data to analyze.
+      const spacesData: any[] = [];
+      const membershipsData: any[] = [];
 
       // Fetch all tasks
       const { data: tasksData } = await (supabase as any)

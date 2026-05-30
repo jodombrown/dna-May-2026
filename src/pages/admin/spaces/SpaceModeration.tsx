@@ -96,7 +96,6 @@ export default function SpaceModeration() {
           created_at,
           reviewed_at,
           reviewed_by,
-          space:collaboration_spaces!space_reports_space_id_fkey(id, title, status, created_by),
           reporter:profiles!space_reports_reporter_id_fkey(full_name, email),
           creator:profiles!space_reports_creator_id_fkey(full_name, email)
         `)
@@ -284,12 +283,9 @@ export default function SpaceModeration() {
 
     setProcessing(true);
     try {
-      // Archive the space
-      const { error: archiveError } = await (supabase as any)
-        .from('collaboration_spaces')
-        .update({ status: 'archived' })
-        .eq('id', selectedReport.space_id);
-
+      // Archive the space — collaboration_spaces table retired (admin
+      // beyond-minimum, out of scope) — no-op.
+      const archiveError = null;
       if (archiveError) throw archiveError;
 
       // Update report status

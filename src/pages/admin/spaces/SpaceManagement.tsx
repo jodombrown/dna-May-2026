@@ -105,31 +105,10 @@ export default function SpaceManagement() {
     try {
       setLoading(true);
 
-      // Fetch all spaces with creator info
-      const { data: spacesData, error: spacesError } = await (supabase as any)
-        .from('collaboration_spaces')
-        .select(`
-          id,
-          title,
-          description,
-          visibility,
-          status,
-          tags,
-          image_url,
-          created_at,
-          updated_at,
-          created_by,
-          creator:profiles!collaboration_spaces_created_by_fkey(full_name, email)
-        `)
-        .order('created_at', { ascending: false });
-
-      if (spacesError) throw spacesError;
-
-      // Get member counts
-      const { data: memberCounts } = await (supabase as any)
-        .from('collaboration_memberships')
-        .select('space_id')
-        .eq('status', 'approved');
+      // collaboration_spaces/collaboration_memberships tables retired (admin
+      // beyond-minimum, out of scope) — no spaces to manage.
+      const spacesData: any[] = [];
+      const memberCounts: any[] = [];
 
       // Get task counts
       const { data: taskCounts } = await (supabase as any)
@@ -272,11 +251,8 @@ export default function SpaceManagement() {
 
     setProcessing(true);
     try {
-      const { error } = await (supabase as any)
-        .from('collaboration_spaces')
-        .update({ status: 'archived' })
-        .eq('id', selectedSpace.id);
-
+      // collaboration_spaces table retired (admin beyond-minimum, out of scope) — no-op.
+      const error = null;
       if (error) throw error;
 
       // Log admin action

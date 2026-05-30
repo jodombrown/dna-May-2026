@@ -42,30 +42,8 @@ export function ConnectionRequestContext({ currentUserId, requesterId }: Connect
         }
       }
 
-      // 2. Check shared spaces
-      const [{ data: mySpaces }, { data: theirSpaces }] = await Promise.all([
-        supabase
-          .from('collaboration_memberships')
-          .select('space_id, collaboration_spaces!inner(title)')
-          .eq('user_id', currentUserId)
-          .eq('status', 'active')
-          .limit(20),
-        supabase
-          .from('collaboration_memberships')
-          .select('space_id, collaboration_spaces!inner(title)')
-          .eq('user_id', requesterId)
-          .eq('status', 'active')
-          .limit(20),
-      ]);
-
-      if (mySpaces && theirSpaces) {
-        const mySpaceIds = new Set(mySpaces.map(s => s.space_id));
-        const shared = theirSpaces.find(s => mySpaceIds.has(s.space_id));
-        if (shared) {
-          const title = (shared.collaboration_spaces as unknown as { title: string })?.title;
-          if (title) return `Both members of **${title}**`;
-        }
-      }
+      // 2. Check shared spaces — removed: collaboration_spaces/collaboration_memberships
+      // tables retired; shared-spaces signal deferred to Arc 4 (BD046).
 
       // 3. Check shared industry/role
       const { data: profiles } = await supabase

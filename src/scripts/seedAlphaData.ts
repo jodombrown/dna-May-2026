@@ -788,27 +788,8 @@ export async function seedAlphaData(config: AlphaSeedConfig = DEFAULT_CONFIG): P
       logger.info('SeedAlpha', `Seeded ${result.eventIds.length} events`);
     }
 
-    // 4. Seed Spaces
-    const spacesToInsert = SEED_SPACES.slice(0, config.activeSpaces + config.stalledSpaces).map((s) => ({
-      id: generateId(),
-      title: s.name,
-      description: s.description,
-      created_by: randomElement(result.profileIds),
-      status: s.status === 'stalled' ? 'active' : s.status,
-      updated_at: daysFromNow(-s.daysSinceActivity),
-    }));
-
-    const { data: insertedSpaces, error: spaceError } = await (supabase as any)
-      .from('collaboration_spaces')
-      .upsert(spacesToInsert)
-      .select('id');
-
-    if (spaceError) {
-      logger.warn('SeedAlpha', 'Failed to seed spaces', spaceError);
-    } else {
-      result.spaceIds = (insertedSpaces ?? []).map((s) => s.id);
-      logger.info('SeedAlpha', `Seeded ${result.spaceIds.length} spaces`);
-    }
+    // 4. Seed Spaces — collaboration_spaces table retired; space seeding removed.
+    // result.spaceIds remains [] (initialized above).
 
     // 5. Seed Opportunities
     const opportunitiesToInsert = SEED_OPPORTUNITIES.slice(0, config.openOpportunities).map((o) => ({

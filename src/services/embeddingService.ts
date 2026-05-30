@@ -127,12 +127,8 @@ export async function generateEntityEmbedding(
         break;
 
       case 'space':
-        const { data: space } = await supabase
-          .from('collaboration_spaces')
-          .select('title, description, tags')
-          .eq('id', entityId)
-          .single();
-        entityData = space;
+        // collaboration_spaces table retired; space embeddings disabled.
+        entityData = null;
         break;
 
       case 'need':

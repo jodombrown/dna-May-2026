@@ -74,8 +74,8 @@ export function useWhatsNext() {
 
       if (profile?.intents && profile.intents.length > 0) {
         const { data: relevantSpaces } = await supabase
-          .from('collaboration_spaces')
-          .select('id, title')
+          .from('spaces')
+          .select('id, name')
           .eq('visibility', 'public')
           .eq('status', 'active')
           .limit(1);
@@ -84,7 +84,7 @@ export function useWhatsNext() {
           recommendations.push({
             id: 'join_space',
             title: 'Spaces Matching Your Interests',
-            description: `Explore ${relevantSpaces[0].title} and similar projects`,
+            description: `Explore ${relevantSpaces[0].name} and similar projects`,
             pillar: 'collaborate',
             route: '/dna/collaborate',
             priority: 6,
@@ -96,10 +96,10 @@ export function useWhatsNext() {
       // 4. Check for spaces user is member of with open needs
       // Two-step fetch pattern to avoid PostgREST FK resolution issues
       const { data: memberSpaces } = await supabase
-        .from('collaboration_memberships')
+        .from('space_members')
         .select('space_id')
         .eq('user_id', user.id)
-        .eq('status', 'approved');
+        .eq('status', 'active');
 
       if (memberSpaces && memberSpaces.length > 0) {
         const spaceIds = memberSpaces.map((m: { space_id: string }) => m.space_id).filter(Boolean);

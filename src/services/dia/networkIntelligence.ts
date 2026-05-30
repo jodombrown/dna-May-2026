@@ -190,34 +190,9 @@ async function getSmartIntroductions(
  * Identify community clusters the user belongs to.
  */
 async function getCommunityCluster(userId: string): Promise<CommunityCluster[]> {
-  // For now, derive clusters from shared spaces
-  const { data: memberships } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userId)
-    .eq('status', 'active');
-
-  if (!memberships || memberships.length === 0) return [];
-
-  const spaceIds = memberships.map(m => m.space_id);
-  const { data: spaces } = await supabase
-    .from('collaboration_spaces')
-    .select('id, title, description')
-    .in('id', spaceIds);
-
-  if (!spaces || spaces.length === 0) return [];
-
-  return spaces.map(space => {
-      return {
-        cluster_id: space.id,
-        name: space.title || 'Unnamed Cluster',
-        description: space.description || '',
-        member_count: 0,
-        primary_skills: [],
-        primary_regions: [],
-        density_score: 0,
-      };
-    });
+  // collaboration_spaces/collaboration_memberships tables retired (DIA/ADIN out
+  // of scope) — community clusters disabled; return none.
+  return [];
 }
 
 // --- Internal helpers ---
@@ -243,22 +218,8 @@ async function getMutualEngagements(userAId: string, userBId: string) {
 }
 
 async function getSharedSpaces(userAId: string, userBId: string) {
-  const { data: spacesA } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userAId)
-    .eq('status', 'active');
-
-  const { data: spacesB } = await supabase
-    .from('collaboration_memberships')
-    .select('space_id')
-    .eq('user_id', userBId)
-    .eq('status', 'active');
-
-  const setA = new Set((spacesA || []).map(s => s.space_id));
-  const shared = (spacesB || []).filter(s => setA.has(s.space_id));
-
-  return { count: shared.length };
+  // collaboration_memberships table retired (DIA/ADIN out of scope) — stub to 0.
+  return { count: 0 };
 }
 
 async function getSharedEvents(userAId: string, userBId: string) {
