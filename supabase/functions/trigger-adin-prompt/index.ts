@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { requireUser, requireInternal } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,6 +11,14 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
+  }
+
+  const __internal = requireInternal(req);
+  let __callerUserId: string | null = null;
+  if (!__internal.ok) {
+    const __auth = await requireUser(req);
+    if (!__auth.ok) return __auth.response;
+    __callerUserId = __auth.userId;
   }
 
   try {
@@ -23,10 +32,15 @@ serve(async (req) => {
     if (!user_id || !event_type) {
       return new Response(
         JSON.stringify({ error: 'Missing user_id or event_type' }),
-        { 
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Non-internal callers may only trigger prompts for themselves
+    if (__callerUserId && user_id !== __callerUserId) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden: can only trigger DIA prompt for your own user_id' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 

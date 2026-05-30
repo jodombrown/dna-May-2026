@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { requireUser, isSafePublicUrl } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,6 +42,9 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  const __auth = await requireUser(req);
+  if (!__auth.ok) return __auth.response;
+
   try {
     const { audioUrl, audioBase64 } = await req.json()
     
@@ -51,16 +55,23 @@ serve(async (req) => {
       // Handle base64 audio data
       audioData = processBase64Chunks(audioBase64);
     } else if (audioUrl) {
-      // Fetch audio from URL
-      console.log('[transcribe-voice] Fetching audio from URL:', audioUrl);
+      // SSRF guard: only allow https URLs to the project's Supabase storage host
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+      const supabaseHost = supabaseUrl ? new URL(supabaseUrl).hostname : '';
+      const allowed = supabaseHost ? [supabaseHost] : [];
+      if (!isSafePublicUrl(audioUrl, allowed)) {
+        return new Response(
+          JSON.stringify({ error: 'audioUrl must be an https URL on the project storage host' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
       const audioResponse = await fetch(audioUrl);
       if (!audioResponse.ok) {
         throw new Error(`Failed to fetch audio: ${audioResponse.status}`);
       }
       const arrayBuffer = await audioResponse.arrayBuffer();
       audioData = new Uint8Array(arrayBuffer);
-      
-      // Extract filename from URL
+
       const urlParts = audioUrl.split('/');
       filename = urlParts[urlParts.length - 1] || 'audio.webm';
     } else {

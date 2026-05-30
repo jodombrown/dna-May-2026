@@ -1,6 +1,8 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { requireUser, escapeHtml } from "../_shared/auth.ts";
+
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -21,8 +23,28 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const __auth = await requireUser(req);
+  if (!__auth.ok) return __auth.response;
+
   try {
     const { email, resetUrl }: PasswordResetRequest = await req.json();
+
+    // Validate resetUrl against allowed domains to prevent phishing
+    const ALLOWED_HOSTS = ['diasporanetwork.africa', 'www.diasporanetwork.africa', 'diaspora-network-of-africa.lovable.app'];
+    let safeResetUrl: string;
+    try {
+      const u = new URL(resetUrl);
+      if (u.protocol !== 'https:' || !ALLOWED_HOSTS.some(h => u.hostname === h || u.hostname.endsWith(`.${h}`))) {
+        throw new Error('invalid host');
+      }
+      safeResetUrl = u.toString();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: 'Invalid resetUrl: must be https on an allowed domain' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const escapedUrl = escapeHtml(safeResetUrl);
 
     const emailResponse = await resend.emails.send({
       from: "DNA Platform <noreply@dnaplatform.com>",
@@ -52,14 +74,14 @@ const handler = async (req: Request): Promise<Response> => {
               <p>To reset your password, click the button below:</p>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${resetUrl}" 
+                <a href="${escapedUrl}" 
                    style="background: #CD853F; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                   Reset Password
                 </a>
               </div>
               
               <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
-              <p style="word-break: break-all; color: #666; font-size: 14px;">${resetUrl}</p>
+              <p style="word-break: break-all; color: #666; font-size: 14px;">${escapedUrl}</p>
               
               <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 14px;">
                 This link will expire in 24 hours for security reasons.
