@@ -29,6 +29,23 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { email, resetUrl }: PasswordResetRequest = await req.json();
 
+    // Validate resetUrl against allowed domains to prevent phishing
+    const ALLOWED_HOSTS = ['diasporanetwork.africa', 'www.diasporanetwork.africa', 'diaspora-network-of-africa.lovable.app'];
+    let safeResetUrl: string;
+    try {
+      const u = new URL(resetUrl);
+      if (u.protocol !== 'https:' || !ALLOWED_HOSTS.some(h => u.hostname === h || u.hostname.endsWith(`.${h}`))) {
+        throw new Error('invalid host');
+      }
+      safeResetUrl = u.toString();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: 'Invalid resetUrl: must be https on an allowed domain' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const escapedUrl = escapeHtml(safeResetUrl);
+
     const emailResponse = await resend.emails.send({
       from: "DNA Platform <noreply@dnaplatform.com>",
       to: [email],

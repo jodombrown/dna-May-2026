@@ -32,10 +32,15 @@ serve(async (req) => {
     if (!user_id || !event_type) {
       return new Response(
         JSON.stringify({ error: 'Missing user_id or event_type' }),
-        { 
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Non-internal callers may only trigger prompts for themselves
+    if (__callerUserId && user_id !== __callerUserId) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden: can only trigger DIA prompt for your own user_id' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 

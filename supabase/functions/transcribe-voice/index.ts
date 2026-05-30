@@ -55,16 +55,23 @@ serve(async (req) => {
       // Handle base64 audio data
       audioData = processBase64Chunks(audioBase64);
     } else if (audioUrl) {
-      // Fetch audio from URL
-      console.log('[transcribe-voice] Fetching audio from URL:', audioUrl);
+      // SSRF guard: only allow https URLs to the project's Supabase storage host
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+      const supabaseHost = supabaseUrl ? new URL(supabaseUrl).hostname : '';
+      const allowed = supabaseHost ? [supabaseHost] : [];
+      if (!isSafePublicUrl(audioUrl, allowed)) {
+        return new Response(
+          JSON.stringify({ error: 'audioUrl must be an https URL on the project storage host' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
       const audioResponse = await fetch(audioUrl);
       if (!audioResponse.ok) {
         throw new Error(`Failed to fetch audio: ${audioResponse.status}`);
       }
       const arrayBuffer = await audioResponse.arrayBuffer();
       audioData = new Uint8Array(arrayBuffer);
-      
-      // Extract filename from URL
+
       const urlParts = audioUrl.split('/');
       filename = urlParts[urlParts.length - 1] || 'audio.webm';
     } else {
