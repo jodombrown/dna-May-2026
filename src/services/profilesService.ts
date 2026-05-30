@@ -77,25 +77,17 @@ export const profilesService = {
   },
 
   // Get own full profile with all fields (including private ones)
-  async getOwnProfile(userId: string) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    
+  // Uses SECURITY DEFINER RPC because sensitive columns (email/phone/whatsapp_number)
+  // are revoked from direct authenticated SELECT on profiles.
+  async getOwnProfile(_userId: string) {
+    const { data, error } = await (supabase.rpc as any)('get_own_profile').single();
     if (error) throw error;
     return data;
   },
 
   // Get current user's full profile with realtime updates
-  async getCurrentUserProfile(userId: string) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-    
+  async getCurrentUserProfile(_userId: string) {
+    const { data, error } = await (supabase.rpc as any)('get_own_profile').maybeSingle();
     if (error) throw error;
     return data;
   },
