@@ -296,8 +296,34 @@ const ConveneCategoryPage = () => {
   const categoryKey = category?.toLowerCase() || 'technology';
   const details = categoryDetails[categoryKey as keyof typeof categoryDetails] || categoryDetails.technology;
 
+  const SITE_URL = 'https://diasporanetwork.africa';
+  const pageUrl = `${SITE_URL}/convene/${categoryKey}`;
+  const pageTitle = `${details.title} events | Convene on DNA`;
+  const pageDescription = details.description.length > 160
+    ? details.description.slice(0, 157).trimEnd() + '...'
+    : details.description;
+  const collectionJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: pageUrl,
+    isPartOf: { '@type': 'WebSite', name: 'Diaspora Network of Africa', url: SITE_URL },
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={pageUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={`${SITE_URL}/og-image.png`} />
+        <script type="application/ld+json">{JSON.stringify(collectionJsonLd)}</script>
+      </Helmet>
       <UnifiedHeader />
       
       <main className="container mx-auto px-4 py-8 pt-24">
