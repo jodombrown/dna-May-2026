@@ -74,14 +74,14 @@ const handler = async (req: Request): Promise<Response> => {
               <p>To reset your password, click the button below:</p>
               
               <div style="text-align: center; margin: 30px 0;">
-                <a href="${resetUrl}" 
+                <a href="${escapedUrl}" 
                    style="background: #CD853F; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                   Reset Password
                 </a>
               </div>
               
               <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
-              <p style="word-break: break-all; color: #666; font-size: 14px;">${resetUrl}</p>
+              <p style="word-break: break-all; color: #666; font-size: 14px;">${escapedUrl}</p>
               
               <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 14px;">
                 This link will expire in 24 hours for security reasons.
