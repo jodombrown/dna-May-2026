@@ -45,11 +45,14 @@ export function IntroductionInsightChips({
 
     async function fetchCommonalities() {
       try {
-        // Fetch both profiles with skills, interests, heritage
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, skills, interests, primary_origin_country, ethnic_heritage')
-          .in('id', [personAId, personBId]);
+        // Fetch both profiles + primary origin codes from member_heritage (BD038/BD039)
+        const [{ data: profiles }, originCodes] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('id, skills, interests, ethnic_heritage')
+            .in('id', [personAId, personBId]),
+          getPrimaryOriginCodes([personAId, personBId]),
+        ]);
 
         if (cancelled || !profiles || profiles.length < 2) {
           setLoading(false);
@@ -100,14 +103,18 @@ export function IntroductionInsightChips({
           });
         }
 
-        // Same country of origin
-        if (pA.primary_origin_country && pA.primary_origin_country === pB.primary_origin_country) {
+        // Same primary origin (code-vs-code, alpha-3 both sides, BD039)
+        const codeA = originCodes.get(personAId);
+        const codeB = originCodes.get(personBId);
+        if (codeA && codeA === codeB) {
+          const displayName = originCodeToName(codeA) || codeA;
           results.push({
             id: 'country',
-            label: `Both from ${pA.primary_origin_country}`,
-            sentence: `You're both from ${pA.primary_origin_country} — I thought you should know each other!`,
+            label: `Both from ${displayName}`,
+            sentence: `You're both from ${displayName} — I thought you should know each other!`,
           });
         }
+
 
         if (!cancelled) setInsights(results);
       } catch {
