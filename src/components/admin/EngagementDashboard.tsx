@@ -190,7 +190,7 @@ const EngagementDashboard = () => {
         p_ids: userIds as string[],
       });
 
-      const userMap = new Map((usersData || []).map((user: any) => [user.id, user]));
+      const userMap = new Map<string, { email?: string; full_name?: string }>((usersData || []).map((user: any) => [user.id, user]));
 
       return (logsData || []).map(log => {
         const user = userMap.get(log.user_id);
