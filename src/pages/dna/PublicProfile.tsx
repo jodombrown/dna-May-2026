@@ -389,13 +389,6 @@ const PublicProfile = () => {
               )}
             </div>
 
-            {/* Diaspora Story */}
-            {profile.diaspora_story && (
-              <div className="mb-6">
-                <h3 className="font-semibold mb-2">Diaspora Story</h3>
-                <p className="text-muted-foreground whitespace-pre-wrap">{profile.diaspora_story}</p>
-              </div>
-            )}
 
             {/* Bio */}
             {profile.bio && (
