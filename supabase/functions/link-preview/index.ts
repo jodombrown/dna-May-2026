@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { isSafePublicUrl } from "../_shared/auth.ts"
 
 /**
  * DNA Link Preview Edge Function
@@ -267,6 +268,14 @@ serve(async (req) => {
       );
     }
 
+    // SSRF guard: reject non-https or private/internal targets
+    if (!isSafePublicUrl(targetUrl)) {
+      return new Response(
+        JSON.stringify({ error: 'URL not allowed' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     console.log(`[link-preview] Fetching preview for: ${targetUrl}`);
 
     const { isVideo, provider } = isVideoProvider(targetUrl);
@@ -344,8 +353,7 @@ serve(async (req) => {
     console.error('[link-preview] Error:', error);
     return new Response(
       JSON.stringify({ 
-        error: 'Failed to fetch link preview',
-        details: (error as Error).message 
+        error: 'An unexpected error occurred. Please try again.'
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

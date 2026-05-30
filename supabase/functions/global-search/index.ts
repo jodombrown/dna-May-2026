@@ -82,12 +82,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in global-search function:', error);
     return new Response(JSON.stringify({ 
-      error: 'Global search failed',
-      details: error.message,
-      status: {
-        perplexityAvailable: !!perplexityApiKey,
-        openaiAvailable: !!openAIApiKey
-      }
+      error: 'An unexpected error occurred. Please try again.'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

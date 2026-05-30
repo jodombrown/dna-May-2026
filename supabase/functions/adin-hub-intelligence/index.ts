@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireUser } from "../_shared/auth.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -121,9 +122,14 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const auth = await requireUser(req);
+  if (!auth.ok) return auth.response;
+
   try {
     const body: HubRequest = await req.json();
-    const { hub_type, hub_slug, user_id, feeds, include_metrics = true, include_metadata = true } = body;
+    const { hub_type, hub_slug, feeds, include_metrics = true, include_metadata = true } = body;
+    // Force user_id to the authenticated caller; ignore client-supplied value to prevent impersonation.
+    const user_id = auth.userId;
 
     console.log(`Hub request: type=${hub_type}, slug=${hub_slug}, user=${user_id}`);
 

@@ -72,8 +72,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in ai-search function:', error);
     return new Response(JSON.stringify({ 
-      error: 'Search failed',
-      details: error.message 
+      error: 'An unexpected error occurred. Please try again.'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
