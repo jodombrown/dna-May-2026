@@ -40,7 +40,7 @@ export interface ProfileV2Data {
   location: string | null;
   /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
   primary_origin_country: string | null;
-  diaspora_origin: string | null;
+  
   bio: string | null;
   profession: string | null;
   industry: string | null;
@@ -79,7 +79,7 @@ export interface ProfileV2Tags {
   interest_tags?: string[];
   contribution_tags?: string[];
   sector_tags?: string[];
-  diaspora_tags?: string[];
+  
   region_tags?: string[];
   language_tags?: string[];
 }
