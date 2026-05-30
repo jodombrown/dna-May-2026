@@ -12,12 +12,14 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { getPrimaryOriginCodes } from '@/lib/memberHeritage';
 import type {
   RelationshipSignals,
   RawRelationshipData,
   SharedSpaceData,
   CommunicationFrequency,
 } from '@/types/diaEngine';
+
 
 /** Weights for each relationship signal — sums to 1.0 */
 const SIGNAL_WEIGHTS: Record<keyof RelationshipSignals, number> = {
