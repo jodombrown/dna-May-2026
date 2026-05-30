@@ -84,9 +84,22 @@ class MatchingService {
 
       if (!professionals) return [];
 
+      // Hydrate alpha-3 primary origin codes from member_heritage for both
+      // sides so calculateCulturalMatch compares code-vs-code at runtime.
+      const ids = [currentUserId, ...professionals.map((p) => p.id)];
+      const originMap = await getPrimaryOriginCodes(ids);
+      const hydratedUser: ProfileRow = {
+        ...currentUser,
+        primary_origin_country: originMap.get(currentUserId) ?? null,
+      };
+      const hydratedPros: ProfileRow[] = professionals.map((p) => ({
+        ...p,
+        primary_origin_country: originMap.get(p.id) ?? null,
+      }));
+
       // Calculate match scores for each professional
-      const matches = professionals
-        .map((prof) => this.calculateMatchScore(currentUser, prof, criteria))
+      const matches = hydratedPros
+        .map((prof) => this.calculateMatchScore(hydratedUser, prof, criteria))
         .filter(match => match.score > 20) // Filter out very low matches
         .sort((a, b) => b.score - a.score)
         .slice(0, 50); // Return top 50 matches
