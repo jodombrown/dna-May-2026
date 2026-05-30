@@ -77,19 +77,29 @@ export function IntroductionModal({
     if (!open) return;
 
     const fetchProfiles = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('id, full_name, avatar_url, headline, username, primary_origin_country')
-        .in('id', [personAId, personBId]);
+      const [{ data }, originCodes] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, headline, username')
+          .in('id', [personAId, personBId]),
+        getPrimaryOriginCodes([personAId, personBId]),
+      ]);
 
       if (data) {
-        setProfileA(data.find(p => p.id === personAId) || null);
-        setProfileB(data.find(p => p.id === personBId) || null);
+        const hydrate = (id: string): ProfileData | null => {
+          const row = data.find(p => p.id === id);
+          if (!row) return null;
+          const code = originCodes.get(id) ?? null;
+          return { ...row, primary_origin_country: code };
+        };
+        setProfileA(hydrate(personAId));
+        setProfileB(hydrate(personBId));
       }
     };
 
     fetchProfiles();
   }, [open, personAId, personBId]);
+
 
   // Generate default message when profiles load
   useEffect(() => {
