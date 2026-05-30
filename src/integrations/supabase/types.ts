@@ -14815,10 +14815,6 @@ export type Database = {
       rpc_request_join_space: { Args: { p_space: string }; Returns: undefined }
       rpc_run_cron_overdue_task_reminders: { Args: never; Returns: undefined }
       rpc_save_opportunity: { Args: { p_op: string }; Returns: undefined }
-      rpc_seed_reco_demo: {
-        Args: { p_opps?: number; p_people?: number; p_spaces?: number }
-        Returns: Json
-      }
       rpc_seed_verified_contributor: { Args: never; Returns: undefined }
       rpc_task_assign: {
         Args: { p_assignee: string; p_task: string }
