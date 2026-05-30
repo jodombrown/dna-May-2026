@@ -7,6 +7,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { getOrComputeImpactScores, type ImpactScores } from '@/services/impact-score-service';
+import { getPrimaryOriginCode, originCodeToName } from '@/lib/memberHeritage';
 import { logger } from '@/lib/logger';
 
 /**
@@ -14,15 +15,17 @@ import { logger } from '@/lib/logger';
  */
 export async function generateUniquenessInsight(userId: string): Promise<string> {
   try {
-    const [profileResult, impactScores, networkStats] = await Promise.all([
+    const [profileResult, impactScores, networkStats, originCode] = await Promise.all([
       supabase
         .from('profiles')
-        .select('skills, ethnic_heritage, current_country, primary_origin_country, professional_sectors, bio, profession')
+        .select('skills, ethnic_heritage, current_country, professional_sectors, bio, profession')
         .eq('id', userId)
         .single(),
       getOrComputeImpactScores(userId),
       getNetworkCountrySpan(userId),
+      getPrimaryOriginCode(userId),
     ]);
+
 
     const profile = profileResult.data;
     if (!profile) return '';
