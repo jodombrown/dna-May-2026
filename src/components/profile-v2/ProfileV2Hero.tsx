@@ -249,18 +249,22 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                   )}
                 </div>
               )}
-              {profile.country_of_origin && profile.country_of_origin !== profile.current_country && (
-                <div className="flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  <span className="truncate max-w-[150px] sm:max-w-none">
-                    <span className="text-muted-foreground/70">From </span>
-                    {profile.country_of_origin}
-                  </span>
-                  <span className="text-2xl leading-none" aria-label={profile.country_of_origin}>
-                    {getFlag(profile.country_of_origin)}
-                  </span>
-                </div>
-              )}
+              {profile.primary_origin_country && (() => {
+                const originName = originCodeToName(profile.primary_origin_country) || profile.primary_origin_country;
+                if (originName === profile.current_country) return null;
+                return (
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span className="truncate max-w-[150px] sm:max-w-none">
+                      <span className="text-muted-foreground/70">From </span>
+                      {originName}
+                    </span>
+                    <span className="text-2xl leading-none" aria-label={originName}>
+                      {getFlag(originName)}
+                    </span>
+                  </div>
+                );
+              })()}
               {/* Connection & follower counts */}
               {(connectionsCount > 0 || followerCount > 0 || followingCount > 0) && (
                 <div className="flex items-center gap-1.5">
