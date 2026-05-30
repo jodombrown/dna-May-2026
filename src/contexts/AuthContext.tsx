@@ -27,7 +27,7 @@ export interface UserProfile {
   current_city?: string | null;
   /** Primary origin country, ISO code, sourced from member_heritage (BD038). */
   primary_origin_country?: string | null;
-  diaspora_origin?: string | null;
+  
   verification_status?: string | null;
   current_role?: string | null;
   professional_title?: string | null;

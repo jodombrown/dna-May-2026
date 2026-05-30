@@ -408,13 +408,7 @@ const PublicProfilePage = () => {
                 </div>
               )}
 
-              {/* Diaspora Story */}
-              {profile.diaspora_story && shouldShowSection('about') && (
-                <div className="mb-6">
-                  <h3 className="font-semibold mb-2">Diaspora Story</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">{profile.diaspora_story}</p>
-                </div>
-              )}
+
 
               {/* Bio with read more */}
               {profile.bio && shouldShowSection('about') && (
