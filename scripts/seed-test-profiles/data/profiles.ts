@@ -46,9 +46,7 @@ export interface TestProfile {
   current_city: string;
   current_country: string;
   country_of_origin: string;
-  diaspora_origin: string;
   diaspora_status: string;
-  diaspora_story: string;
   diaspora_networks: string[];
   ethnic_heritage: string[];
   african_causes: string[];
@@ -58,7 +56,6 @@ export interface TestProfile {
   profession: string;
   industry: string;
   years_experience: number;
-  years_in_diaspora: number;
   skills: string[];
   interests: string[];
   impact_areas: string[];
@@ -116,9 +113,7 @@ When I'm not building products, I mentor young African entrepreneurs and invest 
     current_city: 'London',
     current_country: 'United Kingdom',
     country_of_origin: 'Nigeria',
-    diaspora_origin: 'Nigeria',
     diaspora_status: 'First-Gen',
-    diaspora_story: 'Moved to London for my MBA at LSE in 2012. What started as a temporary move became a launching pad for my mission to transform financial services for Africans worldwide.',
     diaspora_networks: ['Nigeria', 'West Africa', 'UK African Diaspora'],
     ethnic_heritage: ['Igbo', 'Nigerian'],
     african_causes: ['Financial Inclusion', 'Youth Entrepreneurship', 'Digital Infrastructure'],
@@ -128,7 +123,6 @@ When I'm not building products, I mentor young African entrepreneurs and invest 
     profession: 'Entrepreneur',
     industry: 'Financial Technology',
     years_experience: 10,
-    years_in_diaspora: 12,
     skills: ['Fintech', 'Product Strategy', 'Fundraising', 'Team Leadership', 'Cross-border Payments', 'Mobile Money', 'Financial Modeling', 'Regulatory Compliance'],
     interests: ['African Innovation', 'Financial Inclusion', 'Mentorship', 'Tech Policy', 'Angel Investing', 'Women in Tech'],
     impact_areas: ['Financial Inclusion', 'Economic Empowerment', 'Technology Access'],
@@ -185,9 +179,7 @@ I'm passionate about training the next generation of African scientists and regu
     current_city: 'Toronto',
     current_country: 'Canada',
     country_of_origin: 'Ghana',
-    diaspora_origin: 'Ghana',
     diaspora_status: 'First-Gen',
-    diaspora_story: 'Came to Canada for my PhD at University of Toronto in 2009. After completing my doctorate, I stayed to continue research but maintain strong ties with Ghanaian universities and regularly collaborate on projects in West Africa.',
     diaspora_networks: ['Ghana', 'West Africa', 'Canadian African Diaspora'],
     ethnic_heritage: ['Akan', 'Ghanaian'],
     african_causes: ['Climate Change', 'Rural Electrification', 'STEM Education'],
@@ -197,7 +189,6 @@ I'm passionate about training the next generation of African scientists and regu
     profession: 'Research Scientist',
     industry: 'Clean Energy',
     years_experience: 15,
-    years_in_diaspora: 14,
     skills: ['Solar Technology', 'Research & Development', 'Grant Writing', 'Data Analysis', 'Project Management', 'Technical Writing', 'Lab Management', 'Policy Analysis'],
     interests: ['Climate Change', 'Sustainable Development', 'Education', 'Policy Advocacy', 'Youth Mentorship', 'Technology Transfer'],
     impact_areas: ['Climate Action', 'Energy Access', 'Education'],
@@ -254,9 +245,7 @@ My newest initiative, the African Creators Fund, provides grants and mentorship 
     current_city: 'Paris',
     current_country: 'France',
     country_of_origin: 'Senegal',
-    diaspora_origin: 'Senegal',
     diaspora_status: 'First-Gen',
-    diaspora_story: 'Arrived in Paris at 18 for university and fell in love with the city\'s art scene. Now I split my time between Paris and Dakar, using both cities as platforms to showcase African creativity to the world.',
     diaspora_networks: ['Senegal', 'West Africa', 'French African Diaspora'],
     ethnic_heritage: ['Wolof', 'Senegalese'],
     african_causes: ['Cultural Preservation', 'Youth Empowerment', 'Creative Economy'],
@@ -266,7 +255,6 @@ My newest initiative, the African Creators Fund, provides grants and mentorship 
     profession: 'Cultural Entrepreneur',
     industry: 'Arts & Culture',
     years_experience: 12,
-    years_in_diaspora: 17,
     skills: ['Creative Direction', 'Art Curation', 'Cultural Programming', 'Community Building', 'Event Production', 'Brand Development', 'Fundraising', 'Artist Management'],
     interests: ['African Art', 'Cultural Preservation', 'Youth Mentorship', 'Creative Economy', 'Fashion', 'Design'],
     impact_areas: ['Cultural Preservation', 'Economic Empowerment', 'Youth Development'],
@@ -323,9 +311,7 @@ I'm particularly passionate about maternal and child health, having designed pro
     current_city: 'Berlin',
     current_country: 'Germany',
     country_of_origin: 'Kenya',
-    diaspora_origin: 'Kenya',
     diaspora_status: 'First-Gen',
-    diaspora_story: 'Moved to Geneva for WHO work in 2010, then relocated to Berlin in 2018 to be closer to major health tech innovation hubs while maintaining deep ties to East African health systems.',
     diaspora_networks: ['Kenya', 'East Africa', 'German African Diaspora'],
     ethnic_heritage: ['Kikuyu', 'Kenyan'],
     african_causes: ['Healthcare Access', 'Maternal Health', 'Digital Infrastructure'],
@@ -335,7 +321,6 @@ I'm particularly passionate about maternal and child health, having designed pro
     profession: 'Healthcare Consultant',
     industry: 'Healthcare Technology',
     years_experience: 18,
-    years_in_diaspora: 13,
     skills: ['Digital Health', 'Program Management', 'Policy Development', 'Stakeholder Engagement', 'Healthcare Systems', 'Telemedicine', 'Data Analytics', 'Grant Management'],
     interests: ['Global Health', 'Healthcare Access', 'Digital Innovation', 'Policy Reform', 'Maternal Health', 'Health Equity'],
     impact_areas: ['Healthcare Access', 'Maternal Health', 'Digital Health'],
@@ -392,9 +377,7 @@ LearnAfrica has partnered with 500+ schools and provides free content in 12 Afri
     current_city: 'Boston',
     current_country: 'United States',
     country_of_origin: 'South Africa',
-    diaspora_origin: 'South Africa',
     diaspora_status: 'First-Gen',
-    diaspora_story: 'Came to the US in 2019 on a full scholarship to MIT. Founded LearnAfrica during the pandemic when I saw how COVID-19 was devastating education access across Africa. Planning to return after completing my PhD.',
     diaspora_networks: ['South Africa', 'Southern Africa', 'US African Diaspora'],
     ethnic_heritage: ['Zulu', 'South African'],
     african_causes: ['Education Access', 'Digital Literacy', 'Youth Empowerment'],
@@ -404,7 +387,6 @@ LearnAfrica has partnered with 500+ schools and provides free content in 12 Afri
     profession: 'Entrepreneur & Researcher',
     industry: 'Education Technology',
     years_experience: 5,
-    years_in_diaspora: 4,
     skills: ['EdTech', 'Machine Learning', 'Mobile Development', 'User Experience Design', 'Research', 'Product Management', 'Curriculum Development', 'Data Science'],
     interests: ['Educational Access', 'Digital Learning', 'Teacher Empowerment', 'Youth Development', 'AI in Education', 'Social Entrepreneurship'],
     impact_areas: ['Education', 'Digital Literacy', 'Youth Development'],
