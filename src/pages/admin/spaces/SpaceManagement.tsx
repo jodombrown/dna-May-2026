@@ -112,7 +112,7 @@ export default function SpaceManagement() {
 
       // Get task counts
       const { data: taskCounts } = await (supabase as any)
-        .from('tasks')
+        .from('space_tasks')
         .select('space_id, status');
 
       // Build member count map

@@ -131,7 +131,7 @@ export default function CollaborationAnalytics() {
 
       // Fetch all tasks
       const { data: tasksData } = await (supabase as any)
-        .from('tasks')
+        .from('space_tasks')
         .select('space_id, status, created_at');
 
       // Build member count map

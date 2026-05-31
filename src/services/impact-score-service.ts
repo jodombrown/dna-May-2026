@@ -167,7 +167,7 @@ async function computeCollaborateScore(userId: string): Promise<number> {
   let taskPts = 0;
   try {
     const { count: tasksCompleted } = await supabase
-      .from('tasks' as any)
+      .from('space_tasks' as any)
       .select('*', { count: 'exact', head: true })
       .eq('assigned_to', userId)
       .eq('status', 'completed');
