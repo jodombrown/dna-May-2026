@@ -1102,72 +1102,6 @@ export type Database = {
         }
         Relationships: []
       }
-      collaboration_memberships: {
-        Row: {
-          id: string
-          joined_at: string
-          role: string
-          space_id: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          joined_at?: string
-          role?: string
-          space_id: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          id?: string
-          joined_at?: string
-          role?: string
-          space_id?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      collaboration_spaces: {
-        Row: {
-          created_at: string
-          created_by: string
-          description: string | null
-          id: string
-          image_url: string | null
-          status: string
-          tags: string[] | null
-          title: string
-          updated_at: string
-          visibility: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          status?: string
-          tags?: string[] | null
-          title: string
-          updated_at?: string
-          visibility?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          status?: string
-          tags?: string[] | null
-          title?: string
-          updated_at?: string
-          visibility?: string
-        }
-        Relationships: []
-      }
       comment_reactions: {
         Row: {
           comment_id: string
@@ -7499,7 +7433,6 @@ export type Database = {
           share_commentary: string | null
           shared_by: string | null
           slug: string | null
-          space_id: string | null
           story_type: string | null
           subtitle: string | null
           tags: string[] | null
@@ -7539,7 +7472,6 @@ export type Database = {
           share_commentary?: string | null
           shared_by?: string | null
           slug?: string | null
-          space_id?: string | null
           story_type?: string | null
           subtitle?: string | null
           tags?: string[] | null
@@ -7579,7 +7511,6 @@ export type Database = {
           share_commentary?: string | null
           shared_by?: string | null
           slug?: string | null
-          space_id?: string | null
           story_type?: string | null
           subtitle?: string | null
           tags?: string[] | null
@@ -7614,13 +7545,6 @@ export type Database = {
             columns: ["shared_by"]
             isOneToOne: false
             referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "posts_space_id_fkey"
-            columns: ["space_id"]
-            isOneToOne: false
-            referencedRelation: "collaboration_spaces"
             referencedColumns: ["id"]
           },
         ]
