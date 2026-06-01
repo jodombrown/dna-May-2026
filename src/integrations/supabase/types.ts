@@ -14300,6 +14300,10 @@ export type Database = {
         Args: { _sponsor_id: string; _user_id: string }
         Returns: boolean
       }
+      is_typing_topic_participant: {
+        Args: { _topic: string }
+        Returns: boolean
+      }
       is_user_blocked: {
         Args: { p_other_user_id: string; p_user_id: string }
         Returns: boolean
