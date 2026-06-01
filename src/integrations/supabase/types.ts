@@ -14750,38 +14750,6 @@ export type Database = {
       rpc_run_cron_overdue_task_reminders: { Args: never; Returns: undefined }
       rpc_save_opportunity: { Args: { p_op: string }; Returns: undefined }
       rpc_seed_verified_contributor: { Args: never; Returns: undefined }
-      rpc_task_assign: {
-        Args: { p_assignee: string; p_task: string }
-        Returns: undefined
-      }
-      rpc_task_comment: {
-        Args: { p_body: string; p_task: string }
-        Returns: string
-      }
-      rpc_task_create: {
-        Args: {
-          p_description?: string
-          p_due?: string
-          p_priority?: string
-          p_space: string
-          p_title: string
-        }
-        Returns: string
-      }
-      rpc_task_set_status: {
-        Args: { p_status: string; p_task: string }
-        Returns: undefined
-      }
-      rpc_task_update: {
-        Args: {
-          p_description?: string
-          p_due?: string
-          p_priority?: string
-          p_task: string
-          p_title?: string
-        }
-        Returns: undefined
-      }
       rpc_toggle_spotlight: {
         Args: { p_post: string; p_value: boolean }
         Returns: undefined
