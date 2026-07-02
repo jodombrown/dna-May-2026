@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.is_typing_topic_participant(text) FROM anon, public;
