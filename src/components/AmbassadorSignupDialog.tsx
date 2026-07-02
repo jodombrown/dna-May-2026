@@ -35,14 +35,18 @@ const AmbassadorSignupDialog = ({ isOpen, onClose }: AmbassadorSignupDialogProps
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value.trim()
+      [field]: value
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.firstName || !formData.lastName || !formData.email) {
+    const trimmedFirstName = formData.firstName.trim();
+    const trimmedLastName = formData.lastName.trim();
+    const trimmedEmail = formData.email.trim();
+    
+    if (!trimmedFirstName || !trimmedLastName || !trimmedEmail) {
       toast.error('Please fill in your first name, last name, and email.');
       return;
     }
@@ -50,15 +54,15 @@ const AmbassadorSignupDialog = ({ isOpen, onClose }: AmbassadorSignupDialogProps
     setIsSubmitting(true);
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
+      const fullName = `${trimmedFirstName} ${trimmedLastName}`;
       const ambassadorDetails = `
-Experience/Background: ${formData.experience || 'Not provided'}
+Experience/Background: ${formData.experience.trim() || 'Not provided'}
 
-Motivation: ${formData.motivation || 'Not provided'}
+Motivation: ${formData.motivation.trim() || 'Not provided'}
 
-Skills to Contribute: ${formData.skills || 'Not provided'}
+Skills to Contribute: ${formData.skills.trim() || 'Not provided'}
 
-Availability: ${formData.availability || 'Not provided'}
+Availability: ${formData.availability.trim() || 'Not provided'}
       `.trim();
 
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
@@ -66,14 +70,14 @@ Availability: ${formData.availability || 'Not provided'}
           formType: 'ambassador-signup',
           formData: {
             name: fullName,
-            email: formData.email,
-            organization: formData.organization,
-            current_location: formData.currentLocation,
-            connection_to_africa: formData.connectionToAfrica,
-            linkedin_url: formData.linkedin,
+            email: trimmedEmail,
+            organization: formData.organization.trim(),
+            current_location: formData.currentLocation.trim(),
+            connection_to_africa: formData.connectionToAfrica.trim(),
+            linkedin_url: formData.linkedin.trim(),
             ambassador_details: ambassadorDetails
           },
-          userEmail: formData.email
+          userEmail: trimmedEmail
         }
       });
 

@@ -37,14 +37,18 @@ const MainPageFeedbackPanel = ({ isOpen, onClose }: MainPageFeedbackPanelProps) 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value.trim()
+      [field]: value
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.firstName || !formData.lastName || !formData.email) {
+    const trimmedFirstName = formData.firstName.trim();
+    const trimmedLastName = formData.lastName.trim();
+    const trimmedEmail = formData.email.trim();
+    
+    if (!trimmedFirstName || !trimmedLastName || !trimmedEmail) {
       toast.error('Please fill in your first name, last name, and email.');
       return;
     }
@@ -52,19 +56,19 @@ const MainPageFeedbackPanel = ({ isOpen, onClose }: MainPageFeedbackPanelProps) 
     setIsSubmitting(true);
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
+      const fullName = `${trimmedFirstName} ${trimmedLastName}`;
       const feedbackDetails = `
-Overall Experience: ${formData.overallExperience || 'Not provided'}
+Overall Experience: ${formData.overallExperience.trim() || 'Not provided'}
 
-Most Valuable Feature: ${formData.mostValuableFeature || 'Not provided'}
+Most Valuable Feature: ${formData.mostValuableFeature.trim() || 'Not provided'}
 
-Improvement Areas: ${formData.improvementAreas || 'Not provided'}
+Improvement Areas: ${formData.improvementAreas.trim() || 'Not provided'}
 
-Specific Feedback: ${formData.specificFeedback || 'Not provided'}
+Specific Feedback: ${formData.specificFeedback.trim() || 'Not provided'}
 
-General Suggestions: ${formData.suggestions || 'Not provided'}
+General Suggestions: ${formData.suggestions.trim() || 'Not provided'}
 
-Feedback Type: ${formData.feedbackType || 'General'}
+Feedback Type: ${formData.feedbackType.trim() || 'General'}
       `.trim();
 
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
@@ -72,15 +76,15 @@ Feedback Type: ${formData.feedbackType || 'General'}
           formType: 'main-page-feedback',
           formData: {
             name: fullName,
-            email: formData.email,
-            organization: formData.organization,
-            current_location: formData.currentLocation,
-            connection_to_africa: formData.connectionToAfrica,
-            linkedin_url: formData.linkedin,
-            feedback_type: formData.feedbackType,
+            email: trimmedEmail,
+            organization: formData.organization.trim(),
+            current_location: formData.currentLocation.trim(),
+            connection_to_africa: formData.connectionToAfrica.trim(),
+            linkedin_url: formData.linkedin.trim(),
+            feedback_type: formData.feedbackType.trim(),
             feedback_details: feedbackDetails
           },
-          userEmail: formData.email
+          userEmail: trimmedEmail
         }
       });
 

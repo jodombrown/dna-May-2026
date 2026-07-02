@@ -95,14 +95,18 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value.trim()
+      [field]: value
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.firstName || !formData.lastName || !formData.email) {
+    const trimmedFirstName = formData.firstName.trim();
+    const trimmedLastName = formData.lastName.trim();
+    const trimmedEmail = formData.email.trim();
+    
+    if (!trimmedFirstName || !trimmedLastName || !trimmedEmail) {
       toast.error('Please fill in your first name, last name, and email.');
       return;
     }
@@ -110,20 +114,20 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
     setIsSubmitting(true);
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
-      const message = `Feedback for ${pageType} page:\n\n${formData.recommendations || 'No specific recommendations provided.'}`;
+      const fullName = `${trimmedFirstName} ${trimmedLastName}`;
+      const message = `Feedback for ${pageType} page:\n\n${formData.recommendations.trim() || 'No specific recommendations provided.'}`;
 
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
         body: {
           formType: 'feedback',
           formData: {
             name: fullName,
-            email: formData.email,
+            email: trimmedEmail,
             pageType: pageType,
-            feedback: formData.recommendations,
-            linkedin_url: formData.linkedin
+            feedback: formData.recommendations.trim(),
+            linkedin_url: formData.linkedin.trim()
           },
-          userEmail: formData.email
+          userEmail: trimmedEmail
         }
       });
 
