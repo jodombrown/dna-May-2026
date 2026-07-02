@@ -102,7 +102,11 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.firstName || !formData.lastName || !formData.email) {
+    const trimmedFirstName = formData.firstName.trim();
+    const trimmedLastName = formData.lastName.trim();
+    const trimmedEmail = formData.email.trim();
+    
+    if (!trimmedFirstName || !trimmedLastName || !trimmedEmail) {
       toast.error('Please fill in your first name, last name, and email.');
       return;
     }
