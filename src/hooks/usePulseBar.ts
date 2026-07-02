@@ -215,7 +215,7 @@ async function fetchCollaboratePulse(userId: string): Promise<CollaboratePulse> 
       id: m.spaces.id,
       title: m.spaces.name,
       subtitle: isStalled ? 'Needs attention' : 'Active',
-      action_url: `/collaborate/spaces/${m.spaces.id}`,
+      action_url: `/dna/collaborate/spaces/${m.spaces.id}`,
     };
   });
 
