@@ -114,8 +114,8 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
     setIsSubmitting(true);
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
-      const message = `Feedback for ${pageType} page:\n\n${formData.recommendations || 'No specific recommendations provided.'}`;
+      const fullName = `${trimmedFirstName} ${trimmedLastName}`;
+      const message = `Feedback for ${pageType} page:\n\n${formData.recommendations.trim() || 'No specific recommendations provided.'}`;
 
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
         body: {
