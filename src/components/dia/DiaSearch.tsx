@@ -357,7 +357,7 @@ export function DiaSearch({
   };
 
   const handleProjectClick = (projectId: string) => {
-    navigate(`/spaces/${projectId}`);
+    navigate(`/dna/collaborate/spaces/${projectId}`);
   };
 
   const handleHashtagClick = (hashtagName: string) => {
