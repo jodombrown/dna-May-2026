@@ -35,7 +35,7 @@ const AmbassadorSignupDialog = ({ isOpen, onClose }: AmbassadorSignupDialogProps
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value.trim()
+      [field]: value
     }));
   };
 

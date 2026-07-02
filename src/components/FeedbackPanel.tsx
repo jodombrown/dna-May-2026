@@ -95,7 +95,7 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value.trim()
+      [field]: value
     }));
   };
 
