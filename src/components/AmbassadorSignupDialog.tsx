@@ -54,15 +54,15 @@ const AmbassadorSignupDialog = ({ isOpen, onClose }: AmbassadorSignupDialogProps
     setIsSubmitting(true);
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
+      const fullName = `${trimmedFirstName} ${trimmedLastName}`;
       const ambassadorDetails = `
-Experience/Background: ${formData.experience || 'Not provided'}
+Experience/Background: ${formData.experience.trim() || 'Not provided'}
 
-Motivation: ${formData.motivation || 'Not provided'}
+Motivation: ${formData.motivation.trim() || 'Not provided'}
 
-Skills to Contribute: ${formData.skills || 'Not provided'}
+Skills to Contribute: ${formData.skills.trim() || 'Not provided'}
 
-Availability: ${formData.availability || 'Not provided'}
+Availability: ${formData.availability.trim() || 'Not provided'}
       `.trim();
 
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
