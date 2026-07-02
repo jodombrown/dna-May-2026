@@ -122,12 +122,12 @@ const FeedbackPanel = ({ isOpen, onClose, pageType }: FeedbackPanelProps) => {
           formType: 'feedback',
           formData: {
             name: fullName,
-            email: formData.email,
+            email: trimmedEmail,
             pageType: pageType,
-            feedback: formData.recommendations,
-            linkedin_url: formData.linkedin
+            feedback: formData.recommendations.trim(),
+            linkedin_url: formData.linkedin.trim()
           },
-          userEmail: formData.email
+          userEmail: trimmedEmail
         }
       });
 
