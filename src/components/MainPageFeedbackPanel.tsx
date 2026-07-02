@@ -84,7 +84,7 @@ Feedback Type: ${formData.feedbackType.trim() || 'General'}
             feedback_type: formData.feedbackType.trim(),
             feedback_details: feedbackDetails
           },
-          userEmail: formData.email
+          userEmail: trimmedEmail
         }
       });
 
