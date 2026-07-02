@@ -10471,7 +10471,6 @@ export type Database = {
       }
       space_tasks: {
         Row: {
-          assigned_to: string | null
           assignee_id: string | null
           completed_at: string | null
           created_at: string
@@ -10491,7 +10490,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          assigned_to?: string | null
           assignee_id?: string | null
           completed_at?: string | null
           created_at?: string
@@ -10511,7 +10509,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          assigned_to?: string | null
           assignee_id?: string | null
           completed_at?: string | null
           created_at?: string

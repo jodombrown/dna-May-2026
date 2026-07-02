@@ -222,10 +222,10 @@ async function getConveneDigest(userId: string, since: string): Promise<DigestSe
 }
 
 async function getCollaborateDigest(userId: string, since: string): Promise<DigestSection> {
-  const { count: taskUpdates } = await db
-    .from('collaborate_tasks')
+  const { count: taskUpdates } = await supabase
+    .from('space_tasks')
     .select('*', { count: 'exact', head: true })
-    .eq('assigned_to', userId)
+    .eq('assignee_id', userId)
     .gte('updated_at', since);
 
   return {

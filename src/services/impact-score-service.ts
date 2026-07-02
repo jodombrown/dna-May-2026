@@ -163,19 +163,19 @@ async function computeCollaborateScore(userId: string): Promise<number> {
     .eq('user_id', userId)
     .gte('created_at', fourteenDaysAgo);
 
-  // Tasks completed — check if tasks table exists, if query fails just skip
+  // Tasks completed — count done tasks assigned to the user
   let taskPts = 0;
   try {
     const { count: tasksCompleted } = await supabase
-      .from('space_tasks' as any)
+      .from('space_tasks')
       .select('*', { count: 'exact', head: true })
-      .eq('assigned_to', userId)
-      .eq('status', 'completed');
+      .eq('assignee_id', userId)
+      .eq('status', 'done');
     taskPts = diminishingScore(tasksCompleted ?? 0, [
       [0, 0], [5, 10], [10, 20],
     ], 20);
   } catch {
-    // Tasks table may not exist — skip
+    // Query failed — skip task points
   }
 
   const activePts = (recentActivity ?? 0) > 0 ? 10 : 0;

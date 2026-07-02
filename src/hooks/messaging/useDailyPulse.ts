@@ -99,7 +99,7 @@ export function useDailyPulse(enabled: boolean) {
       const tasksRes = await supabase
         .from('space_tasks')
         .select('id, title, space_id, status, due_date, updated_at, spaces:spaces(id, name)')
-        .or(`assignee_id.eq.${uid},assigned_to.eq.${uid}`)
+        .eq('assignee_id', uid)
         .neq('status', 'done')
         .order('due_date', { ascending: true, nullsFirst: false })
         .limit(20);
