@@ -56,19 +56,19 @@ const MainPageFeedbackPanel = ({ isOpen, onClose }: MainPageFeedbackPanelProps) 
     setIsSubmitting(true);
 
     try {
-      const fullName = `${formData.firstName} ${formData.lastName}`;
+      const fullName = `${trimmedFirstName} ${trimmedLastName}`;
       const feedbackDetails = `
-Overall Experience: ${formData.overallExperience || 'Not provided'}
+Overall Experience: ${formData.overallExperience.trim() || 'Not provided'}
 
-Most Valuable Feature: ${formData.mostValuableFeature || 'Not provided'}
+Most Valuable Feature: ${formData.mostValuableFeature.trim() || 'Not provided'}
 
-Improvement Areas: ${formData.improvementAreas || 'Not provided'}
+Improvement Areas: ${formData.improvementAreas.trim() || 'Not provided'}
 
-Specific Feedback: ${formData.specificFeedback || 'Not provided'}
+Specific Feedback: ${formData.specificFeedback.trim() || 'Not provided'}
 
-General Suggestions: ${formData.suggestions || 'Not provided'}
+General Suggestions: ${formData.suggestions.trim() || 'Not provided'}
 
-Feedback Type: ${formData.feedbackType || 'General'}
+Feedback Type: ${formData.feedbackType.trim() || 'General'}
       `.trim();
 
       const { data, error } = await supabase.functions.invoke('send-universal-email', {
