@@ -70,14 +70,14 @@ Availability: ${formData.availability.trim() || 'Not provided'}
           formType: 'ambassador-signup',
           formData: {
             name: fullName,
-            email: formData.email,
-            organization: formData.organization,
-            current_location: formData.currentLocation,
-            connection_to_africa: formData.connectionToAfrica,
-            linkedin_url: formData.linkedin,
+            email: trimmedEmail,
+            organization: formData.organization.trim(),
+            current_location: formData.currentLocation.trim(),
+            connection_to_africa: formData.connectionToAfrica.trim(),
+            linkedin_url: formData.linkedin.trim(),
             ambassador_details: ambassadorDetails
           },
-          userEmail: formData.email
+          userEmail: trimmedEmail
         }
       });
 
