@@ -98,11 +98,11 @@ export const digestService = {
         .gte('created_at', weekEnd.toISOString()),
 
       // Tasks completed
-      db
-        .from('collaborate_tasks')
+      supabase
+        .from('space_tasks')
         .select('*', { count: 'exact', head: true })
-        .eq('assigned_to', userId)
-        .eq('status', 'completed')
+        .eq('assignee_id', userId)
+        .eq('status', 'done')
         .gte('updated_at', since),
 
       // Opportunity matches
@@ -229,11 +229,11 @@ export const digestService = {
   async getCollaborateHighlights(userId: string, since: string): Promise<DigestHighlight[]> {
     const highlights: DigestHighlight[] = [];
 
-    const { count: completedTasks } = await db
-      .from('collaborate_tasks')
+    const { count: completedTasks } = await supabase
+      .from('space_tasks')
       .select('*', { count: 'exact', head: true })
-      .eq('assigned_to', userId)
-      .eq('status', 'completed')
+      .eq('assignee_id', userId)
+      .eq('status', 'done')
       .gte('updated_at', since);
 
     if (completedTasks && completedTasks > 0) {
