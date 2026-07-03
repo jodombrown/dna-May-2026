@@ -12,35 +12,6 @@ if (!document.getElementById("root")) {
   console.error("Root element not found. Make sure your HTML includes <div id='root'></div>");
 }
 
-const clearDevelopmentServiceWorkerState = async () => {
-  if (!import.meta.env.DEV || !('serviceWorker' in navigator)) {
-    return false;
-  }
-
-  let clearedState = Boolean(navigator.serviceWorker.controller);
-
-  try {
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    clearedState = clearedState || registrations.length > 0;
-    await Promise.all(registrations.map((registration) => registration.unregister()));
-  } catch {
-    // Dev cleanup is best-effort.
-  }
-
-  if ('caches' in window) {
-    try {
-      const keys = await caches.keys();
-      const dnaCacheKeys = keys.filter((key) => key.startsWith('dna-cache-') || key.startsWith('dna-runtime-'));
-      clearedState = clearedState || dnaCacheKeys.length > 0;
-      await Promise.all(dnaCacheKeys.map((key) => caches.delete(key)));
-    } catch {
-      // Dev cleanup is best-effort.
-    }
-  }
-
-  return clearedState;
-};
-
 const registerProductionServiceWorker = () => {
   if ('serviceWorker' in navigator && !import.meta.env.DEV) {
     window.addEventListener('load', () => {
@@ -78,16 +49,9 @@ const registerProductionServiceWorker = () => {
   }
 };
 
-const renderApp = async () => {
-  const clearedDevelopmentState = await clearDevelopmentServiceWorkerState();
-
-  if (clearedDevelopmentState) {
-    window.location.reload();
-    return;
-  }
-
+const renderApp = () => {
   registerProductionServiceWorker();
   createRoot(document.getElementById("root")!).render(<App />);
 };
 
-void renderApp();
+renderApp();
