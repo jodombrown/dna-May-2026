@@ -164,39 +164,11 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
         </div>
 
         {/* Visit Frequency - filtered by Return Plans */}
-        {(() => {
-          const visitOptions = useMemo(
-            () => getVisitFrequencyOptionsFor(returnIntentions),
-            [returnIntentions]
-          );
-          // If the current selection isn't valid for the chosen return plan, clear it.
-          useEffect(() => {
-            if (visitFrequency && !visitOptions.some(o => o.value === visitFrequency)) {
-              onVisitFrequencyChange('');
-            }
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-          }, [returnIntentions]);
-          return (
-            <div>
-              <Label htmlFor="visit_frequency">How Often Do You Visit Africa?</Label>
-              <Select value={visitFrequency} onValueChange={onVisitFrequencyChange}>
-                <SelectTrigger className="bg-background">
-                  <SelectValue placeholder={returnIntentions ? 'Select visit frequency' : 'Choose your return plan first'} />
-                </SelectTrigger>
-                <SelectContent className="bg-popover border shadow-lg z-50">
-                  {visitOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <div className="flex flex-col">
-                        <span>{option.label}</span>
-                        <span className="text-xs text-muted-foreground">{option.description}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          );
-        })()}
+        <VisitFrequencyField
+          returnIntentions={returnIntentions}
+          visitFrequency={visitFrequency}
+          onVisitFrequencyChange={onVisitFrequencyChange}
+        />
 
         {/* Diaspora Networks */}
         <TagMultiSelect
