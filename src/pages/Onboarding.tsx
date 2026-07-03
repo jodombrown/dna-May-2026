@@ -13,7 +13,7 @@ import UsernameStep from '@/components/onboarding/steps/UsernameStep';
 import RoleDeclarationStep, { type DnaIdentityRole } from '@/components/onboarding/RoleDeclarationStep';
 import PlaceDeclarationStep from '@/components/onboarding/PlaceDeclarationStep';
 import type { ContinentCode } from '@/data/continentCountries';
-import { isValidAlpha3 } from '@/lib/dna-place';
+import { isValidAlpha3, getCountryNameByAlpha3 } from '@/lib/dna-place';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -187,6 +187,8 @@ const Onboarding = () => {
         if (continentCode && countryCode) {
           slim.continent = continentCode;
           slim.country = countryCode;
+          const countryName = getCountryNameByAlpha3(countryCode);
+          if (countryName) slim.current_country = countryName;
           if (!profileAny?.place_declared_at) slim.place_declared_at = nowIso;
         }
 
@@ -230,7 +232,7 @@ const Onboarding = () => {
         last_name: formData.last_name,
         username: formData.username,
         avatar_url: formData.avatar_url,
-        current_country: formData.current_country,
+        current_country: formData.current_country || (countryCode ? getCountryNameByAlpha3(countryCode) ?? '' : ''),
         headline: formData.headline || null,
         profession: formData.profession || null,
         professional_role: formData.professional_role || null,
