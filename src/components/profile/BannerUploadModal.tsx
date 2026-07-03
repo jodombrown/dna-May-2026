@@ -136,15 +136,32 @@ export function BannerUploadModal({
       };
 
       if (selectedTab === 'upload' && imageSrc && croppedAreaPixels) {
+        // Ensure we have an authenticated session before uploading (storage RLS uses auth.uid())
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) {
+          throw new Error('You must be signed in to upload a banner.');
+        }
+        if (session.user.id !== userId) {
+          throw new Error('Session user does not match profile owner.');
+        }
+
         // Generate cropped image
         const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
-        const fileName = `${userId}/banner-${Date.now()}.png`;
+        const fileName = `${session.user.id}/banner-${Date.now()}.png`;
+
+        // Force session propagation to the storage client so auth.uid() is set for RLS.
+        // Some supabase-js edge cases leave the Storage client with the anon token
+        // if it initialised before the SIGNED_IN event fired.
+        await supabase.auth.setSession({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+        });
 
         const { error: uploadError } = await supabase.storage
           .from('banners')
           .upload(fileName, croppedBlob, {
             upsert: true,
-            contentType: 'image/png'
+            contentType: 'image/png',
           });
 
         if (uploadError) throw uploadError;
