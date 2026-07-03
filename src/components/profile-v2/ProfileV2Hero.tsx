@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Edit, MapPin, Globe, Briefcase, MessageCircle, UserPlus, Clock, Check, UserCheck, Users, Calendar } from 'lucide-react';
@@ -66,6 +67,14 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
 }) => {
   const { toast } = useToast();
   const { followerCount, followingCount } = useFollow(profile.id);
+  const navigate = useNavigate();
+
+  const networkBase = permissions.is_owner
+    ? '/dna/connect/network'
+    : '/dna/connect/discover';
+  const goToNetwork = (tab: 'connections' | 'followers' | 'following') => {
+    navigate(permissions.is_owner ? `${networkBase}?tab=${tab}` : networkBase);
+  };
 
   const handleShare = async () => {
     const profileUrl = `${window.location.origin}/dna/${profile.username}`;
@@ -272,15 +281,36 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
                   <span>
                     {connectionsCount > 0 && (
                       <>
-                        <strong>{connectionsCount}</strong> connections
+                        <button
+                          type="button"
+                          onClick={() => goToNetwork('connections')}
+                          className="hover:underline focus-visible:underline focus-visible:outline-none"
+                          aria-label={`${connectionsCount} connections. Open network.`}
+                        >
+                          <strong>{connectionsCount}</strong> connections
+                        </button>
                         {(followerCount > 0 || followingCount > 0) && <span className="mx-1">·</span>}
                       </>
                     )}
                     {(followerCount > 0 || followingCount > 0) && (
                       <>
-                        <strong>{followerCount}</strong> followers
+                        <button
+                          type="button"
+                          onClick={() => goToNetwork('followers')}
+                          className="hover:underline focus-visible:underline focus-visible:outline-none"
+                          aria-label={`${followerCount} followers. Open network.`}
+                        >
+                          <strong>{followerCount}</strong> followers
+                        </button>
                         <span className="mx-1">·</span>
-                        <strong>{followingCount}</strong> following
+                        <button
+                          type="button"
+                          onClick={() => goToNetwork('following')}
+                          className="hover:underline focus-visible:underline focus-visible:outline-none"
+                          aria-label={`${followingCount} following. Open network.`}
+                        >
+                          <strong>{followingCount}</strong> following
+                        </button>
                       </>
                     )}
                   </span>

@@ -1,12 +1,14 @@
 /**
- * DNA | Diaspora Footprint — Five C's Activity Bar
- * Shows activity counts across the Five C's as icon+count pills.
+ * DNA | Diaspora Footprint - Five C's Activity Bar
+ * Shows activity counts across the Five C's as clickable icon+count pills.
  * Only displays counts > 0.
  */
 
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 import {
   Sankofa,
   Nkonsonkonson,
@@ -17,6 +19,8 @@ import {
 
 interface DiasporaFootprintProps {
   userId: string;
+  isOwner?: boolean;
+  username?: string;
 }
 
 interface FootprintCounts {
@@ -27,15 +31,40 @@ interface FootprintCounts {
   posts: number;
 }
 
-const FIVE_CS = [
-  { key: 'connections' as const, label: 'Connect', icon: Sankofa },
-  { key: 'events' as const, label: 'Convene', icon: Nkonsonkonson },
-  { key: 'spaces' as const, label: 'Collaborate', icon: FuntunfunefuDenkyemfunefu },
-  { key: 'contributions' as const, label: 'Contribute', icon: Adinkrahene },
-  { key: 'posts' as const, label: 'Convey', icon: Mpatapo },
+type FiveCKey = keyof FootprintCounts;
+
+const FIVE_CS: { key: FiveCKey; label: string; icon: React.ElementType }[] = [
+  { key: 'connections', label: 'Connect', icon: Sankofa },
+  { key: 'events', label: 'Convene', icon: Nkonsonkonson },
+  { key: 'spaces', label: 'Collaborate', icon: FuntunfunefuDenkyemfunefu },
+  { key: 'contributions', label: 'Contribute', icon: Adinkrahene },
+  { key: 'posts', label: 'Convey', icon: Mpatapo },
 ];
 
-export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({ userId }) => {
+const routeFor = (key: FiveCKey, isOwner: boolean, username?: string): string => {
+  switch (key) {
+    case 'connections':
+      return isOwner ? '/dna/connect/network?tab=connections' : '/dna/connect/discover';
+    case 'events':
+      return isOwner ? '/dna/convene/my-events' : '/dna/convene';
+    case 'spaces':
+      return isOwner ? '/dna/collaborate/my-spaces' : '/dna/collaborate';
+    case 'contributions':
+      return isOwner ? '/dna/contribute/my-contributions' : '/dna/contribute';
+    case 'posts':
+      return isOwner
+        ? '/dna/convey'
+        : `/dna/feed${username ? `?author=${encodeURIComponent(username)}` : ''}`;
+  }
+};
+
+export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({
+  userId,
+  isOwner = false,
+  username,
+}) => {
+  const navigate = useNavigate();
+
   const { data: counts } = useQuery({
     queryKey: ['diaspora-footprint', userId],
     queryFn: async (): Promise<FootprintCounts> => {
@@ -84,14 +113,21 @@ export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({ userId }) 
       <h3 className="text-sm font-semibold text-foreground">Diaspora Footprint</h3>
       <div className="flex flex-wrap gap-2">
         {activePills.map(({ key, label, icon: Icon }) => (
-          <div
+          <button
             key={key}
-            className="flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-[64px]"
+            type="button"
+            onClick={() => navigate(routeFor(key, isOwner, username))}
+            aria-label={`${counts[key]} ${label}. Open details.`}
+            className={cn(
+              'flex flex-col items-center bg-muted rounded-lg px-3 py-2 min-w-[64px] min-h-[44px]',
+              'hover:bg-secondary transition-colors cursor-pointer',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
+            )}
           >
             <Icon className="w-4 h-4 text-dna-emerald mb-0.5" />
             <span className="font-semibold text-sm text-foreground">{counts[key]}</span>
             <span className="text-xs text-muted-foreground">{label}</span>
-          </div>
+          </button>
         ))}
       </div>
     </div>
