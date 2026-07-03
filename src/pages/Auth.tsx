@@ -197,6 +197,35 @@ const Auth = () => {
     }
   ];
 
+  const AuthModeToggle = () => (
+    <div className="flex items-center p-1 bg-muted rounded-lg w-full max-w-xs mx-auto">
+      <button
+        type="button"
+        onClick={() => setIsSignUp(false)}
+        className={cn(
+          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
+          !isSignUp
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Sign In
+      </button>
+      <button
+        type="button"
+        onClick={() => setIsSignUp(true)}
+        className={cn(
+          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
+          isSignUp
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Sign Up
+      </button>
+    </div>
+  );
+
   // Auth content switches between sign-in and sign-up
   const authContent = (
     <div className="w-full space-y-4">
