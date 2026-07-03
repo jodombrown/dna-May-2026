@@ -98,6 +98,12 @@ const EventDetail = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   
   const isLoggedIn = !!user;
+  const { markStepComplete } = useProfileCompletion();
+
+  // Auto-mark "Browse an event" profile step as complete
+  useEffect(() => {
+    if (isLoggedIn) markStepComplete('first_event');
+  }, [isLoggedIn, markStepComplete]);
   
   // Animate banner in after a short delay for non-logged-in users
   useEffect(() => {
