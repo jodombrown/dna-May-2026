@@ -410,11 +410,9 @@ const Auth = () => {
               <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
                 <Globe className="w-7 h-7 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-foreground">
-                {isSignUp ? 'Join DNA' : 'Welcome Back'}
-              </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                Connect with the global African diaspora
+              <AuthModeToggle />
+              <p className="text-sm text-muted-foreground mt-3">
+                {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
               </p>
             </CardHeader>
             <CardContent>
