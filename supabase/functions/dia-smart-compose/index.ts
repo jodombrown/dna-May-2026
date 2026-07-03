@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
     }
 
     const fmtProfile = (label: string, p: typeof otherProfile) =>
-      `${label}: name=${p.full_name ?? '?'}; headline=${p.headline ?? '-'}; sector=${p.professional_sector ?? '-'}; heritage=${p.ethnic_heritage ?? '-'}; location=${[p.current_city, p.current_country].filter(Boolean).join(', ') || '-'}`;
+      `${label}: name=${p.full_name ?? '?'}; headline=${p.headline ?? '-'}; sector=${(Array.isArray(p.professional_sectors) ? p.professional_sectors.join(', ') : p.professional_sectors) || '-'}; heritage=${Array.isArray(p.ethnic_heritage) ? (p.ethnic_heritage.join(', ') || '-') : (p.ethnic_heritage ?? '-')}; location=${[p.current_city, p.current_country].filter(Boolean).join(', ') || '-'}`;
 
     const context = [
       meProfile ? fmtProfile('Sender', meProfile) : '',
