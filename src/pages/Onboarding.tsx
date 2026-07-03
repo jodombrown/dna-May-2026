@@ -187,6 +187,8 @@ const Onboarding = () => {
         if (continentCode && countryCode) {
           slim.continent = continentCode;
           slim.country = countryCode;
+          const countryName = getCountryNameByAlpha3(countryCode);
+          if (countryName) slim.current_country = countryName;
           if (!profileAny?.place_declared_at) slim.place_declared_at = nowIso;
         }
 
