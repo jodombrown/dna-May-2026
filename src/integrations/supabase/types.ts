@@ -13293,6 +13293,15 @@ export type Database = {
               username: string
             }[]
           }
+      get_my_contact_info: {
+        Args: never
+        Returns: {
+          email: string
+          phone: string
+          phone_number: string
+          whatsapp_number: string
+        }[]
+      }
       get_my_speaker_follows: {
         Args: never
         Returns: {
