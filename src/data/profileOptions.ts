@@ -312,6 +312,23 @@ export const VISIT_FREQUENCY_OPTIONS = [
 export const VISIT_FREQUENCY_VALUES = VISIT_FREQUENCY_OPTIONS.map(o => o.value);
 export type VisitFrequencyValue = typeof VISIT_FREQUENCY_OPTIONS[number]['value'];
 
+// Which visit-frequency options make sense for each return-plan choice.
+// Keeps the "How often do you visit Africa?" list short and relevant.
+export const VISIT_FREQUENCY_BY_RETURN_INTENTION: Record<string, VisitFrequencyValue[]> = {
+  planning_return:  ['multiple_yearly', 'yearly', 'every_few_years', 'planning_first'],
+  exploring:        ['multiple_yearly', 'yearly', 'every_few_years', 'rarely', 'never_visited', 'planning_first'],
+  regular_visits:   ['multiple_yearly', 'yearly', 'every_few_years'],
+  no_plans:         ['yearly', 'every_few_years', 'rarely', 'never_visited', 'planning_first'],
+  already_returned: ['live_there'],
+  never_left:       ['live_there'],
+};
+
+export function getVisitFrequencyOptionsFor(returnIntention: string) {
+  const allowed = VISIT_FREQUENCY_BY_RETURN_INTENTION[returnIntention];
+  if (!allowed || allowed.length === 0) return VISIT_FREQUENCY_OPTIONS;
+  return VISIT_FREQUENCY_OPTIONS.filter(o => allowed.includes(o.value));
+}
+
 // =============================================================================
 // USER TYPES
 // =============================================================================
