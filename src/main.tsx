@@ -12,31 +12,37 @@ if (!document.getElementById("root")) {
   console.error("Root element not found. Make sure your HTML includes <div id='root'></div>");
 }
 
-// Register service worker only for production builds.
-// In Vite dev preview, caching /node_modules/.vite chunks can mix stale React
-// modules with fresh ReactDOM modules and crash hooks with a null dispatcher.
-if ('serviceWorker' in navigator) {
-  if (import.meta.env.DEV) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.getRegistrations()
-        .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
-        .catch(() => {
-          // Dev cleanup is best-effort.
-        });
+const clearDevelopmentServiceWorkerState = async () => {
+  if (!import.meta.env.DEV || !('serviceWorker' in navigator)) {
+    return false;
+  }
 
-      if ('caches' in window) {
-        caches.keys()
-          .then((keys) => Promise.all(
-            keys
-              .filter((key) => key.startsWith('dna-cache-') || key.startsWith('dna-runtime-'))
-              .map((key) => caches.delete(key))
-          ))
-          .catch(() => {
-            // Dev cleanup is best-effort.
-          });
-      }
-    });
-  } else {
+  let clearedState = Boolean(navigator.serviceWorker.controller);
+
+  try {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    clearedState = clearedState || registrations.length > 0;
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  } catch {
+    // Dev cleanup is best-effort.
+  }
+
+  if ('caches' in window) {
+    try {
+      const keys = await caches.keys();
+      const dnaCacheKeys = keys.filter((key) => key.startsWith('dna-cache-') || key.startsWith('dna-runtime-'));
+      clearedState = clearedState || dnaCacheKeys.length > 0;
+      await Promise.all(dnaCacheKeys.map((key) => caches.delete(key)));
+    } catch {
+      // Dev cleanup is best-effort.
+    }
+  }
+
+  return clearedState;
+};
+
+const registerProductionServiceWorker = () => {
+  if ('serviceWorker' in navigator && !import.meta.env.DEV) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
@@ -70,6 +76,18 @@ if ('serviceWorker' in navigator) {
       });
     });
   }
-}
+};
 
-createRoot(document.getElementById("root")!).render(<App />);
+const renderApp = async () => {
+  const clearedDevelopmentState = await clearDevelopmentServiceWorkerState();
+
+  if (clearedDevelopmentState) {
+    window.location.reload();
+    return;
+  }
+
+  registerProductionServiceWorker();
+  createRoot(document.getElementById("root")!).render(<App />);
+};
+
+void renderApp();
