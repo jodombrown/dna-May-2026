@@ -67,6 +67,14 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
 }) => {
   const { toast } = useToast();
   const { followerCount, followingCount } = useFollow(profile.id);
+  const navigate = useNavigate();
+
+  const networkBase = permissions.is_owner
+    ? '/dna/connect/network'
+    : '/dna/connect/discover';
+  const goToNetwork = (tab: 'connections' | 'followers' | 'following') => {
+    navigate(permissions.is_owner ? `${networkBase}?tab=${tab}` : networkBase);
+  };
 
   const handleShare = async () => {
     const profileUrl = `${window.location.origin}/dna/${profile.username}`;
