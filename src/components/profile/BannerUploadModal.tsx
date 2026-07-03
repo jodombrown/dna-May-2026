@@ -149,11 +149,19 @@ export function BannerUploadModal({
         const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
         const fileName = `${session.user.id}/banner-${Date.now()}.png`;
 
+        // Force session propagation to the storage client so auth.uid() is set for RLS.
+        // Some supabase-js edge cases leave the Storage client with the anon token
+        // if it initialised before the SIGNED_IN event fired.
+        await supabase.auth.setSession({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+        });
+
         const { error: uploadError } = await supabase.storage
           .from('banners')
           .upload(fileName, croppedBlob, {
             upsert: true,
-            contentType: 'image/png'
+            contentType: 'image/png',
           });
 
         if (uploadError) throw uploadError;
