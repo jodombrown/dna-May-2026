@@ -481,10 +481,8 @@ const Auth = () => {
         <div className="w-1/2 bg-background flex items-center justify-center p-12">
           <div className="w-full max-w-md space-y-8">
             {/* Header */}
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold text-foreground">
-                {isSignUp ? 'Create Account' : 'Welcome'}
-              </h2>
+            <div className="text-center space-y-3">
+              <AuthModeToggle />
               <p className="text-muted-foreground">
                 {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
               </p>
