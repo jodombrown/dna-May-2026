@@ -28,6 +28,49 @@ const MENTORSHIP_AREA_OPTIONS = [
   'Technical skills',
 ] as const;
 
+interface VisitFrequencyFieldProps {
+  returnIntentions: string;
+  visitFrequency: string;
+  onVisitFrequencyChange: (value: string) => void;
+}
+
+const VisitFrequencyField: React.FC<VisitFrequencyFieldProps> = ({
+  returnIntentions,
+  visitFrequency,
+  onVisitFrequencyChange,
+}) => {
+  const visitOptions = useMemo(
+    () => getVisitFrequencyOptionsFor(returnIntentions),
+    [returnIntentions]
+  );
+  useEffect(() => {
+    if (visitFrequency && !visitOptions.some(o => o.value === visitFrequency)) {
+      onVisitFrequencyChange('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [returnIntentions]);
+  return (
+    <div>
+      <Label htmlFor="visit_frequency">How Often Do You Visit Africa?</Label>
+      <Select value={visitFrequency} onValueChange={onVisitFrequencyChange}>
+        <SelectTrigger className="bg-background">
+          <SelectValue placeholder={returnIntentions ? 'Select visit frequency' : 'Choose your return plan first'} />
+        </SelectTrigger>
+        <SelectContent className="bg-popover border shadow-lg z-50">
+          {visitOptions.map(option => (
+            <SelectItem key={option.value} value={option.value}>
+              <div className="flex flex-col">
+                <span>{option.label}</span>
+                <span className="text-xs text-muted-foreground">{option.description}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
+
 interface ProfileEditDiasporaProps {
   diasporaNetworks: string[];
   engagementIntentions: string[];
