@@ -232,7 +232,7 @@ const Onboarding = () => {
         last_name: formData.last_name,
         username: formData.username,
         avatar_url: formData.avatar_url,
-        current_country: formData.current_country,
+        current_country: formData.current_country || (countryCode ? getCountryNameByAlpha3(countryCode) ?? '' : ''),
         headline: formData.headline || null,
         profession: formData.profession || null,
         professional_role: formData.professional_role || null,
