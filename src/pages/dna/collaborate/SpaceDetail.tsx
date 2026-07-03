@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, KanbanSquare, Settings } from 'lucide-react';
+import { format } from 'date-fns';
+import { ArrowLeft, Check, KanbanSquare, Settings, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -10,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SpacesShell } from '@/components/collaborate/SpacesShell';
 import { SpaceFilesSection } from '@/components/collaborate/files/SpaceFilesSection';
 import { useJoinSpace } from '@/hooks/collaborate/useJoinSpace';
+import { useRosterModeration } from '@/hooks/collaborate/useRosterModeration';
 import { useSpace } from '@/hooks/collaborate/useSpace';
 import { memberInitials, memberName, useSpaceRoster } from '@/hooks/collaborate/useSpaceRoster';
 import type { SpaceVisibility } from '@/types/collaborate';
@@ -40,12 +42,21 @@ export default function SpaceDetail() {
 
   const { space, isLoading, isError } = useSpace(param);
   const { data: members = [] } = useSpaceRoster(space?.id);
+  const { approve, decline } = useRosterModeration(space?.id);
 
   const activeMembers = useMemo(
     () =>
       members
         .filter((m) => m.status === 'active')
         .sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9)),
+    [members],
+  );
+
+  const pendingMembers = useMemo(
+    () =>
+      members
+        .filter((m) => m.status === 'invited')
+        .sort((a, b) => (a.joined_at ?? '').localeCompare(b.joined_at ?? '')),
     [members],
   );
 
@@ -147,6 +158,62 @@ export default function SpaceDetail() {
             {space.description}
           </p>
         </Card>
+      )}
+
+      {/* Requests — leads only */}
+      {isLead && pendingMembers.length > 0 && (
+        <section className="mt-6">
+          <h2 className="text-sm font-semibold text-foreground">
+            Requests ({pendingMembers.length})
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            People asking to join this space. Approve to add them, or decline to dismiss.
+          </p>
+          <Card className="mt-2 divide-y divide-border">
+            {pendingMembers.map((m) => {
+              const name = memberName(m);
+              const pending = approve.isPending || decline.isPending;
+              return (
+                <div key={m.user_id} className="flex items-center gap-3 p-3">
+                  <Avatar className="h-9 w-9">
+                    {m.avatar_url && <AvatarImage src={m.avatar_url} alt={name} />}
+                    <AvatarFallback>{memberInitials(name)}</AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-foreground">{name}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {m.username ? `@${m.username} · ` : ''}
+                      Requested {m.joined_at ? format(new Date(m.joined_at), 'MMM d, yyyy') : 'recently'}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={pending}
+                      onClick={() => approve.mutate(m.user_id)}
+                    >
+                      <Check className="mr-1 h-4 w-4" aria-hidden="true" />
+                      Approve
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-foreground"
+                      disabled={pending}
+                      onClick={() => decline.mutate(m.user_id)}
+                      aria-label={`Decline ${name}`}
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </Card>
+        </section>
       )}
 
       {/* Members */}

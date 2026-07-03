@@ -5,6 +5,7 @@ export interface RosterMember {
   user_id: string;
   role: string;
   status: string;
+  joined_at: string | null;
   full_name: string | null;
   display_name: string | null;
   username: string | null;
@@ -34,7 +35,7 @@ export function useSpaceRoster(spaceId: string | undefined) {
     queryFn: async (): Promise<RosterMember[]> => {
       const { data: memberRows, error } = await supabase
         .from('space_members')
-        .select('user_id, role, status')
+        .select('user_id, role, status, joined_at')
         .eq('space_id', spaceId!);
       if (error) throw error;
       if (!memberRows || memberRows.length === 0) return [];
@@ -52,6 +53,7 @@ export function useSpaceRoster(spaceId: string | undefined) {
           user_id: r.user_id,
           role: r.role,
           status: r.status ?? 'active',
+          joined_at: r.joined_at ?? null,
           full_name: p?.full_name ?? null,
           display_name: p?.display_name ?? null,
           username: p?.username ?? null,
