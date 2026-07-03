@@ -1,9 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Users, Briefcase, MessageSquare, Folder, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+
   // Fetch platform stats
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
@@ -25,10 +28,10 @@ export default function AdminDashboard() {
   });
 
   const statCards = [
-    { label: 'Total Users', value: stats?.users || 0, icon: Users, color: 'bg-blue-500' },
-    { label: 'Total Posts', value: stats?.posts || 0, icon: MessageSquare, color: 'bg-emerald-500' },
-    { label: 'Active Spaces', value: stats?.spaces || 0, icon: Folder, color: 'bg-copper-500' },
-    { label: 'Opportunities', value: stats?.opportunities || 0, icon: Briefcase, color: 'bg-orange-500' }
+    { label: 'Total Users', value: stats?.users || 0, icon: Users, color: 'bg-blue-500', to: '/app/admin/users' },
+    { label: 'Total Posts', value: stats?.posts || 0, icon: MessageSquare, color: 'bg-emerald-500', to: '/app/admin/moderation' },
+    { label: 'Active Spaces', value: stats?.spaces || 0, icon: Folder, color: 'bg-copper-500', to: '/admin/spaces' },
+    { label: 'Opportunities', value: stats?.opportunities || 0, icon: Briefcase, color: 'bg-orange-500', to: '/admin/contributions' }
   ];
 
   if (isLoading) {
@@ -42,11 +45,24 @@ export default function AdminDashboard() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8 text-foreground">Admin Dashboard</h1>
-      
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((stat) => (
-          <Card key={stat.label}>
+          <Card
+            key={stat.label}
+            className="cursor-pointer hover:shadow-md transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(stat.to)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate(stat.to);
+              }
+            }}
+            aria-label={`${stat.label}: ${stat.value}. Open ${stat.label}.`}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between mb-4">
                 <div className={`${stat.color} p-3 rounded-lg`}>
@@ -80,3 +96,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
