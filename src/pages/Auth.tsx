@@ -396,31 +396,25 @@ const Auth = () => {
         </>
       )}
 
-      <div className="text-center pt-4 border-t">
-        <p className="text-sm text-muted-foreground">
-          {isSignUp ? (
-            <>
-              Already have an account?{' '}
-              <button
-                type="button"
-                onClick={() => setIsSignUp(false)}
-                className="text-primary hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
-              >
-                Sign In
-              </button>
-            </>
-          ) : (
-            <>
-              Don't have an account?{' '}
-              <button
-                type="button"
-                onClick={() => setIsSignUp(true)}
-                className="text-primary hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
-              >
-                Create Account
-              </button>
-            </>
-          )}
+      <div className="text-center pt-2">
+        <p className="text-xs text-muted-foreground">
+          By continuing, you agree to DNA's{' '}
+          <Link to="/legal/user-agreement" className="text-primary hover:underline font-medium">
+            User Agreement
+          </Link>
+          ,{' '}
+          <Link to="/legal/privacy-policy" className="text-primary hover:underline font-medium">
+            Privacy Policy
+          </Link>
+          ,{' '}
+          <Link to="/legal/terms" className="text-primary hover:underline font-medium">
+            Terms & Conditions
+          </Link>
+          , and{' '}
+          <Link to="/legal/cookie-policy" className="text-primary hover:underline font-medium">
+            Cookie Policy
+          </Link>
+          .
         </p>
       </div>
     </div>
