@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ArrowLeft, Globe, Users, Handshake, Eye, EyeOff } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useAuth } from '@/contexts/AuthContext';
