@@ -117,7 +117,7 @@ export function useProfileCompletion() {
       id: 'location',
       label: 'Set your location',
       description: 'Connect with people in your city and region',
-      isComplete: !!(profileData?.current_country || profileData?.location),
+      isComplete: !!(profileData?.current_country || profileData?.location || profileData?.country || profileData?.current_city),
       priority: 'required',
     },
 
