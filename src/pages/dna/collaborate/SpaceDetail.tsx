@@ -1,8 +1,6 @@
-import { useEffect, useMemo } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Settings } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useMemo } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, KanbanSquare, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -11,30 +9,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SpacesShell } from '@/components/collaborate/SpacesShell';
 import { useJoinSpace } from '@/hooks/collaborate/useJoinSpace';
-import { isUUID } from '@/utils/slugify';
+import { useSpace } from '@/hooks/collaborate/useSpace';
+import { memberInitials, memberName, useSpaceRoster } from '@/hooks/collaborate/useSpaceRoster';
 import type { SpaceVisibility } from '@/types/collaborate';
-
-interface SpaceRecord {
-  id: string;
-  slug: string;
-  name: string;
-  tagline: string | null;
-  description: string | null;
-  status: string;
-  visibility: string;
-  space_type: string;
-  created_by: string;
-}
-
-interface RosterMember {
-  user_id: string;
-  role: string;
-  status: string;
-  full_name: string | null;
-  display_name: string | null;
-  username: string | null;
-  avatar_url: string | null;
-}
 
 const SPACE_TYPE_LABEL: Record<string, string> = {
   project: 'Project',
@@ -55,83 +32,13 @@ function titleCase(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-function memberName(m: RosterMember): string {
-  return m.full_name || m.display_name || m.username || 'Member';
-}
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w.charAt(0).toUpperCase())
-    .join('');
-}
-
 export default function SpaceDetail() {
   const { slug: param = '' } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const joinSpace = useJoinSpace();
 
-  // Resolve-both: the :slug param may actually be a UUID (many legacy call
-  // sites pass a space id). Look up by whichever it is.
-  const paramIsUUID = isUUID(param);
-
-  const { data: space, isLoading, isError } = useQuery({
-    queryKey: ['space', param],
-    queryFn: async (): Promise<SpaceRecord | null> => {
-      const column = paramIsUUID ? 'id' : 'slug';
-      const { data, error } = await supabase
-        .from('spaces')
-        .select('id, slug, name, tagline, description, status, visibility, space_type, created_by')
-        .eq(column, param)
-        .maybeSingle();
-      if (error) throw error;
-      return data as SpaceRecord | null;
-    },
-    enabled: param.length > 0,
-  });
-
-  // If we resolved by id, rewrite the URL to the canonical /:slug form.
-  useEffect(() => {
-    if (space && paramIsUUID && space.slug) {
-      navigate(`/dna/collaborate/spaces/${space.slug}`, { replace: true });
-    }
-  }, [space, paramIsUUID, navigate]);
-
-  const { data: members = [] } = useQuery({
-    queryKey: ['space-members', space?.id],
-    queryFn: async (): Promise<RosterMember[]> => {
-      if (!space) return [];
-      const { data: memberRows, error } = await supabase
-        .from('space_members')
-        .select('user_id, role, status')
-        .eq('space_id', space.id);
-      if (error) throw error;
-      if (!memberRows || memberRows.length === 0) return [];
-
-      const ids = memberRows.map((r) => r.user_id);
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, full_name, display_name, username, avatar_url')
-        .in('id', ids);
-      const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));
-
-      return memberRows.map((r) => {
-        const p = profileMap.get(r.user_id);
-        return {
-          user_id: r.user_id,
-          role: r.role,
-          status: r.status ?? 'active',
-          full_name: p?.full_name ?? null,
-          display_name: p?.display_name ?? null,
-          username: p?.username ?? null,
-          avatar_url: p?.avatar_url ?? null,
-        };
-      });
-    },
-    enabled: !!space,
-  });
+  const { space, isLoading, isError } = useSpace(param);
+  const { data: members = [] } = useSpaceRoster(space?.id);
 
   const activeMembers = useMemo(
     () =>
@@ -258,7 +165,7 @@ export default function SpaceDetail() {
                 <div key={m.user_id} className="flex items-center gap-3 p-3">
                   <Avatar className="h-9 w-9">
                     {m.avatar_url && <AvatarImage src={m.avatar_url} alt={name} />}
-                    <AvatarFallback>{initials(name)}</AvatarFallback>
+                    <AvatarFallback>{memberInitials(name)}</AvatarFallback>
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-foreground">{name}</p>
@@ -276,13 +183,19 @@ export default function SpaceDetail() {
         </Card>
       </section>
 
-      {/* Board / tasks placeholder — next cycle. */}
+      {/* Board */}
       <section className="mt-6">
         <h2 className="text-sm font-semibold text-foreground">Board</h2>
-        <Card className="mt-2 p-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            The task board is coming soon. Check back shortly.
-          </p>
+        <Card className="mt-2 flex items-center justify-between gap-4 p-5">
+          <div className="flex min-w-0 items-center gap-3">
+            <KanbanSquare className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <p className="text-sm text-muted-foreground">
+              Plan and track the space&rsquo;s work on the task board.
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shrink-0">
+            <Link to={`/dna/collaborate/spaces/${space.slug}/board`}>Open board</Link>
+          </Button>
         </Card>
       </section>
     </SpacesShell>
