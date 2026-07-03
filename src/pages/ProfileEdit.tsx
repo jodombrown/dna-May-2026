@@ -180,6 +180,16 @@ const ProfileEdit = () => {
     }
   }, [profile]);
 
+  // Load primary origin country from member_heritage (BD038)
+  useEffect(() => {
+    let cancelled = false;
+    if (!user?.id) return;
+    getPrimaryOriginCode(user.id).then(code => {
+      if (!cancelled && code) setCountryOfOrigin(code);
+    }).catch(() => { /* silent */ });
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async (updates: Record<string, unknown>) => {
