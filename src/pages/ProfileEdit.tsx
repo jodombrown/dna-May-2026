@@ -198,11 +198,19 @@ const ProfileEdit = () => {
         .update(updates)
         .eq('id', user!.id)
         .select();
-      
+
       if (error) throw error;
       if (!data || data.length === 0) {
         throw new Error('Profile not found');
       }
+
+      // BD038: origin country lives on member_heritage, not on profiles.
+      try {
+        await upsertPrimaryOrigin(user!.id, countryOfOrigin);
+      } catch (mhErr) {
+        console.error('Failed to save primary origin country', mhErr);
+      }
+
       return data[0];
     },
     onSuccess: (data) => {
