@@ -12,7 +12,9 @@ interface JoinSpaceArgs {
 /**
  * Calls public.rpc_request_join_space, which is keyed to the space's visibility:
  *   - public    -> caller joins immediately (active)
- *   - community -> caller's request is recorded (invited), pending a lead's approval
+ *   - community -> caller's request is recorded (invited), pending a lead's approval.
+ *                  Requires profiles.role_declared_at IS NOT NULL (Arc-2 proxy for
+ *                  Affirmed-Member; mirrors the community-visibility RLS gate).
  *   - private   -> the RPC raises 'This space is invite-only.'
  * Invalidates the space membership queries so the UI reflects the new state.
  */
