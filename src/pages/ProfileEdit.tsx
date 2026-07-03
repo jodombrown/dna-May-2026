@@ -130,7 +130,8 @@ const ProfileEdit = () => {
       setHeadline(profile.headline || '');
       setBio(profile.bio || '');
       setLocation(profile.location || '');
-      setCountryOfOrigin((profile as any).primary_origin_country || '');
+      // Country of origin lives in member_heritage (BD038); fetch async below.
+      setCountryOfOrigin('');
       setCurrentCountry(profile.current_country || '');
       setPronouns((profile as any).pronouns || '');
 
