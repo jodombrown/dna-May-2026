@@ -13,6 +13,7 @@ import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/component
 import TourResumeBanner from '@/components/onboarding/TourResumeBanner';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import UsernameManager from '@/components/profile/UsernameManager';
+import { upsertPrimaryOrigin, getPrimaryOriginCode } from '@/lib/memberHeritage';
 
 // Import modular profile edit components
 import {
