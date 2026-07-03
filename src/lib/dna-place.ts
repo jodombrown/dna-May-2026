@@ -161,3 +161,15 @@ export const KNOWN_ALPHA3: ReadonlySet<string> = new Set(
 export function isValidAlpha3(value: unknown): value is string {
   return typeof value === 'string' && /^[A-Z]{3}$/.test(value) && KNOWN_ALPHA3.has(value);
 }
+
+// Reverse lookup: alpha-3 code -> country display name.
+const ALPHA3_TO_NAME: Record<string, string> = Object.values(CONTINENT_COUNTRY_LIST)
+  .flat()
+  .reduce<Record<string, string>>((acc, c) => {
+    acc[c.alpha3] = c.name;
+    return acc;
+  }, {});
+
+export function getCountryNameByAlpha3(alpha3: string): string | undefined {
+  return ALPHA3_TO_NAME[alpha3];
+}
