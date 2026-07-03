@@ -361,8 +361,12 @@ const ProfileV2: React.FC = () => {
               />
             </section>
 
-            {/* Enhancement 2: Diaspora Footprint — Five C's Activity Bar */}
-            <DiasporaFootprint userId={profile.id} />
+            {/* Enhancement 2: Diaspora Footprint - Five C's Activity Bar */}
+            <DiasporaFootprint
+              userId={profile.id}
+              isOwner={permissions.is_owner}
+              username={profile.username}
+            />
 
             {/* Enhancement 5: Recent Activity Preview */}
             <ProfileRecentPosts userId={profile.id} username={profile.username} />
