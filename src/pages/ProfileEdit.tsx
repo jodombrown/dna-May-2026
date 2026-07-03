@@ -301,7 +301,7 @@ const ProfileEdit = () => {
       headline,
       bio,
       location,
-      primary_origin_country: countryOfOrigin,
+      // BD038: primary_origin_country handled via member_heritage in the mutation
       current_country: currentCountry,
       pronouns,
 
