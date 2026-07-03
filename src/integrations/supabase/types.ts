@@ -14290,6 +14290,10 @@ export type Database = {
         Returns: boolean
       }
       is_prelaunch_locked: { Args: never; Returns: boolean }
+      is_space_lead: {
+        Args: { _space_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_sponsor_manager: {
         Args: { _sponsor_id: string; _user_id: string }
         Returns: boolean
