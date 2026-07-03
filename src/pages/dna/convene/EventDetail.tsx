@@ -75,6 +75,7 @@ import { StickyRSVPBar } from '@/components/convene/StickyRSVPBar';
 import { EventSocialProof } from '@/components/convene/EventSocialProof';
 import { EventOrganizerCard } from '@/components/convene/EventOrganizerCard';
 import { cn } from '@/lib/utils';
+import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
 const REPORT_REASONS = [
   { value: 'spam', label: 'Spam' },
