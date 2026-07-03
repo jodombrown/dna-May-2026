@@ -54,10 +54,34 @@ export const FeedLeftPanel: React.FC = () => {
   const currentCity = (profile as Record<string, unknown>).current_city as string | undefined;
 
   const fiveCStats = [
-    { icon: Users, count: stats?.connections || 0, label: 'Connections', color: 'text-dna-emerald' },
-    { icon: Calendar, count: stats?.events || 0, label: 'Events', color: 'text-dna-gold' },
-    { icon: Layers, count: stats?.spaces || 0, label: 'Spaces', color: 'text-dna-forest' },
-    { icon: BookOpen, count: stats?.stories || 0, label: 'Posts', color: 'text-dna-convey' },
+    {
+      icon: Users,
+      count: stats?.connections || 0,
+      label: 'Connections',
+      color: 'text-dna-emerald',
+      to: '/dna/connect/network?tab=connections',
+    },
+    {
+      icon: Calendar,
+      count: stats?.events || 0,
+      label: 'Events',
+      color: 'text-dna-gold',
+      to: '/dna/convene/my-events',
+    },
+    {
+      icon: Layers,
+      count: stats?.spaces || 0,
+      label: 'Spaces',
+      color: 'text-dna-forest',
+      to: '/dna/collaborate/my-spaces',
+    },
+    {
+      icon: BookOpen,
+      count: stats?.stories || 0,
+      label: 'Posts',
+      color: 'text-dna-convey',
+      to: '/dna/convey',
+    },
   ];
 
   return (
@@ -94,10 +118,16 @@ export const FeedLeftPanel: React.FC = () => {
         {stats && (
           <div className="grid grid-cols-4 gap-1 mt-3 pt-3 border-t border-border/50">
             {fiveCStats.map((stat) => (
-              <div key={stat.label} className="text-center">
+              <button
+                key={stat.label}
+                type="button"
+                onClick={() => navigate(stat.to)}
+                aria-label={`${stat.count} ${stat.label}. Open ${stat.label}.`}
+                className="text-center rounded-md py-1 hover:bg-secondary/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
                 <p className="text-sm font-semibold text-foreground">{stat.count}</p>
                 <p className="text-[10px] text-muted-foreground leading-tight">{stat.label}</p>
-              </div>
+              </button>
             ))}
           </div>
         )}
