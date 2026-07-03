@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,7 +9,8 @@ import {
   ETHNIC_HERITAGE_OPTIONS,
   RETURN_INTENTIONS_OPTIONS,
   AFRICAN_CAUSES_OPTIONS,
-  VISIT_FREQUENCY_OPTIONS
+  VISIT_FREQUENCY_OPTIONS,
+  getVisitFrequencyOptionsFor,
 } from '@/data/profileOptions';
 
 const MENTORSHIP_AREA_OPTIONS = [
