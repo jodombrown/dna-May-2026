@@ -10640,7 +10640,6 @@ export type Database = {
           name: string
           origin_event_id: string | null
           origin_group_id: string | null
-          privacy_level: string | null
           region: string | null
           slug: string
           source_id: string | null
@@ -10668,7 +10667,6 @@ export type Database = {
           name: string
           origin_event_id?: string | null
           origin_group_id?: string | null
-          privacy_level?: string | null
           region?: string | null
           slug: string
           source_id?: string | null
@@ -10696,7 +10694,6 @@ export type Database = {
           name?: string
           origin_event_id?: string | null
           origin_group_id?: string | null
-          privacy_level?: string | null
           region?: string | null
           slug?: string
           source_id?: string | null
