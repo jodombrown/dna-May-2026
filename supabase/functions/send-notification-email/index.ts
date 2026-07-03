@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { requireInternal } from "../_shared/auth.ts";
+import { requireUser } from "../_shared/auth.ts";
 
 
 const corsHeaders = {
