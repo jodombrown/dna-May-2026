@@ -1,11 +1,10 @@
-// STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
-// Hub now renders RebuildingLanding directly; this orphaned discovery view
-// is replaced with a placeholder so any stray imports do not pull in the
-// deleted COLLABORATE component dependencies.
-import { RebuildingLanding } from '@/components/shared/RebuildingPlaceholder';
+// Legacy discovery entry point. Spaces discovery now lives on SpacesIndex
+// (/dna/collaborate/spaces), so anything still reaching this view is
+// redirected there rather than shown a placeholder.
+import { Navigate } from 'react-router-dom';
 
 export function CollaborateDiscovery() {
-  return <RebuildingLanding module="collaborate" />;
+  return <Navigate to="/dna/collaborate/spaces" replace />;
 }
 
 export default CollaborateDiscovery;
