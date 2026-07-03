@@ -1,4 +1,6 @@
-export type PrivacyLevel = 'public' | 'private' | 'invite_only';
+// Space visibility + status domains — mirror the live DB CHECK constraints on public.spaces.
+export type SpaceVisibility = 'public' | 'community' | 'private';
+export type SpaceStatus = 'idea' | 'forming' | 'active' | 'completed' | 'paused' | 'abandoned';
 
 export type TemplateCategory = 'learning' | 'investment' | 'community' | 'advocacy' | 'professional';
 
@@ -39,7 +41,7 @@ export interface SpaceTemplate {
 export interface CreateSpaceInput {
   name: string;
   description?: string;
-  privacy_level?: PrivacyLevel;
+  visibility?: SpaceVisibility;
   source_type?: 'event' | 'content' | 'marketplace' | 'organic';
   source_id?: string;
 }
@@ -56,13 +58,12 @@ export interface Space {
   tagline?: string;
   description?: string;
   space_type?: string;
-  status: string;
-  visibility: string;
+  status: SpaceStatus;
+  visibility: SpaceVisibility;
   focus_areas?: string[];
   region?: string;
   created_by: string;
   template_id?: string;
-  privacy_level?: PrivacyLevel;
   cover_image_url?: string;
   source_type?: string;
   source_id?: string;

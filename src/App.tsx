@@ -169,8 +169,6 @@ const UserAdminHub = lazy(() => import("./pages/dna/admin/UserAdminHub"));
 const Opportunities = lazy(() => import("./pages/Opportunities"));
 const MyApplications = lazy(() => import("./pages/MyApplications"));
 const ApplicationsReceived = lazy(() => import("./pages/ApplicationsReceived"));
-const CollaborationSpaces = lazy(() => import("./pages/CollaborationSpaces"));
-const SpaceDetail = lazy(() => import("./pages/SpaceDetail"));
 const DnaDiscover = lazy(() => import("./pages/dna/Discover"));
 // Messages pages consolidated - using DnaMessages from ./pages/dna/Messages
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
@@ -279,6 +277,13 @@ const LegacyImpactIdRedirect = () => {
 const LegacySpaceSlugRedirect = () => {
   const { slug } = useParams();
   return <Navigate to={`/dna/collaborate/spaces/${slug}`} replace />;
+};
+
+// Legacy /dna/spaces/:id redirect to canonical /dna/collaborate/spaces/:id
+// (SpaceDetail resolves a UUID param to the space, then rewrites to the slug URL).
+const LegacySpaceIdRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/dna/collaborate/spaces/${id}`} replace />;
 };
 
 /** Redirect legacy /dna/convey/post/:id emails to /dna/story/:id */
@@ -672,16 +677,10 @@ function App() {
                   <ApplicationsReceived />
                 </OnboardingGuard>
               } />
-               <Route path="/dna/spaces" element={
-                <OnboardingGuard>
-                  <CollaborationSpaces />
-                </OnboardingGuard>
-              } />
-               <Route path="/dna/spaces/:id" element={
-                <OnboardingGuard>
-                  <SpaceDetail />
-                </OnboardingGuard>
-              } />
+               {/* Legacy /dna/spaces routes now redirect into the canonical
+                   /dna/collaborate/spaces surface. */}
+               <Route path="/dna/spaces" element={<Navigate to="/dna/collaborate/spaces" replace />} />
+               <Route path="/dna/spaces/:id" element={<LegacySpaceIdRedirect />} />
                <Route path="/dna/saved" element={
                  <OnboardingGuard>
                    <SavedPostsPage />
