@@ -13,7 +13,7 @@ import UsernameStep from '@/components/onboarding/steps/UsernameStep';
 import RoleDeclarationStep, { type DnaIdentityRole } from '@/components/onboarding/RoleDeclarationStep';
 import PlaceDeclarationStep from '@/components/onboarding/PlaceDeclarationStep';
 import type { ContinentCode } from '@/data/continentCountries';
-import { isValidAlpha3 } from '@/lib/dna-place';
+import { isValidAlpha3, getCountryNameByAlpha3 } from '@/lib/dna-place';
 import { validateStep } from '@/components/onboarding/validation/onboardingStepValidation';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
