@@ -9,7 +9,6 @@ import {
   ETHNIC_HERITAGE_OPTIONS,
   RETURN_INTENTIONS_OPTIONS,
   AFRICAN_CAUSES_OPTIONS,
-  VISIT_FREQUENCY_OPTIONS,
   getVisitFrequencyOptionsFor,
 } from '@/data/profileOptions';
 
