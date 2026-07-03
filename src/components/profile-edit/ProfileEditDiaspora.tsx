@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,7 +9,7 @@ import {
   ETHNIC_HERITAGE_OPTIONS,
   RETURN_INTENTIONS_OPTIONS,
   AFRICAN_CAUSES_OPTIONS,
-  VISIT_FREQUENCY_OPTIONS
+  getVisitFrequencyOptionsFor,
 } from '@/data/profileOptions';
 
 const MENTORSHIP_AREA_OPTIONS = [
@@ -26,6 +26,49 @@ const MENTORSHIP_AREA_OPTIONS = [
   'Product development',
   'Technical skills',
 ] as const;
+
+interface VisitFrequencyFieldProps {
+  returnIntentions: string;
+  visitFrequency: string;
+  onVisitFrequencyChange: (value: string) => void;
+}
+
+const VisitFrequencyField: React.FC<VisitFrequencyFieldProps> = ({
+  returnIntentions,
+  visitFrequency,
+  onVisitFrequencyChange,
+}) => {
+  const visitOptions = useMemo(
+    () => getVisitFrequencyOptionsFor(returnIntentions),
+    [returnIntentions]
+  );
+  useEffect(() => {
+    if (visitFrequency && !visitOptions.some(o => o.value === visitFrequency)) {
+      onVisitFrequencyChange('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [returnIntentions]);
+  return (
+    <div>
+      <Label htmlFor="visit_frequency">How Often Do You Visit Africa?</Label>
+      <Select value={visitFrequency} onValueChange={onVisitFrequencyChange}>
+        <SelectTrigger className="bg-background">
+          <SelectValue placeholder={returnIntentions ? 'Select visit frequency' : 'Choose your return plan first'} />
+        </SelectTrigger>
+        <SelectContent className="bg-popover border shadow-lg z-50">
+          {visitOptions.map(option => (
+            <SelectItem key={option.value} value={option.value}>
+              <div className="flex flex-col">
+                <span>{option.label}</span>
+                <span className="text-xs text-muted-foreground">{option.description}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+};
 
 interface ProfileEditDiasporaProps {
   diasporaNetworks: string[];
@@ -119,25 +162,12 @@ const ProfileEditDiaspora: React.FC<ProfileEditDiasporaProps> = ({
           </Select>
         </div>
 
-        {/* Visit Frequency */}
-        <div>
-          <Label htmlFor="visit_frequency">How Often Do You Visit Africa?</Label>
-          <Select value={visitFrequency} onValueChange={onVisitFrequencyChange}>
-            <SelectTrigger className="bg-background">
-              <SelectValue placeholder="Select visit frequency" />
-            </SelectTrigger>
-            <SelectContent className="bg-popover border shadow-lg z-50">
-              {VISIT_FREQUENCY_OPTIONS.map(option => (
-                <SelectItem key={option.value} value={option.value}>
-                  <div className="flex flex-col">
-                    <span>{option.label}</span>
-                    <span className="text-xs text-muted-foreground">{option.description}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {/* Visit Frequency - filtered by Return Plans */}
+        <VisitFrequencyField
+          returnIntentions={returnIntentions}
+          visitFrequency={visitFrequency}
+          onVisitFrequencyChange={onVisitFrequencyChange}
+        />
 
         {/* Diaspora Networks */}
         <TagMultiSelect

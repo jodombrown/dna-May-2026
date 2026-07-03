@@ -13,6 +13,7 @@ import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/component
 import TourResumeBanner from '@/components/onboarding/TourResumeBanner';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import UsernameManager from '@/components/profile/UsernameManager';
+import { upsertPrimaryOrigin, getPrimaryOriginCode } from '@/lib/memberHeritage';
 
 // Import modular profile edit components
 import {
@@ -129,7 +130,8 @@ const ProfileEdit = () => {
       setHeadline(profile.headline || '');
       setBio(profile.bio || '');
       setLocation(profile.location || '');
-      setCountryOfOrigin((profile as any).primary_origin_country || '');
+      // Country of origin lives in member_heritage (BD038); fetch async below.
+      setCountryOfOrigin('');
       setCurrentCountry(profile.current_country || '');
       setPronouns((profile as any).pronouns || '');
 
@@ -178,6 +180,16 @@ const ProfileEdit = () => {
     }
   }, [profile]);
 
+  // Load primary origin country from member_heritage (BD038)
+  useEffect(() => {
+    let cancelled = false;
+    if (!user?.id) return;
+    getPrimaryOriginCode(user.id).then(code => {
+      if (!cancelled && code) setCountryOfOrigin(code);
+    }).catch(() => { /* silent */ });
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async (updates: Record<string, unknown>) => {
@@ -186,11 +198,19 @@ const ProfileEdit = () => {
         .update(updates)
         .eq('id', user!.id)
         .select();
-      
+
       if (error) throw error;
       if (!data || data.length === 0) {
         throw new Error('Profile not found');
       }
+
+      // BD038: origin country lives on member_heritage, not on profiles.
+      try {
+        await upsertPrimaryOrigin(user!.id, countryOfOrigin);
+      } catch (mhErr) {
+        console.error('Failed to save primary origin country', mhErr);
+      }
+
       return data[0];
     },
     onSuccess: (data) => {
@@ -281,7 +301,7 @@ const ProfileEdit = () => {
       headline,
       bio,
       location,
-      primary_origin_country: countryOfOrigin,
+      // BD038: primary_origin_country handled via member_heritage in the mutation
       current_country: currentCountry,
       pronouns,
 
