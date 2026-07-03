@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Globe, Users, Handshake, Eye, EyeOff } from 'lucide-react';
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { cn } from '@/lib/utils';
 
 const Auth = () => {
   useScrollToTop();
@@ -17,8 +18,13 @@ const Auth = () => {
   const location = useLocation();
   const { signIn, signUp } = useAuth();
 
+  const queryMode = new URLSearchParams(location.search).get('mode');
   // Toggle between sign-in and sign-up
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(queryMode === 'signup');
+
+  useEffect(() => {
+    setIsSignUp(queryMode === 'signup');
+  }, [queryMode]);
 
   // Where to redirect after login (passed via state.from by OnboardingGuard / protected routes)
   const redirectTo = (location.state as { from?: string })?.from || '/dna/feed';
