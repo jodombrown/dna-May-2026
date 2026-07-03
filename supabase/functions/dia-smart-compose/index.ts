@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     // Fetch lightweight profile context for both sides.
     const { data: profiles, error: profErr } = await supabase
       .from('profiles')
-      .select('id, full_name, headline, bio, current_city, current_country, ethnic_heritage, professional_sector')
+      .select('id, full_name, headline, bio, current_city, current_country, ethnic_heritage, professional_sectors')
       .in('id', [me.id, otherUserId]);
 
     if (profErr) {
