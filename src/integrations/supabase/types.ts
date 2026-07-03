@@ -13717,6 +13717,16 @@ export type Database = {
           to_profile_id: string
         }[]
       }
+      get_profile_contact: {
+        Args: { target_id: string }
+        Returns: {
+          email: string
+          id: string
+          phone: string
+          phone_number: string
+          whatsapp_number: string
+        }[]
+      }
       get_profile_contribution_history: {
         Args: {
           p_cursor?: string
