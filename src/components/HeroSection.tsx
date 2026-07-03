@@ -34,21 +34,25 @@ const HeroSection = () => {
                   One platform. Five ways to move Africa forward.
                 </p>
 
-                {/* LinkedIn-style Auth Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center lg:justify-start mb-4 lg:mb-6">
-                  <Button 
+                {/* Auth Buttons */}
+                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start mb-4 lg:mb-6">
+                  <Button
+                    onClick={() => navigate('/auth?mode=signup')}
+                    className="bg-dna-emerald text-white hover:bg-dna-forest text-sm px-4 py-2 h-9 font-medium"
+                  >
+                    Sign up
+                  </Button>
+                  <Button
                     variant="outline"
-                    size="lg" 
                     onClick={() => navigate('/auth')}
-                    className="border-2 border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white text-base lg:text-xl px-6 lg:px-10 py-3 lg:py-6 h-auto font-medium"
+                    className="border-2 border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white text-sm px-4 py-2 h-9 font-medium"
                   >
                     Sign in
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
-                    size="lg" 
                     onClick={() => navigate('/waitlist')}
-                    className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white text-base lg:text-xl px-6 lg:px-10 py-3 lg:py-6 h-auto font-medium"
+                    className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white text-sm px-4 py-2 h-9 font-medium"
                   >
                     Join Waitlist
                   </Button>
