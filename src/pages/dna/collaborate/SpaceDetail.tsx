@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { SpacesShell } from '@/components/collaborate/SpacesShell';
+import { SpaceFilesSection } from '@/components/collaborate/files/SpaceFilesSection';
 import { useJoinSpace } from '@/hooks/collaborate/useJoinSpace';
 import { useSpace } from '@/hooks/collaborate/useSpace';
 import { memberInitials, memberName, useSpaceRoster } from '@/hooks/collaborate/useSpaceRoster';
@@ -198,6 +199,14 @@ export default function SpaceDetail() {
           </Button>
         </Card>
       </section>
+
+      {/* Files */}
+      <SpaceFilesSection
+        spaceId={space.id}
+        spaceName={space.name}
+        isMember={myMembership?.status === 'active'}
+        roster={activeMembers}
+      />
     </SpacesShell>
   );
 }
