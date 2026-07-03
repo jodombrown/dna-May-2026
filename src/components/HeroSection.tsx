@@ -44,13 +44,6 @@ const HeroSection = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => navigate('/auth')}
-                    className="border-2 border-dna-emerald text-dna-emerald hover:bg-dna-emerald hover:text-white text-sm px-4 py-2 h-9 font-medium"
-                  >
-                    Sign in
-                  </Button>
-                  <Button
-                    variant="outline"
                     onClick={() => navigate('/waitlist')}
                     className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white text-sm px-4 py-2 h-9 font-medium"
                   >

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ArrowLeft, Globe, Users, Handshake, Eye, EyeOff } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { cn } from '@/lib/utils';
 
 const Auth = () => {
   useScrollToTop();
@@ -17,8 +18,13 @@ const Auth = () => {
   const location = useLocation();
   const { signIn, signUp } = useAuth();
 
+  const queryMode = new URLSearchParams(location.search).get('mode');
   // Toggle between sign-in and sign-up
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(queryMode === 'signup');
+
+  useEffect(() => {
+    setIsSignUp(queryMode === 'signup');
+  }, [queryMode]);
 
   // Where to redirect after login (passed via state.from by OnboardingGuard / protected routes)
   const redirectTo = (location.state as { from?: string })?.from || '/dna/feed';
@@ -191,6 +197,35 @@ const Auth = () => {
     }
   ];
 
+  const AuthModeToggle = () => (
+    <div className="flex items-center p-1 bg-muted rounded-lg w-full max-w-xs mx-auto">
+      <button
+        type="button"
+        onClick={() => setIsSignUp(false)}
+        className={cn(
+          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
+          !isSignUp
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Sign In
+      </button>
+      <button
+        type="button"
+        onClick={() => setIsSignUp(true)}
+        className={cn(
+          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
+          isSignUp
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Sign Up
+      </button>
+    </div>
+  );
+
   // Auth content switches between sign-in and sign-up
   const authContent = (
     <div className="w-full space-y-4">
@@ -361,33 +396,6 @@ const Auth = () => {
         </>
       )}
 
-      <div className="text-center pt-4 border-t">
-        <p className="text-sm text-muted-foreground">
-          {isSignUp ? (
-            <>
-              Already have an account?{' '}
-              <button
-                type="button"
-                onClick={() => setIsSignUp(false)}
-                className="text-primary hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
-              >
-                Sign In
-              </button>
-            </>
-          ) : (
-            <>
-              Don't have an account?{' '}
-              <button
-                type="button"
-                onClick={() => setIsSignUp(true)}
-                className="text-primary hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
-              >
-                Create Account
-              </button>
-            </>
-          )}
-        </p>
-      </div>
     </div>
   );
 
@@ -402,11 +410,9 @@ const Auth = () => {
               <div className="mx-auto mb-3 w-14 h-14 rounded-full bg-gradient-to-br from-dna-emerald to-dna-copper flex items-center justify-center">
                 <Globe className="w-7 h-7 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-foreground">
-                {isSignUp ? 'Join DNA' : 'Welcome Back'}
-              </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                Connect with the global African diaspora
+              <AuthModeToggle />
+              <p className="text-sm text-muted-foreground mt-3">
+                {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
               </p>
             </CardHeader>
             <CardContent>
@@ -475,10 +481,8 @@ const Auth = () => {
         <div className="w-1/2 bg-background flex items-center justify-center p-12">
           <div className="w-full max-w-md space-y-8">
             {/* Header */}
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-bold text-foreground">
-                {isSignUp ? 'Create Account' : 'Welcome'}
-              </h2>
+            <div className="text-center space-y-3">
+              <AuthModeToggle />
               <p className="text-muted-foreground">
                 {isSignUp ? 'Join the global African diaspora network' : 'Sign in to your account'}
               </p>
