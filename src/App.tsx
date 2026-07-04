@@ -57,6 +57,8 @@ const DnaImpact = lazy(() => import("./pages/dna/Impact"));
 const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
 const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
 const DnaFeedback = lazy(() => import("./pages/dna/feedback/FeedbackPage"));
+const Affirm = lazy(() => import("./pages/dna/affirm/Affirm"));
+const AttestAffirmation = lazy(() => import("./pages/dna/affirm/AttestAffirmation"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const IconUsageGuide = lazy(() => import("./pages/dna/IconUsageGuide"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -329,6 +331,19 @@ function App() {
               {/* Onboarding & Welcome - NOT wrapped with OnboardingGuard */}
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dna/welcome" element={<Welcome />} />
+
+              {/* ========== AFFIRMATION ========== */}
+              <Route path="/dna/affirm" element={
+                <OnboardingGuard>
+                  <Affirm />
+                </OnboardingGuard>
+              } />
+              {/* Fixed deep-link contract for witness attestation notifications */}
+              <Route path="/dna/affirm/attest/:id" element={
+                <OnboardingGuard>
+                  <AttestAffirmation />
+                </OnboardingGuard>
+              } />
               
               {/* User Admin Hub - personal management for all Five C's */}
               <Route path="/dna/admin" element={
