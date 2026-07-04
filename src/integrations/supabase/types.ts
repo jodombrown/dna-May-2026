@@ -743,6 +743,7 @@ export type Database = {
       affirmations: {
         Row: {
           affirmed_at: string
+          attested_at: string | null
           created_at: string
           id: string
           profile_id: string
@@ -752,6 +753,7 @@ export type Database = {
         }
         Insert: {
           affirmed_at?: string
+          attested_at?: string | null
           created_at?: string
           id?: string
           profile_id: string
@@ -761,6 +763,7 @@ export type Database = {
         }
         Update: {
           affirmed_at?: string
+          attested_at?: string | null
           created_at?: string
           id?: string
           profile_id?: string
@@ -14262,6 +14265,7 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_admin_email: { Args: { email_address: string }; Returns: boolean }
       is_admin_user: { Args: { _user_id: string }; Returns: boolean }
+      is_affirmed_member: { Args: { p_profile_id: string }; Returns: boolean }
       is_blocked_between: { Args: { _a: string; _b: string }; Returns: boolean }
       is_blocked_from_space: {
         Args: { _space_id: string; _user_id: string }
@@ -14603,6 +14607,10 @@ export type Database = {
           shared_regions: string[]
           shared_sectors: string[]
         }[]
+      }
+      rpc_attest_affirmation: {
+        Args: { p_affirmation_id: string }
+        Returns: undefined
       }
       rpc_check_in_by_token:
         | { Args: { p_event: string; p_token: string }; Returns: Json }
