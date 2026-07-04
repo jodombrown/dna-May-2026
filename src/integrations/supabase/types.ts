@@ -14689,6 +14689,12 @@ export type Database = {
         Returns: Json
       }
       rpc_health_snapshot: { Args: never; Returns: Json }
+      rpc_list_eligible_witnesses: {
+        Args: {
+          p_role_at_affirm: Database["public"]["Enums"]["dna_identity_role"]
+        }
+        Returns: string[]
+      }
       rpc_log_contribution:
         | {
             Args: {
