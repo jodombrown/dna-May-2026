@@ -142,10 +142,10 @@ const InviteSignup = () => {
               This invitation link has expired or is no longer valid.
             </p>
             <Button 
-              onClick={() => navigate('/waitlist')}
+              onClick={() => navigate('/auth?mode=signup')}
               className="w-full bg-dna-forest hover:bg-dna-forest/90"
             >
-              Join the Waitlist
+              Sign Up
             </Button>
           </CardContent>
         </Card>

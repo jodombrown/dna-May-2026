@@ -187,14 +187,13 @@ const Contact = () => {
                     </Button>
                   )}
                   {method.component === 'waitlist' && (
-                    <WaitlistSlideIn>
-                      <Button 
-                        className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
-                      >
-                        <MateMasie className="w-4 h-4 mr-2" />
-                        Join Waitlist
-                      </Button>
-                    </WaitlistSlideIn>
+                    <Button 
+                      className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
+                      onClick={() => navigate('/auth?mode=signup')}
+                    >
+                      <MateMasie className="w-4 h-4 mr-2" />
+                      Sign Up
+                    </Button>
                   )}
                 </CardContent>
               </Card>

@@ -181,8 +181,8 @@ const PublicProfilePage = () => {
               Visit DNA
             </Button>
             {!isLoggedIn && (
-              <Button variant="outline" onClick={() => navigate('/waitlist')}>
-                Join Waitlist
+              <Button variant="outline" onClick={() => navigate('/auth?mode=signup')}>
+                Sign Up
               </Button>
             )}
           </div>
