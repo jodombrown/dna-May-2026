@@ -559,10 +559,10 @@ const UnifiedHeader = () => {
                             </Button>
                             <Button
                               variant="default"
-                              className="justify-start text-left bg-dna-copper hover:bg-dna-gold transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={() => navigate('/waitlist')}
+                              className="justify-start text-left bg-dna-emerald hover:bg-dna-forest text-white transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                              onClick={() => navigate('/auth?mode=signup')}
                             >
-                              Join Waitlist
+                              Sign Up
                             </Button>
                           </>
                         ) : null}
