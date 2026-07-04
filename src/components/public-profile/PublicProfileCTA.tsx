@@ -38,8 +38,8 @@ export const PublicProfileCTA = ({ firstName, username }: PublicProfileCTAProps)
               className="bg-dna-copper hover:bg-dna-gold text-white"
               asChild
             >
-              <Link to="/waitlist">
-                Join the Waitlist
+              <Link to="/auth?mode=signup">
+                Sign Up
               </Link>
             </Button>
             <Button
