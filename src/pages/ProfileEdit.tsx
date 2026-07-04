@@ -64,6 +64,7 @@ const ProfileEdit = () => {
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
   const [countryOfOrigin, setCountryOfOrigin] = useState('');
+  const [originHydrated, setOriginHydrated] = useState(false);
   const [currentCountry, setCurrentCountry] = useState('');
   const [pronouns, setPronouns] = useState('');
 
