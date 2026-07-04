@@ -64,6 +64,7 @@ const ProfileEdit = () => {
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
   const [countryOfOrigin, setCountryOfOrigin] = useState('');
+  const [originHydrated, setOriginHydrated] = useState(false);
   const [currentCountry, setCurrentCountry] = useState('');
   const [pronouns, setPronouns] = useState('');
 
@@ -185,8 +186,10 @@ const ProfileEdit = () => {
     let cancelled = false;
     if (!user?.id) return;
     getPrimaryOriginCode(user.id).then(code => {
-      if (!cancelled && code) setCountryOfOrigin(code);
-    }).catch(() => { /* silent */ });
+      if (cancelled) return;
+      if (code) setCountryOfOrigin(code);
+      setOriginHydrated(true);
+    }).catch(() => { /* leave unhydrated to prevent overwriting existing data */ });
     return () => { cancelled = true; };
   }, [user?.id]);
 
@@ -205,10 +208,13 @@ const ProfileEdit = () => {
       }
 
       // BD038: origin country lives on member_heritage, not on profiles.
-      try {
-        await upsertPrimaryOrigin(user!.id, countryOfOrigin);
-      } catch (mhErr) {
-        console.error('Failed to save primary origin country', mhErr);
+      // Only write if hydration succeeded to avoid clobbering existing value.
+      if (originHydrated) {
+        try {
+          await upsertPrimaryOrigin(user!.id, countryOfOrigin);
+        } catch (mhErr) {
+          console.error('Failed to save primary origin country', mhErr);
+        }
       }
 
       return data[0];

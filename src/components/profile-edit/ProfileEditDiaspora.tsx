@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,7 +42,13 @@ const VisitFrequencyField: React.FC<VisitFrequencyFieldProps> = ({
     () => getVisitFrequencyOptionsFor(returnIntentions),
     [returnIntentions]
   );
+  const initialReturnRef = useRef(returnIntentions);
   useEffect(() => {
+    // Only clear when the user changes returnIntentions after mount.
+    // Never clear on initial hydration, even if the saved combination is
+    // no longer in the current allowed subset — that would silently wipe
+    // existing member data on Save.
+    if (returnIntentions === initialReturnRef.current) return;
     if (visitFrequency && !visitOptions.some(o => o.value === visitFrequency)) {
       onVisitFrequencyChange('');
     }
