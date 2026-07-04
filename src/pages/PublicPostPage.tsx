@@ -168,8 +168,8 @@ const PublicPostPage = () => {
               Visit DNA
             </Button>
             {!isLoggedIn && (
-              <Button variant="outline" onClick={() => navigate('/waitlist')}>
-                Join Waitlist
+              <Button variant="outline" onClick={() => navigate('/auth?mode=signup')}>
+                Sign Up
               </Button>
             )}
           </div>
@@ -260,8 +260,8 @@ const PublicPostPage = () => {
                   className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
                   asChild
                 >
-                  <Link to="/waitlist">
-                    Join Waitlist
+                  <Link to="/auth?mode=signup">
+                    Sign Up
                   </Link>
                 </Button>
               </div>
@@ -435,8 +435,8 @@ const PublicPostPage = () => {
                       className="bg-dna-copper hover:bg-dna-gold text-white h-8 text-xs"
                       asChild
                     >
-                      <Link to="/waitlist">
-                        Join the Waitlist
+                      <Link to="/auth?mode=signup">
+                        Sign Up
                       </Link>
                     </Button>
                     <Button 

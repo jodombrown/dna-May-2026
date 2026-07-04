@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import WaitlistSlideIn from '@/components/waitlist/WaitlistSlideIn';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Users, MessageSquare, Lightbulb, Briefcase, MessageCircle } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { PageSEO } from '@/components/seo/PageSEO';
@@ -17,6 +17,7 @@ import { MateMasie } from '@/components/icons/adinkra';
 
 const Contact = () => {
   useScrollToTop();
+  const navigate = useNavigate();
   
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -187,14 +188,13 @@ const Contact = () => {
                     </Button>
                   )}
                   {method.component === 'waitlist' && (
-                    <WaitlistSlideIn>
-                      <Button 
-                        className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
-                      >
-                        <MateMasie className="w-4 h-4 mr-2" />
-                        Join Waitlist
-                      </Button>
-                    </WaitlistSlideIn>
+                    <Button 
+                      className="bg-gradient-to-r from-dna-emerald to-dna-copper hover:from-dna-forest hover:to-dna-gold text-white w-full"
+                      onClick={() => navigate('/auth?mode=signup')}
+                    >
+                      <MateMasie className="w-4 h-4 mr-2" />
+                      Sign Up
+                    </Button>
                   )}
                 </CardContent>
               </Card>

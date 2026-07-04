@@ -439,7 +439,7 @@ const ConveneCategoryPage = () => {
             Explore All Event Categories
           </Button>
           <p className="mt-4 text-muted-foreground">
-            Join the waitlist to be among the first to access these features when we launch
+            Sign up to be among the first to access these features when we launch
           </p>
         </div>
       </main>
