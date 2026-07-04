@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import WaitlistSlideIn from '@/components/waitlist/WaitlistSlideIn';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Users, MessageSquare, Lightbulb, Briefcase, MessageCircle } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { PageSEO } from '@/components/seo/PageSEO';
