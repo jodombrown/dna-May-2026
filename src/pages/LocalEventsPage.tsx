@@ -545,8 +545,9 @@ const LocalEventsPage = () => {
                 size="lg"
                 variant="outline"
                 className="border-2 border-white text-white hover:bg-white/10 text-lg px-10 py-7 h-auto"
+                onClick={() => navigate('/auth?mode=signup')}
               >
-                Join the Waitlist
+                Sign Up
               </Button>
             </div>
           </div>

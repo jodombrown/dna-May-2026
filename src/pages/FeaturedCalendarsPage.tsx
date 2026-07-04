@@ -346,8 +346,9 @@ const FeaturedCalendarsPage = () => {
               size="lg"
               variant="outline"
               className="border-white text-white hover:bg-white/10 text-lg px-8 py-6"
+              onClick={() => navigate('/auth?mode=signup')}
             >
-              Join the Waitlist
+              Sign Up
             </Button>
           </div>
         </Card>
