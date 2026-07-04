@@ -17,6 +17,7 @@ import { MateMasie } from '@/components/icons/adinkra';
 
 const Contact = () => {
   useScrollToTop();
+  const navigate = useNavigate();
   
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
