@@ -44,10 +44,10 @@ const HeroSection = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => navigate('/waitlist')}
-                    className="border-2 border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white text-sm px-4 py-2 h-9 font-medium"
+                    onClick={() => navigate('/auth?mode=signin')}
+                    className="border-2 border-dna-forest text-dna-forest hover:bg-dna-forest hover:text-white text-sm px-4 py-2 h-9 font-medium"
                   >
-                    Join Waitlist
+                    Sign in
                   </Button>
                 </div>
 
