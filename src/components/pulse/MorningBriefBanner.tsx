@@ -45,8 +45,7 @@ export const MorningBriefBanner: React.FC = () => {
 
   const brief = useInboxBrief(eligible && !dismissed);
 
-  const handleDismiss = () => {
-    setDismissed(true);
+  const markSeenToday = () => {
     try {
       if (user) localStorage.setItem(`dia:morning-brief:${user.id}`, todayKey());
     } catch {
@@ -54,61 +53,76 @@ export const MorningBriefBanner: React.FC = () => {
     }
   };
 
-  const handleOpen = () => {
-    setSheetOpen(true);
-    handleDismiss();
+  const handleDismiss = () => {
+    setDismissed(true);
+    markSeenToday();
   };
 
-  if (!eligible || dismissed) return null;
-  if (brief.isLoading) return null;
-  if (brief.isError || !brief.data) return null;
-  if ((brief.data.totalUnread ?? 0) === 0) return null;
+  const handleOpen = () => {
+    setSheetOpen(true);
+    markSeenToday();
+  };
+
+  const handleSheetOpenChange = (next: boolean) => {
+    setSheetOpen(next);
+    if (!next) setDismissed(true);
+  };
+
+  const showBanner =
+    eligible &&
+    !dismissed &&
+    !brief.isLoading &&
+    !brief.isError &&
+    !!brief.data &&
+    (brief.data.totalUnread ?? 0) > 0;
 
   return (
     <>
-      <div
-        className={cn(
-          'fixed left-3 right-3 z-30 rounded-md border border-primary/25 bg-card shadow-md',
-          'top-[calc(var(--unified-header-height,56px)+var(--pulse-bar-height,56px)+8px)]',
-          'lg:left-auto lg:right-6 lg:max-w-sm',
-        )}
-        role="status"
-      >
-        <button
-          type="button"
-          onClick={handleOpen}
-          className="w-full text-left px-3 py-2.5 pr-9"
-        >
-          <div className="flex items-center gap-2 mb-0.5">
-            <MateMasie className="h-3.5 w-3.5 text-primary" />
-            <span className="text-[11px] uppercase tracking-wide text-primary font-medium">
-              Morning brief
-            </span>
-            <span className="text-[11px] text-muted-foreground ml-auto">
-              {brief.data.totalUnread} unread - {brief.data.unreadThreadCount} threads
-            </span>
-          </div>
-          <p className="text-sm font-medium text-foreground leading-snug">
-            {brief.data.headline}
-          </p>
-          {brief.data.narrative && (
-            <p className="text-xs text-muted-foreground leading-snug mt-1 line-clamp-2">
-              {brief.data.narrative}
-            </p>
+      {showBanner && brief.data && (
+        <div
+          className={cn(
+            'fixed left-3 right-3 z-30 rounded-md border border-primary/25 bg-card shadow-md',
+            'top-[calc(var(--unified-header-height,56px)+var(--pulse-bar-height,56px)+8px)]',
+            'lg:left-auto lg:right-6 lg:max-w-sm',
           )}
-          <p className="text-[11px] text-primary mt-1.5">Tap to open digest</p>
-        </button>
-        <button
-          type="button"
-          onClick={handleDismiss}
-          aria-label="Dismiss morning brief"
-          className="absolute top-1.5 right-1.5 p-1.5 text-muted-foreground hover:text-foreground"
+          role="status"
         >
-          <X className="h-3.5 w-3.5" />
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={handleOpen}
+            className="w-full text-left px-3 py-2.5 pr-9"
+          >
+            <div className="flex items-center gap-2 mb-0.5">
+              <MateMasie className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[11px] uppercase tracking-wide text-primary font-medium">
+                Morning brief
+              </span>
+              <span className="text-[11px] text-muted-foreground ml-auto">
+                {brief.data.totalUnread} unread - {brief.data.unreadThreadCount} threads
+              </span>
+            </div>
+            <p className="text-sm font-medium text-foreground leading-snug">
+              {brief.data.headline}
+            </p>
+            {brief.data.narrative && (
+              <p className="text-xs text-muted-foreground leading-snug mt-1 line-clamp-2">
+                {brief.data.narrative}
+              </p>
+            )}
+            <p className="text-[11px] text-primary mt-1.5">Tap to open digest</p>
+          </button>
+          <button
+            type="button"
+            onClick={handleDismiss}
+            aria-label="Dismiss morning brief"
+            className="absolute top-1.5 right-1.5 p-1.5 text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
 
-      <InboxDigestSheet open={sheetOpen} onOpenChange={setSheetOpen} />
+      <InboxDigestSheet open={sheetOpen} onOpenChange={handleSheetOpenChange} />
     </>
   );
 };
