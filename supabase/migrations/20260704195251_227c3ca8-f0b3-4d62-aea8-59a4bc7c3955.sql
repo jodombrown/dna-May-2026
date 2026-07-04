@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.rpc_get_profile_bundle(text, uuid) TO anon;
