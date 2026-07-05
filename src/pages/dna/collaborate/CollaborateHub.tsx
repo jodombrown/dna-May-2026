@@ -107,6 +107,22 @@ export default function CollaborateHub() {
 
   const membershipMap = useMemo(() => memberships ?? {}, [memberships]);
 
+  // Client-side search filter shared by both My Spaces and Discover shelves.
+  const matchesQuery = (s: SpaceListItem) => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      s.name.toLowerCase().includes(q) ||
+      (s.tagline?.toLowerCase().includes(q) ?? false)
+    );
+  };
+
+  const filteredMySpaces = useMemo(
+    () => mySpaces.filter(matchesQuery),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mySpaces, searchQuery],
+  );
+
   // Community/public spaces the caller hasn't joined yet.
   const discover = useMemo(
     () =>
@@ -114,14 +130,20 @@ export default function CollaborateHub() {
         .filter(
           (s) =>
             !membershipMap[s.id] &&
-            (s.visibility === 'public' || s.visibility === 'community'),
+            (s.visibility === 'public' || s.visibility === 'community') &&
+            matchesQuery(s),
         )
         .slice(0, PREVIEW_LIMIT),
-    [allSpaces, membershipMap],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allSpaces, membershipMap, searchQuery],
   );
 
   return (
-    <SpacesShell bubblePlaceholder="Search Spaces…">
+    <SpacesShell
+      bubblePlaceholder="Search Spaces…"
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+    >
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Collaborate</h1>
