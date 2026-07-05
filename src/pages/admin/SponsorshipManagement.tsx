@@ -202,7 +202,7 @@ export default function SponsorshipManagement() {
                     size="icon"
                     onClick={() => {
                       if (confirm('Delete this sponsor and all its placements?')) {
-                        deleteSponsor.mutate(sponsor.id);
+                        deleteSponsor.mutate(sponsor);
                       }
                     }}
                   >
