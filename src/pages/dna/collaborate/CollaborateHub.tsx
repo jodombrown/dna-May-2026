@@ -3,7 +3,7 @@
 // spaces to join, and a Create Space CTA. Query keys are shared with MySpaces
 // and SpacesIndex so the cache is reused rather than duplicated.
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Plus } from 'lucide-react';
