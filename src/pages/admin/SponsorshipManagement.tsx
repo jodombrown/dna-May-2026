@@ -69,6 +69,7 @@ const tierColors: Record<string, string> = {
 
 export default function SponsorshipManagement() {
   const queryClient = useQueryClient();
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
   const [editingSponsor, setEditingSponsor] = useState<Sponsor | null>(null);
   const [showSponsorDialog, setShowSponsorDialog] = useState(false);
   const [showPlacementDialog, setShowPlacementDialog] = useState(false);
@@ -77,6 +78,7 @@ export default function SponsorshipManagement() {
   const { data: sponsors = [], isLoading } = useQuery({
     queryKey: ['admin-sponsors'],
     queryFn: sponsorshipService.getAllSponsors,
+    enabled: isAdmin,
   });
 
   const toggleSponsorActive = useMutation({
@@ -89,12 +91,20 @@ export default function SponsorshipManagement() {
   });
 
   const deleteSponsor = useMutation({
-    mutationFn: sponsorshipService.deleteSponsor,
+    mutationFn: async (sponsor: Sponsor) => {
+      await sponsorshipService.deleteSponsor(sponsor.id);
+      await logSponsorLogoAction('delete', {
+        sponsor_id: sponsor.id,
+        logo_url: sponsor.logo_url,
+        metadata: { reason: 'sponsor_deleted', sponsor_name: sponsor.name },
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-sponsors'] });
       toast.success('Sponsor deleted');
     },
   });
+
 
   const deletePlacement = useMutation({
     mutationFn: sponsorshipService.deletePlacement,
