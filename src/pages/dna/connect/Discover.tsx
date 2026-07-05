@@ -112,12 +112,19 @@ export default function Discover() {
 
   const loadMembers = async (reset = false, pageOverride?: number) => {
     if (!user) return;
+    const isReset = reset;
     try {
-      setLoading(true);
+      if (isReset) {
+        setLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+      setLoadMoreError(null);
       const effectivePage = pageOverride !== undefined ? pageOverride : page;
-      const offset = reset ? 0 : effectivePage * 20;
+      const offset = isReset ? 0 : effectivePage * 20;
 
       let rows: any[] = [];
+      let requestFailed = false;
 
       try {
         // Primary: call RPC for smart discovery
@@ -166,35 +173,51 @@ export default function Discover() {
           const { data: fbData, error: fbError } = await q;
           if (fbError) {
             logger.warn('Discover', 'Fallback query also failed:', fbError);
+            requestFailed = true;
             rows = [];
           } else {
             rows = (fbData || []).map((p: any) => ({ ...p, match_score: 0 }));
           }
         } catch (fallbackError) {
           logger.warn('Discover', 'All queries failed:', fallbackError);
+          requestFailed = true;
           rows = [];
         }
       }
 
-      if (reset) {
+      // Load-more error path: keep existing members, surface retry state
+      if (!isReset && requestFailed) {
+        setLoadMoreError("Couldn't load more members. Please try again.");
+        return;
+      }
+
+      if (isReset) {
         setMembers(rows);
+        setHasMore(rows.length === 20);
       } else {
         // Dedupe against existing members to avoid repopulation if RPC returns overlap
+        let addedCount = 0;
         setMembers(prev => {
           const seen = new Set(prev.map((m: any) => m.id));
           const fresh = rows.filter((r: any) => !seen.has(r.id));
+          addedCount = fresh.length;
           return [...prev, ...fresh];
         });
+        // End-of-list: RPC returned fewer than a full page, OR every returned
+        // row was already displayed (pure overlap = no forward progress).
+        setHasMore(rows.length === 20 && addedCount > 0);
       }
-      setHasMore(rows.length === 20);
     } catch (error) {
       logger.warn('Discover', 'Unexpected error in loadMembers:', error);
-      if (reset) {
+      if (isReset) {
         setMembers([]);
+        setHasMore(false);
+      } else {
+        setLoadMoreError("Couldn't load more members. Please try again.");
       }
-      setHasMore(false);
     } finally {
       setLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
@@ -202,6 +225,11 @@ export default function Discover() {
     const nextPage = page + 1;
     setPage(nextPage);
     loadMembers(false, nextPage);
+  };
+
+  const handleRetryLoadMore = () => {
+    setLoadMoreError(null);
+    loadMembers(false, page);
   };
 
   const handleFilterChange = (newFilters: FilterState) => {
