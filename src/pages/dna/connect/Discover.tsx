@@ -101,15 +101,18 @@ export default function Discover() {
     if (user) {
       setPage(0);
       setMembers([]);
-      loadMembers(true);
+      setHasMore(true);
+      loadMembers(true, 0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, filters, searchQuery]);
 
-  const loadMembers = async (reset = false) => {
+  const loadMembers = async (reset = false, pageOverride?: number) => {
     if (!user) return;
     try {
       setLoading(true);
-      const offset = reset ? 0 : page * 20;
+      const effectivePage = pageOverride !== undefined ? pageOverride : page;
+      const offset = reset ? 0 : effectivePage * 20;
 
       let rows: any[] = [];
 
@@ -137,7 +140,6 @@ export default function Discover() {
         }
       } catch (rpcError) {
         logger.warn('Discover', 'RPC failed, using fallback query', rpcError);
-        // Hotfix fallback: simple profiles query so the page still works
         try {
           let q = supabase
             .from('profiles')
@@ -145,14 +147,10 @@ export default function Discover() {
             .neq('id', user.id)
             .eq('is_public', true);
 
-          // Apply filters (best-effort)
           if (filters?.focus_areas?.length) q = q.overlaps('focus_areas', filters.focus_areas);
           if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
           if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
           if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
-          // BD038/BD039: origin filter intentionally dropped from fallback; canonical
-          // filtering routes through the RPC (member_heritage join, alpha-3 code-vs-code).
-
           if (filters?.current_country) q = q.eq('current_country_name', filters.current_country);
           if (searchQuery) {
             q = q.or(
@@ -167,7 +165,6 @@ export default function Discover() {
             logger.warn('Discover', 'Fallback query also failed:', fbError);
             rows = [];
           } else {
-            // Map to expected shape with a default match_score
             rows = (fbData || []).map((p: any) => ({ ...p, match_score: 0 }));
           }
         } catch (fallbackError) {
@@ -179,7 +176,12 @@ export default function Discover() {
       if (reset) {
         setMembers(rows);
       } else {
-        setMembers(prev => [...prev, ...rows]);
+        // Dedupe against existing members to avoid repopulation if RPC returns overlap
+        setMembers(prev => {
+          const seen = new Set(prev.map((m: any) => m.id));
+          const fresh = rows.filter((r: any) => !seen.has(r.id));
+          return [...prev, ...fresh];
+        });
       }
       setHasMore(rows.length === 20);
     } catch (error) {
@@ -194,8 +196,9 @@ export default function Discover() {
   };
 
   const handleLoadMore = () => {
-    setPage(prev => prev + 1);
-    loadMembers(false);
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadMembers(false, nextPage);
   };
 
   const handleFilterChange = (newFilters: FilterState) => {
