@@ -4,9 +4,11 @@
  */
 
 import { useState, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { sponsorshipService, Sponsor, SponsorPlacement, SponsorWithPlacements } from '@/services/sponsorshipService';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,8 +18,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Eye, MousePointer, ExternalLink, Upload, Award, Image as ImageIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, MousePointer, ExternalLink, Upload, Award, Image as ImageIcon, ShieldAlert, ScrollText } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
+
+/** Server-verified audit log write. Fails closed if not an admin. */
+async function logSponsorLogoAction(
+  action: 'upload' | 'update' | 'delete',
+  payload: { storage_path?: string | null; logo_url?: string | null; sponsor_id?: string | null; metadata?: Record<string, unknown> } = {},
+): Promise<void> {
+  const { error } = await (supabase as any).rpc('log_sponsor_logo_action', {
+    _action: action,
+    _storage_path: payload.storage_path ?? null,
+    _logo_url: payload.logo_url ?? null,
+    _sponsor_id: payload.sponsor_id ?? null,
+    _metadata: payload.metadata ?? {},
+  });
+  if (error) {
+    // Non-fatal for the caller UI: surface via console so ops can detect log gaps.
+    // The RPC itself will have already prevented non-admins from mutating anything upstream.
+    // eslint-disable-next-line no-console
+    console.error('[sponsor-logo-audit] log failed', error);
+  }
+}
 
 const TIERS = ['gold', 'silver', 'bronze', 'community'] as const;
 
