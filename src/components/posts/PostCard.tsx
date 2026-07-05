@@ -601,7 +601,11 @@ export function PostCard({
 
       {/* Threaded Comments Section */}
       {showComments && (
-        <ThreadedComments postId={post.post_id} currentUserId={currentUserId} />
+        <ThreadedComments
+          postId={post.post_id}
+          currentUserId={currentUserId}
+          commentsDisabled={!!post.comments_disabled}
+        />
       )}
 
       {/* Reshare Dialog */}
