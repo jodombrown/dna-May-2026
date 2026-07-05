@@ -56,27 +56,34 @@ d('security · SECURITY DEFINER functions are not callable by anon', () => {
 
 d('security · sponsor-logos storage bucket is write-locked for non-admins', () => {
   const testPath = `security-test/${Date.now()}-anon.txt`;
-  const body = new Blob(['nope'], { type: 'text/plain' });
+
+  // Use raw fetch against the Storage REST endpoint. The supabase-js Blob
+  // upload path fails in the jsdom/undici test environment for unrelated
+  // multipart reasons; the REST endpoint is what the SDK ultimately calls
+  // and it exercises the exact same RLS policies.
+  const storageFetch = (method: string, path: string, body?: string) =>
+    fetch(`${url}/storage/v1/object/sponsor-logos/${path}`, {
+      method,
+      headers: {
+        apikey: anonKey as string,
+        authorization: `Bearer ${anonKey as string}`,
+        'content-type': 'text/plain',
+        'x-upsert': 'false',
+      },
+      body,
+    });
 
   it('blocks anon uploads to sponsor-logos', async () => {
-    const supabase = anonClient();
-    const { data, error } = await supabase.storage
-      .from('sponsor-logos')
-      .upload(testPath, body, { upsert: false });
-
-    expect(error).not.toBeNull();
-    expect(data).toBeNull();
-  }, 20000);
+    const res = await storageFetch('POST', testPath, 'nope');
+    expect(res.ok).toBe(false);
+    expect([401, 403]).toContain(res.status);
+  }, 15000);
 
   it('blocks anon updates to sponsor-logos', async () => {
-    const supabase = anonClient();
-    const { data, error } = await supabase.storage
-      .from('sponsor-logos')
-      .update(testPath, body);
-
-    expect(error).not.toBeNull();
-    expect(data).toBeNull();
-  }, 20000);
+    const res = await storageFetch('PUT', testPath, 'nope');
+    expect(res.ok).toBe(false);
+    expect([401, 403]).toContain(res.status);
+  }, 15000);
 
   it('blocks anon deletes from sponsor-logos', async () => {
     const supabase = anonClient();
@@ -84,8 +91,8 @@ d('security · sponsor-logos storage bucket is write-locked for non-admins', () 
       .from('sponsor-logos')
       .remove([testPath]);
 
-    // Storage remove returns error OR an empty successful array when RLS filters
-    // out every candidate row - both prove no rows were actually removed.
+    // remove() either errors or returns an empty list when RLS filters
+    // out every candidate - both prove nothing was actually deleted.
     const removedCount = Array.isArray(data) ? data.length : 0;
     expect(error !== null || removedCount === 0).toBe(true);
   });
