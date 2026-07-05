@@ -5645,6 +5645,42 @@ export type Database = {
         }
         Relationships: []
       }
+      mcp_tool_events: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          input_summary: Json | null
+          latency_ms: number
+          success: boolean
+          tool_name: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          input_summary?: Json | null
+          latency_ms: number
+          success: boolean
+          tool_name: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          input_summary?: Json | null
+          latency_ms?: number
+          success?: boolean
+          tool_name?: string
+        }
+        Relationships: []
+      }
       member_heritage: {
         Row: {
           created_at: string
