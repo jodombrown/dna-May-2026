@@ -97,3 +97,41 @@ d('security · sponsor-logos storage bucket is write-locked for non-admins', () 
     expect(error !== null || removedCount === 0).toBe(true);
   });
 });
+
+d('security · sponsor_logo_audit_log is not readable by anon', () => {
+  it('rejects direct REST SELECT on sponsor_logo_audit_log for anon', async () => {
+    const res = await fetch(
+      `${url}/rest/v1/sponsor_logo_audit_log?select=id&limit=1`,
+      {
+        headers: {
+          apikey: anonKey as string,
+          authorization: `Bearer ${anonKey as string}`,
+        },
+      },
+    );
+    // Must NOT return a readable row list.
+    if (res.ok) {
+      const body = (await res.json()) as unknown[];
+      expect(Array.isArray(body) && body.length === 0).toBe(true);
+    } else {
+      expect(res.status).toBeGreaterThanOrEqual(400);
+    }
+  });
+
+  it('rejects list_sponsor_logo_audit_log RPC for anon', async () => {
+    const supabase = anonClient();
+    const { data, error } = await supabase.rpc('list_sponsor_logo_audit_log', {
+      _limit: 1,
+      _offset: 0,
+    });
+    expect(error).not.toBeNull();
+    expect(data).toBeNull();
+    const msg = `${error?.code ?? ''} ${error?.message ?? ''}`.toLowerCase();
+    expect(
+      msg.includes('permission denied') ||
+        msg.includes('42501') ||
+        msg.includes('not authenticated') ||
+        msg.includes('authentication required'),
+    ).toBe(true);
+  });
+});
