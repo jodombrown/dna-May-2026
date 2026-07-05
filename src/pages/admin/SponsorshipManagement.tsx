@@ -177,7 +177,9 @@ export default function SponsorshipManagement() {
             />
           </DialogContent>
         </Dialog>
+        </div>
       </div>
+
 
       {sponsors.length === 0 ? (
         <Card className="p-12 text-center text-muted-foreground">
