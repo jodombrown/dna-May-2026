@@ -6,7 +6,6 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import { typedSupabase } from '@/lib/typedSupabase';
 import {
   ComposerMode,
   CModule,
@@ -19,23 +18,8 @@ import {
   type EventModeFields,
   type SpaceModeFields,
   type OpportunityModeFields,
-  type CrossReference,
 } from '@/types/composer';
-import { logger } from '@/lib/logger';
 import { extractHashtags } from '@/utils/hashtagUtils';
-
-interface AttributionInsert {
-  content_type: string;
-  content_id: string;
-  created_by: string;
-  created_via: string;
-  primary_c: string;
-  secondary_cs: string[];
-  composer_mode: string;
-  dia_suggested_mode: boolean;
-  dia_interactions: number;
-  cross_references: CrossReference[];
-}
 
 export const composerService = {
   // ============================================
@@ -75,105 +59,7 @@ export const composerService = {
 
     const contentId = await handlers[submission.mode]();
 
-    // Create attribution record
-    const userId = (await supabase.auth.getUser()).data.user?.id;
-    if (userId) {
-      await this.createAttribution({
-        content_type: submission.mode,
-        content_id: contentId,
-        created_by: userId,
-        created_via: 'post_composer',
-        primary_c: submission.attribution.primaryC,
-        secondary_cs: submission.attribution.secondaryCs,
-        composer_mode: submission.attribution.composerMode,
-        dia_suggested_mode: submission.attribution.diaSuggestedMode,
-        dia_interactions: submission.attribution.diaInteractions,
-        cross_references: submission.attribution.crossReferences,
-      });
-    }
-
-    // Clear draft for this mode
-    await this.deleteDraft(submission.mode);
-
     return { id: contentId, type: submission.mode };
-  },
-
-  // ============================================
-  // DRAFT MANAGEMENT
-  // ============================================
-
-  async saveDraft(
-    mode: ComposerMode,
-    baseFields: ComposerBaseFields,
-    modeFields: Record<string, unknown>
-  ): Promise<void> {
-    const userId = (await supabase.auth.getUser()).data.user?.id;
-    if (!userId) return;
-
-    const { error } = await typedSupabase.composerDrafts().upsert(
-      {
-        user_id: userId,
-        mode,
-        base_fields: baseFields,
-        mode_fields: modeFields,
-        last_saved_at: new Date().toISOString(),
-      },
-      {
-        onConflict: 'user_id,mode',
-      }
-    );
-
-    if (error) throw error;
-  },
-
-  async loadDraft(
-    mode: ComposerMode
-  ): Promise<{
-    baseFields: ComposerBaseFields;
-    modeFields: Record<string, unknown>;
-  } | null> {
-    const { data, error } = await typedSupabase.composerDrafts()
-      .select('base_fields, mode_fields')
-      .eq('mode', mode)
-      .single();
-
-    if (error || !data) return null;
-
-    const record = data as Record<string, unknown>;
-    return {
-      baseFields: record.base_fields as ComposerBaseFields,
-      modeFields: record.mode_fields as Record<string, unknown>,
-    };
-  },
-
-  async deleteDraft(mode: ComposerMode): Promise<void> {
-    await typedSupabase.composerDrafts()
-      .delete()
-      .eq('mode', mode);
-  },
-
-  // ============================================
-  // ATTRIBUTION
-  // ============================================
-
-  async createAttribution(attribution: AttributionInsert): Promise<void> {
-    const { error } = await typedSupabase.contentAttribution()
-      .insert({
-        content_type: attribution.content_type,
-        content_id: attribution.content_id,
-        created_by: attribution.created_by,
-        created_via: attribution.created_via,
-        primary_c: attribution.primary_c,
-        secondary_cs: attribution.secondary_cs,
-        composer_mode: attribution.composer_mode,
-        dia_suggested_mode: attribution.dia_suggested_mode,
-        dia_interactions: attribution.dia_interactions,
-        cross_references: attribution.cross_references,
-      });
-
-    if (error) {
-      logger.warn('composerService', 'Failed to create attribution record', error);
-    }
   },
 
   // ============================================

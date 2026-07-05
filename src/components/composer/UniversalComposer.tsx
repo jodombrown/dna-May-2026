@@ -40,7 +40,6 @@ import { toast } from 'sonner';
 
 import { useNavigate } from 'react-router-dom';
 import { diaComposerService } from '@/services/diaComposerService';
-import { composerService } from '@/services/composerService';
 import { detectIntent, type IntentSuggestion } from '@/services/diaIntentDetectionService';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAuth } from '@/contexts/AuthContext';
@@ -102,7 +101,6 @@ export const UniversalComposer = ({
   const lastDiscardAtRef = useRef<number>(0);
 
   const diaDebounceRef = useRef<ReturnType<typeof setTimeout>>();
-  const autoSaveRef = useRef<ReturnType<typeof setTimeout>>();
   const prevModeRef = useRef<ComposerMode>(mode);
   // Remember the element that opened the composer so we can return focus on close
   const triggerElementRef = useRef<HTMLElement | null>(null);
@@ -222,39 +220,6 @@ export const UniversalComposer = ({
       });
     }
   }, [isOpen]);
-
-  // Auto-save draft every 10 seconds when content changes (server-side, optional)
-  useEffect(() => {
-    if (!formData.content.trim()) return;
-
-    if (autoSaveRef.current) {
-      clearTimeout(autoSaveRef.current);
-    }
-
-    autoSaveRef.current = setTimeout(async () => {
-      try {
-        const prdMode = mode as unknown as PRDComposerMode;
-        await composerService.saveDraft(
-          prdMode,
-          {
-            body: formData.content,
-            media: [],
-            audience: 'public' as unknown as import('@/types/composer').AudienceType,
-            tags: [],
-            mentions: [],
-            hashtags: [],
-          },
-          { ...formData }
-        );
-      } catch {
-        // Silent fail for draft auto-save
-      }
-    }, 10000);
-
-    return () => {
-      if (autoSaveRef.current) clearTimeout(autoSaveRef.current);
-    };
-  }, [formData, mode]);
 
   // Local draft hydration: when the composer opens or the active mode changes,
   // restore the last persisted draft for (user, mode) if there is no
