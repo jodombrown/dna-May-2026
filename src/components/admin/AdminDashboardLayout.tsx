@@ -181,24 +181,11 @@ export const AdminDashboardLayout: React.FC = () => {
       }
     };
 
-    const fetchPendingCounts = async () => {
-      try {
-        const { data: stats } = await (supabase as any).rpc('get_admin_dashboard_stats');
-        if (stats) {
-          setPendingFeedback((stats as any)?.feedback?.pending || 0);
-          setPendingModeration((stats as any)?.moderation?.pending_flags || 0);
-        }
-      } catch (err) {
-        // Failed to fetch pending counts - will use defaults
-      }
-    };
-
+    // v0.0: no live pending-count source — get_admin_dashboard_stats was never
+    // built (see Pass 2c/2d). Skip the fetch entirely; the Feedback/Moderation nav
+    // badges stay hidden (they render only when their count > 0) rather than showing
+    // a fabricated 0 from a dead RPC.
     fetchAdminUser();
-    fetchPendingCounts();
-
-    // Refresh counts every 2 minutes
-    const interval = setInterval(fetchPendingCounts, 2 * 60 * 1000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleLogout = async () => {
