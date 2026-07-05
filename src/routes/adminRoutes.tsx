@@ -15,6 +15,7 @@ const EngagementDashboard = lazy(() => import('@/pages/admin/EngagementDashboard
 const AlphaFeedbackDashboard = lazy(() => import('@/pages/admin/AlphaFeedbackDashboard'));
 const SponsorshipManagement = lazy(() => import('@/pages/admin/SponsorshipManagement'));
 const SponsorLogoAuditLog = lazy(() => import('@/pages/admin/SponsorLogoAuditLog'));
+const AgentIntegrations = lazy(() => import('@/pages/admin/AgentIntegrations'));
 
 // Placeholder pages for routes that will be implemented later
 const PlaceholderPage = ({ title }: { title: string }) => (
@@ -127,6 +128,11 @@ export const adminRoutes: RouteObject[] = [
       {
         path: 'sponsorships/logo-audit',
         element: withSuspense(SponsorLogoAuditLog)
+      },
+      // Agent integrations (MCP)
+      {
+        path: 'agent-integrations',
+        element: withGuard(withSuspense(AgentIntegrations), ['super_admin', 'platform_admin'])
       },
       // Moderation
       {

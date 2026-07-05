@@ -8,130 +8,282 @@ import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
 // src/lib/mcp/tools/search-profiles.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
 import { z } from "npm:zod@^4.4.3";
-async function restGet(path) {
+
+// src/lib/mcp/_shared.ts
+async function supabaseRest(opts) {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY;
-  const res = await fetch(`${url}/rest/v1/${path}`, {
-    headers: { apikey: key, Authorization: `Bearer ${key}` }
+  if (!url || !key) throw new Error("mcp: Supabase env not configured");
+  const res = await fetch(`${url}/rest/v1/${opts.path}`, {
+    method: opts.method ?? "GET",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      Accept: "application/json",
+      ...opts.body ? { "Content-Type": "application/json" } : {}
+    },
+    body: opts.body ? JSON.stringify(opts.body) : void 0
   });
-  if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new McpToolError("upstream_error", `Supabase ${res.status}: ${text.slice(0, 300)}`);
+  }
   return res.json();
 }
+var McpToolError = class extends Error {
+  code;
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+  }
+};
+async function recordEvent(evt) {
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) return;
+  try {
+    await fetch(`${url}/rest/v1/mcp_tool_events`, {
+      method: "POST",
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify(evt)
+    });
+  } catch {
+  }
+}
+function summarizeInput(input) {
+  if (!input || typeof input !== "object") return null;
+  const out = {};
+  for (const [k, v] of Object.entries(input)) {
+    if (v == null) continue;
+    if (typeof v === "string") out[k] = v.slice(0, 80);
+    else if (typeof v === "number" || typeof v === "boolean") out[k] = v;
+    else out[k] = typeof v;
+  }
+  return out;
+}
+function wrapHandler(toolName, schema, fn) {
+  return async (rawInput, ctx) => {
+    const start = Date.now();
+    let parsedInput = null;
+    let errorCode = null;
+    let errorMessage = null;
+    let success = false;
+    try {
+      const parsed = schema.safeParse(rawInput);
+      if (!parsed.success) {
+        throw new McpToolError(
+          "invalid_input",
+          `Invalid input for ${toolName}: ${formatZodError(parsed.error)}`
+        );
+      }
+      parsedInput = parsed.data;
+      const structured = await fn(parsedInput, ctx);
+      success = true;
+      return {
+        content: [{ type: "text", text: JSON.stringify(structured, null, 2) }],
+        structuredContent: structured
+      };
+    } catch (err) {
+      if (err instanceof McpToolError) {
+        errorCode = err.code;
+        errorMessage = err.message;
+      } else if (err instanceof Error) {
+        errorCode = "internal_error";
+        errorMessage = err.message;
+      } else {
+        errorCode = "unknown_error";
+        errorMessage = "Unknown error";
+      }
+      const payload = { error: { code: errorCode, message: errorMessage } };
+      return {
+        content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+        structuredContent: payload,
+        isError: true
+      };
+    } finally {
+      const latency = Date.now() - start;
+      let clientId = null;
+      try {
+        clientId = ctx.getClientId?.() ?? null;
+      } catch {
+        clientId = null;
+      }
+      void recordEvent({
+        tool_name: toolName,
+        success,
+        latency_ms: latency,
+        error_code: errorCode,
+        error_message: errorMessage ? errorMessage.slice(0, 500) : null,
+        client_id: clientId,
+        input_summary: summarizeInput(parsedInput ?? rawInput)
+      });
+    }
+  };
+}
+function formatZodError(err) {
+  return err.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`).join("; ");
+}
+
+// src/lib/mcp/tools/search-profiles.ts
+var InputSchema = z.object({
+  query: z.string().trim().min(1).max(100).describe("Name, username, or keyword to search for."),
+  limit: z.number().int().min(1).max(25).optional().describe("Max results (default 10).")
+});
 var search_profiles_default = defineTool({
   name: "search_profiles",
   title: "Search DNA member profiles",
   description: "Search public DNA (Diaspora Network of Africa) member profiles by name, username, or headline. Returns basic public info and a shareable /dna/<username> profile link.",
-  inputSchema: {
-    query: z.string().trim().min(1).describe("Name, username, or keyword to search for."),
-    limit: z.number().int().min(1).max(25).optional().describe("Max results (default 10).")
-  },
+  inputSchema: InputSchema.shape,
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ query, limit }) => {
-    const q = encodeURIComponent(query);
+  handler: wrapHandler("search_profiles", InputSchema, async ({ query, limit }) => {
+    const q = encodeURIComponent(query.replace(/[*(),]/g, ""));
     const n = limit ?? 10;
-    const path = `profiles?select=username,full_name,headline,avatar_url,city,country&or=(username.ilike.*${q}*,full_name.ilike.*${q}*,headline.ilike.*${q}*)&limit=${n}`;
-    const rows = await restGet(path);
+    const rows = await supabaseRest({
+      path: `profiles?select=username,full_name,headline,avatar_url,city,country&or=(username.ilike.*${q}*,full_name.ilike.*${q}*,headline.ilike.*${q}*)&limit=${n}`
+    });
     const results = rows.map((r) => ({
-      ...r,
+      username: r.username ?? null,
+      full_name: r.full_name ?? null,
+      headline: r.headline ?? null,
+      avatar_url: r.avatar_url ?? null,
+      city: r.city ?? null,
+      country: r.country ?? null,
       profile_url: r.username ? `https://diasporanetwork.africa/dna/${r.username}` : null
     }));
-    return {
-      content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
-      structuredContent: { results }
+    return { count: results.length, results };
+  })
+});
+
+// src/lib/mcp/tools/get-profile.ts
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z2 } from "npm:zod@^4.4.3";
+var InputSchema2 = z2.object({
+  username: z2.string().trim().min(1).max(64).regex(/^@?[A-Za-z0-9._-]+$/, "username may only contain letters, numbers, . _ -").describe("The DNA username, without the leading @ or /dna/.")
+});
+var get_profile_default = defineTool2({
+  name: "get_profile",
+  title: "Get DNA profile by username",
+  description: "Fetch a single public DNA member profile by username (the /dna/<username> handle).",
+  inputSchema: InputSchema2.shape,
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: wrapHandler("get_profile", InputSchema2, async ({ username }) => {
+    const uname = encodeURIComponent(username.replace(/^@/, ""));
+    const rows = await supabaseRest({
+      path: `profiles?select=username,full_name,headline,bio,avatar_url,city,country,website_url&username=eq.${uname}&limit=1`
+    });
+    if (rows.length === 0) {
+      throw new McpToolError("not_found", `No profile found for @${username}`);
+    }
+    const r = rows[0];
+    const profile = {
+      username: r.username,
+      full_name: r.full_name ?? null,
+      headline: r.headline ?? null,
+      bio: r.bio ?? null,
+      avatar_url: r.avatar_url ?? null,
+      city: r.city ?? null,
+      country: r.country ?? null,
+      website_url: r.website_url ?? null,
+      profile_url: `https://diasporanetwork.africa/dna/${r.username}`
     };
-  }
+    return { profile };
+  })
 });
 
 // src/lib/mcp/tools/list-events.ts
-import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.0";
-import { z as z2 } from "npm:zod@^4.4.3";
-var list_events_default = defineTool2({
+import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z3 } from "npm:zod@^4.4.3";
+var InputSchema3 = z3.object({
+  query: z3.string().trim().max(100).optional().describe("Optional keyword filter (title/description)."),
+  limit: z3.number().int().min(1).max(25).optional().describe("Max results (default 10).")
+});
+var list_events_default = defineTool3({
   name: "list_upcoming_events",
   title: "List upcoming DNA events",
   description: "List upcoming public events on the DNA platform (Convene module). Optionally filter by keyword.",
-  inputSchema: {
-    query: z2.string().trim().optional().describe("Optional keyword filter (title/description)."),
-    limit: z2.number().int().min(1).max(25).optional().describe("Max results (default 10).")
-  },
+  inputSchema: InputSchema3.shape,
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ query, limit }) => {
-    const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY;
+  handler: wrapHandler("list_upcoming_events", InputSchema3, async ({ query, limit }) => {
     const nowIso = (/* @__PURE__ */ new Date()).toISOString();
     const n = limit ?? 10;
     let path = `events?select=id,title,description,start_time,end_time,location,event_type,slug&start_time=gte.${nowIso}&order=start_time.asc&limit=${n}`;
     if (query) {
-      const q = encodeURIComponent(query);
+      const q = encodeURIComponent(query.replace(/[*(),]/g, ""));
       path += `&or=(title.ilike.*${q}*,description.ilike.*${q}*)`;
     }
-    const res = await fetch(`${url}/rest/v1/${path}`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` }
-    });
-    if (!res.ok) {
-      return {
-        content: [{ type: "text", text: `Supabase error ${res.status}: ${await res.text()}` }],
-        isError: true
-      };
-    }
-    const rows = await res.json();
+    const rows = await supabaseRest({ path });
     const results = rows.map((r) => ({
-      ...r,
+      id: r.id,
+      title: r.title ?? null,
+      description: r.description ?? null,
+      start_time: r.start_time ?? null,
+      end_time: r.end_time ?? null,
+      location: r.location ?? null,
+      event_type: r.event_type ?? null,
       event_url: r.slug ? `https://diasporanetwork.africa/dna/events/${r.slug}` : `https://diasporanetwork.africa/dna/events/${r.id}`
     }));
-    return {
-      content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
-      structuredContent: { results }
-    };
-  }
+    return { count: results.length, results };
+  })
 });
 
-// src/lib/mcp/tools/get-profile.ts
-import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.20.0";
-import { z as z3 } from "npm:zod@^4.4.3";
-var get_profile_default = defineTool3({
-  name: "get_profile",
-  title: "Get DNA profile by username",
-  description: "Fetch a single public DNA member profile by username (the /dna/<username> handle).",
-  inputSchema: {
-    username: z3.string().trim().min(1).describe("The DNA username, without the leading @ or /dna/.")
-  },
+// src/lib/mcp/tools/list-communities.ts
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z4 } from "npm:zod@^4.4.3";
+var InputSchema4 = z4.object({
+  query: z4.string().trim().max(100).optional().describe("Optional keyword filter on community name/description/tags."),
+  category: z4.string().trim().max(64).optional().describe("Optional category filter."),
+  featured_only: z4.boolean().optional().describe("If true, return only featured communities."),
+  limit: z4.number().int().min(1).max(50).optional().describe("Max results (default 20).")
+});
+var list_communities_default = defineTool4({
+  name: "list_communities",
+  title: "List DNA communities",
+  description: "List active public DNA communities (African diaspora affinity groups, chapters, and interest groups). Supports optional keyword search, category filter, and featured-only filter. Useful for agent discovery of relevant communities.",
+  inputSchema: InputSchema4.shape,
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ username }) => {
-    const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY;
-    const uname = encodeURIComponent(username.replace(/^@/, ""));
-    const path = `profiles?select=username,full_name,headline,bio,avatar_url,city,country,website_url&username=eq.${uname}&limit=1`;
-    const res = await fetch(`${url}/rest/v1/${path}`, {
-      headers: { apikey: key, Authorization: `Bearer ${key}` }
-    });
-    if (!res.ok) {
-      return {
-        content: [{ type: "text", text: `Supabase error ${res.status}: ${await res.text()}` }],
-        isError: true
-      };
+  handler: wrapHandler(
+    "list_communities",
+    InputSchema4,
+    async ({ query, category, featured_only, limit }) => {
+      const n = limit ?? 20;
+      let path = `communities?select=id,name,description,category,member_count,is_featured,image_url,tags&is_active=eq.true&moderation_status=eq.approved&order=member_count.desc.nullslast&limit=${n}`;
+      if (featured_only) path += `&is_featured=eq.true`;
+      if (category) {
+        const c = encodeURIComponent(category.replace(/[*(),]/g, ""));
+        path += `&category=eq.${c}`;
+      }
+      if (query) {
+        const q = encodeURIComponent(query.replace(/[*(),]/g, ""));
+        path += `&or=(name.ilike.*${q}*,description.ilike.*${q}*)`;
+      }
+      const rows = await supabaseRest({ path });
+      const results = rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        description: r.description ?? null,
+        category: r.category ?? null,
+        member_count: r.member_count ?? null,
+        is_featured: r.is_featured ?? null,
+        image_url: r.image_url ?? null,
+        tags: r.tags ?? null
+      }));
+      return { count: results.length, results };
     }
-    const rows = await res.json();
-    if (rows.length === 0) {
-      return { content: [{ type: "text", text: `No profile found for @${username}` }], isError: true };
-    }
-    const profile = {
-      ...rows[0],
-      profile_url: `https://diasporanetwork.africa/dna/${rows[0].username}`
-    };
-    return {
-      content: [{ type: "text", text: JSON.stringify(profile, null, 2) }],
-      structuredContent: { profile }
-    };
-  }
+  )
 });
 
 // src/lib/mcp/index.ts
 var mcp_default = defineMcp({
   name: "dna-platform-mcp",
   title: "DNA (Diaspora Network of Africa)",
-  version: "0.1.0",
-  instructions: "Tools for exploring the DNA platform \u2014 the operating system for the Global African Diaspora. Use `search_profiles` and `get_profile` to look up public member profiles (shareable at /dna/<username>), and `list_upcoming_events` to discover upcoming public events across the Convene module. All tools return public data only.",
-  tools: [search_profiles_default, get_profile_default, list_events_default]
+  version: "0.2.0",
+  instructions: "Tools for exploring the DNA platform \u2014 the operating system for the Global African Diaspora. Use `search_profiles` and `get_profile` to look up public member profiles (shareable at /dna/<username>), `list_upcoming_events` to discover upcoming public events across the Convene module, and `list_communities` to discover active African diaspora communities. All tools return public data only and validate their inputs strictly; malformed calls return a typed error with `code` and `message`.",
+  tools: [search_profiles_default, get_profile_default, list_events_default, list_communities_default]
 });
 
 // lovable-mcp-supabase-entry.ts
