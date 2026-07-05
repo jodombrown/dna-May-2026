@@ -1,6 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-// Admin RPC functions use 'as any' to bypass TypeScript since they're not in auto-generated types
 
 export interface UserStats {
   total: number;
@@ -80,56 +78,24 @@ export const useAdminStats = (): UseAdminStatsReturn => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // v0.0: no platform-wide analytics RPC is provisioned. get_admin_dashboard_stats,
+  // get_user_growth_data, and get_user_segments_distribution were never built — the
+  // real metrics source is owned by a dedicated admin analytics cycle (Arc 5). The
+  // fetch bodies below are short-circuited so we never call an absent RPC; the admin
+  // overview renders a deferred-state notice instead of zero-state cards.
   const fetchStats = useCallback(async () => {
-    try {
-      const { data, error: rpcError } = await (supabase as any).rpc('get_admin_dashboard_stats');
-
-      if (rpcError) {
-        setError('Failed to fetch dashboard stats');
-        return;
-      }
-
-      if (data) {
-        setStats(data as unknown as AdminDashboardStats);
-        setError(null);
-      }
-    } catch (err) {
-      setError('An error occurred while fetching stats');
-    }
+    // no-op until the analytics layer is built (Arc 5)
+    return;
   }, []);
 
-  const fetchGrowth = useCallback(async (days: number = 30) => {
-    try {
-      const { data, error: rpcError } = await (supabase as any).rpc('get_user_growth_data', {
-        p_days: days
-      });
-
-      if (rpcError) {
-        return;
-      }
-
-      if (data) {
-        setUserGrowth(data as unknown as UserGrowthDataPoint[]);
-      }
-    } catch (err) {
-      // Silently handle growth data errors
-    }
+  const fetchGrowth = useCallback(async (_days: number = 30) => {
+    // no-op until the analytics layer is built (Arc 5)
+    return;
   }, []);
 
   const fetchSegments = useCallback(async () => {
-    try {
-      const { data, error: rpcError } = await (supabase as any).rpc('get_user_segments_distribution');
-
-      if (rpcError) {
-        return;
-      }
-
-      if (data) {
-        setUserSegments(data as unknown as UserSegment[]);
-      }
-    } catch (err) {
-      // Silently handle segments data errors
-    }
+    // no-op until the analytics layer is built (Arc 5)
+    return;
   }, []);
 
   const refetch = useCallback(async () => {
