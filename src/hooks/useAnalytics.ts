@@ -29,7 +29,12 @@ export type ConnectEventName =
   | 'partner_page_cta_clicked'
   | 'partner_sector_cta_clicked'
   | 'partner_models_cta_clicked'
-  | 'partner_form_submitted';
+  | 'partner_form_submitted'
+  | 'morning_brief_banner_tap'
+  | 'morning_brief_banner_dismiss'
+  | 'morning_brief_deep_link_open'
+  | 'inbox_digest_opened'
+  | 'inbox_digest_closed';
 
 /** Typed metadata for analytics events */
 export type AnalyticsMetadata = Record<string, string | number | boolean | null | undefined>;
