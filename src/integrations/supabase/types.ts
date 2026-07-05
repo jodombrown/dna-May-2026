@@ -13958,6 +13958,14 @@ export type Database = {
         Args: { _speaker_id: string }
         Returns: number
       }
+      get_sponsor_contact: {
+        Args: { _sponsor_id: string }
+        Returns: {
+          contact_email: string
+          contact_name: string
+          id: string
+        }[]
+      }
       get_suggested_connections: {
         Args: { p_limit?: number; p_user_id: string }
         Returns: {
@@ -14373,6 +14381,27 @@ export type Database = {
       leave_group_conversation: {
         Args: { p_conversation_id: string }
         Returns: undefined
+      }
+      list_sponsor_logo_audit_log: {
+        Args: {
+          _action?: string
+          _admin_user_id?: string
+          _from?: string
+          _limit?: number
+          _offset?: number
+          _to?: string
+        }
+        Returns: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          id: string
+          logo_url: string
+          metadata: Json
+          sponsor_id: string
+          storage_path: string
+          total_count: number
+        }[]
       }
       log_connection_event: {
         Args: { p_connection: string; p_event_type: string; p_payload?: Json }
