@@ -444,7 +444,7 @@ function SponsorForm({ sponsor, onSave }: { sponsor: Sponsor | null; onSave: () 
       setUploading(false);
     }
   }, [sponsor?.id]);
-  }, []);
+
 
   const mutation = useMutation({
     mutationFn: () =>
