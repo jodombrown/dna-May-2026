@@ -141,7 +141,7 @@ export default function Discover() {
         try {
           let q = supabase
             .from('profiles')
-            .select('id, full_name, username, avatar_url, headline, profession, location, current_country, focus_areas, industries, skills, languages, available_for, regional_expertise, is_mentor, is_investor, updated_at')
+            .select('id, full_name, username, avatar_url, headline, profession, location, current_country, focus_areas, industries, skills, languages, available_for, regional_expertise, updated_at')
             .neq('id', user.id)
             .eq('is_public', true);
 
