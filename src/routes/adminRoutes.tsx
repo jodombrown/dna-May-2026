@@ -14,6 +14,7 @@ const ContentModeration = lazy(() => import('@/pages/admin/ContentModeration'));
 const EngagementDashboard = lazy(() => import('@/pages/admin/EngagementDashboard'));
 const AlphaFeedbackDashboard = lazy(() => import('@/pages/admin/AlphaFeedbackDashboard'));
 const SponsorshipManagement = lazy(() => import('@/pages/admin/SponsorshipManagement'));
+const SponsorLogoAuditLog = lazy(() => import('@/pages/admin/SponsorLogoAuditLog'));
 
 // Placeholder pages for routes that will be implemented later
 const PlaceholderPage = ({ title }: { title: string }) => (
