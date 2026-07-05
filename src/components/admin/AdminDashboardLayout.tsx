@@ -203,9 +203,6 @@ export const AdminDashboardLayout: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      // End admin session
-      await (supabase as any).rpc('end_admin_session', { p_reason: 'manual' });
-
       // Sign out
       await supabase.auth.signOut();
 

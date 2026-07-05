@@ -31,10 +31,12 @@ export const ProfileViewTracker: React.FC<ProfileViewTrackerProps> = ({
       if (!user || user.id === profileId) return;
 
       try {
-        // Use new record_profile_view function with notifications
-        const { error } = await supabase.rpc('record_profile_view' as any, {
-          p_viewer_id: user.id,
+        // Re-point onto live log_profile_view(p_profile_id, p_view_type).
+        // Viewer identity is derived server-side from auth.uid(); p_view_type
+        // carries the view context (profile_page / connection_card / …).
+        const { error } = await supabase.rpc('log_profile_view', {
           p_profile_id: profileId,
+          p_view_type: viewType,
         });
 
         if (error) {
