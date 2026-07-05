@@ -10733,6 +10733,39 @@ export type Database = {
           },
         ]
       }
+      sponsor_logo_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          id: string
+          logo_url: string | null
+          metadata: Json
+          sponsor_id: string | null
+          storage_path: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          metadata?: Json
+          sponsor_id?: string | null
+          storage_path?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          metadata?: Json
+          sponsor_id?: string | null
+          storage_path?: string | null
+        }
+        Relationships: []
+      }
       sponsor_placements: {
         Row: {
           click_count: number
@@ -14362,6 +14395,16 @@ export type Database = {
       log_profile_view: {
         Args: { p_profile_id: string; p_view_type?: string }
         Returns: undefined
+      }
+      log_sponsor_logo_action: {
+        Args: {
+          _action: string
+          _logo_url?: string
+          _metadata?: Json
+          _sponsor_id?: string
+          _storage_path?: string
+        }
+        Returns: string
       }
       make_user_admin: { Args: { user_email: string }; Returns: string }
       mark_all_notifications_read: {
