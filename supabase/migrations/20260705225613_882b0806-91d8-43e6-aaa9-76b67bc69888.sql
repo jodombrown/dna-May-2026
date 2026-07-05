@@ -1,0 +1,1 @@
+REVOKE SELECT (contact_email, contact_name) ON public.sponsors FROM anon, authenticated;

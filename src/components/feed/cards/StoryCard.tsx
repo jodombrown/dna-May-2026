@@ -299,7 +299,11 @@ export const StoryCard: React.FC<StoryCardProps> = ({
 
       {/* Threaded Comments Section */}
       {commentsVisible && (
-        <ThreadedComments postId={item.post_id} currentUserId={currentUserId} />
+        <ThreadedComments
+          postId={item.post_id}
+          currentUserId={currentUserId}
+          commentsDisabled={!!item.comments_disabled}
+        />
       )}
     </FeedCardBase>
   );
