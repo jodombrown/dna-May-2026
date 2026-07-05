@@ -4,9 +4,11 @@
  */
 
 import { useState, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { sponsorshipService, Sponsor, SponsorPlacement, SponsorWithPlacements } from '@/services/sponsorshipService';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,8 +18,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Pencil, Trash2, Eye, MousePointer, ExternalLink, Upload, Award, Image as ImageIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, MousePointer, ExternalLink, Upload, Award, Image as ImageIcon, ShieldAlert, ScrollText } from 'lucide-react';
 import { slugify } from '@/utils/slugify';
+
+/** Server-verified audit log write. Fails closed if not an admin. */
+async function logSponsorLogoAction(
+  action: 'upload' | 'update' | 'delete',
+  payload: { storage_path?: string | null; logo_url?: string | null; sponsor_id?: string | null; metadata?: Record<string, unknown> } = {},
+): Promise<void> {
+  const { error } = await (supabase as any).rpc('log_sponsor_logo_action', {
+    _action: action,
+    _storage_path: payload.storage_path ?? null,
+    _logo_url: payload.logo_url ?? null,
+    _sponsor_id: payload.sponsor_id ?? null,
+    _metadata: payload.metadata ?? {},
+  });
+  if (error) {
+    // Non-fatal for the caller UI: surface via console so ops can detect log gaps.
+    // The RPC itself will have already prevented non-admins from mutating anything upstream.
+    // eslint-disable-next-line no-console
+    console.error('[sponsor-logo-audit] log failed', error);
+  }
+}
 
 const TIERS = ['gold', 'silver', 'bronze', 'community'] as const;
 
@@ -47,6 +69,7 @@ const tierColors: Record<string, string> = {
 
 export default function SponsorshipManagement() {
   const queryClient = useQueryClient();
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
   const [editingSponsor, setEditingSponsor] = useState<Sponsor | null>(null);
   const [showSponsorDialog, setShowSponsorDialog] = useState(false);
   const [showPlacementDialog, setShowPlacementDialog] = useState(false);
@@ -55,6 +78,7 @@ export default function SponsorshipManagement() {
   const { data: sponsors = [], isLoading } = useQuery({
     queryKey: ['admin-sponsors'],
     queryFn: sponsorshipService.getAllSponsors,
+    enabled: isAdmin,
   });
 
   const toggleSponsorActive = useMutation({
@@ -67,12 +91,20 @@ export default function SponsorshipManagement() {
   });
 
   const deleteSponsor = useMutation({
-    mutationFn: sponsorshipService.deleteSponsor,
+    mutationFn: async (sponsor: Sponsor) => {
+      await sponsorshipService.deleteSponsor(sponsor.id);
+      await logSponsorLogoAction('delete', {
+        sponsor_id: sponsor.id,
+        logo_url: sponsor.logo_url,
+        metadata: { reason: 'sponsor_deleted', sponsor_name: sponsor.name },
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-sponsors'] });
       toast.success('Sponsor deleted');
     },
   });
+
 
   const deletePlacement = useMutation({
     mutationFn: sponsorshipService.deletePlacement,
@@ -91,6 +123,22 @@ export default function SponsorshipManagement() {
     },
   });
 
+  if (adminLoading) {
+    return <div className="text-center py-12 text-muted-foreground">Verifying access...</div>;
+  }
+
+  if (!isAdmin) {
+    return (
+      <Card className="p-12 text-center space-y-2">
+        <ShieldAlert className="h-8 w-8 mx-auto text-destructive" aria-hidden="true" />
+        <h2 className="text-lg font-semibold text-foreground">Admins only</h2>
+        <p className="text-sm text-muted-foreground">
+          Sponsor logo uploads, edits, and deletions are restricted to platform admins.
+        </p>
+      </Card>
+    );
+  }
+
   if (isLoading) {
     return <div className="text-center py-12 text-muted-foreground">Loading sponsors...</div>;
   }
@@ -102,6 +150,13 @@ export default function SponsorshipManagement() {
           <h2 className="text-2xl font-bold text-foreground">Sponsorship Portal</h2>
           <p className="text-sm text-muted-foreground mt-1">Manage sponsors, upload logos, preview cards, and control placements</p>
         </div>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline">
+            <Link to="/admin/sponsorships/logo-audit">
+              <ScrollText className="h-4 w-4 mr-2" aria-hidden="true" />
+              Logo audit log
+            </Link>
+          </Button>
         <Dialog open={showSponsorDialog} onOpenChange={setShowSponsorDialog}>
           <DialogTrigger asChild>
             <Button onClick={() => setEditingSponsor(null)}>
@@ -122,7 +177,9 @@ export default function SponsorshipManagement() {
             />
           </DialogContent>
         </Dialog>
+        </div>
       </div>
+
 
       {sponsors.length === 0 ? (
         <Card className="p-12 text-center text-muted-foreground">
@@ -170,7 +227,7 @@ export default function SponsorshipManagement() {
                     size="icon"
                     onClick={() => {
                       if (confirm('Delete this sponsor and all its placements?')) {
-                        deleteSponsor.mutate(sponsor.id);
+                        deleteSponsor.mutate(sponsor);
                       }
                     }}
                   >
@@ -266,7 +323,7 @@ export default function SponsorshipManagement() {
 
 // ─── Logo Upload Helper ────────────────────────────────────────────────────────
 
-async function uploadSponsorLogo(file: File): Promise<string> {
+async function uploadSponsorLogo(file: File, sponsorId: string | null): Promise<string> {
   const user = await supabase.auth.getUser();
   if (!user.data.user) throw new Error('Not authenticated');
 
@@ -282,6 +339,12 @@ async function uploadSponsorLogo(file: File): Promise<string> {
   if (error) throw error;
 
   const { data } = supabase.storage.from('sponsor-logos').getPublicUrl(filePath);
+  await logSponsorLogoAction(sponsorId ? 'update' : 'upload', {
+    storage_path: filePath,
+    logo_url: data.publicUrl,
+    sponsor_id: sponsorId,
+    metadata: { file_name: file.name, size_bytes: file.size, content_type: file.type },
+  });
   return data.publicUrl;
 }
 
@@ -372,7 +435,7 @@ function SponsorForm({ sponsor, onSave }: { sponsor: Sponsor | null; onSave: () 
     }
     setUploading(true);
     try {
-      const url = await uploadSponsorLogo(file);
+      const url = await uploadSponsorLogo(file, sponsor?.id ?? null);
       setForm(prev => ({ ...prev, logo_url: url }));
       toast.success('Logo uploaded');
     } catch (err: unknown) {
@@ -380,7 +443,8 @@ function SponsorForm({ sponsor, onSave }: { sponsor: Sponsor | null; onSave: () 
     } finally {
       setUploading(false);
     }
-  }, []);
+  }, [sponsor?.id]);
+
 
   const mutation = useMutation({
     mutationFn: () =>
