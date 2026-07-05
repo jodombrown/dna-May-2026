@@ -1070,31 +1070,15 @@ export const notificationSystemService = {
   },
 
   async updatePreferences(
-    userId: string,
-    updates: Partial<NotificationPreferences>
+    _userId: string,
+    _updates: Partial<NotificationPreferences>
   ): Promise<void> {
-    const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-
-    if (updates.globalEnabled !== undefined) dbUpdates.global_enabled = updates.globalEnabled;
-    if (updates.quietHoursEnabled !== undefined) dbUpdates.quiet_hours_enabled = updates.quietHoursEnabled;
-    if (updates.quietHoursStart !== undefined) dbUpdates.quiet_hours_start = updates.quietHoursStart;
-    if (updates.quietHoursEnd !== undefined) dbUpdates.quiet_hours_end = updates.quietHoursEnd;
-    if (updates.timezone !== undefined) dbUpdates.timezone = updates.timezone;
-    if (updates.pushEnabled !== undefined) dbUpdates.push_enabled = updates.pushEnabled;
-    if (updates.emailEnabled !== undefined) dbUpdates.email_enabled = updates.emailEnabled;
-    if (updates.emailDigestEnabled !== undefined) dbUpdates.email_digest_enabled = updates.emailDigestEnabled;
-    if (updates.emailDigestDay !== undefined) dbUpdates.email_digest_day = updates.emailDigestDay;
-    if (updates.emailDigestHour !== undefined) dbUpdates.email_digest_hour = updates.emailDigestHour;
-    if (updates.categoryPreferences !== undefined) dbUpdates.category_preferences = updates.categoryPreferences;
-    if (updates.typeOverrides !== undefined) dbUpdates.type_overrides = updates.typeOverrides;
-    if (updates.diaInsightFrequency !== undefined) dbUpdates.dia_insight_frequency = updates.diaInsightFrequency;
-    if (updates.mutedUserIds !== undefined) dbUpdates.muted_user_ids = updates.mutedUserIds;
-    if (updates.mutedSpaceIds !== undefined) dbUpdates.muted_space_ids = updates.mutedSpaceIds;
-    if (updates.mutedEventIds !== undefined) dbUpdates.muted_event_ids = updates.mutedEventIds;
-
-    await db
-      .from('notification_preferences')
-      .upsert({ user_id: userId, ...dbUpdates }, { onConflict: 'user_id' });
+    // v0.0: the notification_preferences table is not provisioned (the real
+    // persistence model is owned by BD059/D064). Short-circuit the write path so
+    // we never upsert into an absent table or present a pretend-save to the user.
+    // getPreferences() intentionally still resolves to DEFAULT_NOTIFICATION_PREFERENCES
+    // so the bell + notification center keep working on defaults.
+    return;
   },
 
   // ============================================
