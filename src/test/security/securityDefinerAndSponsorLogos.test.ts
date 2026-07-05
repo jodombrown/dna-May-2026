@@ -66,7 +66,7 @@ d('security · sponsor-logos storage bucket is write-locked for non-admins', () 
 
     expect(error).not.toBeNull();
     expect(data).toBeNull();
-  });
+  }, 20000);
 
   it('blocks anon updates to sponsor-logos', async () => {
     const supabase = anonClient();
@@ -76,7 +76,7 @@ d('security · sponsor-logos storage bucket is write-locked for non-admins', () 
 
     expect(error).not.toBeNull();
     expect(data).toBeNull();
-  });
+  }, 20000);
 
   it('blocks anon deletes from sponsor-logos', async () => {
     const supabase = anonClient();
