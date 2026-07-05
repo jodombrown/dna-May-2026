@@ -23,7 +23,7 @@ import {
 
 // Mobile components
 
-import { ConnectMobileHeader } from '@/components/connect/ConnectMobileHeader';
+import { ConnectMobileHeader, ConnectMobileTabs, ConnectMobileTopBar } from '@/components/connect/ConnectMobileHeader';
 
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
