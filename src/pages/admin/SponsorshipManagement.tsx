@@ -323,7 +323,7 @@ export default function SponsorshipManagement() {
 
 // ─── Logo Upload Helper ────────────────────────────────────────────────────────
 
-async function uploadSponsorLogo(file: File): Promise<string> {
+async function uploadSponsorLogo(file: File, sponsorId: string | null): Promise<string> {
   const user = await supabase.auth.getUser();
   if (!user.data.user) throw new Error('Not authenticated');
 
@@ -339,6 +339,12 @@ async function uploadSponsorLogo(file: File): Promise<string> {
   if (error) throw error;
 
   const { data } = supabase.storage.from('sponsor-logos').getPublicUrl(filePath);
+  await logSponsorLogoAction(sponsorId ? 'update' : 'upload', {
+    storage_path: filePath,
+    logo_url: data.publicUrl,
+    sponsor_id: sponsorId,
+    metadata: { file_name: file.name, size_bytes: file.size, content_type: file.type },
+  });
   return data.publicUrl;
 }
 
