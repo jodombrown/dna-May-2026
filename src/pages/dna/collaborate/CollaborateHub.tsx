@@ -49,6 +49,7 @@ const PREVIEW_LIMIT = 3;
 export default function CollaborateHub() {
   const { user } = useAuth();
   const joinSpace = useJoinSpace();
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Spaces the caller is an active member of (shares MySpaces' cache).
   const { data: mySpaces = [], isLoading: myLoading } = useQuery({
