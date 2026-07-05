@@ -179,17 +179,9 @@ export function createTypedSupabase(client: SupabaseClient<Database>) {
     userNudgeState: () =>
       client.from('user_nudge_state' as never) as unknown as AnyQueryBuilder,
 
-    /** Provisional: composer_drafts */
-    composerDrafts: () =>
-      client.from('composer_drafts' as never) as unknown as AnyQueryBuilder,
-
     /** Provisional: messaging_messages */
     messagingMessages: () =>
       client.from('messaging_messages' as never) as unknown as AnyQueryBuilder,
-
-    /** Provisional: content_attribution */
-    contentAttribution: () =>
-      client.from('content_attribution' as never) as unknown as AnyQueryBuilder,
 
     /** Provisional: notification_records */
     notificationRecords: () =>
