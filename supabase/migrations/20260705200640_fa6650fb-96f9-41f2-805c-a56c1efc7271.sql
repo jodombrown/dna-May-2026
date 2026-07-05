@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.is_group_creator(uuid, uuid) TO anon, authenticated;
