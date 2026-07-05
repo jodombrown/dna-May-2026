@@ -23,6 +23,7 @@ import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradi
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { connectionService } from '@/services/connectionService';
 import { messageService } from '@/services/messageService';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 import { useToast } from '@/hooks/use-toast';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
@@ -354,7 +355,8 @@ const PublicProfile = () => {
                     </Button>
                   )}
                   
-                  {connectionStatus === 'accepted' && (
+                  {/* BD063 hide-and-freeze: Message entry hidden while DM messaging is OUT at v0.0. */}
+                  {MESSAGING_ENABLED && connectionStatus === 'accepted' && (
                     <Button onClick={handleMessage} variant="outline">
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Message

@@ -1,3 +1,5 @@
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
+
 export type PublicNavItem = {
   name: string;
   path: string;
@@ -20,7 +22,10 @@ export const mainNavItems = [
   { name: 'Discover', path: '/dna/connect/discover', icon: 'Search' },
   { name: 'Connect', path: '/dna/connect/network', icon: 'Users2' },
   { name: 'Convene', path: '/dna/convene/events', icon: 'Calendar' },
-  { name: 'Messages', path: '/dna/connect/messages', icon: 'MessageCircle' },
+  // BD063 hide-and-freeze: Messages hidden while DM/group messaging is OUT at v0.0.
+  ...(MESSAGING_ENABLED
+    ? [{ name: 'Messages', path: '/dna/connect/messages', icon: 'MessageCircle' }]
+    : []),
   { name: 'Contribute', path: '/dna/contribute', icon: 'Briefcase' },
 ];
 
@@ -40,7 +45,8 @@ export const pillarNavigation = {
     items: [
       { name: 'Network', path: '/dna/connect/network' },
       { name: 'Feed', path: '/dna/feed' },
-      { name: 'Messages', path: '/dna/messages' },
+      // BD063 hide-and-freeze: Messages hidden while DM/group messaging is OUT at v0.0.
+      ...(MESSAGING_ENABLED ? [{ name: 'Messages', path: '/dna/messages' }] : []),
     ],
   },
   convene: {

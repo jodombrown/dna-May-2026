@@ -29,6 +29,7 @@ import { ProfileShareDropdown } from '@/components/profile/ProfileShareDropdown'
 import { useState } from 'react';
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
 import { messageService } from '@/services/messageService';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 // Public profile components
 import {
@@ -311,10 +312,13 @@ const PublicProfilePage = () => {
                         <UserCheck className="w-4 h-4 mr-2" />
                         Connected
                       </Button>
-                      <Button onClick={handleMessage} variant="outline">
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Message
-                      </Button>
+                      {/* BD063 hide-and-freeze: Message entry hidden while DM messaging is OUT at v0.0. */}
+                      {MESSAGING_ENABLED && (
+                        <Button onClick={handleMessage} variant="outline">
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Message
+                        </Button>
+                      )}
                     </>
                   )}
                   

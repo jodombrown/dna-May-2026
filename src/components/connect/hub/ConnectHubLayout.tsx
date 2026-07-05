@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 interface ConnectHubLayoutProps {
   leftPanel: React.ReactNode;
@@ -161,7 +162,10 @@ function MobileBottomNav({ activeView, onViewChange }: MobileBottomNavProps) {
   const navItems = [
     { id: 'network' as const, label: 'Network', icon: NetworkIcon },
     { id: 'discover' as const, label: 'Discover', icon: DiscoverIcon },
-    { id: 'messages' as const, label: 'Messages', icon: MessagesIcon },
+    // BD063 hide-and-freeze: hide the Messages tab while DM messaging is OUT at v0.0.
+    ...(MESSAGING_ENABLED
+      ? [{ id: 'messages' as const, label: 'Messages', icon: MessagesIcon }]
+      : []),
   ];
 
   return (

@@ -32,6 +32,7 @@ import {
 import BetaSignupDialog from '@/components/auth/BetaSignupDialog';
 import { publicNavItems, aboutUsDropdown } from './header/navigationConfig';
 import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 // useUnreadNotificationCount removed — UnifiedNotificationBell handles its own count
 import { useMobile } from '@/hooks/useMobile';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
@@ -182,7 +183,10 @@ const UnifiedHeader = () => {
   // Utility navigation - SECONDARY
   const utilityNavigation = [
     { title: 'Feed', icon: Home, path: '/dna/feed', badge: 0 },
-    { title: 'Messages', icon: MessageCircle, path: '/dna/messages', badge: unreadMessageCount },
+    // BD063 hide-and-freeze: DM/group messaging is OUT at v0.0 (see MESSAGING_ENABLED).
+    ...(MESSAGING_ENABLED
+      ? [{ title: 'Messages', icon: MessageCircle, path: '/dna/messages', badge: unreadMessageCount }]
+      : []),
   ];
 
   const handleSignOut = () => {

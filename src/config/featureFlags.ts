@@ -22,3 +22,17 @@ export const FEATURE_FLAGS: FeatureFlags = {
   enableTestGuide: true,
   showDIADebugInfo: false,
 };
+
+/**
+ * In-app DM / group messaging (BD063 founder call: OUT at v0.0).
+ *
+ * Hide-and-freeze: the messaging surface (nav entries, "Message" entry
+ * buttons, and the /dna/messages routes) is hidden while messageService /
+ * groupMessageService and all thread components stay frozen in the tree.
+ * Set to `true` to unfreeze the entire surface in one place.
+ *
+ * NOTE: this gates DM/group messaging ONLY. Convene event threads
+ * (EventThreadCTA) and Connect introductions are Charter-live and are NOT
+ * gated by this flag.
+ */
+export const MESSAGING_ENABLED = false;

@@ -16,6 +16,7 @@ import { PulseTrayItem } from './PulseTrayItem';
 import { MateMasie, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
 import { InboxDigestSheet } from './InboxDigestSheet';
 import { DailyPulseSheet } from './DailyPulseSheet';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 interface PulseDockTrayProps {
   open: boolean;
@@ -136,7 +137,8 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
         {/* Pulse Items (Five C's completion + DIA + Messages) */}
         <div className="px-4 pb-4">
           <div className="grid grid-cols-4 gap-2">
-            {PULSE_ITEMS.map((item) => (
+            {/* BD063 hide-and-freeze: drop the Messages item while DM/group messaging is OUT at v0.0. */}
+            {PULSE_ITEMS.filter((item) => MESSAGING_ENABLED || item.key !== 'messages').map((item) => (
               <PulseTrayItem
                 key={item.key}
                 item={item}
