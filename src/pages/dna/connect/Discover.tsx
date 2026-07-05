@@ -56,6 +56,8 @@ export default function Discover() {
   
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({});
   const [desktopSearchQuery, setDesktopSearchQuery] = useState('');
   const [page, setPage] = useState(0);
