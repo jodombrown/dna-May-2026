@@ -8,13 +8,14 @@ import { DiscoverSearchHeader } from '@/components/connect/DiscoverSearchHeader'
 import { DiscoverFilterPills } from '@/components/connect/DiscoverFilterPills';
 import { DiscoverFilterSheet } from '@/components/connect/DiscoverFilterSheet';
 import { MemberCardSkeletonGrid } from '@/components/connect/MemberCardSkeleton';
-import { Loader2, Users } from 'lucide-react';
+import { Loader2, Users, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import { useMobile } from '@/hooks/useMobile';
 import { logger } from '@/lib/logger';
 import { originNameToCode } from '@/lib/memberHeritage';
+import { CaughtUpNotice } from '@/components/shared/CaughtUpNotice';
 
 interface FilterState {
   primary_origin_country?: string;
