@@ -435,7 +435,7 @@ function SponsorForm({ sponsor, onSave }: { sponsor: Sponsor | null; onSave: () 
     }
     setUploading(true);
     try {
-      const url = await uploadSponsorLogo(file);
+      const url = await uploadSponsorLogo(file, sponsor?.id ?? null);
       setForm(prev => ({ ...prev, logo_url: url }));
       toast.success('Logo uploaded');
     } catch (err: unknown) {
@@ -443,6 +443,7 @@ function SponsorForm({ sponsor, onSave }: { sponsor: Sponsor | null; onSave: () 
     } finally {
       setUploading(false);
     }
+  }, [sponsor?.id]);
   }, []);
 
   const mutation = useMutation({
