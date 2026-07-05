@@ -82,7 +82,16 @@ export function ThreadedComments({ postId, currentUserId, commentsDisabled = fal
         setExpandedReplies((prev) => new Set([...prev, parentId]));
       }
     } catch (error) {
-      toast.error('Failed to post comment');
+      const message = error instanceof Error ? error.message : 'Please try again.';
+      const friendly = /comments are turned off/i.test(message)
+        ? 'The author turned off comments for this post.'
+        : `Couldn't post your comment. ${message}`;
+      toast.error(friendly, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleSubmit(parentId),
+        },
+      });
     } finally {
       setIsSubmitting(false);
     }
