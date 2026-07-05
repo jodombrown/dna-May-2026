@@ -40,43 +40,75 @@ export function ConnectMobileHeader({
           activeFilterCount,
         }}
       />
+      <ConnectMobileTabs activeTab={activeTab} onTabChange={onTabChange} />
+    </div>
+  );
+}
 
-      {/* Tab Bar - Matches Feed tab styling (no sticky needed, parent is fixed) */}
-      <div className="px-3 py-1.5 bg-background border-b border-border">
-        <div
-          className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg"
-          role="tablist"
-          aria-label="Connect tabs"
-        >
-          {TAB_CONFIG.map(({ value, icon: Icon, label }) => {
-            const isActive = activeTab === value;
-            const ariaLabel = `${label} tab`;
+interface ConnectMobileTabsProps {
+  activeTab: ConnectTab;
+  onTabChange: (tab: ConnectTab) => void;
+}
 
-            return (
-              <button
-                key={value}
-                onClick={() => onTabChange(value)}
-                role="tab"
-                aria-selected={isActive}
-                aria-label={ariaLabel}
-                title={label}
-                className={cn(
-                  "flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  isActive
-                    ? "bg-background shadow-sm flex-1 px-3"
-                    : "px-3 text-muted-foreground hover:text-foreground hover:bg-background/50"
-                )}
-              >
-                <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} aria-hidden="true" />
-                {isActive && (
-                  <span className="text-xs font-medium truncate">{label}</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+export function ConnectMobileTabs({ activeTab, onTabChange }: ConnectMobileTabsProps) {
+  return (
+    <div className="px-3 py-1.5 bg-background border-b border-border">
+      <div
+        className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg"
+        role="tablist"
+        aria-label="Connect tabs"
+      >
+        {TAB_CONFIG.map(({ value, icon: Icon, label }) => {
+          const isActive = activeTab === value;
+          const ariaLabel = `${label} tab`;
+
+          return (
+            <button
+              key={value}
+              onClick={() => onTabChange(value)}
+              role="tab"
+              aria-selected={isActive}
+              aria-label={ariaLabel}
+              title={label}
+              className={cn(
+                "flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                isActive
+                  ? "bg-background shadow-sm flex-1 px-3"
+                  : "px-3 text-muted-foreground hover:text-foreground hover:bg-background/50"
+              )}
+            >
+              <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} aria-hidden="true" />
+              {isActive && (
+                <span className="text-xs font-medium truncate">{label}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
+
+export function ConnectMobileTopBar({
+  searchQuery,
+  onSearchChange,
+  onFiltersClick,
+  activeFilterCount = 0,
+}: Omit<ConnectMobileHeaderProps, 'activeTab' | 'onTabChange'>) {
+  return (
+    <div className="md:hidden">
+      <DnaMobileHeader
+        bubble={{
+          kind: 'search',
+          placeholder: 'Search members...',
+          value: searchQuery,
+          onChange: onSearchChange,
+          onFiltersClick,
+          activeFilterCount,
+        }}
+      />
+    </div>
+  );
+}
+
