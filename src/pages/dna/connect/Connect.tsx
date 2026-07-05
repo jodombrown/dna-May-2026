@@ -167,17 +167,17 @@ const Connect = () => {
         >
           <div className={cn(
             "bg-background transition-all duration-300 overflow-hidden",
-            headerHidden ? "max-h-0 opacity-0" : "max-h-40 opacity-100"
+            headerHidden ? "max-h-0 opacity-0" : "max-h-20 opacity-100"
           )}>
-            <ConnectMobileHeader
-              activeTab={mobileView}
-              onTabChange={handleMobileTabChange}
+            <ConnectMobileTopBar
               searchQuery={mobileSearchQuery}
               onSearchChange={setMobileSearchQuery}
               onFiltersClick={() => setShowMobileFilters(true)}
               activeFilterCount={mobileActiveFilterCount}
             />
           </div>
+          {/* Tabs row - always visible (matches Feed behavior) */}
+          <ConnectMobileTabs activeTab={mobileView} onTabChange={handleMobileTabChange} />
         </div>
 
         {/* Mobile Content - dynamic padding from measured header */}
