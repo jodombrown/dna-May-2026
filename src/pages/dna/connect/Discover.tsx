@@ -317,24 +317,35 @@ export default function Discover() {
             </AnimatePresence>
           </motion.div>
 
-          {hasMore ? (
+          {loadMoreError ? (
+            <div className="flex flex-col items-center justify-center pt-4 pb-2 gap-2" data-testid="discover-load-more-error">
+              <div className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <span>{loadMoreError}</span>
+              </div>
+              <button
+                onClick={handleRetryLoadMore}
+                disabled={isLoadingMore}
+                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all active:scale-95"
+              >
+                {isLoadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Retry'}
+              </button>
+            </div>
+          ) : hasMore ? (
             <div className="flex justify-center pt-4 pb-2">
               <button
                 onClick={handleLoadMore}
-                disabled={loading}
-                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all active:scale-95"
+                disabled={isLoadingMore}
+                aria-busy={isLoadingMore}
+                data-testid="discover-load-more"
+                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all active:scale-95 min-w-[120px] flex items-center justify-center"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Load More'}
+                {isLoadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Load More'}
               </button>
             </div>
           ) : (
             members.length > 0 && (
-              <div className="flex flex-col items-center justify-center pt-6 pb-2 text-center">
-                <div className="text-sm font-medium text-foreground">You're all caught up</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  You've seen every member matching your filters. Try adjusting them to discover more.
-                </p>
-              </div>
+              <CaughtUpNotice description="You've seen every member matching your filters. Try adjusting them to discover more." />
             )
           )}
         </>
