@@ -123,6 +123,22 @@ export default function SponsorshipManagement() {
     },
   });
 
+  if (adminLoading) {
+    return <div className="text-center py-12 text-muted-foreground">Verifying access...</div>;
+  }
+
+  if (!isAdmin) {
+    return (
+      <Card className="p-12 text-center space-y-2">
+        <ShieldAlert className="h-8 w-8 mx-auto text-destructive" aria-hidden="true" />
+        <h2 className="text-lg font-semibold text-foreground">Admins only</h2>
+        <p className="text-sm text-muted-foreground">
+          Sponsor logo uploads, edits, and deletions are restricted to platform admins.
+        </p>
+      </Card>
+    );
+  }
+
   if (isLoading) {
     return <div className="text-center py-12 text-muted-foreground">Loading sponsors...</div>;
   }
@@ -134,6 +150,13 @@ export default function SponsorshipManagement() {
           <h2 className="text-2xl font-bold text-foreground">Sponsorship Portal</h2>
           <p className="text-sm text-muted-foreground mt-1">Manage sponsors, upload logos, preview cards, and control placements</p>
         </div>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline">
+            <Link to="/admin/sponsorships/logo-audit">
+              <ScrollText className="h-4 w-4 mr-2" aria-hidden="true" />
+              Logo audit log
+            </Link>
+          </Button>
         <Dialog open={showSponsorDialog} onOpenChange={setShowSponsorDialog}>
           <DialogTrigger asChild>
             <Button onClick={() => setEditingSponsor(null)}>
