@@ -13,7 +13,9 @@ interface EventResult {
   description: string | null;
   start_time: string | null;
   end_time: string | null;
-  location: string | null;
+  location_name: string | null;
+  location_city: string | null;
+  location_country: string | null;
   event_type: string | null;
   event_url: string;
 }
@@ -29,7 +31,7 @@ export default defineTool({
     const nowIso = new Date().toISOString();
     const n = limit ?? 10;
     let path =
-      `events?select=id,title,description,start_time,end_time,location,event_type,slug` +
+      `events?select=id,title,description,start_time,end_time,location_name,location_city,location_country,event_type,slug` +
       `&start_time=gte.${nowIso}&order=start_time.asc&limit=${n}`;
     if (query) {
       const q = encodeURIComponent(query.replace(/[*(),]/g, ""));
@@ -42,7 +44,9 @@ export default defineTool({
       description: (r.description as string) ?? null,
       start_time: (r.start_time as string) ?? null,
       end_time: (r.end_time as string) ?? null,
-      location: (r.location as string) ?? null,
+      location_name: (r.location_name as string) ?? null,
+      location_city: (r.location_city as string) ?? null,
+      location_country: (r.location_country as string) ?? null,
       event_type: (r.event_type as string) ?? null,
       event_url: r.slug
         ? `https://diasporanetwork.africa/dna/events/${r.slug}`
