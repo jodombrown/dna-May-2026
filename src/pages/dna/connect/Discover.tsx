@@ -286,7 +286,7 @@ export default function Discover() {
             </AnimatePresence>
           </motion.div>
 
-          {hasMore && (
+          {hasMore ? (
             <div className="flex justify-center pt-4 pb-2">
               <button
                 onClick={handleLoadMore}
@@ -296,6 +296,15 @@ export default function Discover() {
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Load More'}
               </button>
             </div>
+          ) : (
+            members.length > 0 && (
+              <div className="flex flex-col items-center justify-center pt-6 pb-2 text-center">
+                <div className="text-sm font-medium text-foreground">You're all caught up</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  You've seen every member matching your filters. Try adjusting them to discover more.
+                </p>
+              </div>
+            )
           )}
         </>
       )}
