@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { MessageSquare, Settings, Bell, LogOut, LayoutDashboard } from 'lucide-react';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 const MobileBottomNav: React.FC = () => {
   const navigate = useNavigate();
@@ -229,7 +230,8 @@ const MobileBottomNav: React.FC = () => {
 
           {/* Menu Items */}
           <div className="space-y-1">
-            {moreMenuItems.map((item) => (
+            {/* BD063 hide-and-freeze: drop the Messages item while DM messaging is OUT at v0.0. */}
+            {moreMenuItems.filter((item) => MESSAGING_ENABLED || item.path !== '/dna/messages').map((item) => (
               <button
                 key={item.label}
                 onClick={() => {

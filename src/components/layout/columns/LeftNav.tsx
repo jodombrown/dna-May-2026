@@ -15,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 /**
  * LeftNav - Standard left navigation for DNA platform
@@ -33,7 +34,10 @@ export function LeftNav() {
     { icon: FuntunfunefuDenkyemfunefu, label: 'Collaborate', path: '/dna/collaborate' },
     { icon: Adinkrahene, label: 'Contribute', path: '/dna/contribute' },
     { icon: Mpatapo, label: 'Convey', path: '/dna/convey' },
-    { icon: MessageCircle, label: 'Messages', path: '/dna/messages' },
+    // BD063 hide-and-freeze: DM/group messaging is OUT at v0.0 (see MESSAGING_ENABLED).
+    ...(MESSAGING_ENABLED
+      ? [{ icon: MessageCircle, label: 'Messages', path: '/dna/messages' }]
+      : []),
   ];
 
   return (

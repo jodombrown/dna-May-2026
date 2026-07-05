@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { messageService } from '@/services/messageService';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
@@ -114,6 +115,8 @@ const Connect = () => {
 
   // Handle message member from discovery feed or DIA cards — open inline chat
   const handleMessageMember = useCallback(async (memberId: string) => {
+    // BD063 hide-and-freeze: DM messaging is OUT at v0.0 — do not open a conversation.
+    if (!MESSAGING_ENABLED) return;
     try {
       const conversation = await messageService.getOrCreateConversation(memberId);
       setSelectedConversationId(conversation.id);
@@ -133,7 +136,8 @@ const Connect = () => {
   // Mobile tab change
   const handleMobileTabChange = (tab: 'discover' | 'network' | 'messages') => {
     if (tab === 'messages') {
-      navigate('/dna/messages');
+      // BD063 hide-and-freeze: messaging is OUT at v0.0 — route to discover, not /dna/messages.
+      navigate(MESSAGING_ENABLED ? '/dna/messages' : '/dna/connect/discover');
     } else if (tab === 'network') {
       navigate('/dna/connect/network');
     } else {
@@ -226,18 +230,22 @@ const Connect = () => {
           />
         }
         rightPanel={
-          expandedChat && selectedConversationId ? (
-            <InlineChat
-              conversationId={selectedConversationId}
-              onClose={handleCloseChat}
-              onMinimize={() => setExpandedChat(false)}
-            />
-          ) : (
-            <ConversationsPanel
-              onSelectConversation={handleSelectConversation}
-              onExpandChat={() => setExpandedChat(true)}
-              selectedConversationId={selectedConversationId}
-            />
+          /* BD063 hide-and-freeze: the DM column (conversations list + inline chat) is
+             hidden while messaging is OUT at v0.0. Frozen components stay in the tree. */
+          !MESSAGING_ENABLED ? null : (
+            expandedChat && selectedConversationId ? (
+              <InlineChat
+                conversationId={selectedConversationId}
+                onClose={handleCloseChat}
+                onMinimize={() => setExpandedChat(false)}
+              />
+            ) : (
+              <ConversationsPanel
+                onSelectConversation={handleSelectConversation}
+                onExpandChat={() => setExpandedChat(true)}
+                selectedConversationId={selectedConversationId}
+              />
+            )
           )
         }
         expandedChat={expandedChat}

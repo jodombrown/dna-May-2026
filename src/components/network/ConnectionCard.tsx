@@ -22,6 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useMutualConnections } from '@/hooks/useMutualConnections';
 import { ProfileViewTracker } from '@/components/analytics/ProfileViewTracker';
 import { messageService } from '@/services/messageService';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -164,10 +165,13 @@ const ConnectionCard: React.FC<ConnectionCardProps> = ({ connection, connectionI
                   <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleMessage(); }}>
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    Message
-                  </DropdownMenuItem>
+                  {/* BD063 hide-and-freeze: Message entry hidden while DM messaging is OUT at v0.0. */}
+                  {MESSAGING_ENABLED && (
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleMessage(); }}>
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Message
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleViewProfile(); }}>
                     <User className="mr-2 h-4 w-4" />
                     View Profile
