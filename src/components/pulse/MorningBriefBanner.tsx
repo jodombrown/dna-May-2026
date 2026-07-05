@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
 import { useAuth } from '@/contexts/AuthContext';
 import { useInboxBrief } from '@/hooks/messaging/useInboxBrief';
 import { useDiaMessagingPrefs } from '@/hooks/messaging/useDiaMessagingPrefs';
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { InboxDigestSheet } from './InboxDigestSheet';
 import { cn } from '@/lib/utils';
 
 const ALLOWED_PATHS = ['/dna/feed'];
+
+/**
+ * Query param that deep-links straight into the Inbox Digest sheet.
+ * Works on any route the banner is mounted on and on both mobile + desktop
+ * (the sheet renders as a Dialog on desktop, a Drawer on mobile).
+ *
+ *   /dna/feed?digest=open
+ */
+export const DIGEST_DEEP_LINK_PARAM = 'digest';
+export const DIGEST_DEEP_LINK_VALUE = 'open';
 
 const todayKey = () => {
   const d = new Date();
@@ -20,15 +31,23 @@ const todayKey = () => {
  * Once per calendar day, after the user lands on the feed, surface a small
  * banner with DIA's cross-thread summary. Dismissible; clicking opens the
  * full inbox digest sheet. Respects the user's DIA summaries preference.
+ *
+ * The InboxDigestSheet is intentionally rendered OUTSIDE the `!dismissed`
+ * gate so dismissing the banner never unmounts the sheet mid-open.
  */
 export const MorningBriefBanner: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { prefs } = useDiaMessagingPrefs();
+  const { trackEvent } = useAnalytics();
   const [dismissed, setDismissed] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const deepLinkHandledRef = useRef(false);
 
-  const onAllowedPath = ALLOWED_PATHS.some((p) => location.pathname === p || location.pathname.startsWith(p + '/'));
+  const onAllowedPath = ALLOWED_PATHS.some(
+    (p) => location.pathname === p || location.pathname.startsWith(p + '/'),
+  );
   const eligible = !!user && prefs.summariesEnabled && onAllowedPath;
 
   useEffect(() => {
@@ -43,6 +62,25 @@ export const MorningBriefBanner: React.FC = () => {
     }
   }, [eligible, user]);
 
+  // Deep link: ?digest=open opens the sheet directly (mobile + desktop).
+  useEffect(() => {
+    if (deepLinkHandledRef.current) return;
+    const params = new URLSearchParams(location.search);
+    if (params.get(DIGEST_DEEP_LINK_PARAM) !== DIGEST_DEEP_LINK_VALUE) return;
+    deepLinkHandledRef.current = true;
+    setSheetOpen(true);
+    void trackEvent('morning_brief_deep_link_open', {
+      route: location.pathname,
+    });
+    // Strip the param so refresh / back does not re-open.
+    params.delete(DIGEST_DEEP_LINK_PARAM);
+    const nextSearch = params.toString();
+    navigate(
+      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : '' },
+      { replace: true },
+    );
+  }, [location.pathname, location.search, navigate, trackEvent]);
+
   const brief = useInboxBrief(eligible && !dismissed);
 
   const markSeenToday = () => {
@@ -54,18 +92,31 @@ export const MorningBriefBanner: React.FC = () => {
   };
 
   const handleDismiss = () => {
+    void trackEvent('morning_brief_banner_dismiss', {
+      unread: brief.data?.totalUnread ?? 0,
+    });
     setDismissed(true);
     markSeenToday();
   };
 
   const handleOpen = () => {
+    void trackEvent('morning_brief_banner_tap', {
+      unread: brief.data?.totalUnread ?? 0,
+      threads: brief.data?.unreadThreadCount ?? 0,
+    });
+    void trackEvent('inbox_digest_opened', { source: 'morning_brief_banner' });
     setSheetOpen(true);
     markSeenToday();
   };
 
   const handleSheetOpenChange = (next: boolean) => {
     setSheetOpen(next);
-    if (!next) setDismissed(true);
+    if (!next) {
+      void trackEvent('inbox_digest_closed', { source: 'morning_brief_banner' });
+      // Only mark the banner dismissed AFTER the sheet finished closing,
+      // so the sheet is never unmounted in the same render as its opener.
+      setDismissed(true);
+    }
   };
 
   const showBanner =
@@ -80,6 +131,7 @@ export const MorningBriefBanner: React.FC = () => {
     <>
       {showBanner && brief.data && (
         <div
+          data-testid="morning-brief-banner"
           className={cn(
             'fixed left-3 right-3 z-30 rounded-md border border-primary/25 bg-card shadow-md',
             'top-[calc(var(--unified-header-height,56px)+var(--pulse-bar-height,56px)+8px)]',
@@ -90,6 +142,7 @@ export const MorningBriefBanner: React.FC = () => {
           <button
             type="button"
             onClick={handleOpen}
+            data-testid="morning-brief-open"
             className="w-full text-left px-3 py-2.5 pr-9"
           >
             <div className="flex items-center gap-2 mb-0.5">
@@ -122,6 +175,7 @@ export const MorningBriefBanner: React.FC = () => {
         </div>
       )}
 
+      {/* Rendered outside the `!dismissed` gate on purpose - see file docstring. */}
       <InboxDigestSheet open={sheetOpen} onOpenChange={handleSheetOpenChange} />
     </>
   );
