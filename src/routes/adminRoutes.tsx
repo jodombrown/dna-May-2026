@@ -124,6 +124,10 @@ export const adminRoutes: RouteObject[] = [
         path: 'sponsorships',
         element: withSuspense(SponsorshipManagement)
       },
+      {
+        path: 'sponsorships/logo-audit',
+        element: withSuspense(SponsorLogoAuditLog)
+      },
       // Moderation
       {
         path: 'moderation',
