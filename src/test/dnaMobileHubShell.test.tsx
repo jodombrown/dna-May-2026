@@ -25,7 +25,7 @@ vi.mock('@/hooks/useScrollDirection', () => ({
 }));
 
 vi.mock('@/components/mobile/DnaMobileHeader', () => ({
-  DnaMobileHeader: ({ bubble }: { bubble: { kind: string; label?: string } }) => (
+  DnaMobileHeader: ({ bubble }: { bubble: { kind: string; placeholder?: string } }) => (
     <div data-testid="dna-mobile-header" data-bubble={bubble.kind}>
       {bubble.label ?? ''}
     </div>
@@ -43,7 +43,7 @@ describe('DnaMobileHubShell', () => {
   it('renders the canonical fixed top bar, tabs slot, content, and bottom nav', () => {
     const { container, getByTestId, getByText } = render(
       <DnaMobileHubShell
-        bubble={{ kind: 'static', label: 'Discover' }}
+        bubble={{ kind: 'static', placeholder: 'Discover' }}
         tabs={<div data-testid="hub-tabs">Tabs</div>}
       >
         <main>Body</main>
@@ -72,7 +72,7 @@ describe('DnaMobileHubShell', () => {
 
   it('omits MobileBottomNav when showBottomNav is false', () => {
     const { queryByTestId } = render(
-      <DnaMobileHubShell bubble={{ kind: 'static', label: 'X' }} showBottomNav={false}>
+      <DnaMobileHubShell bubble={{ kind: 'static', placeholder: 'X' }} showBottomNav={false}>
         <div />
       </DnaMobileHubShell>,
     );
