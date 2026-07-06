@@ -185,6 +185,7 @@ const MyReportsSettings = lazy(() => import("./pages/dna/settings/MyReportsSetti
 const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
+const SettingsRouteShell = lazy(() => import("./pages/dna/settings/SettingsRouteShell"));
 const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
 const DiaPage = lazy(() => import("./pages/dna/DiaPage"));
 const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
@@ -360,37 +361,37 @@ function App() {
               } />
               <Route path="/dna/settings/account" element={
                 <OnboardingGuard>
-                  <AccountSettings />
+                  <SettingsRouteShell title="Account"><AccountSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/privacy" element={
                 <OnboardingGuard>
-                  <PrivacySettings />
+                  <SettingsRouteShell title="Privacy"><PrivacySettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/blocked" element={
                 <OnboardingGuard>
-                  <BlockedUsersSettings />
+                  <SettingsRouteShell title="Blocked users"><BlockedUsersSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/reports" element={
                 <OnboardingGuard>
-                  <MyReportsSettings />
+                  <SettingsRouteShell title="My reports"><MyReportsSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/notifications" element={
                 <OnboardingGuard>
-                  <NotificationSettings />
+                  <SettingsRouteShell title="Notification settings"><NotificationSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/preferences" element={
                 <OnboardingGuard>
-                  <PreferencesSettings />
+                  <SettingsRouteShell title="Preferences"><PreferencesSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/hashtags" element={
                 <OnboardingGuard>
-                  <MyHashtagsSettings />
+                  <SettingsRouteShell title="My hashtags"><MyHashtagsSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               {/* Legacy settings routes - redirect to new hub */}

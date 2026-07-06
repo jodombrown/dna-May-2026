@@ -19,6 +19,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import type { FeedbackFilter, UserTag } from '@/types/feedback';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
@@ -181,6 +182,7 @@ export default function FeedbackPage() {
   ];
 
   return (
+    <DnaMobileHubShell bubble={{ kind: 'static', placeholder: 'Alpha Feedback' }}>
     <div className="flex flex-col bg-background min-h-screen">
       {/* Hero Header */}
       <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-background to-primary/10">
@@ -335,5 +337,6 @@ export default function FeedbackPage() {
         onClose={() => setShowHelpTour(false)}
       />
     </div>
+    </DnaMobileHubShell>
   );
 }

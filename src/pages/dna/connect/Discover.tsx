@@ -8,13 +8,14 @@ import { DiscoverSearchHeader } from '@/components/connect/DiscoverSearchHeader'
 import { DiscoverFilterPills } from '@/components/connect/DiscoverFilterPills';
 import { DiscoverFilterSheet } from '@/components/connect/DiscoverFilterSheet';
 import { MemberCardSkeletonGrid } from '@/components/connect/MemberCardSkeleton';
-import { Loader2, Users } from 'lucide-react';
+import { Loader2, Users, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
 import { useMobile } from '@/hooks/useMobile';
 import { logger } from '@/lib/logger';
 import { originNameToCode } from '@/lib/memberHeritage';
+import { CaughtUpNotice } from '@/components/shared/CaughtUpNotice';
 
 interface FilterState {
   primary_origin_country?: string;
@@ -55,6 +56,8 @@ export default function Discover() {
   
   const [members, setMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({});
   const [desktopSearchQuery, setDesktopSearchQuery] = useState('');
   const [page, setPage] = useState(0);
@@ -109,12 +112,19 @@ export default function Discover() {
 
   const loadMembers = async (reset = false, pageOverride?: number) => {
     if (!user) return;
+    const isReset = reset;
     try {
-      setLoading(true);
+      if (isReset) {
+        setLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+      setLoadMoreError(null);
       const effectivePage = pageOverride !== undefined ? pageOverride : page;
-      const offset = reset ? 0 : effectivePage * 20;
+      const offset = isReset ? 0 : effectivePage * 20;
 
       let rows: any[] = [];
+      let requestFailed = false;
 
       try {
         // Primary: call RPC for smart discovery
@@ -163,35 +173,50 @@ export default function Discover() {
           const { data: fbData, error: fbError } = await q;
           if (fbError) {
             logger.warn('Discover', 'Fallback query also failed:', fbError);
+            requestFailed = true;
             rows = [];
           } else {
             rows = (fbData || []).map((p: any) => ({ ...p, match_score: 0 }));
           }
         } catch (fallbackError) {
           logger.warn('Discover', 'All queries failed:', fallbackError);
+          requestFailed = true;
           rows = [];
         }
       }
 
-      if (reset) {
-        setMembers(rows);
-      } else {
-        // Dedupe against existing members to avoid repopulation if RPC returns overlap
-        setMembers(prev => {
-          const seen = new Set(prev.map((m: any) => m.id));
-          const fresh = rows.filter((r: any) => !seen.has(r.id));
-          return [...prev, ...fresh];
-        });
+      // Load-more error path: keep existing members, surface retry state
+      if (!isReset && requestFailed) {
+        setLoadMoreError("Couldn't load more members. Please try again.");
+        return;
       }
-      setHasMore(rows.length === 20);
+
+      if (isReset) {
+        setMembers(rows);
+        setHasMore(rows.length === 20);
+      } else {
+        // Dedupe against existing members synchronously so we can decide
+        // hasMore in the same tick (setState is async in React 18+).
+        const seen = new Set(members.map((m: any) => m.id));
+        const fresh = rows.filter((r: any) => !seen.has(r.id));
+        if (fresh.length > 0) {
+          setMembers(prev => [...prev, ...fresh]);
+        }
+        // End-of-list: RPC returned fewer than a full page, OR every returned
+        // row was already displayed (pure overlap = no forward progress).
+        setHasMore(rows.length === 20 && fresh.length > 0);
+      }
     } catch (error) {
       logger.warn('Discover', 'Unexpected error in loadMembers:', error);
-      if (reset) {
+      if (isReset) {
         setMembers([]);
+        setHasMore(false);
+      } else {
+        setLoadMoreError("Couldn't load more members. Please try again.");
       }
-      setHasMore(false);
     } finally {
       setLoading(false);
+      setIsLoadingMore(false);
     }
   };
 
@@ -199,6 +224,11 @@ export default function Discover() {
     const nextPage = page + 1;
     setPage(nextPage);
     loadMembers(false, nextPage);
+  };
+
+  const handleRetryLoadMore = () => {
+    setLoadMoreError(null);
+    loadMembers(false, page);
   };
 
   const handleFilterChange = (newFilters: FilterState) => {
@@ -286,24 +316,35 @@ export default function Discover() {
             </AnimatePresence>
           </motion.div>
 
-          {hasMore ? (
+          {loadMoreError ? (
+            <div className="flex flex-col items-center justify-center pt-4 pb-2 gap-2" data-testid="discover-load-more-error">
+              <div className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <span>{loadMoreError}</span>
+              </div>
+              <button
+                onClick={handleRetryLoadMore}
+                disabled={isLoadingMore}
+                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all active:scale-95"
+              >
+                {isLoadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Retry'}
+              </button>
+            </div>
+          ) : hasMore ? (
             <div className="flex justify-center pt-4 pb-2">
               <button
                 onClick={handleLoadMore}
-                disabled={loading}
-                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all active:scale-95"
+                disabled={isLoadingMore}
+                aria-busy={isLoadingMore}
+                data-testid="discover-load-more"
+                className="px-6 py-2.5 bg-primary text-primary-foreground rounded-full text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-all active:scale-95 min-w-[120px] flex items-center justify-center"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Load More'}
+                {isLoadingMore ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Load More'}
               </button>
             </div>
           ) : (
             members.length > 0 && (
-              <div className="flex flex-col items-center justify-center pt-6 pb-2 text-center">
-                <div className="text-sm font-medium text-foreground">You're all caught up</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  You've seen every member matching your filters. Try adjusting them to discover more.
-                </p>
-              </div>
+              <CaughtUpNotice description="You've seen every member matching your filters. Try adjusting them to discover more." />
             )
           )}
         </>

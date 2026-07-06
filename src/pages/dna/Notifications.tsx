@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { NotificationItem } from '@/components/notifications/NotificationItem';
@@ -39,7 +39,9 @@ const DnaNotifications = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-bottom-nav md:pb-0">
+    <DnaMobileHubShell
+      bubble={{ kind: 'static', placeholder: 'Notifications' }}
+    >
       <div className="container mx-auto px-3 sm:px-6 lg:px-8 py-2 lg:py-6 max-w-3xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-3 lg:mb-6">
@@ -117,8 +119,7 @@ const DnaNotifications = () => {
           )}
         </div>
       </div>
-      <MobileBottomNav />
-    </div>
+    </DnaMobileHubShell>
   );
 };
 

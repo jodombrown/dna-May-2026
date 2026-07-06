@@ -3,7 +3,7 @@
 // spaces to join, and a Create Space CTA. Query keys are shared with MySpaces
 // and SpacesIndex so the cache is reused rather than duplicated.
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, Plus } from 'lucide-react';
@@ -49,6 +49,7 @@ const PREVIEW_LIMIT = 3;
 export default function CollaborateHub() {
   const { user } = useAuth();
   const joinSpace = useJoinSpace();
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Spaces the caller is an active member of (shares MySpaces' cache).
   const { data: mySpaces = [], isLoading: myLoading } = useQuery({
@@ -106,6 +107,22 @@ export default function CollaborateHub() {
 
   const membershipMap = useMemo(() => memberships ?? {}, [memberships]);
 
+  // Client-side search filter shared by both My Spaces and Discover shelves.
+  const matchesQuery = (s: SpaceListItem) => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      s.name.toLowerCase().includes(q) ||
+      (s.tagline?.toLowerCase().includes(q) ?? false)
+    );
+  };
+
+  const filteredMySpaces = useMemo(
+    () => mySpaces.filter(matchesQuery),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [mySpaces, searchQuery],
+  );
+
   // Community/public spaces the caller hasn't joined yet.
   const discover = useMemo(
     () =>
@@ -113,14 +130,20 @@ export default function CollaborateHub() {
         .filter(
           (s) =>
             !membershipMap[s.id] &&
-            (s.visibility === 'public' || s.visibility === 'community'),
+            (s.visibility === 'public' || s.visibility === 'community') &&
+            matchesQuery(s),
         )
         .slice(0, PREVIEW_LIMIT),
-    [allSpaces, membershipMap],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allSpaces, membershipMap, searchQuery],
   );
 
   return (
-    <SpacesShell bubblePlaceholder="Search Spaces…">
+    <SpacesShell
+      bubblePlaceholder="Search Spaces…"
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+    >
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Collaborate</h1>
@@ -154,15 +177,17 @@ export default function CollaborateHub() {
               <Skeleton key={i} className="h-28 w-full rounded-lg" />
             ))}
           </div>
-        ) : mySpaces.length === 0 ? (
+        ) : filteredMySpaces.length === 0 ? (
           <Card className="mt-3 p-6 text-center">
             <p className="text-sm text-muted-foreground">
-              You haven't joined any spaces yet. Discover one below, or start your own.
+              {mySpaces.length === 0
+                ? "You haven't joined any spaces yet. Discover one below, or start your own."
+                : 'No spaces match your search.'}
             </p>
           </Card>
         ) : (
           <div className="mt-3 space-y-3">
-            {mySpaces.slice(0, PREVIEW_LIMIT).map((space) => (
+            {filteredMySpaces.slice(0, PREVIEW_LIMIT).map((space) => (
               <SpaceListCard key={space.id} space={space} isMember />
             ))}
           </div>
