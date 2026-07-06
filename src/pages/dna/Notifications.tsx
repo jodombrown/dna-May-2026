@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { NotificationItem } from '@/components/notifications/NotificationItem';
