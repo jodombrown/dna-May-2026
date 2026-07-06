@@ -177,15 +177,17 @@ export default function CollaborateHub() {
               <Skeleton key={i} className="h-28 w-full rounded-lg" />
             ))}
           </div>
-        ) : mySpaces.length === 0 ? (
+        ) : filteredMySpaces.length === 0 ? (
           <Card className="mt-3 p-6 text-center">
             <p className="text-sm text-muted-foreground">
-              You haven't joined any spaces yet. Discover one below, or start your own.
+              {mySpaces.length === 0
+                ? "You haven't joined any spaces yet. Discover one below, or start your own."
+                : 'No spaces match your search.'}
             </p>
           </Card>
         ) : (
           <div className="mt-3 space-y-3">
-            {mySpaces.slice(0, PREVIEW_LIMIT).map((space) => (
+            {filteredMySpaces.slice(0, PREVIEW_LIMIT).map((space) => (
               <SpaceListCard key={space.id} space={space} isMember />
             ))}
           </div>
