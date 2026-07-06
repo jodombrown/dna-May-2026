@@ -19,6 +19,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import type { FeedbackFilter, UserTag } from '@/types/feedback';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
