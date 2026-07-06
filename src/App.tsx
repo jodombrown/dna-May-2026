@@ -185,6 +185,7 @@ const MyReportsSettings = lazy(() => import("./pages/dna/settings/MyReportsSetti
 const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
+const SettingsRouteShell = lazy(() => import("./pages/dna/settings/SettingsRouteShell"));
 const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
 const DiaPage = lazy(() => import("./pages/dna/DiaPage"));
 const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
