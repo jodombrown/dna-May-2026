@@ -181,4 +181,81 @@ describe('Discover pagination', () => {
     // Existing members are preserved on failure.
     expect(screen.getByTestId('member-a-0')).toBeInTheDocument();
   });
+
+  it('disables the Load More button while the paginated fetch is in flight', async () => {
+    const pageA = makePage('a', 20);
+    const pageB = makePage('b', 20);
+
+    // Deferred second call so we can observe the pending state.
+    let resolvePageB: (v: { data: unknown; error: null }) => void = () => {};
+    const pendingPageB = new Promise<{ data: unknown; error: null }>((resolve) => {
+      resolvePageB = resolve;
+    });
+
+    rpcMock
+      .mockResolvedValueOnce({ data: pageA, error: null })
+      .mockReturnValueOnce(pendingPageB);
+
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId('member-a-0')).toBeInTheDocument());
+
+    const button = screen.getByTestId('discover-load-more') as HTMLButtonElement;
+    expect(button).not.toBeDisabled();
+    expect(button.getAttribute('aria-busy')).toBe('false');
+
+    fireEvent.click(button);
+
+    // While the RPC is pending the button must be disabled and marked busy.
+    await waitFor(() => {
+      const pending = screen.getByTestId('discover-load-more') as HTMLButtonElement;
+      expect(pending).toBeDisabled();
+      expect(pending.getAttribute('aria-busy')).toBe('true');
+    });
+
+    // Resolve the fetch; button returns to enabled and next page is appended.
+    resolvePageB({ data: pageB, error: null });
+    await waitFor(() => {
+      expect(screen.getByTestId('member-b-0')).toBeInTheDocument();
+    });
+    const after = screen.getByTestId('discover-load-more') as HTMLButtonElement;
+    expect(after).not.toBeDisabled();
+    expect(after.getAttribute('aria-busy')).toBe('false');
+  });
+
+  it('Retry re-requests the failed page and appends new members on success', async () => {
+    const pageA = makePage('a', 20);
+    const pageB = makePage('b', 20);
+
+    rpcMock
+      .mockResolvedValueOnce({ data: pageA, error: null }) // initial
+      .mockResolvedValueOnce({ data: null, error: { message: 'network down' } }) // first load-more fails
+      .mockResolvedValueOnce({ data: pageB, error: null }); // retry succeeds
+
+    renderDiscover();
+    await waitFor(() => expect(screen.getByTestId('member-a-0')).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId('discover-load-more'));
+
+    // Failure surfaces retry affordance.
+    const retryButton = await screen.findByRole('button', { name: /retry/i });
+    expect(screen.getByTestId('discover-load-more-error')).toBeInTheDocument();
+
+    // Retry must re-issue the RPC at the same offset that failed (20).
+    fireEvent.click(retryButton);
+
+    await waitFor(() => {
+      expect(rpcMock).toHaveBeenCalledTimes(3);
+    });
+    expect(rpcMock.mock.calls[2][1].p_offset).toBe(20);
+
+    // New page appends without dropping the original page.
+    await waitFor(() => {
+      expect(screen.getByTestId('member-b-0')).toBeInTheDocument();
+      expect(screen.getByTestId('member-b-19')).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('member-a-0')).toBeInTheDocument();
+
+    // Error UI is cleared, standard Load More returns.
+    expect(screen.queryByTestId('discover-load-more-error')).not.toBeInTheDocument();
+  });
 });
