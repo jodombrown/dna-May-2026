@@ -35,8 +35,6 @@ export { peopleMatchingService } from './peopleMatching';
 export { eventMatchingService } from './eventMatching';
 
 // ── Nudge & Trend Services ───────────────────────────────
-export { nudgeEngineService } from './nudgeEngine';
-export { nudgeEngineV2Service } from './nudgeEngineV2';
 export { trendIntelligenceService } from './trendIntelligence';
 
 // ── Regional & Chat Services ─────────────────────────────
