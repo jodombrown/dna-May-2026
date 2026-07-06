@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from "react-router-dom";
 import { MESSAGING_ENABLED } from "@/config/featureFlags";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
@@ -16,8 +16,9 @@ import BaseLayout from "@/layouts/BaseLayout";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { usePresenceHeartbeat } from "@/hooks/messaging/usePresenceHeartbeat";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import AfricaSpinner from "@/components/ui/AfricaSpinner";
+import { supabase } from "@/integrations/supabase/client";
 
 // Loading fallback for lazy-loaded routes
 const PageLoader = () => (
@@ -257,6 +258,33 @@ const AuthGuard = ({ children, redirectAuth = false }: { children: React.ReactNo
   return <>{children}</>;
 };
 
+const hasRecoveryMarker = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+
+  return searchParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery';
+};
+
+const RecoveryRedirectListener = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (hasRecoveryMarker()) {
+      navigate('/onboarding/reset-password-complete', { replace: true });
+    }
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        navigate('/onboarding/reset-password-complete', { replace: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  return null;
+};
+
 // Mounts presence heartbeat for the authenticated user (Phase 1 messaging foundation)
 const PresenceHeartbeat = () => {
   usePresenceHeartbeat();
@@ -311,6 +339,7 @@ function App() {
             <Sonner />
             <BrowserRouter>
               <ScrollToTop />
+              <RecoveryRedirectListener />
               <AuthProvider>
                 <PresenceHeartbeat />
                 <AccountDrawerProvider>
