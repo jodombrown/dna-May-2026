@@ -27,7 +27,7 @@ vi.mock('@/hooks/useScrollDirection', () => ({
 vi.mock('@/components/mobile/DnaMobileHeader', () => ({
   DnaMobileHeader: ({ bubble }: { bubble: { kind: string; placeholder?: string } }) => (
     <div data-testid="dna-mobile-header" data-bubble={bubble.kind}>
-      {bubble.label ?? ''}
+      {bubble.placeholder ?? ''}
     </div>
   ),
 }));
