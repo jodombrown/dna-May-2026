@@ -34,6 +34,7 @@ import { OnboardingGuard } from "./components/auth/OnboardingGuard";
 
 // Lazy-loaded pages - split into separate chunks
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const ResetPasswordComplete = lazy(() => import("./pages/ResetPasswordComplete"));
 const InviteSignup = lazy(() => import("./pages/InviteSignup"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const DnaMe = lazy(() => import("./pages/dna/Me"));
@@ -329,6 +330,8 @@ function App() {
               <Route path="/install" element={<Install />} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
               <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
+              <Route path="/onboarding/reset-password-complete" element={<ResetPasswordComplete />} />
+              <Route path="/reset-password-complete" element={<ResetPasswordComplete />} />
               
               {/* Onboarding & Welcome - NOT wrapped with OnboardingGuard */}
               <Route path="/onboarding" element={<Onboarding />} />
