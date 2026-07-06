@@ -270,7 +270,15 @@ const RecoveryRedirectListener = () => {
 
   useEffect(() => {
     if (hasRecoveryMarker()) {
-      navigate('/onboarding/reset-password-complete', { replace: true });
+      const timer = window.setTimeout(async () => {
+        const { data } = await supabase.auth.getSession();
+
+        if (data.session) {
+          navigate('/onboarding/reset-password-complete', { replace: true });
+        }
+      }, 600);
+
+      return () => clearTimeout(timer);
     }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
@@ -361,7 +369,7 @@ function App() {
               <Route path="/design-system" element={<DesignSystem />} />
               <Route path="/install" element={<Install />} />
               <Route path="/auth" element={<AuthGuard redirectAuth><Auth /></AuthGuard>} />
-              <Route path="/reset-password" element={<AuthGuard redirectAuth><ResetPassword /></AuthGuard>} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/onboarding/reset-password-complete" element={<ResetPasswordComplete />} />
               <Route path="/reset-password-complete" element={<ResetPasswordComplete />} />
               <Route path="/auth/email-change-complete" element={<EmailChangeComplete />} />

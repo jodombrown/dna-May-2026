@@ -80,6 +80,32 @@ const SAMPLE_DATA: Record<string, object> = {
   },
 }
 
+function buildActionUrl(emailType: string, url: string): string {
+  if (emailType !== 'recovery') {
+    return url
+  }
+
+  const resetUrl = `https://${ROOT_DOMAIN}/onboarding/reset-password-complete`
+
+  try {
+    const actionUrl = new URL(url)
+
+    if (actionUrl.pathname.includes('/verify')) {
+      actionUrl.searchParams.set('redirect_to', resetUrl)
+      return actionUrl.toString()
+    }
+
+    if (actionUrl.hostname === ROOT_DOMAIN || actionUrl.hostname === `www.${ROOT_DOMAIN}`) {
+      actionUrl.pathname = '/onboarding/reset-password-complete'
+      return actionUrl.toString()
+    }
+
+    return url
+  } catch (_error) {
+    return url
+  }
+}
+
 // Preview endpoint handler - returns rendered HTML without sending email
 async function handlePreview(req: Request): Promise<Response> {
   const previewCorsHeaders = {
@@ -223,7 +249,7 @@ async function handleWebhook(req: Request): Promise<Response> {
     siteName: SITE_NAME,
     siteUrl: `https://${ROOT_DOMAIN}`,
     recipient: payload.data.email,
-    confirmationUrl: payload.data.url,
+    confirmationUrl: buildActionUrl(emailType, payload.data.url),
     token: payload.data.token,
     email: payload.data.email,
     oldEmail: payload.data.old_email,

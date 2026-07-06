@@ -1,14 +1,45 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle, MailCheck, ArrowLeft } from 'lucide-react';
+import { getAppUrl } from '@/lib/config';
 
 export default function ResetPassword() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    const currentUrl = `${window.location.search}${window.location.hash}`;
+    const looksLikeRecoveryCallback = currentUrl.includes('type=recovery') || currentUrl.includes('code=');
+
+    const timer = looksLikeRecoveryCallback
+      ? window.setTimeout(async () => {
+          const { data } = await supabase.auth.getSession();
+
+          if (data.session) {
+            navigate('/onboarding/reset-password-complete', { replace: true });
+          }
+        }, 600)
+      : undefined;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        navigate('/onboarding/reset-password-complete', { replace: true });
+      }
+    });
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +47,7 @@ export default function ResetPassword() {
     setErrorMsg('');
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/onboarding/reset-password-complete`,
+      redirectTo: getAppUrl('/onboarding/reset-password-complete'),
     });
 
     if (error) {
