@@ -170,9 +170,17 @@ const DnaMessages = () => {
       );
     }
 
-    // Mobile: Conversation list — flush, edge-to-edge
+    // Mobile: Conversation list wrapped in the canonical DNA hub shell so it
+    // matches Feed/Connect/Convene (logo + bubble + bell + avatar + bottom nav).
     return (
-      <div className="min-h-screen bg-background pb-bottom-nav" style={{ paddingTop: 'var(--total-header-height, 56px)' }}>
+      <DnaMobileHubShell
+        bubble={{
+          kind: 'search',
+          placeholder: 'Search messages...',
+          value: searchTerm,
+          onChange: setSearchTerm,
+        }}
+      >
         <InboxLiveRegion conversations={conversations} />
         <div className="w-full">
           <OfflineQueueBanner />
@@ -193,10 +201,10 @@ const DnaMessages = () => {
           onOpenChange={setGroupDrawerOpen}
           onGroupCreated={handleGroupCreated}
         />
-        
-      </div>
+      </DnaMobileHubShell>
     );
   }
+
 
   // Desktop: Two-column layout
   return (
