@@ -18,7 +18,15 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     rpc: (...args: unknown[]) => rpcMock(...args),
     from: () => ({
-      select: () => ({ neq: () => ({ eq: () => ({ order: () => ({ range: async () => ({ data: [], error: null }) }) }) }) }),
+      select: () => ({
+        neq: () => ({
+          eq: () => ({
+            order: () => ({
+              range: async () => ({ data: null, error: { message: 'fallback-disabled' } }),
+            }),
+          }),
+        }),
+      }),
     }),
   },
 }));
