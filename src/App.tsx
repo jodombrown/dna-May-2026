@@ -361,37 +361,37 @@ function App() {
               } />
               <Route path="/dna/settings/account" element={
                 <OnboardingGuard>
-                  <AccountSettings />
+                  <SettingsRouteShell title="Account"><AccountSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/privacy" element={
                 <OnboardingGuard>
-                  <PrivacySettings />
+                  <SettingsRouteShell title="Privacy"><PrivacySettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/blocked" element={
                 <OnboardingGuard>
-                  <BlockedUsersSettings />
+                  <SettingsRouteShell title="Blocked users"><BlockedUsersSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/reports" element={
                 <OnboardingGuard>
-                  <MyReportsSettings />
+                  <SettingsRouteShell title="My reports"><MyReportsSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/notifications" element={
                 <OnboardingGuard>
-                  <NotificationSettings />
+                  <SettingsRouteShell title="Notification settings"><NotificationSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/preferences" element={
                 <OnboardingGuard>
-                  <PreferencesSettings />
+                  <SettingsRouteShell title="Preferences"><PreferencesSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/hashtags" element={
                 <OnboardingGuard>
-                  <MyHashtagsSettings />
+                  <SettingsRouteShell title="My hashtags"><MyHashtagsSettings /></SettingsRouteShell>
                 </OnboardingGuard>
               } />
               {/* Legacy settings routes - redirect to new hub */}
