@@ -31,8 +31,9 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
+const TEST_USER = { id: 'viewer-1' };
 vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => ({ user: { id: 'viewer-1' } }),
+  useAuth: () => ({ user: TEST_USER }),
 }));
 
 vi.mock('@/hooks/useAnalytics', () => ({
