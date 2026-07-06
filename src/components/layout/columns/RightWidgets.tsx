@@ -55,7 +55,7 @@ export function RightWidgets({ variant = 'default' }: RightWidgetsProps) {
             variant="outline"
             size="sm"
             className="w-full justify-start"
-            onClick={() => navigate('/dna/convene/create')}
+            onClick={() => navigate('/dna/convene/my-events')}
           >
             <Calendar className="w-4 h-4 mr-2" />
             Host an Event
