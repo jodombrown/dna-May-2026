@@ -195,17 +195,16 @@ export default function Discover() {
         setMembers(rows);
         setHasMore(rows.length === 20);
       } else {
-        // Dedupe against existing members to avoid repopulation if RPC returns overlap
-        let addedCount = 0;
-        setMembers(prev => {
-          const seen = new Set(prev.map((m: any) => m.id));
-          const fresh = rows.filter((r: any) => !seen.has(r.id));
-          addedCount = fresh.length;
-          return [...prev, ...fresh];
-        });
+        // Dedupe against existing members synchronously so we can decide
+        // hasMore in the same tick (setState is async in React 18+).
+        const seen = new Set(members.map((m: any) => m.id));
+        const fresh = rows.filter((r: any) => !seen.has(r.id));
+        if (fresh.length > 0) {
+          setMembers(prev => [...prev, ...fresh]);
+        }
         // End-of-list: RPC returned fewer than a full page, OR every returned
         // row was already displayed (pure overlap = no forward progress).
-        setHasMore(rows.length === 20 && addedCount > 0);
+        setHasMore(rows.length === 20 && fresh.length > 0);
       }
     } catch (error) {
       logger.warn('Discover', 'Unexpected error in loadMembers:', error);
