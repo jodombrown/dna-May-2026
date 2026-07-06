@@ -31,10 +31,10 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-const TEST_USER = { id: 'viewer-1' };
-vi.mock('@/contexts/AuthContext', () => ({
-  useAuth: () => ({ user: TEST_USER }),
-}));
+vi.mock('@/contexts/AuthContext', () => {
+  const TEST_USER = { id: 'viewer-1' };
+  return { useAuth: () => ({ user: TEST_USER }) };
+});
 
 vi.mock('@/hooks/useAnalytics', () => ({
   useAnalytics: () => ({ trackEvent: vi.fn() }),
