@@ -21,6 +21,7 @@ import { InboxLiveRegion } from '@/components/messaging/InboxLiveRegion';
 import { useInboxKeyboardShortcuts } from '@/hooks/messaging/useInboxKeyboardShortcuts';
 import { useBlockedUserIds } from '@/hooks/messaging/useBlockedUserIds';
 import { archiveConversation, muteConversation } from '@/services/messageConversationActions';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 /**
  * DnaMessages - Canonical Messages route (/dna/messages)
  *
