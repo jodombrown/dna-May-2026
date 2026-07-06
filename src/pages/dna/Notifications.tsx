@@ -39,7 +39,9 @@ const DnaNotifications = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-bottom-nav md:pb-0">
+    <DnaMobileHubShell
+      bubble={{ kind: 'static', placeholder: 'Notifications' }}
+    >
       <div className="container mx-auto px-3 sm:px-6 lg:px-8 py-2 lg:py-6 max-w-3xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-3 lg:mb-6">
@@ -117,8 +119,7 @@ const DnaNotifications = () => {
           )}
         </div>
       </div>
-      <MobileBottomNav />
-    </div>
+    </DnaMobileHubShell>
   );
 };
 
