@@ -36,7 +36,7 @@ export function SpacesShell({
       }
     : {
         kind: 'static' as const,
-        label: bubblePlaceholder,
+        placeholder: bubblePlaceholder,
       };
 
   return (
