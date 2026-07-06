@@ -7,11 +7,16 @@ import { NeedEditor } from '@/components/contribute/needs/NeedEditor';
 import { ContributeMobileHeader, type ContributeTab } from '@/components/contribute/ContributeMobileHeader';
 import { RoomHub } from '@/components/contribute/room/RoomHub';
 import { MOBILE_HEADER_Z } from '@/lib/mobileHeaderSpacing';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 
 export function ContributeHub() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isMobile } = useMobile();
+  const { isScrollingDown, isAtTop } = useScrollDirection(30);
+  const topBarVisible = !(isMobile && isScrollingDown && !isAtTop);
 
   const [activeTab, setActiveTab] = useState<ContributeTab>('manifest');
   const [composerSignal, setComposerSignal] = useState(0);
@@ -39,14 +44,16 @@ export function ContributeHub() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile chrome - matches Feed/Connect/Convene pattern */}
+      {/* Mobile chrome - top bar hides on scroll, tabs stay fixed (matches Connect/Feed) */}
       <div className={cn('md:hidden sticky top-0', MOBILE_HEADER_Z)}>
         <ContributeMobileHeader
           activeTab={activeTab}
           onTabChange={handleTabChange}
           onComposerClick={handleComposerClick}
+          isRow1Visible={topBarVisible}
         />
       </div>
+
 
       <main className="max-w-2xl mx-auto px-4 py-6 md:py-8 space-y-8">
         {user ? (
