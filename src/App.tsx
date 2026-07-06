@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { MESSAGING_ENABLED } from "@/config/featureFlags";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
@@ -474,21 +475,31 @@ function App() {
                    <HashtagFeed />
                  </OnboardingGuard>
                } />
-               {/* Messages: Canonical routes */}
+               {/* Messages: Canonical routes.
+                   BD063 hide-and-freeze: while DM/group messaging is OUT at v0.0
+                   (MESSAGING_ENABLED=false), these routes redirect to a safe surface
+                   instead of mounting DnaMessages/GroupThreadPage. Route defs + lazy
+                   imports stay frozen in the tree so unfreeze is one flag flip. */}
               <Route path="/dna/messages" element={
-                <OnboardingGuard>
-                  <DnaMessages />
-                </OnboardingGuard>
+                MESSAGING_ENABLED ? (
+                  <OnboardingGuard>
+                    <DnaMessages />
+                  </OnboardingGuard>
+                ) : <Navigate to="/dna/connect" replace />
               } />
               <Route path="/dna/messages/:conversationId" element={
-                <OnboardingGuard>
-                  <DnaMessages />
-                </OnboardingGuard>
+                MESSAGING_ENABLED ? (
+                  <OnboardingGuard>
+                    <DnaMessages />
+                  </OnboardingGuard>
+                ) : <Navigate to="/dna/connect" replace />
               } />
               <Route path="/dna/messages/group/:groupId" element={
-                <OnboardingGuard>
-                  <GroupThreadPage />
-                </OnboardingGuard>
+                MESSAGING_ENABLED ? (
+                  <OnboardingGuard>
+                    <GroupThreadPage />
+                  </OnboardingGuard>
+                ) : <Navigate to="/dna/connect" replace />
               } />
               
               {/* Legacy message routes - redirect to canonical */}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Users, Network, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
 export type ConnectTab = 'discover' | 'network' | 'messages';
 
@@ -14,10 +15,14 @@ interface ConnectMobileHeaderProps {
   activeFilterCount?: number;
 }
 
+// BD063 hide-and-freeze: the Messages tab is dropped while DM/group messaging
+// is OUT at v0.0 (see MESSAGING_ENABLED).
 const TAB_CONFIG = [
   { value: 'discover' as const, icon: Users, label: 'Members' },
   { value: 'network' as const, icon: Network, label: 'Network' },
-  { value: 'messages' as const, icon: MessageCircle, label: 'Messages' },
+  ...(MESSAGING_ENABLED
+    ? [{ value: 'messages' as const, icon: MessageCircle, label: 'Messages' }]
+    : []),
 ];
 
 export function ConnectMobileHeader({

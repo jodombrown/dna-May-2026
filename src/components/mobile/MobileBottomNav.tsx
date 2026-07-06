@@ -21,6 +21,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { MessageSquare, Settings, Bell, LogOut, LayoutDashboard } from 'lucide-react';
+import { MESSAGING_ENABLED } from '@/config/featureFlags';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 const MobileBottomNav: React.FC = () => {
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ const MobileBottomNav: React.FC = () => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { data: unreadCountFromRPC = 0 } = useUnreadNotificationCount();
   const composer = useUniversalComposer();
+  const { isAdmin } = useIsAdmin();
   
   // Use the RPC count directly - it's the source of truth for unread notifications
   const unreadCount = unreadCountFromRPC;
@@ -229,7 +232,12 @@ const MobileBottomNav: React.FC = () => {
 
           {/* Menu Items */}
           <div className="space-y-1">
-            {moreMenuItems.map((item) => (
+            {/* BD063 hide-and-freeze: drop the Messages item while DM messaging is OUT at v0.0.
+                Admin item is role-gated — only rendered for admins (page guard on /dna/admin stays as defense-in-depth). */}
+            {moreMenuItems
+              .filter((item) => MESSAGING_ENABLED || item.path !== '/dna/messages')
+              .filter((item) => isAdmin || item.path !== '/dna/admin')
+              .map((item) => (
               <button
                 key={item.label}
                 onClick={() => {

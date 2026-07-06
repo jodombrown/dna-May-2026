@@ -19,11 +19,9 @@ export const DnaRightRail: React.FC = () => {
         <div className="flex flex-wrap gap-x-2 gap-y-1">
           <a href="/about" className="hover:underline">About</a>
           <span>·</span>
-          <a href="/privacy" className="hover:underline">Privacy</a>
+          <a href="/privacy-policy" className="hover:underline">Privacy</a>
           <span>·</span>
-          <a href="/terms" className="hover:underline">Terms</a>
-          <span>·</span>
-          <a href="/help" className="hover:underline">Help</a>
+          <a href="/terms-of-service" className="hover:underline">Terms</a>
         </div>
         <p className="mt-1.5">DNA © {new Date().getFullYear()}</p>
       </div>
