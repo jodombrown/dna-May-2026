@@ -182,6 +182,7 @@ export default function FeedbackPage() {
   ];
 
   return (
+    <DnaMobileHubShell bubble={{ kind: 'static', placeholder: 'Alpha Feedback' }}>
     <div className="flex flex-col bg-background min-h-screen">
       {/* Hero Header */}
       <div className="relative overflow-hidden border-b bg-gradient-to-br from-primary/5 via-background to-primary/10">
