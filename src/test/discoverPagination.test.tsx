@@ -67,15 +67,25 @@ vi.mock('@/components/profile/ProfileCompletionNudge', () => ({
 }));
 
 // Framer motion: strip animations to keep the test deterministic.
-vi.mock('framer-motion', () => ({
-  motion: new Proxy(
-    {},
-    {
-      get: () => (props: React.ComponentProps<'div'>) => <div {...props} />,
-    },
-  ),
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock('framer-motion', () => {
+  const passthrough = (tag: string) =>
+    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>((props, ref) =>
+      React.createElement(tag, { ...props, ref }),
+    );
+  const cache: Record<string, ReturnType<typeof passthrough>> = {};
+  return {
+    motion: new Proxy(
+      {},
+      {
+        get: (_t, key: string) => {
+          if (!cache[key]) cache[key] = passthrough(key);
+          return cache[key];
+        },
+      },
+    ),
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
 
 import Discover from '@/pages/dna/connect/Discover';
 
