@@ -337,5 +337,6 @@ export default function FeedbackPage() {
         onClose={() => setShowHelpTour(false)}
       />
     </div>
+    </DnaMobileHubShell>
   );
 }
