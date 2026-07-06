@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DnaMobileHubShell > renders the canonical fixed top bar, tabs slot, content, and bottom nav 1`] = `
+<div>
+  <div
+    class="min-h-screen bg-background pb-bottom-nav overflow-x-hidden"
+  >
+    <div
+      class="fixed top-0 left-0 right-0 z-50 bg-background"
+    >
+      <div
+        class="transition-all duration-200 overflow-hidden max-h-20 opacity-100"
+      >
+        <div
+          data-bubble="static"
+          data-testid="dna-mobile-header"
+        >
+          Discover
+        </div>
+      </div>
+      <div
+        data-testid="hub-tabs"
+      >
+        Tabs
+      </div>
+    </div>
+    <div
+      class="transition-[padding] duration-200"
+      style="padding-top: 96px;"
+    >
+      <main>
+        Body
+      </main>
+    </div>
+    <nav
+      data-testid="mobile-bottom-nav"
+    />
+  </div>
+</div>
+`;
