@@ -266,7 +266,7 @@ async function generateHostingNudge(userId: string): Promise<DIACard | null> {
       icon: 'Mic',
       priority: 35,
       actions: [
-        { label: 'Create Event', type: 'navigate' as const, payload: { url: '/dna/convene/create' }, isPrimary: true },
+        { label: 'Create Event', type: 'navigate' as const, payload: { url: '/dna/convene/my-events' }, isPrimary: true },
         { label: 'Not for me', type: 'dismiss' as const, payload: {}, isPrimary: false },
       ],
       metadata: { attendedCount },
