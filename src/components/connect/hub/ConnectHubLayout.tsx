@@ -136,16 +136,18 @@ export function ConnectHubLayout({
         {centerPanel}
       </motion.div>
 
-      {/* Right column - Conversations Panel */}
-      <motion.div
-        className="border-l border-border/40 overflow-y-auto bg-background/50 backdrop-blur-sm scrollbar-thin"
-        initial={false}
-        animate={{ width: expandedChat ? '40%' : '25%' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        style={{ height: columnHeight }}
-      >
-        {rightPanel}
-      </motion.div>
+      {/* Right column - Conversations Panel (hidden entirely when no content, e.g. BD063 messaging freeze) */}
+      {rightPanel ? (
+        <motion.div
+          className="border-l border-border/40 overflow-y-auto bg-background/50 backdrop-blur-sm scrollbar-thin"
+          initial={false}
+          animate={{ width: expandedChat ? '40%' : '25%' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          style={{ height: columnHeight }}
+        >
+          {rightPanel}
+        </motion.div>
+      ) : null}
     </div>
   );
 }

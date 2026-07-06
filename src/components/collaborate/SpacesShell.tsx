@@ -24,15 +24,23 @@ export function SpacesShell({
   onSearchChange,
   maxWidthClassName = 'max-w-4xl',
 }: SpacesShellProps) {
-  return (
-    <DnaMobileHubShell
-      bubble={{
-        kind: 'search',
+  // If the caller doesn't wire searchQuery/onSearchChange, fall back to a
+  // non-interactive static bubble so the mobile header doesn't render a
+  // broken controlled input that swallows every keystroke.
+  const bubble = onSearchChange
+    ? {
+        kind: 'search' as const,
         placeholder: bubblePlaceholder,
         value: searchQuery ?? '',
         onChange: onSearchChange,
-      }}
-    >
+      }
+    : {
+        kind: 'static' as const,
+        placeholder: bubblePlaceholder,
+      };
+
+  return (
+    <DnaMobileHubShell bubble={bubble}>
       <div className="min-h-[60vh] bg-background">
         <div className={`mx-auto ${maxWidthClassName} px-4 py-6 sm:py-8`}>
           {children}
