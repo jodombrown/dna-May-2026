@@ -1181,61 +1181,6 @@ export type Database = {
           },
         ]
       }
-      comments: {
-        Row: {
-          author_id: string
-          content: string
-          created_at: string | null
-          id: string
-          is_seeded: boolean | null
-          parent_id: string | null
-          post_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          author_id: string
-          content: string
-          created_at?: string | null
-          id?: string
-          is_seeded?: boolean | null
-          parent_id?: string | null
-          post_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          author_id?: string
-          content?: string
-          created_at?: string | null
-          id?: string
-          is_seeded?: boolean | null
-          parent_id?: string | null
-          post_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comments_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "comments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       communities: {
         Row: {
           category: string | null
@@ -12901,86 +12846,45 @@ export type Database = {
           user_rsvp_status: Database["public"]["Enums"]["rsvp_status"]
         }[]
       }
-      get_feed_posts:
-        | {
-            Args: {
-              p_feed_type: string
-              p_hashtag?: string
-              p_limit?: number
-              p_offset?: number
-              p_user_id: string
-            }
-            Returns: {
-              author_avatar_url: string
-              author_full_name: string
-              author_headline: string
-              author_id: string
-              author_username: string
-              comments_count: number
-              content: string
-              created_at: string
-              image_url: string
-              is_connection: boolean
-              likes_count: number
-              link_description: string
-              link_title: string
-              link_url: string
-              original_author_avatar_url: string
-              original_author_full_name: string
-              original_author_headline: string
-              original_author_id: string
-              original_author_username: string
-              original_content: string
-              original_created_at: string
-              original_image_url: string
-              original_post_id: string
-              post_id: string
-              post_type: string
-              privacy_level: string
-              share_commentary: string
-              shared_by: string
-              user_has_liked: boolean
-            }[]
-          }
-        | {
-            Args: {
-              p_feed_type: string
-              p_limit?: number
-              p_offset?: number
-              p_user_id: string
-            }
-            Returns: {
-              author_avatar_url: string
-              author_full_name: string
-              author_headline: string
-              author_id: string
-              author_username: string
-              comments_count: number
-              content: string
-              created_at: string
-              image_url: string
-              is_connection: boolean
-              likes_count: number
-              link_description: string
-              link_title: string
-              link_url: string
-              original_author_avatar_url: string
-              original_author_full_name: string
-              original_author_headline: string
-              original_author_id: string
-              original_author_username: string
-              original_content: string
-              original_created_at: string
-              original_image_url: string
-              original_post_id: string
-              post_id: string
-              post_type: string
-              privacy_level: string
-              share_commentary: string
-              shared_by: string
-              user_has_liked: boolean
-            }[]
-          }
+      get_feed_posts: {
+        Args: {
+          p_feed_type: string
+          p_limit?: number
+          p_offset?: number
+          p_user_id: string
+        }
+        Returns: {
+          author_avatar_url: string
+          author_full_name: string
+          author_headline: string
+          author_id: string
+          author_username: string
+          comments_count: number
+          content: string
+          created_at: string
+          image_url: string
+          is_connection: boolean
+          likes_count: number
+          link_description: string
+          link_title: string
+          link_url: string
+          original_author_avatar_url: string
+          original_author_full_name: string
+          original_author_headline: string
+          original_author_id: string
+          original_author_username: string
+          original_content: string
+          original_created_at: string
+          original_image_url: string
+          original_post_id: string
+          post_id: string
+          post_type: string
+          privacy_level: string
+          share_commentary: string
+          shared_by: string
+          user_has_liked: boolean
+        }[]
+      }
       get_five_cs_pulse: {
         Args: { p_scope?: string; p_time_range?: string; p_user_id?: string }
         Returns: {
@@ -14498,10 +14402,6 @@ export type Database = {
       }
       recent_engagement_score_for_space: {
         Args: { p_space: string }
-        Returns: number
-      }
-      recent_engagement_score_for_user: {
-        Args: { p_target_user: string }
         Returns: number
       }
       record_brief_interaction: {
