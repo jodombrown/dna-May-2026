@@ -19,6 +19,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import React, { Suspense, lazy, useEffect } from "react";
 import AfricaSpinner from "@/components/ui/AfricaSpinner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Session } from "@supabase/supabase-js";
 
 // Loading fallback for lazy-loaded routes
 const PageLoader = () => (
@@ -265,23 +266,46 @@ const hasRecoveryMarker = () => {
   return searchParams.get('type') === 'recovery' || hashParams.get('type') === 'recovery';
 };
 
+const hasAuthCode = () => {
+  const searchParams = new URLSearchParams(window.location.search);
+
+  return searchParams.has('code');
+};
+
+const isRecentRecoverySession = (session: Session | null) => {
+  const recoverySentAt = session?.user?.recovery_sent_at;
+
+  if (!recoverySentAt) {
+    return false;
+  }
+
+  const recoveryTime = new Date(recoverySentAt).getTime();
+
+  return Number.isFinite(recoveryTime) && Date.now() - recoveryTime < 24 * 60 * 60 * 1000;
+};
+
 const RecoveryRedirectListener = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     const shouldHandleRecovery = hasRecoveryMarker();
-    const timer = shouldHandleRecovery
+    const shouldInspectAuthCode = hasAuthCode();
+    const timer = shouldHandleRecovery || shouldInspectAuthCode
       ? window.setTimeout(async () => {
         const { data } = await supabase.auth.getSession();
 
-        if (data.session) {
+        if (data.session && (shouldHandleRecovery || isRecentRecoverySession(data.session))) {
           navigate('/onboarding/reset-password-complete', { replace: true });
         }
       }, 600)
       : undefined;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY' || (shouldHandleRecovery && event === 'SIGNED_IN')) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (
+        event === 'PASSWORD_RECOVERY' ||
+        (shouldHandleRecovery && event === 'SIGNED_IN') ||
+        (shouldInspectAuthCode && isRecentRecoverySession(session))
+      ) {
         navigate('/onboarding/reset-password-complete', { replace: true });
       }
     });

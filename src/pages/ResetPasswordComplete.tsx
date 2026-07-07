@@ -19,6 +19,14 @@ export default function ResetPasswordComplete() {
     // Supabase parses the recovery token from the URL hash and creates a session automatically.
     // We just need to confirm a session exists before allowing password change.
     const check = async () => {
+      const code = new URLSearchParams(window.location.search).get('code');
+
+      if (code) {
+        const { data } = await supabase.auth.exchangeCodeForSession(code);
+        setHasRecoverySession(!!data.session);
+        return;
+      }
+
       const { data } = await supabase.auth.getSession();
       setHasRecoverySession(!!data.session);
     };
