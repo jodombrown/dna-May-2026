@@ -113,7 +113,7 @@ const UnifiedHeader = () => {
     return (
       <header
         className="bg-background border-b border-border fixed left-0 right-0 z-50 shadow-sm motion-safe:transition-[top] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ top: 'var(--roadmap-banner-height, 0px)' }}
+        style={{ top: 0 }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -241,7 +241,7 @@ const UnifiedHeader = () => {
         ref={headerRef}
         data-unified-header
         className="bg-background border-b border-border fixed left-0 right-0 z-50 shadow-sm motion-safe:transition-[top] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ top: 'var(--roadmap-banner-height, 0px)' }}
+        style={{ top: 0 }}
       >
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">

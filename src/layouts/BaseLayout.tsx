@@ -140,7 +140,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
             // Always reserve space for header + pulse bar to prevent columns
             // rendering behind the PulseBar before the measurement hook runs.
             // Mobile pages with custom headers hide this spacer via the className.
-            height: 'calc(var(--roadmap-banner-height, 0px) + var(--unified-header-height, 56px) + var(--pulse-bar-height, 56px))',
+            height: 'calc(var(--unified-header-height, 56px) + var(--pulse-bar-height, 56px))',
           }}
           className={cn(
             hasCustomMobileHeader ? 'hidden sm:block' : 'block',
