@@ -7,7 +7,7 @@
  *
  * Usage:
  *   import { typedSupabase } from '@/lib/typedSupabase'
- *   const { data } = await typedSupabase.diaNudges().select('*')
+ *   const { data } = await typedSupabase.messagingMessages().select('*')
  *
  * When to retire this file:
  * - Provisional tables: once migrated to prod, regenerate types and remove the corresponding section
@@ -20,45 +20,6 @@ import type { Database } from '@/integrations/supabase/types';
 // ─── Provisional Table Shapes ──────────────────────────────────────────────────
 // These tables do NOT yet exist in the DB. Services were written ahead of schema.
 // Add migrations for these in Sprint 2.
-
-export interface DiaNudgeRow {
-  id: string;
-  user_id: string;
-  nudge_type: 'connection' | 'project_stall' | 'contribution' | 'event' | 'content';
-  category: string;
-  c_module: string;
-  headline: string;
-  body: string;
-  action: Record<string, unknown> | null;
-  priority: string;
-  delivery_channel: string;
-  timing: Record<string, unknown> | null;
-  trigger_event: string | null;
-  match_id: string | null;
-  status: string;
-  delivered_at: string | null;
-  acted_on_at: string | null;
-  dismissed_at: string | null;
-  expires_at: string | null;
-  created_at: string;
-}
-
-export interface DiaNudgeInsert extends Omit<DiaNudgeRow, 'id' | 'created_at'> {
-  id?: string;
-  created_at?: string;
-}
-
-export interface UserNudgeStateRow {
-  id: string;
-  user_id: string;
-  nudges_today: number;
-  nudges_today_reset_at: string;
-  last_nudge_by_type: Record<string, string>;
-  dismiss_count_by_type: Record<string, number>;
-  dia_frequency: 'frequent' | 'normal' | 'minimal' | 'off';
-  timezone: string;
-  updated_at: string;
-}
 
 export interface ComposerDraftRow {
   id: string;
@@ -171,14 +132,6 @@ type AnyQueryBuilder = ReturnType<SupabaseClient<any>['from']>;
 
 export function createTypedSupabase(client: SupabaseClient<Database>) {
   return {
-    /** Provisional: dia_nudges */
-    diaNudges: () =>
-      client.from('dia_nudges' as never) as unknown as AnyQueryBuilder,
-
-    /** Provisional: user_nudge_state */
-    userNudgeState: () =>
-      client.from('user_nudge_state' as never) as unknown as AnyQueryBuilder,
-
     /** Provisional: messaging_messages */
     messagingMessages: () =>
       client.from('messaging_messages' as never) as unknown as AnyQueryBuilder,
