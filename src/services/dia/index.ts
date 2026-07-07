@@ -29,7 +29,6 @@ export { conversationIntelligenceService } from './conversationIntelligence';
 
 // ── Matching Services ────────────────────────────────────
 export { matchingEngineService } from './matchingEngine';
-export { peopleMatchingService } from './peopleMatching';
 // STUBBED: Phase 2 teardown. opportunityMatching and spaceMatching removed
 // while CONTRIBUTE/COLLABORATE are being rebuilt. Restore in Phase 3.
 export { eventMatchingService } from './eventMatching';
@@ -39,7 +38,6 @@ export { trendIntelligenceService } from './trendIntelligence';
 
 // ── Regional & Chat Services ─────────────────────────────
 export { regionalIntelligenceService } from './regionalIntelligence';
-export { diaChatService } from './diaChat';
 
 // ── DIA Card System (Sprint 4A) ────────────────────────
 export { generateConnectCards } from './connectCards';
