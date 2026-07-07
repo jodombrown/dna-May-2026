@@ -269,25 +269,30 @@ const RecoveryRedirectListener = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (hasRecoveryMarker()) {
-      const timer = window.setTimeout(async () => {
+    const shouldHandleRecovery = hasRecoveryMarker();
+    const timer = shouldHandleRecovery
+      ? window.setTimeout(async () => {
         const { data } = await supabase.auth.getSession();
 
         if (data.session) {
           navigate('/onboarding/reset-password-complete', { replace: true });
         }
-      }, 600);
-
-      return () => clearTimeout(timer);
-    }
+      }, 600)
+      : undefined;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
+      if (event === 'PASSWORD_RECOVERY' || (shouldHandleRecovery && event === 'SIGNED_IN')) {
         navigate('/onboarding/reset-password-complete', { replace: true });
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   return null;
