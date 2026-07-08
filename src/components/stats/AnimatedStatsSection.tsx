@@ -53,7 +53,7 @@ const AnimatedStatsSection = () => {
             description="Living outside Africa, projected to comprise 25% of global population"
             bgGradient="bg-gradient-to-br from-dna-emerald/80 to-dna-forest/80"
             source="African Union, 2024"
-            sourceUrl="https://au.int/en/diaspora"
+            sourceUrl="https://au.int/en/diaspora-division"
           />
           
           <AnimatedStat
@@ -73,7 +73,7 @@ const AnimatedStatsSection = () => {
             description="Hold bachelor's degree or higher, 2x the U.S. national average"
             bgGradient="bg-gradient-to-br from-dna-mint/80 to-dna-emerald/80"
             source="Pew Research Center, 2022"
-            sourceUrl="https://www.pewresearch.org/global/fact-sheet/sub-saharan-african-immigrants-in-the-u-s/"
+            sourceUrl="https://www.pewresearch.org/2022/01/20/a-growing-share-of-black-immigrants-have-a-college-degree-or-higher/"
           />
         </div>
       </div>

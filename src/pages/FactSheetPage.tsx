@@ -615,7 +615,7 @@ const FactSheetPage = () => {
                 <p className="font-semibold text-foreground/70 mb-2">Additional Resources</p>
                 <ul className="space-y-1">
                   <li>
-                    <a href="https://au.int/en/diaspora" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
+                    <a href="https://au.int/en/diaspora-division" target="_blank" rel="noopener noreferrer" className="hover:text-dna-copper flex items-center gap-1">
                       African Union Diaspora Division <ArrowUpRight className="h-3 w-3" />
                     </a>
                   </li>
