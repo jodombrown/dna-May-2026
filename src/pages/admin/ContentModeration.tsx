@@ -74,7 +74,7 @@ const ContentModeration = () => {
           flag_reason,
           moderation_status,
           moderation_notes,
-          author:profiles!posts_author_id_fkey(display_name, email),
+          author:profiles!posts_author_id_fkey(display_name),
           flagger:profiles!posts_flagged_by_fkey(display_name)
         `)
         .in('moderation_status', ['pending', 'flagged'])
@@ -95,7 +95,7 @@ const ContentModeration = () => {
           flag_reason,
           moderation_status,
           moderation_notes,
-          author:profiles!post_comments_user_id_fkey(display_name, email),
+          author:profiles!post_comments_user_id_fkey(display_name),
           flagger:profiles!post_comments_flagged_by_fkey(display_name)
         `)
         .in('moderation_status', ['pending', 'flagged'])

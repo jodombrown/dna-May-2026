@@ -49,7 +49,7 @@ const ContributionModerationQueue = () => {
           status,
           created_at,
           admin_notes,
-          profiles!inner(display_name, email)
+          profiles!inner(display_name)
         `)
         .order('created_at', { ascending: false });
 

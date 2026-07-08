@@ -90,7 +90,7 @@ export default function ContributionModeration() {
             created_by,
             space:spaces!contribution_needs_space_id_fkey(name)
           ),
-          reporter:profiles!contribution_reports_reporter_id_fkey(full_name, email)
+          reporter:profiles!contribution_reports_reporter_id_fkey(full_name)
         `)
         .order('created_at', { ascending: false });
 
