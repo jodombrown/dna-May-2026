@@ -87,7 +87,7 @@ const WhoIsDNAForSection = () => {
             onClick={() => navigate('/auth?mode=signup')}
             className="bg-dna-emerald hover:bg-dna-forest text-white px-8 py-3"
           >
-            Get Started
+            Join Now
           </Button>
         </div>
       </div>

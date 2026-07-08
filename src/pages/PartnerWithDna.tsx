@@ -60,7 +60,7 @@ const PartnerWithDna = () => {
                   onClick={() => handleCTAClick('join-dna', '/auth?mode=signup')}
                 >
                   <Link to="/auth?mode=signup">
-                    Sign Up
+                    Join Now
                   </Link>
                 </EnhancedButton>
               </div>
@@ -233,7 +233,7 @@ const PartnerWithDna = () => {
               onClick={() => handleCTAClick('join-now', '/auth?mode=signup')}
             >
               <Link to="/auth?mode=signup">
-                Sign Up
+                Join Now
               </Link>
             </EnhancedButton>
           </div>

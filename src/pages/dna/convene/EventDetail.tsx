@@ -492,7 +492,7 @@ const EventDetail = () => {
                 </span>
               </div>
               <Button size="sm" className="bg-white text-foreground hover:bg-white/90 shrink-0 h-7 text-xs px-3" asChild>
-                <Link to="/auth?mode=signup">Sign Up</Link>
+                <Link to="/auth?mode=signup">Join Now</Link>
               </Button>
             </div>
           </motion.div>

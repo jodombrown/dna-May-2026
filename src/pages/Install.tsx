@@ -374,7 +374,7 @@ const Install = () => {
               onClick={() => navigate("/auth")}
               className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground gap-2 px-8"
             >
-              Get Started
+              Join Now
               <ArrowRight className="w-5 h-5" />
             </Button>
             <Button 

@@ -205,7 +205,7 @@ const PartnerSector = () => {
             onClick={handleCTAClick}
           >
             <Link to={sector.ctaLink}>
-              Get Started
+              Join Now
             </Link>
           </EnhancedButton>
         </div>

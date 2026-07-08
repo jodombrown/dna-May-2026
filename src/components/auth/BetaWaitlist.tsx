@@ -107,7 +107,7 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
           <div className="text-sm text-neutral-700">
             <p className="font-medium mb-1">Join our waitlist for upcoming access</p>
             <p className="text-neutral-600">
-              Sign up to be notified when DNA opens to more users after the beta period.
+              Join now to be notified when DNA opens to more users after the beta period.
             </p>
           </div>
         </div>

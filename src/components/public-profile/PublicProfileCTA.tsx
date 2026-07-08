@@ -39,7 +39,7 @@ export const PublicProfileCTA = ({ firstName, username }: PublicProfileCTAProps)
               asChild
             >
               <Link to="/auth?mode=signup">
-                Sign Up
+                Join Now
               </Link>
             </Button>
             <Button

@@ -187,13 +187,13 @@ export default function FeatureDetail() {
 
         {/* Bottom CTA */}
         <div className="bg-gradient-to-r from-dna-forest to-dna-emerald text-white p-8 rounded-lg text-center">
-          <h3 className="text-2xl font-bold mb-4">Ready to get started?</h3>
+          <h3 className="text-2xl font-bold mb-4">Ready to join?</h3>
           <p className="mb-6">Join DNA today and start connecting with the global African diaspora.</p>
           <Link
             to="/auth?mode=signup"
             className="inline-block bg-white text-dna-forest px-6 py-3 rounded-lg font-medium hover:bg-white/90 transition-colors"
           >
-            Sign Up
+            Join Now
           </Link>
         </div>
       </div>

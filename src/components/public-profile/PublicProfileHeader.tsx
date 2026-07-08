@@ -45,19 +45,19 @@ export const PublicProfileHeader = ({ username }: PublicProfileHeaderProps) => {
           ) : (
             <>
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(`/auth?redirect=/dna/${username}`)}
-              >
-                Sign In
-              </Button>
-              <Button
                 variant="default"
                 size="sm"
                 className="bg-dna-copper hover:bg-dna-gold"
                 onClick={() => navigate('/auth?mode=signup')}
               >
-                Sign Up
+                Join Now
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(`/auth?redirect=/dna/${username}`)}
+              >
+                Sign In
               </Button>
             </>
           )}

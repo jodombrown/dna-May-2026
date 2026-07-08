@@ -338,7 +338,7 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
               className="bg-primary hover:bg-primary/90 shadow-lg px-8"
             >
               <UserPlus className="w-5 h-5 mr-2" />
-              Sign Up
+              Join Now
             </Button>
           </motion.div>
         </motion.div>
@@ -414,7 +414,7 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
                 className="bg-primary hover:bg-primary/90"
               >
                 <UserPlus className="w-4 h-4 mr-2" />
-                Sign Up
+                Join Now
               </Button>
             </CardContent>
           </Card>
