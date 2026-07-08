@@ -123,6 +123,8 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
       className="relative flex-1 min-w-0"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={() => prefetchRoute(config.href)}
+      onFocus={() => prefetchRoute(config.href)}
     >
       <motion.div
         transition={{ duration: 0.12 }}
