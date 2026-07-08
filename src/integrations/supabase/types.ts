@@ -10391,6 +10391,60 @@ export type Database = {
           },
         ]
       }
+      stat_citations: {
+        Row: {
+          created_at: string
+          definition: string | null
+          description: string
+          display_value: string
+          id: string
+          is_active: boolean
+          key: string
+          label: string
+          methodology: string | null
+          sort_order: number
+          source_name: string
+          source_url: string | null
+          updated_at: string
+          updated_by: string | null
+          year: number | null
+        }
+        Insert: {
+          created_at?: string
+          definition?: string | null
+          description: string
+          display_value: string
+          id?: string
+          is_active?: boolean
+          key: string
+          label: string
+          methodology?: string | null
+          sort_order?: number
+          source_name: string
+          source_url?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          year?: number | null
+        }
+        Update: {
+          created_at?: string
+          definition?: string | null
+          description?: string
+          display_value?: string
+          id?: string
+          is_active?: boolean
+          key?: string
+          label?: string
+          methodology?: string | null
+          sort_order?: number
+          source_name?: string
+          source_url?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          year?: number | null
+        }
+        Relationships: []
+      }
       task_comments: {
         Row: {
           author_id: string
