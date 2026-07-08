@@ -110,7 +110,7 @@ export default function ContributionManagement() {
           created_by,
           space_id,
           space:spaces!contribution_needs_space_id_fkey(name),
-          creator:profiles!contribution_needs_created_by_fkey(full_name, email)
+          creator:profiles!contribution_needs_created_by_fkey(full_name)
         `)
         .order('created_at', { ascending: false });
 
