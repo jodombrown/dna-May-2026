@@ -1,60 +1,83 @@
-## Scope
 
-You raised eight items covering Discover polish, mobile chrome consistency across Collaborate / Contribute / Messages / Notifications / Feedback / Settings, and one regression test. I'll group them so the shared work (a single "DNA mobile hub shell") is done once and reused, then finish per-page fixes and the test.
+## What's actually wrong with the Pulse Bar
 
-## Phase 1 — Discover polish (small, safe)
+The slowness when you tap a Pulse item is not the navigation itself — SPA `<Link>` transitions are instant. The Pulse Bar is quietly saturating the browser and the network so that, at the moment you click, the app is busy doing work it shouldn't be doing. Three concrete defects in `src/hooks/usePulseBar.ts`, plus one contributing factor at the route layer.
 
-1. **Load More UX**
-  - Track a dedicated `isLoadingMore` state in `Discover.tsx` so the button disables and shows a spinner only during the paginated fetch (today `loading` is shared with the initial skeleton state).
-  - On fetch failure, set `loadMoreError` and render an inline retry row ("Couldn't load more members. Retry") instead of silently hiding the button.
-  - Keep the existing dedupe + `hasMore` end state (already renders "You're all caught up").
-2. **End-of-list state consistency**
-  - Extract the "You're all caught up" block into a shared `<CaughtUpNotice />` in `src/components/shared/` and reuse it on Discover (both when `hasMore === false` and when the last page returned 0 net-new members after dedupe).
-3. **Automated regression test** (`src/test/discoverPagination.test.tsx`)
-  - Mock `supabase.rpc('discover_members', …)` to return overlapping IDs on page 2, non-overlapping on page 3, then empty.
-  - Assert: page 1 renders N cards, clicking Load More increments the RPC's `p_offset` (20, then 40, then 60), overlapping IDs never duplicate in the DOM, and the "You're all caught up" notice appears once the RPC returns an empty page.
+### Root cause 1 - Unfiltered realtime subscriptions on the hottest tables
 
-## Phase 2 — DNA Mobile Hub Shell (shared chrome)
+Three of the five realtime channels subscribe with **no `filter`**:
 
-Create one canonical mobile shell used by every `/dna/*` hub that doesn't already have a bespoke layout. This is the piece that makes Collaborate / Messages / Notifications / Feedback / Settings feel like Feed / Connect / Convene.
+- `contribution_offers` (all rows, all users)
+- `post_likes` (every like, platform-wide)
+- `post_comments` (every comment, platform-wide)
 
-- **New file** `src/components/mobile/DnaMobileHubShell.tsx`
-  - Renders `DnaMobileHeader` (logo / bubble / bell / avatar) in a `fixed top-0` container measured with `useMobileHeaderHeight`.
-  - Wraps the top bar in a `useScrollDirection`-driven collapse (same "hide top bar on scroll, keep tabs visible" pattern already used in Connect).
-  - Optional `tabs` slot rendered directly under the top bar and always visible.
-  - Applies `paddingTop` to the content column from the measured height.
-  - Reserves `pb-bottom-nav` for the bottom navigation.
-- Refactor `SpacesShell` to compose `DnaMobileHubShell` instead of its own fixed header (removes the current "static" bubble that just says "Search Spaces…" and doesn't behave).
-- Reuse it for Messages, Notifications, Feedback, and Settings shells below.
+Every like or comment anyone posts anywhere on DNA fires an event into your browser and invalidates the pulse query. On an active platform this is dozens of events per minute per session. This directly violates the Performance Foundation rule ("every `postgres_changes` MUST include a filter; unfiltered on `post_likes` / `post_comments` / `contribution_offers` is a bug").
 
-## Phase 3 — Per-page fixes using the shared shell
+### Root cause 2 - Every invalidation refires all 10 fetches
 
-4. **Collaborate hub feels foreign** (screenshot 1)
-  - Wrap `CollaborateHub.tsx` (and `MySpaces`, `SpacesIndex`) with `DnaMobileHubShell`.
-  - Move the "Collaborate / Create Space" title row + description into a `tabs`-style secondary row so the top bar carries only logo / search bubble / bell / avatar, matching Feed & Connect.
-  - Bubble becomes a live `search` bubble that filters the currently shown lists (My Spaces + Discover) client-side, matching how Connect's search behaves.
-  - Ensure the bottom nav is present (`pb-bottom-nav`) — same as other hubs.
-5. **Contribute header scroll behavior** (matches Connect fix)
-  - Update `ContributeHub.tsx` to drive `ContributeMobileHeader` with a `useScrollDirection` flag: `isRow1Visible` collapses the top bar on scroll, tab row stays fixed. Uses the same measured-height pattern as Connect so content padding stays correct.
-6. **Messages page missing bottom nav** (screenshot 5)
-  - Locate the messages page shell (`src/pages/dna/Messages.tsx` / mobile view) and wrap it with `DnaMobileHubShell` (search-bubble variant), and add the missing `pb-bottom-nav` so the global bottom nav re-appears. Keep the existing Primary / Requests / Spam / Archive tabs as the `tabs` slot.
-7. **Notifications / Settings / Feedback don't match** (screenshot 6)
-  - Wrap `NotificationsPage`, `src/pages/dna/settings/*`, and the Feedback hub page in `DnaMobileHubShell` with a `static` bubble that shows the page title (e.g. "Notifications", "Settings", "Alpha Feedback"). Result: same top bar chrome, same bottom nav, same content padding as Feed / Connect.
-  - Remove any duplicated in-page back arrows / close buttons that competed with the shell.
+The invalidation key is `[PULSE_QUERY_KEY]`, and the query fn runs `Promise.all` of five fetchers, which themselves issue ~10 Supabase reads (some with joins on `events`, `spaces`, `contribution_needs`, plus a follow-up `profiles.in()` for Connect and two `post_likes` / `post_comments` `.in()` scans for Convey). One stranger's like across the platform = 10 queries fired in parallel from your session. When you tap a Pulse item mid-cascade, the click has to wait for React to finish re-rendering with new data plus for the network to free up.
 
-## Phase 4 — Guardrail
+### Root cause 3 - Redundant 10-minute polling on top of realtime
 
-- Extend `src/test/mobileHeaderOverlap.test.tsx` (already the header regression) with a snapshot that fails if a `/dna/*` hub renders without `DnaMobileHubShell` or without `pb-bottom-nav`.
+`refetchInterval: 10 * 60 * 1000` runs regardless of the realtime subscriptions. When realtime is working, the poll is pure overhead; when realtime is broken, it masks the bug. Pick one.
 
-## Technical notes
+### Contributing factor - Route-level lazy chunks
 
-- No schema, RLS, or edge-function changes. All work is React / Tailwind.
-- Uses only existing hooks: `useMobile`, `useScrollDirection`, `useMobileHeaderHeight`, `useHeaderVisibility`.
-- No new dependencies.
-- Complies with the mobile-first + Anti Vibe-Coded doctrine (no new gradients, no new colors, keeps 44px targets, no em-dashes).
+Every hub in `App.tsx` is `lazy()` (`ConveneHub`, `CollaborateHub`, `ContributeHub`, `ConveyHub`, `Connect`). First tap on each downloads a chunk. That's fine in isolation, but combined with the cascade above it turns a 200-400ms chunk fetch into "forever." Fixing 1-3 makes this feel instant again; we can additionally prefetch the chunk on hover/press.
 
-## Out of scope (flag for later)
+---
 
-- Desktop redesign of Collaborate (you said "mobile now"). I meant that right now I'm focused on the mobile view right now but fix both desktop and mobile as always
-- Any changes to comment / posts logic (already shipped previously).
-- Redesigning the individual Settings sub-pages beyond wrapping them in the shell.
+## The fix
+
+### 1. Scope every realtime subscription to this user
+
+In `src/hooks/usePulseBar.ts`:
+
+- `contribution_offers` → add `filter: 'offerer_id=eq.${user.id}'` **and** a second channel for offers on the user's own needs (via a `contribution_needs.created_by` scoped filter, or drop the second channel and rely on the periodic refetch for the "offers received" side if a direct filter isn't available — realtime `postgres_changes` filters don't traverse joins).
+- `post_likes` → `filter: 'post_id=in.(...)'` is not supported for realtime; instead subscribe scoped to the user's own posts by switching to a lightweight `author_id`-scoped channel on `posts` for engagement-relevant updates, or drop this channel entirely and let the 10-min poll / manual invalidations from the Convey hub handle it. Same for `post_comments`.
+- Keep `connections` (already filtered by `recipient_id`), `event_attendees` (already filtered by `user_id`), `space_members` (already filtered by `user_id`) as-is.
+
+Target: **zero unfiltered channels** on high-write tables. This alone eliminates 95% of the invalidation storm.
+
+### 2. Debounce and narrow the invalidation
+
+- Replace immediate `queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })` with a shared debounced invalidator (300-500ms trailing) so bursts collapse into one refetch.
+- Key the invalidation to this user: `queryKey: [PULSE_QUERY_KEY, user.id]` so we don't accidentally invalidate across sessions in dev/HMR.
+
+### 3. Drop the redundant poll, lengthen stale time
+
+- Remove `refetchInterval` entirely (realtime + tab-focus refetch is enough).
+- Keep `staleTime: 5 * 60 * 1000`.
+- Add `refetchOnWindowFocus: false` for pulse — it's ambient, not critical.
+
+### 4. Make the click itself instant
+
+In `src/components/pulse/PulseItem.tsx`:
+
+- On `onMouseEnter` / `onTouchStart` / `onFocus`, call the route's dynamic import so the chunk is warm by the time the click lands. Simplest form: import the page module lazily and trigger the promise on hover; React Router will resolve the already-fetched module synchronously on navigation.
+- No visual change; purely a prefetch.
+
+### 5. Verification
+
+After the edits:
+
+1. Reload `/dna/convene`, open DevTools Network, filter to `rest/v1`. Idle for 60s. Expected: **no pulse re-fetch bursts** unless the current user's own data changes.
+2. Have a second account like/comment on an unrelated post. Expected: **no network activity** in this session.
+3. Tap each Pulse item cold, then warm. Expected: cold ≤ chunk-fetch time, warm ≈ instant.
+4. Confirm counts still update when the current user accepts a connection, RSVPs an event, joins a space (the three filtered channels that survive).
+
+---
+
+## Files touched
+
+- `src/hooks/usePulseBar.ts` — realtime scoping, debounced invalidator, drop `refetchInterval`, add `refetchOnWindowFocus: false`.
+- `src/components/pulse/PulseItem.tsx` — hover/touch prefetch of the destination route chunk.
+
+No schema changes, no UI changes, no behavior change beyond "it stops thrashing."
+
+---
+
+## Out of scope for this pass (flagging, not doing)
+
+- The messages inbox is issuing a per-conversation `messages?select=id&conversation_id=eq.…` request for every conversation on load (visible in the network snapshot). That's a separate N+1 in the messaging layer and a real perf hit, but it's not the Pulse Bar.
+- Full route-code-splitting review across `/dna/*` hubs.
