@@ -14,6 +14,7 @@ import { useMobile } from '@/hooks/useMobile';
 import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { PulseItem } from './PulseItem';
 import { PULSE_CONFIG, type PulseKey } from '@/types/pulse';
+import { scheduleHubPrefetch } from '@/lib/prefetchHubRoutes';
 
 const PULSE_KEYS: PulseKey[] = ['connect', 'convene', 'collaborate', 'contribute', 'convey'];
 
