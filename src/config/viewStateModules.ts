@@ -1,15 +1,15 @@
 /**
  * ViewState-Specific Module Configurations
- * 
- * These are the default module configurations for each ViewState (5C).
- * ADA policies can override these defaults via cohort or experiment assignments.
- * 
+ *
+ * Default module configurations for each ViewState (5C).
+ *
  * Resolution order:
- * 1. ViewState-specific cohort/experiment policy (most specific)
- * 2. Global cohort/experiment policy
- * 3. ViewState default (defined here)
- * 4. Global default from ada_policies
- * 5. DEFAULT_MODULES constant (hardcoded fallback)
+ * 1. ViewState default (defined here)
+ * 2. DEFAULT_MODULES constant (hardcoded fallback)
+ *
+ * Note: the ADA cohort/experiment/policy override layer was removed in the
+ * Pass 10 dark-DB cleanup (2026-07). If per-cohort overrides are ever
+ * reintroduced, they should slot in above the ViewState default here.
  */
 
 import { ViewState } from '@/contexts/ViewStateContext';
