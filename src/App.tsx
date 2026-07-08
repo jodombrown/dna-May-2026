@@ -95,7 +95,6 @@ const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
-// const Roadmap = lazy(() => import("./pages/Roadmap"));
 const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
 const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage"));
 const LocalEventsPage = lazy(() => import("./pages/LocalEventsPage"));
@@ -104,11 +103,6 @@ const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const Manifesto = lazy(() => import("./pages/Manifesto"));
 const Demo = lazy(() => import("./pages/Demo"));
 
-// Public marketing pages (Five C's examples)
-const ConnectExample = lazy(() => import("./pages/_archived/ConnectExample"));
-const CollaborateExample = lazy(() => import("./pages/_archived/CollaborationsExample"));
-const ContributeExample = lazy(() => import("./pages/_archived/ContributeExample"));
-const ConveyExample = lazy(() => import("./pages/_archived/ConveyExample"));
 const DesignSystem = lazy(() => import("./pages/DesignSystem"));
 const FeaturesHub = lazy(() => import("./pages/documentation/FeaturesHub"));
 const FeatureDetail = lazy(() => import("./pages/documentation/FeatureDetail"));
