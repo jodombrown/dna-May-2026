@@ -54,6 +54,14 @@ export function PulseDock() {
   // Activate keyboard detection to auto-hide dock when typing
   useKeyboardDetection();
 
+  // Warm all five hub chunks during idle time so the first tap on any
+  // dock item resolves synchronously. Mobile taps were paying a cold
+  // chunk-fetch cost every time because navigate() runs after the tap.
+  React.useEffect(() => {
+    if (!isMobile || !user) return;
+    scheduleHubPrefetch();
+  }, [isMobile, user]);
+
   // Hide dock only in full-screen chat threads (Messages with active conversation)
   const isFullScreenChat = location.pathname.includes('/dna/messages');
 

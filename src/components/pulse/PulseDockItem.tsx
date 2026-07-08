@@ -10,6 +10,7 @@ import { type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PulseSection, PulseStatus } from '@/types/pulse';
 import type { MoreButtonState } from '@/hooks/usePulseNavigation';
+import { prefetchHubRoute } from '@/lib/prefetchHubRoutes';
 
 interface PulseDockItemProps {
   item: {
@@ -43,9 +44,16 @@ export function PulseDockItem({ item, pulseData, isActive, onClick }: PulseDockI
         ? pulseData.totalCount
         : 0;
 
+  const warm = () => {
+    if (item.href) prefetchHubRoute(item.href);
+  };
+
   return (
     <button
       onClick={onClick}
+      onPointerDown={warm}
+      onTouchStart={warm}
+      onFocus={warm}
       className={cn(
         'flex flex-col items-center justify-center',
         'min-w-[56px] h-full px-1',
