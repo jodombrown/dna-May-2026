@@ -101,6 +101,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
       hideTimeoutRef.current = null;
     }
     setShowPreview(true);
+    prefetchRoute(config.href);
   };
 
   const handleMouseLeave = () => {
