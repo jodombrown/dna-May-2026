@@ -16,22 +16,43 @@ export default function ResetPasswordComplete() {
   const [hasRecoverySession, setHasRecoverySession] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Supabase parses the recovery token from the URL hash and creates a session automatically.
-    // We just need to confirm a session exists before allowing password change.
-    const check = async () => {
-      const code = new URLSearchParams(window.location.search).get('code');
+    // The Supabase client is configured with detectSessionInUrl + PKCE, so it
+    // automatically calls exchangeCodeForSession for `?code=` on init. If we
+    // then call exchangeCodeForSession ourselves, the code has already been
+    // consumed and we get { session: null, error }, which flashes the
+    // "invalid or expired" block before onAuthStateChange corrects it.
+    // Fix: always check for an existing session first; only fall back to the
+    // manual exchange if none exists yet.
+    let cancelled = false;
 
-      if (code) {
-        const { data } = await supabase.auth.exchangeCodeForSession(code);
-        setHasRecoverySession(!!data.session);
+    const check = async () => {
+      const { data: existing } = await supabase.auth.getSession();
+      if (cancelled) return;
+      if (existing.session) {
+        setHasRecoverySession(true);
         return;
       }
 
-      const { data } = await supabase.auth.getSession();
-      setHasRecoverySession(!!data.session);
+      const code = new URLSearchParams(window.location.search).get('code');
+      if (!code) {
+        setHasRecoverySession(false);
+        return;
+      }
+
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      if (cancelled) return;
+      // If the auto-exchange already consumed the code, this call errors but
+      // a session will land via onAuthStateChange shortly. Only mark as
+      // invalid when there's no error AND no session (truly bad code).
+      if (data?.session) {
+        setHasRecoverySession(true);
+      } else if (!error) {
+        setHasRecoverySession(false);
+      }
+      // else: leave as null and let onAuthStateChange resolve it.
     };
 
-    // Give Supabase a tick to process the hash
+    // Give Supabase a tick to process the URL code first.
     const timer = setTimeout(check, 300);
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
@@ -41,6 +62,7 @@ export default function ResetPasswordComplete() {
     });
 
     return () => {
+      cancelled = true;
       clearTimeout(timer);
       sub.subscription.unsubscribe();
     };
