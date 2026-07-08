@@ -50,6 +50,14 @@ export function PulseBar() {
     }
   }, [isMobile, user]);
 
+  // Warm all five hub chunks during idle time so the first tap on any Pulse
+  // item resolves synchronously instead of paying a cold chunk-fetch cost.
+  React.useEffect(() => {
+    if (isMobile || !user) return;
+    scheduleHubPrefetch();
+  }, [isMobile, user]);
+
+
 
   if (isMobile || !user) return null;
 

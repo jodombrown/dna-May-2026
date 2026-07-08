@@ -20,6 +20,7 @@ import type { PulseSection } from '@/types/pulse';
 import { useMobile } from '@/hooks/useMobile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useKeyboardDetection } from '@/hooks/useKeyboardDetection';
+import { scheduleHubPrefetch, prefetchHubRoute } from '@/lib/prefetchHubRoutes';
 
 import { PulseDockItem } from './PulseDockItem';
 import { PulseDockTray } from './PulseDockTray';
