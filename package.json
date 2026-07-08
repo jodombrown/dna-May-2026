@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "lint:tokens": "tsx scripts/check-forbidden-classes.ts",
     "lint:icons": "tsx scripts/check-icon-duplicates.ts",
+    "lint:links": "tsx scripts/check-external-links.ts",
     "prebuild": "tsx scripts/check-forbidden-classes.ts && tsx scripts/check-icon-duplicates.ts",
     "preview": "vite preview"
   },
