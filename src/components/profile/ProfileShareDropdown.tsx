@@ -95,7 +95,10 @@ export const ProfileShareDropdown: React.FC<ProfileShareDropdownProps> = ({
     
     setIsDownloading(true);
     try {
-      await generateProfilePDF(profile, user?.email);
+      // Only carry the owner's email into the PDF for the signed-in user's own profile;
+      // a peer-profile export must not leak an email field.
+      const isOwnProfile = !!user?.id && profile?.id === user.id;
+      await generateProfilePDF(profile, isOwnProfile ? user?.email : undefined);
       toast.success('Profile PDF downloaded successfully');
     } catch (error) {
       toast.error('Failed to generate PDF');

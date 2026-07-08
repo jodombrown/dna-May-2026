@@ -44,21 +44,17 @@ const InviteSignup = lazy(() => import("./pages/InviteSignup"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const DnaMe = lazy(() => import("./pages/dna/Me"));
 const MyProfileRedirect = lazy(() => import("./components/routing/MyProfileRedirect"));
-const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
 const LegacyProfileRedirect = lazy(() => import("./components/routing/LegacyProfileRedirect"));
 const LegacyEventRedirect = lazy(() => import("./components/routing/LegacyEventRedirect"));
 const PublicPostPage = lazy(() => import("./pages/PublicPostPage"));
 const PublicEventPage = lazy(() => import("./pages/PublicEventPage"));
 const ProfileV2 = lazy(() => import("./pages/ProfileV2"));
 const SavedPostsPage = lazy(() => import("./pages/SavedPostsPage"));
-const DnaNetwork = lazy(() => import("./pages/dna/Network"));
 const DnaFeed = lazy(() => import("./pages/dna/Feed"));
 const HashtagFeed = lazy(() => import("./pages/dna/HashtagFeed"));
 const DebugUniversalFeed = lazy(() => import("./pages/dna/DebugUniversalFeed"));
-const DnaEvents = lazy(() => import("./pages/dna/Events"));
 const DnaMessages = lazy(() => import("./pages/dna/Messages"));
 const GroupThreadPage = lazy(() => import("./pages/dna/GroupThread"));
-const DnaImpact = lazy(() => import("./pages/dna/Impact"));
 const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
 const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
 const DnaFeedback = lazy(() => import("./pages/dna/feedback/FeedbackPage"));
@@ -68,7 +64,6 @@ const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const IconUsageGuide = lazy(() => import("./pages/dna/IconUsageGuide"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const EngagementDashboard = lazy(() => import("./pages/admin/EngagementDashboard"));
-const AdminEngagement = lazy(() => import("./pages/admin/AdminEngagement"));
 const AdminSignals = lazy(() => import("./pages/admin/AdminSignals"));
 const WaitlistManagement = lazy(() => import("./pages/admin/WaitlistManagement"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
@@ -143,7 +138,6 @@ const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 // Contribute M1-M2 pages
 const ContributeHub = lazy(() => import("./pages/dna/contribute/ContributeHub"));
 const NeedsIndex = lazy(() => import("./pages/dna/contribute/NeedsIndex"));
-const NeedDetail = lazy(() => import("./pages/dna/contribute/NeedDetail"));
 const OpportunityDetail = lazy(() => import("./pages/dna/contribute/OpportunityDetail"));
 const MyContributions = lazy(() => import("./pages/dna/contribute/MyContributions"));
 const FulfillmentTrackerPage = lazy(() => import("./components/contribute/FulfillmentTracker"));
@@ -163,10 +157,7 @@ const UserAdminHub = lazy(() => import("./pages/dna/admin/UserAdminHub"));
 // Feature pages
 const MyApplications = lazy(() => import("./pages/MyApplications"));
 const ApplicationsReceived = lazy(() => import("./pages/ApplicationsReceived"));
-const DnaDiscover = lazy(() => import("./pages/dna/Discover"));
 // Messages pages consolidated - using DnaMessages from ./pages/dna/Messages
-const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
-const NotificationSettingsPage = lazy(() => import("./pages/NotificationSettingsPage"));
 const ProfileEdit = lazy(() => import("./pages/ProfileEdit"));
 
 // Settings Hub pages
@@ -189,7 +180,6 @@ const ContributionModeration = lazy(() => import("./pages/admin/contributions/Co
 const ContributionAnalytics = lazy(() => import("./pages/admin/contributions/ContributionAnalytics"));
 const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
 const EditEventPage = lazy(() => import("./pages/EditEventPage"));
-const DnaGroups = lazy(() => import("./pages/dna/Groups"));
 const GroupDetailsPage = lazy(() => import("./pages/GroupDetailsPage"));
 const GroupSettingsPage = lazy(() => import("./pages/GroupSettingsPage"));
 
@@ -819,7 +809,6 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* ROADMAP — hidden, work-in-progress */}
 
               {/* Public marketing pages - Five C's examples temporarily disabled pending redesign.
                   All links redirect home so no in-progress page is exposed. */}
