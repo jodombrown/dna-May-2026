@@ -109,7 +109,7 @@ export const AccountDrawer: React.FC = () => {
     
     setIsDownloading(true);
     try {
-      await generateProfilePDF(profile as any);
+      await generateProfilePDF(profile as any, user?.email);
       toast.success('Profile PDF downloaded successfully');
     } catch (error) {
       toast.error('Failed to generate PDF');

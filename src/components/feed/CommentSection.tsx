@@ -2,6 +2,7 @@ import { useState, useRef, useMemo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -257,7 +258,7 @@ function CommentItem({ comment }: { comment: any }) {
     queryFn: async () => {
       const { data } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .eq('id', comment.user_id)
         .maybeSingle();
       return data;

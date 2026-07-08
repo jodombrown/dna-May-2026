@@ -15,6 +15,7 @@ import {
 import { Share2, Copy, MessageSquare, Linkedin, Twitter, Share, Download, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { generateProfilePDF } from '@/lib/generateProfilePDF';
+import { useAuth } from '@/contexts/AuthContext';
 import { ROUTES } from '@/config/routes';
 
 interface ProfileShareDropdownProps {
@@ -37,6 +38,7 @@ export const ProfileShareDropdown: React.FC<ProfileShareDropdownProps> = ({
   className = '',
 }) => {
   const [isDownloading, setIsDownloading] = useState(false);
+  const { user } = useAuth();
 
   const getPublicProfileUrl = () => {
     return `${window.location.origin}${ROUTES.profile.view(username)}`;
@@ -93,7 +95,7 @@ export const ProfileShareDropdown: React.FC<ProfileShareDropdownProps> = ({
     
     setIsDownloading(true);
     try {
-      await generateProfilePDF(profile);
+      await generateProfilePDF(profile, user?.email);
       toast.success('Profile PDF downloaded successfully');
     } catch (error) {
       toast.error('Failed to generate PDF');

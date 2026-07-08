@@ -23,7 +23,6 @@ interface ProfileData {
   location?: string;
   current_country?: string;
   primary_origin_country?: string;
-  email?: string;
   phone_number?: string;
   whatsapp_number?: string;
   linkedin_url?: string;
@@ -76,7 +75,11 @@ const DNA_COLORS = {
   sidebarText: '#E5E7EB',
 };
 
-export async function generateProfilePDF(profile: ProfileData): Promise<void> {
+/**
+ * @param ownerEmail Owner's email sourced from supabase.auth (NOT the profiles row).
+ *   Rendered only in the owner's own export; profiles no longer exposes email.
+ */
+export async function generateProfilePDF(profile: ProfileData, ownerEmail?: string): Promise<void> {
   // Determine visibility - if owner viewing, show everything; otherwise respect settings
   const isOwner = profile.isOwnerView ?? true; // Default to owner view for backward compatibility
   const visibility = profile.visibility as ProfileVisibility | undefined;
@@ -163,8 +166,8 @@ export async function generateProfilePDF(profile: ProfileData): Promise<void> {
   if (hasSidebarSpace(20)) {
     sidebarY = drawSidebarSection(doc, 'CONTACT', sidebarY, sidebarWidth, margin);
     
-    if (profile.email && isOwner && hasSidebarSpace(10)) {
-      sidebarY = drawSidebarItem(doc, 'Email:', profile.email, sidebarY, sidebarWidth, margin);
+    if (ownerEmail && isOwner && hasSidebarSpace(10)) {
+      sidebarY = drawSidebarItem(doc, 'Email:', ownerEmail, sidebarY, sidebarWidth, margin);
     }
     if (profile.linkedin_url && hasSidebarSpace(10)) {
       const linkedinHandle = profile.linkedin_url.includes('linkedin.com') 

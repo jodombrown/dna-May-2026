@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
 
 /**
  * User profile data from the profiles table
@@ -90,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .eq('id', userId)
         .maybeSingle();
       
@@ -105,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Try one more time
         const { data: retryData, error: retryError } = await supabase
           .from('profiles')
-          .select('*')
+          .select(PROFILE_SELECT_COLUMNS)
           .eq('id', userId)
           .maybeSingle();
 

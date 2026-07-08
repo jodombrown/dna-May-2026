@@ -6,6 +6,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
 import type {
   ProfileIntelligenceInput,
   ProfileIntelligenceResult,
@@ -49,7 +50,7 @@ const FIELD_TO_COLUMN: Record<ProfileField, string> = {
 async function analyzeProfile(input: ProfileIntelligenceInput): Promise<ProfileIntelligenceResult> {
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select(PROFILE_SELECT_COLUMNS)
     .eq('id', input.user_id)
     .single();
 
