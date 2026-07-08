@@ -27,7 +27,8 @@
     "useDefineForClassFields": true
   },
   "exclude": [
-    "src/components/_archived"
+    "src/components/_archived",
+    "src/pages/_archived"
   ],
   "include": [
     "src"

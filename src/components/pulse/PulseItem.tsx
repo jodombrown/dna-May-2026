@@ -28,6 +28,25 @@ const ICONS: Record<string, LucideIcon> = {
   Mpatapo,
 };
 
+// Warm-import the destination hub chunk on hover/touch so navigation is
+// instant. React lazy() caches the module promise, so the actual <Link>
+// click resolves synchronously if the chunk is already fetched.
+const ROUTE_PREFETCH: Record<string, () => Promise<unknown>> = {
+  '/dna/connect': () => import('@/pages/dna/connect/Connect'),
+  '/dna/convene': () => import('@/pages/dna/convene/ConveneHub'),
+  '/dna/collaborate': () => import('@/pages/dna/collaborate/CollaborateHub'),
+  '/dna/contribute': () => import('@/pages/dna/contribute/ContributeHub'),
+  '/dna/convey': () => import('@/pages/dna/convey/ConveyHub'),
+};
+const prefetchedRoutes = new Set<string>();
+function prefetchRoute(href: string) {
+  if (prefetchedRoutes.has(href)) return;
+  const loader = ROUTE_PREFETCH[href];
+  if (!loader) return;
+  prefetchedRoutes.add(href);
+  loader().catch(() => prefetchedRoutes.delete(href));
+}
+
 interface PulseItemProps {
   config: PulseConfig;
   data?: PulseSection;
@@ -82,6 +101,7 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
       hideTimeoutRef.current = null;
     }
     setShowPreview(true);
+    prefetchRoute(config.href);
   };
 
   const handleMouseLeave = () => {
@@ -103,6 +123,8 @@ export function PulseItem({ config, data, pulseKey }: PulseItemProps) {
       className="relative flex-1 min-w-0"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={() => prefetchRoute(config.href)}
+      onFocus={() => prefetchRoute(config.href)}
     >
       <motion.div
         transition={{ duration: 0.12 }}

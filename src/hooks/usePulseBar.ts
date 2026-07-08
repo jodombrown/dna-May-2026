@@ -454,103 +454,104 @@ export function usePulseBar() {
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes — pulse is non-critical ambient data
-    refetchInterval: 10 * 60 * 1000, // 10 minutes — reduced from 5min
+    // No refetchInterval: realtime subscriptions below cover the current user's
+    // own writes; polling stacked on top of realtime just wastes bandwidth and
+    // fires 10 Supabase reads every cycle.
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
-  // Set up realtime subscriptions for instant updates
+
+  // Set up realtime subscriptions for instant updates.
+  //
+  // IMPORTANT: every channel MUST include a `filter` scoped to this user.
+  // Unfiltered subscriptions on hot tables (post_likes, post_comments,
+  // contribution_offers) fire for EVERY row change platform-wide, which
+  // invalidates the pulse query dozens of times per minute and refires all
+  // 10 fetches — that's why tapping a Pulse item felt like "forever."
   useEffect(() => {
     if (!user?.id) return;
 
     const instanceId = `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     const channels: ReturnType<typeof supabase.channel>[] = [];
 
-    // Connection requests subscription
-    const connectChannel = supabase
-      .channel(`pulse-connect-${user.id}-${instanceId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'connections',
-          filter: `recipient_id=eq.${user.id}`,
-        },
-        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
-      )
-      .subscribe();
-    channels.push(connectChannel);
+    // Debounced invalidator so a burst of realtime events collapses into a
+    // single refetch instead of firing 10 Supabase reads per event.
+    let invalidateTimer: ReturnType<typeof setTimeout> | null = null;
+    const scheduleInvalidate = () => {
+      if (invalidateTimer) return;
+      invalidateTimer = setTimeout(() => {
+        invalidateTimer = null;
+        queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY, user.id] });
+      }, 400);
+    };
 
-    // Event attendees subscription
-    const conveneChannel = supabase
-      .channel(`pulse-convene-${user.id}-${instanceId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'event_attendees',
-          filter: `user_id=eq.${user.id}`,
-        },
-        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
-      )
-      .subscribe();
-    channels.push(conveneChannel);
+    // Connection requests: only rows where this user is the recipient.
+    channels.push(
+      supabase
+        .channel(`pulse-connect-${user.id}-${instanceId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'connections',
+            filter: `recipient_id=eq.${user.id}`,
+          },
+          scheduleInvalidate
+        )
+        .subscribe()
+    );
 
-    // Space members subscription
-    const collaborateChannel = supabase
-      .channel(`pulse-collaborate-${user.id}-${instanceId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'space_members',
-          filter: `user_id=eq.${user.id}`,
-        },
-        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
-      )
-      .subscribe();
-    channels.push(collaborateChannel);
+    // Event attendees: only this user's RSVPs.
+    channels.push(
+      supabase
+        .channel(`pulse-convene-${user.id}-${instanceId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'event_attendees',
+            filter: `user_id=eq.${user.id}`,
+          },
+          scheduleInvalidate
+        )
+        .subscribe()
+    );
 
-    // Contribution offers subscription
-    const contributeChannel = supabase
-      .channel(`pulse-contribute-${user.id}-${instanceId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'contribution_offers',
-        },
-        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
-      )
-      .subscribe();
-    channels.push(contributeChannel);
+    // Space memberships: only this user's memberships.
+    channels.push(
+      supabase
+        .channel(`pulse-collaborate-${user.id}-${instanceId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'space_members',
+            filter: `user_id=eq.${user.id}`,
+          },
+          scheduleInvalidate
+        )
+        .subscribe()
+    );
 
-    // Posts subscription for engagement updates
-    const conveyChannel = supabase
-      .channel(`pulse-convey-${user.id}-${instanceId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'post_likes',
-        },
-        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'post_comments',
-        },
-        () => queryClient.invalidateQueries({ queryKey: [PULSE_QUERY_KEY] })
-      )
-      .subscribe();
-    channels.push(conveyChannel);
+    // Contribute pulse intentionally has NO realtime channel. The fetch
+    // reads offers RECEIVED on this user's needs (contribution_needs.created_by),
+    // and realtime `postgres_changes` filters can't traverse an FK. Rather
+    // than subscribe to every offer platform-wide (the original bug), we
+    // let the 5-minute stale window + on-mount refetch cover it.
+
+    // Convey engagement (post_likes / post_comments) intentionally has NO
+    // realtime channel here. Realtime `postgres_changes` filters can't be
+    // scoped by "posts authored by this user" without an IN-clause on a
+    // dynamic list, and unfiltered subscriptions on these two tables were
+    // the primary source of the Pulse Bar thrash. The Convey hub still
+    // shows live engagement via its own scoped subscriptions; the Pulse
+    // Bar's "Trending!" micro-text refreshes on the 5-min stale boundary.
 
     return () => {
+      if (invalidateTimer) clearTimeout(invalidateTimer);
       channels.forEach((channel) => supabase.removeChannel(channel));
     };
   }, [user?.id, queryClient]);
