@@ -96,8 +96,8 @@ export default function SpaceModeration() {
           created_at,
           reviewed_at,
           reviewed_by,
-          reporter:profiles!space_reports_reporter_id_fkey(full_name, email),
-          creator:profiles!space_reports_creator_id_fkey(full_name, email)
+          reporter:profiles!space_reports_reporter_id_fkey(full_name),
+          creator:profiles!space_reports_creator_id_fkey(full_name)
         `)
         .order('created_at', { ascending: false });
 
