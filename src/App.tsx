@@ -81,6 +81,7 @@ const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboardLayout = lazy(() => import("./components/admin/AdminDashboardLayout"));
 const AdminDashboardOverview = lazy(() => import("./pages/admin/AdminDashboardOverview"));
 const AdminRouteGuard = lazy(() => import("./components/admin/AdminRouteGuard").then(m => ({ default: m.AdminRouteGuard })));
+const StatCitationsAdmin = lazy(() => import("./pages/admin/StatCitationsAdmin"));
 
 // Static pages  
 const About = lazy(() => import("./pages/About"));
@@ -862,6 +863,8 @@ function App() {
                 <Route path="analytics/contributions" element={<ContributionAnalytics />} />
                 {/* Error monitoring */}
                 <Route path="errors" element={<ErrorDashboard />} />
+                {/* Homepage citation editor */}
+                <Route path="citations" element={<StatCitationsAdmin />} />
               </Route>
 
               {/* Legacy Admin routes */}
