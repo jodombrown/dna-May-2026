@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search, Users, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { ConnectDiscoveryLane } from './ConnectDiscoveryLane';
@@ -127,7 +128,7 @@ export function DiscoveryFeed({
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .neq('id', user.id)
         .eq('is_public', true)
         .gte('last_seen_at', twentyFourHoursAgo)

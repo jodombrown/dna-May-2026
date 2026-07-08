@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
 import { Professional } from '@/types/search';
 import type { Tables } from '@/integrations/supabase/types';
 import { getPrimaryOriginCodes, originCodeToName } from '@/lib/memberHeritage';
@@ -68,7 +69,7 @@ class MatchingService {
       // Get current user's full profile for comparison
       const { data: currentUser } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .eq('id', currentUserId)
         .single();
 
@@ -77,7 +78,7 @@ class MatchingService {
       // Get all potential matches with extended fields
       const { data: professionals } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .neq('id', currentUserId)
         .eq('is_public', true)
         .limit(200);
@@ -712,7 +713,7 @@ class MatchingService {
 
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .in('id', topMatchIds);
 
       if (!profiles) return [];
@@ -757,7 +758,7 @@ class MatchingService {
     try {
       const { data: user } = await supabase
         .from('profiles')
-        .select('*')
+        .select(PROFILE_SELECT_COLUMNS)
         .eq('id', userId)
         .single();
 

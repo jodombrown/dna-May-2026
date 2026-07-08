@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { PROFILE_SELECT_COLUMNS } from '@/lib/profileColumns';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -16,9 +17,8 @@ import {
   MapPin, 
   Briefcase, 
   Globe, 
-  Linkedin, 
+  Linkedin,
   Github,
-  Mail,
   Calendar,
   Clock,
   CheckCircle2,
@@ -40,7 +40,7 @@ const DnaUserDashboard = () => {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('*')
+          .select(PROFILE_SELECT_COLUMNS)
           .eq('username', username)
           .maybeSingle();
 
@@ -286,14 +286,6 @@ const DnaUserDashboard = () => {
                       <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer">
                         <Linkedin className="w-4 h-4 mr-2" />
                         LinkedIn
-                      </a>
-                    </Button>
-                  )}
-                  {profile.email && (
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={`mailto:${profile.email}`}>
-                        <Mail className="w-4 h-4 mr-2" />
-                        Email
                       </a>
                     </Button>
                   )}
