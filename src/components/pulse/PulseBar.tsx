@@ -14,6 +14,7 @@ import { useMobile } from '@/hooks/useMobile';
 import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { PulseItem } from './PulseItem';
 import { PULSE_CONFIG, type PulseKey } from '@/types/pulse';
+import { scheduleHubPrefetch } from '@/lib/prefetchHubRoutes';
 
 const PULSE_KEYS: PulseKey[] = ['connect', 'convene', 'collaborate', 'contribute', 'convey'];
 
@@ -48,6 +49,14 @@ export function PulseBar() {
       };
     }
   }, [isMobile, user]);
+
+  // Warm all five hub chunks during idle time so the first tap on any Pulse
+  // item resolves synchronously instead of paying a cold chunk-fetch cost.
+  React.useEffect(() => {
+    if (isMobile || !user) return;
+    scheduleHubPrefetch();
+  }, [isMobile, user]);
+
 
 
   if (isMobile || !user) return null;
