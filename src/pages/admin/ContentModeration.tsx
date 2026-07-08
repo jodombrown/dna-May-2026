@@ -182,7 +182,7 @@ const ContentModeration = () => {
 
       const post = selectedPost;
 
-      const { error } = await supabase
+      const { data: updated, error } = await supabase
         .from('posts')
         .update({
           moderation_status: status,
@@ -190,9 +190,21 @@ const ContentModeration = () => {
           moderated_at: new Date().toISOString(),
           moderation_notes: reviewNotes || undefined
         })
-        .eq('id', postId);
+        .eq('id', postId)
+        .select('id');
 
       if (error) throw error;
+
+      // Fail loud on a no-op: a zero-row update means the post was not moderated.
+      const affected = updated?.length ?? 0;
+      if (affected === 0) {
+        toast({
+          title: "No changes",
+          description: "No rows were updated — the post may already be moderated or is no longer accessible.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       // Send notification to the post author
       if (post) {
@@ -201,7 +213,7 @@ const ContentModeration = () => {
 
       toast({
         title: "Success",
-        description: `Post ${status} successfully`,
+        description: `Post ${status} (${affected} updated)`,
       });
 
       fetchFlaggedContent();
@@ -223,7 +235,7 @@ const ContentModeration = () => {
 
       const comment = selectedComment;
 
-      const { error } = await supabase
+      const { data: updated, error } = await supabase
         .from('post_comments')
         .update({
           moderation_status: status,
@@ -231,9 +243,21 @@ const ContentModeration = () => {
           moderated_at: new Date().toISOString(),
           moderation_notes: reviewNotes || undefined
         })
-        .eq('id', commentId);
+        .eq('id', commentId)
+        .select('id');
 
       if (error) throw error;
+
+      // Fail loud on a no-op: a zero-row update means the comment was not moderated.
+      const affected = updated?.length ?? 0;
+      if (affected === 0) {
+        toast({
+          title: "No changes",
+          description: "No rows were updated — the comment may already be moderated or is no longer accessible.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       // Send notification to the comment author
       if (comment) {
@@ -242,7 +266,7 @@ const ContentModeration = () => {
 
       toast({
         title: "Success",
-        description: `Comment ${status} successfully`,
+        description: `Comment ${status} (${affected} updated)`,
       });
 
       fetchFlaggedContent();
@@ -268,21 +292,33 @@ const ContentModeration = () => {
 
       const ids = Array.from(selectedPostIds);
 
-      // Get the posts to be moderated for notifications
-      const postsToNotify = flaggedPosts.filter(p => ids.includes(p.id));
-
-      const { error } = await supabase
+      const { data: updated, error } = await supabase
         .from('posts')
         .update({
           moderation_status: status,
           moderated_by: user.user.id,
           moderated_at: new Date().toISOString(),
         })
-        .in('id', ids);
+        .in('id', ids)
+        .select('id');
 
       if (error) throw error;
 
-      // Send notifications to all affected users
+      // Report the real affected-row count, not the client-side selection size.
+      const affectedIds = new Set((updated ?? []).map(r => r.id));
+      const affected = affectedIds.size;
+
+      if (affected === 0) {
+        toast({
+          title: "No changes",
+          description: `No rows were updated (0 of ${ids.length} selected). They may already be moderated or no longer accessible.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Notify only the authors whose posts were actually updated.
+      const postsToNotify = flaggedPosts.filter(p => affectedIds.has(p.id));
       await Promise.all(
         postsToNotify.map(post =>
           sendModerationNotification(post.author_id, 'post', status, post.flag_reason)
@@ -290,8 +326,11 @@ const ContentModeration = () => {
       );
 
       toast({
-        title: "Bulk action complete",
-        description: `${ids.length} post(s) ${status} successfully`,
+        title: affected < ids.length ? "Partial update" : "Bulk action complete",
+        description: affected < ids.length
+          ? `${affected} of ${ids.length} post(s) ${status}; ${ids.length - affected} not updated.`
+          : `${affected} post(s) ${status} successfully`,
+        variant: affected < ids.length ? "destructive" : undefined,
       });
 
       setSelectedPostIds(new Set());
@@ -317,21 +356,33 @@ const ContentModeration = () => {
 
       const ids = Array.from(selectedCommentIds);
 
-      // Get the comments to be moderated for notifications
-      const commentsToNotify = flaggedComments.filter(c => ids.includes(c.id));
-
-      const { error } = await supabase
+      const { data: updated, error } = await supabase
         .from('post_comments')
         .update({
           moderation_status: status,
           moderated_by: user.user.id,
           moderated_at: new Date().toISOString(),
         })
-        .in('id', ids);
+        .in('id', ids)
+        .select('id');
 
       if (error) throw error;
 
-      // Send notifications to all affected users
+      // Report the real affected-row count, not the client-side selection size.
+      const affectedIds = new Set((updated ?? []).map(r => r.id));
+      const affected = affectedIds.size;
+
+      if (affected === 0) {
+        toast({
+          title: "No changes",
+          description: `No rows were updated (0 of ${ids.length} selected). They may already be moderated or no longer accessible.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Notify only the authors whose comments were actually updated.
+      const commentsToNotify = flaggedComments.filter(c => affectedIds.has(c.id));
       await Promise.all(
         commentsToNotify.map(comment =>
           sendModerationNotification(comment.user_id, 'comment', status, comment.flag_reason)
@@ -339,8 +390,11 @@ const ContentModeration = () => {
       );
 
       toast({
-        title: "Bulk action complete",
-        description: `${ids.length} comment(s) ${status} successfully`,
+        title: affected < ids.length ? "Partial update" : "Bulk action complete",
+        description: affected < ids.length
+          ? `${affected} of ${ids.length} comment(s) ${status}; ${ids.length - affected} not updated.`
+          : `${affected} comment(s) ${status} successfully`,
+        variant: affected < ids.length ? "destructive" : undefined,
       });
 
       setSelectedCommentIds(new Set());

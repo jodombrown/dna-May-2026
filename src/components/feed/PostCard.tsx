@@ -22,8 +22,10 @@ import { EditPostDialog } from './EditPostDialog';
 import { createResharePost } from '@/lib/feedWriter';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { usePostReactions } from '@/hooks/usePostReactions';
+import { usePostActions } from '@/hooks/usePostActions';
 import { ReactionPicker } from '@/components/posts/ReactionPicker';
 import { ReactionSummary } from '@/components/posts/ReactionSummary';
+import { ReportDialog } from '@/components/posts/ReportDialog';
 
 interface Post {
   id: string;
@@ -51,6 +53,10 @@ export function PostCard({ post }: PostCardProps) {
   const [showComments, setShowComments] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
+
+  // Report action reuses the existing working report path (see PostMenuOthers).
+  const { reportPost } = usePostActions(post.id, post.author_id, user?.id);
 
   // Fetch author profile
   const { data: author } = useQuery({
@@ -324,7 +330,7 @@ export function PostCard({ post }: PostCardProps) {
               </>
             )}
             {!isOwnPost && (
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowReportDialog(true)}>
                 <Flag className="h-4 w-4 mr-2" />
                 Report
               </DropdownMenuItem>
@@ -424,6 +430,16 @@ export function PostCard({ post }: PostCardProps) {
         onClose={() => setShowEditDialog(false)}
         onSave={handleEdit}
         initialContent={post.content}
+      />
+
+      {/* Report Dialog */}
+      <ReportDialog
+        open={showReportDialog}
+        onOpenChange={setShowReportDialog}
+        onSubmit={(reason, description) => {
+          reportPost.mutate({ reason, description });
+        }}
+        type="post"
       />
     </Card>
   );
