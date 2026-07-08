@@ -120,15 +120,18 @@ export function UnifiedNotificationPanel({
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
-        </div>
-        <div className="flex items-center gap-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground"
+                aria-label="Notification options"
+              >
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="start" sideOffset={4}>
               {unreadCount > 0 && (
                 <DropdownMenuItem onClick={() => markAllAsRead()}>
                   <CheckCheck className="h-4 w-4 mr-2" />
