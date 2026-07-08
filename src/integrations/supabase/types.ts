@@ -10710,36 +10710,6 @@ export type Database = {
           },
         ]
       }
-      user_dna_points: {
-        Row: {
-          collaborate_score: number
-          connect_score: number
-          contribute_score: number
-          created_at: string
-          last_updated: string
-          total_score: number | null
-          user_id: string
-        }
-        Insert: {
-          collaborate_score?: number
-          connect_score?: number
-          contribute_score?: number
-          created_at?: string
-          last_updated?: string
-          total_score?: number | null
-          user_id: string
-        }
-        Update: {
-          collaborate_score?: number
-          connect_score?: number
-          contribute_score?: number
-          created_at?: string
-          last_updated?: string
-          total_score?: number | null
-          user_id?: string
-        }
-        Relationships: []
-      }
       user_engagement_tracking: {
         Row: {
           cohort: string | null
@@ -11863,10 +11833,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      check_badge_unlocks: {
-        Args: { target_user_id: string }
-        Returns: undefined
-      }
       check_event_permission: {
         Args: { p_event_id: string; p_permission: string; p_user_id: string }
         Returns: boolean
@@ -12714,22 +12680,6 @@ export type Database = {
           other_user_username: string
           participant_count: number
           unread_count: number
-        }[]
-      }
-      get_leaderboard: {
-        Args: {
-          board_type?: string
-          country_filter?: string
-          limit_count?: number
-          sector_filter?: string
-        }
-        Returns: {
-          avatar_url: string
-          full_name: string
-          location: string
-          rank: number
-          score: number
-          user_id: string
         }[]
       }
       get_manifest_for_user: {
@@ -14498,10 +14448,6 @@ export type Database = {
           p_poster_notes?: string
         }
         Returns: string
-      }
-      update_dna_points: {
-        Args: { pillar: string; points?: number; target_user_id: string }
-        Returns: undefined
       }
       update_event_attendee_count: {
         Args: { p_event: string }
