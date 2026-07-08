@@ -45,8 +45,6 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const DnaMe = lazy(() => import("./pages/dna/Me"));
 const MyProfileRedirect = lazy(() => import("./components/routing/MyProfileRedirect"));
 const DnaUserDashboard = lazy(() => import("./pages/dna/Username"));
-const PublicProfile = lazy(() => import("./pages/dna/PublicProfile"));
-const PublicProfilePage = lazy(() => import("./pages/PublicProfilePage"));
 const LegacyProfileRedirect = lazy(() => import("./components/routing/LegacyProfileRedirect"));
 const LegacyEventRedirect = lazy(() => import("./components/routing/LegacyEventRedirect"));
 const PublicPostPage = lazy(() => import("./pages/PublicPostPage"));
@@ -95,9 +93,6 @@ const UserAgreement = lazy(() => import("./pages/UserAgreement"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const Convene = lazy(() => import("./pages/Convene"));
-const ConveneCategoryPage = lazy(() => import("./pages/ConveneCategoryPage"));
-const FeaturedCalendarsPage = lazy(() => import("./pages/FeaturedCalendarsPage"));
-const LocalEventsPage = lazy(() => import("./pages/LocalEventsPage"));
 const FactSheetPage = lazy(() => import("./pages/FactSheetPage"));
 const PitchDeck = lazy(() => import("./pages/PitchDeck"));
 const Manifesto = lazy(() => import("./pages/Manifesto"));
@@ -115,11 +110,9 @@ const ArchivedFeatureDetail = lazy(() => import("./pages/features/archived/Archi
 
 // Convene M1-M3 pages
 const ConveneHub = lazy(() => import("./pages/dna/convene/ConveneHub"));
-const ComingSoonConvene = lazy(() => import("./pages/dna/convene/ComingSoonConvene"));
 const EventsIndex = lazy(() => import("./pages/dna/convene/EventsIndex"));
 const EventDetail = lazy(() => import("./pages/dna/convene/EventDetail"));
 const Welcome = lazy(() => import("./pages/dna/Welcome"));
-const DashboardSettings = lazy(() => import("./pages/dna/DashboardSettings"));
 const MyEvents = lazy(() => import("./pages/dna/convene/MyEvents"));
 const EventAnalytics = lazy(() => import("./pages/dna/convene/EventAnalytics"));
 const OrganizerAnalytics = lazy(() => import("./pages/dna/convene/OrganizerAnalytics"));
@@ -139,7 +132,6 @@ const EventSettingsPage = lazy(() => import("./components/convene/management/set
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
-const ComingSoonCollaborate = lazy(() => import("./pages/dna/collaborate/ComingSoonCollaborate"));
 const SpacesIndex = lazy(() => import("./pages/dna/collaborate/SpacesIndex"));
 const CollaborateSpaceDetail = lazy(() => import("./pages/dna/collaborate/SpaceDetail"));
 const SpaceBoard = lazy(() => import("./pages/dna/collaborate/SpaceBoard"));
@@ -149,7 +141,6 @@ const MySpaces = lazy(() => import("./pages/dna/collaborate/MySpaces"));
 
 // Contribute M1-M2 pages
 const ContributeHub = lazy(() => import("./pages/dna/contribute/ContributeHub"));
-const ComingSoonContribute = lazy(() => import("./pages/dna/contribute/ComingSoonContribute"));
 const NeedsIndex = lazy(() => import("./pages/dna/contribute/NeedsIndex"));
 const NeedDetail = lazy(() => import("./pages/dna/contribute/NeedDetail"));
 const OpportunityDetail = lazy(() => import("./pages/dna/contribute/OpportunityDetail"));
@@ -169,7 +160,6 @@ const ConveyAnalytics = lazy(() => import("./pages/dna/admin/ConveyAnalytics"));
 const UserAdminHub = lazy(() => import("./pages/dna/admin/UserAdminHub"));
 
 // Feature pages
-const Opportunities = lazy(() => import("./pages/Opportunities"));
 const MyApplications = lazy(() => import("./pages/MyApplications"));
 const ApplicationsReceived = lazy(() => import("./pages/ApplicationsReceived"));
 const DnaDiscover = lazy(() => import("./pages/dna/Discover"));
@@ -197,17 +187,13 @@ const ContributionManagement = lazy(() => import("./pages/admin/contributions/Co
 const ContributionModeration = lazy(() => import("./pages/admin/contributions/ContributionModeration"));
 const ContributionAnalytics = lazy(() => import("./pages/admin/contributions/ContributionAnalytics"));
 const NudgeCenter = lazy(() => import("./pages/NudgeCenter"));
-const EventsPage = lazy(() => import("./pages/EventsPage"));
-const EventDetailsPage = lazy(() => import("./pages/EventDetailsPage"));
 const EditEventPage = lazy(() => import("./pages/EditEventPage"));
-const GroupsPage = lazy(() => import("./pages/GroupsPage"));
 const DnaGroups = lazy(() => import("./pages/dna/Groups"));
 const GroupDetailsPage = lazy(() => import("./pages/GroupDetailsPage"));
 const GroupSettingsPage = lazy(() => import("./pages/GroupSettingsPage"));
 
 // CONNECT M2 - New Connect Hub pages
 const Connect = lazy(() => import("./pages/dna/connect/Connect"));
-const ConnectLayout = lazy(() => import("./components/connect/ConnectLayout").then(m => ({ default: m.ConnectLayout })));
 const ConnectDiscover = lazy(() => import("./pages/dna/connect/Discover"));
 const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
 // Legacy connect messages pages removed - using canonical /dna/messages route
@@ -833,7 +819,6 @@ function App() {
               } />
               
               {/* ROADMAP — hidden, work-in-progress */}
-              {/* <Route path="/roadmap" element={<Roadmap />} /> */}
 
               {/* Public marketing pages - Five C's examples temporarily disabled pending redesign.
                   All links redirect home so no in-progress page is exposed. */}
