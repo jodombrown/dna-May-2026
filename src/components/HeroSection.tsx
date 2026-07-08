@@ -40,7 +40,7 @@ const HeroSection = () => {
                     onClick={() => navigate('/auth?mode=signup')}
                     className="bg-dna-emerald text-white hover:bg-dna-forest text-sm px-4 py-2 h-9 font-medium"
                   >
-                    Sign up
+                    Join Now
                   </Button>
                   <Button
                     variant="outline"

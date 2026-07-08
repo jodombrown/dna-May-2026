@@ -447,18 +447,18 @@ const UnifiedHeader = () => {
                   {!isAuthenticated && (
                     <>
                       <Button
+                        variant="default"
+                        onClick={() => navigate('/auth?mode=signup')}
+                        className="hidden md:inline-flex bg-dna-emerald text-white hover:bg-dna-forest transition-all duration-200"
+                      >
+                        Join Now
+                      </Button>
+                      <Button
                         variant="outline"
                         onClick={handleSignInClick}
                         className="hidden md:inline-flex border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white transition-all duration-200"
                       >
                         Sign In
-                      </Button>
-                      <Button
-                        variant="default"
-                        onClick={() => navigate('/auth?mode=signup')}
-                        className="hidden md:inline-flex bg-dna-emerald text-white hover:bg-dna-forest transition-all duration-200"
-                      >
-                        Sign Up
                       </Button>
                     </>
                   )}
@@ -555,18 +555,18 @@ const UnifiedHeader = () => {
                             
                             
                             <Button
+                              variant="default"
+                              className="justify-start text-left bg-dna-emerald hover:bg-dna-forest text-white transition-all duration-200 focus:ring-0 focus:ring-offset-0"
+                              onClick={() => navigate('/auth?mode=signup')}
+                            >
+                              Join Now
+                            </Button>
+                            <Button
                               variant="outline"
                               className="justify-start text-left transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                               onClick={handleSignInClick}
                             >
                               Sign In
-                            </Button>
-                            <Button
-                              variant="default"
-                              className="justify-start text-left bg-dna-emerald hover:bg-dna-forest text-white transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                              onClick={() => navigate('/auth?mode=signup')}
-                            >
-                              Sign Up
                             </Button>
                           </>
                         ) : null}

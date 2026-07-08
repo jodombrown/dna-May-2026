@@ -201,6 +201,18 @@ const Auth = () => {
     <div className="flex items-center p-1 bg-muted rounded-lg w-full max-w-xs mx-auto">
       <button
         type="button"
+        onClick={() => setIsSignUp(true)}
+        className={cn(
+          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
+          isSignUp
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Join Now
+      </button>
+      <button
+        type="button"
         onClick={() => setIsSignUp(false)}
         className={cn(
           "flex-1 py-2 text-sm font-medium rounded-md transition-all",
@@ -210,18 +222,6 @@ const Auth = () => {
         )}
       >
         Sign In
-      </button>
-      <button
-        type="button"
-        onClick={() => setIsSignUp(true)}
-        className={cn(
-          "flex-1 py-2 text-sm font-medium rounded-md transition-all",
-          isSignUp
-            ? "bg-background text-foreground shadow-sm"
-            : "text-muted-foreground hover:text-foreground"
-        )}
-      >
-        Sign Up
       </button>
     </div>
   );
@@ -316,7 +316,7 @@ const Auth = () => {
             className="w-full bg-dna-forest hover:bg-dna-forest/90"
             disabled={isSignUpLoading}
           >
-            {isSignUpLoading ? 'Creating account...' : 'Create Account'}
+            {isSignUpLoading ? 'Joining...' : 'Join Now'}
           </Button>
         </form>
       ) : (

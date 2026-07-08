@@ -126,7 +126,7 @@ ${formData.interest}
               className="w-full"
               onClick={() => handleCTAClick('get-started', '#form')}
             >
-              Get Started
+              Join Now
             </EnhancedButton>
             <EnhancedButton 
               variant="dna-outline" 
@@ -143,7 +143,7 @@ ${formData.interest}
               asChild
               onClick={() => handleCTAClick('join-dna', '/auth?mode=signup')}
             >
-              <Link to="/auth?mode=signup">Sign Up</Link>
+              <Link to="/auth?mode=signup">Join Now</Link>
             </EnhancedButton>
           </div>
         </div>
