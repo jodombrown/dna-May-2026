@@ -120,19 +120,17 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
           'animate-slide-up'
         )}
       >
-        {/* Drag Handle */}
-        <div className="flex justify-center py-3">
+        {/* Header: drag handle + close (reserved row so X never overlaps tiles) */}
+        <div className="relative flex items-center justify-center pt-3 pb-2">
           <div className="w-10 h-1 bg-neutral-300 rounded-full" />
+          <button
+            onClick={onClose}
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 inline-flex items-center justify-center rounded-full text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-4 p-2 text-neutral-400 hover:text-neutral-600 transition-colors"
-          aria-label="Close menu"
-        >
-          <X className="w-5 h-5" />
-        </button>
 
         {/* Pulse Items (Five C's completion + DIA + Messages) */}
         <div className="px-4 pb-4">
