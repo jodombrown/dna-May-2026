@@ -536,25 +536,11 @@ export function usePulseBar() {
         .subscribe()
     );
 
-    // Contribution offers: only offers this user made. Offers received on
-    // this user's own needs are surfaced by the 5-minute stale time + next
-    // refetch — subscribing to all offers platform-wide is not viable
-    // because realtime filters can't traverse the FK to contribution_needs.
-    channels.push(
-      supabase
-        .channel(`pulse-contribute-${user.id}-${instanceId}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'contribution_offers',
-            filter: `offerer_id=eq.${user.id}`,
-          },
-          scheduleInvalidate
-        )
-        .subscribe()
-    );
+    // Contribute pulse intentionally has NO realtime channel. The fetch
+    // reads offers RECEIVED on this user's needs (contribution_needs.created_by),
+    // and realtime `postgres_changes` filters can't traverse an FK. Rather
+    // than subscribe to every offer platform-wide (the original bug), we
+    // let the 5-minute stale window + on-mount refetch cover it.
 
     // Convey engagement (post_likes / post_comments) intentionally has NO
     // realtime channel here. Realtime `postgres_changes` filters can't be
