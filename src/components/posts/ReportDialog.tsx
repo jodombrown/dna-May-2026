@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -36,7 +35,7 @@ export function ReportDialog({ open, onOpenChange, onSubmit, type }: ReportDialo
 
   const handleSubmit = async () => {
     if (!reason) return;
-    
+
     setIsSubmitting(true);
     try {
       await onSubmit(reason, description || undefined);
@@ -49,55 +48,54 @@ export function ReportDialog({ open, onOpenChange, onSubmit, type }: ReportDialo
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Report {type}</DialogTitle>
-          <DialogDescription>
-            Help us understand what's wrong with this {type}. Your report is anonymous.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="py-4 space-y-4">
-          <RadioGroup value={reason} onValueChange={setReason}>
-            {REPORT_REASONS.map((r) => (
-              <div key={r.value} className="flex items-center space-x-2">
-                <RadioGroupItem value={r.value} id={r.value} />
-                <Label htmlFor={r.value} className="cursor-pointer">
-                  {r.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange} className="sm:max-w-md">
+      <ResponsiveModalHeader>
+        <ResponsiveModalTitle>Report {type}</ResponsiveModalTitle>
+        <ResponsiveModalDescription>
+          Help us understand what's wrong with this {type}. Your report is anonymous.
+        </ResponsiveModalDescription>
+      </ResponsiveModalHeader>
 
-          <div>
-            <Label htmlFor="description" className="text-sm text-muted-foreground">
-              Additional details (optional)
-            </Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Provide any additional context..."
-              rows={3}
-              className="mt-2 resize-none"
-            />
-          </div>
+      <div className="px-4 py-4 space-y-4">
+        <RadioGroup value={reason} onValueChange={setReason}>
+          {REPORT_REASONS.map((r) => (
+            <div key={r.value} className="flex items-center space-x-2">
+              <RadioGroupItem value={r.value} id={r.value} />
+              <Label htmlFor={r.value} className="cursor-pointer">
+                {r.label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+
+        <div>
+          <Label htmlFor="description" className="text-sm text-muted-foreground">
+            Additional details (optional)
+          </Label>
+          <Textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Provide any additional context..."
+            rows={3}
+            className="mt-2 w-full resize-none"
+          />
         </div>
+      </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSubmit} 
-            disabled={isSubmitting || !reason}
-            variant="destructive"
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit report'}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <ResponsiveModalFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={isSubmitting || !reason}
+          variant="destructive"
+          className="w-full sm:w-auto"
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit report'}
+        </Button>
+      </ResponsiveModalFooter>
+    </ResponsiveModal>
   );
 }
