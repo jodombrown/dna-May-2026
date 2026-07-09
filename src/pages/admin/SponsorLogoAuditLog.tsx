@@ -386,8 +386,7 @@ export default function SponsorLogoAuditLog() {
         </Card>
       )}
 
-      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-lg">
+      <ResponsiveModal open={!!selected} onOpenChange={(open) => !open && setSelected(null)} className="max-w-lg">
           <ResponsiveModalHeader>
             <ResponsiveModalTitle>Audit entry details</ResponsiveModalTitle>
             <ResponsiveModalDescription>
