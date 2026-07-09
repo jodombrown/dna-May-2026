@@ -94,12 +94,11 @@ export default function MyHashtagsSettings() {
                 </div>
               </div>
 
-              <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                <Button disabled={!canCreateMore}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Hashtag
-                  </Button>
-                <DialogContent>
+              <Button disabled={!canCreateMore} onClick={() => setCreateDialogOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Hashtag
+              </Button>
+              <ResponsiveModal open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
                   <ResponsiveModalHeader>
                     <ResponsiveModalTitle>Create Personal Hashtag</ResponsiveModalTitle>
                     <ResponsiveModalDescription>
