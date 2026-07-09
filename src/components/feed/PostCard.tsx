@@ -23,6 +23,7 @@ import { createResharePost } from '@/lib/feedWriter';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostActions } from '@/hooks/usePostActions';
+import { usePostBookmark } from '@/hooks/usePostBookmark';
 import { ReactionPicker } from '@/components/posts/ReactionPicker';
 import { ReactionSummary } from '@/components/posts/ReactionSummary';
 import { ReportDialog } from '@/components/posts/ReportDialog';
@@ -135,21 +136,14 @@ export function PostCard({ post }: PostCardProps) {
     },
   });
 
-  // Fetch saved status
-  const { data: isSaved } = useQuery({
-    queryKey: ['post-saved', post.id, user?.id],
-    queryFn: async () => {
-      if (!user) return false;
-      const { data } = await supabase
-        .from('saved_posts')
-        .select('id')
-        .eq('post_id', post.id)
-        .eq('user_id', user.id)
-        .maybeSingle();
-      return !!data;
-    },
-    enabled: !!user,
-  });
+  // Saved status + toggle via the canonical post_bookmarks store, matching
+  // posts/PostCard and the SavedPostsPage. (Previously used the retired
+  // bookmark table, so posts saved from search never showed up on Saved.)
+  const {
+    isBookmarked: isSaved,
+    toggleBookmark: toggleSave,
+    isLoading: isSaving,
+  } = usePostBookmark(post.id, user?.id);
 
   // Toggle like
   const toggleLikeMutation = useMutation({
@@ -190,29 +184,6 @@ export function PostCard({ post }: PostCardProps) {
     },
     onError: (error) => {
       toast('Could not update like. Please try again.');
-    },
-  });
-
-  // Toggle save
-  const toggleSaveMutation = useMutation({
-    mutationFn: async () => {
-      if (!user) throw new Error('Not authenticated');
-      
-      if (isSaved) {
-        await supabase
-          .from('saved_posts')
-          .delete()
-          .eq('post_id', post.id)
-          .eq('user_id', user.id);
-      } else {
-        await supabase
-          .from('saved_posts')
-          .insert({ post_id: post.id, user_id: user.id });
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['post-saved', post.id] });
-      toast.success(isSaved ? 'Post unsaved' : 'Post saved');
     },
   });
 
@@ -400,7 +371,8 @@ export function PostCard({ post }: PostCardProps) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => user && toggleSaveMutation.mutate()}
+          onClick={() => user && toggleSave()}
+          disabled={isSaving}
           className={isSaved ? 'text-primary' : ''}
         >
           <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
