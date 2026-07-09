@@ -1,50 +1,24 @@
-## Goal
+# Fix: Reshare dialog layout shifts on mobile when typing
 
-Replace user-facing "Sign Up" / "Sign up" / "Get Started" copy with **"Join Now"** across the platform, and reorder auth CTA pairs so **Join Now appears before Sign In**.
+## Diagnosis
+The "Share this post" modal in `src/components/feed/dialogs/ReshareDialog.tsx` is built on Radix `Dialog` with `sm:max-w-[600px]`. Two problems combine to produce the visible shift between screenshot 1 (unfocused) and screenshot 2 (focused with text):
 
-## Scope — copy changes
+1. **Dialog width overflows on mobile.** The dialog has no mobile width cap. When the mobile keyboard opens the visualViewport shrinks, Radix keeps the dialog centered via `translate(-50%,-50%)`, and its natural content width (600px preview card + button row) starts extruding past the viewport, so title/description/preview text get clipped on the right edge.
+2. **Action row grows when typing.** The submit button label switches from `Reshare` to `Reshare with Comment` the moment any character is typed. Combined with `Quick Reshare` next to it in a `flex justify-end gap-2` row with no wrap/shrink, the row widens and pushes the whole dialog to overflow further. That is the "look and feel changed" the user is describing.
+3. **Not using the platform's ResponsiveModal.** Project standard (memory) is Radix Dialog on desktop, Vaul Drawer on mobile via `ResponsiveModal` (as `src/components/posts/ShareDialog.tsx` already does). This alone stabilises the mobile experience: the sheet is pinned to the bottom, resizes with the keyboard, and never horizontally shifts.
 
-Rename every user-facing "Sign Up" / "Sign up" / "Get Started" button and heading to **"Join Now"** in:
+## Fix (scope: presentation only, single file)
+Edit `src/components/feed/dialogs/ReshareDialog.tsx`:
 
-- `src/components/UnifiedHeader.tsx` (top nav — the button shown in screenshot 1)
-- `src/components/HeroSection.tsx` (homepage hero — screenshot 3)
-- `src/pages/Auth.tsx` — the "Sign In / Sign Up" tab toggle becomes **"Sign In / Join Now"** (screenshot 2), and the "Create Account" submit button becomes **"Join Now"**
-- `src/pages/PublicPostPage.tsx`, `src/pages/PublicEventPage.tsx`, `src/pages/InviteSignup.tsx`
-- `src/pages/PartnerWithDna.tsx`, `src/pages/PartnerStart.tsx`, `src/pages/PartnerSector.tsx`
-- `src/pages/Programs.tsx` ("Get Started Today" → "Join Now")
-- `src/pages/Install.tsx`, `src/pages/FactSheetPage.tsx` ("Sign Up Today" → "Join Now")
-- `src/pages/documentation/FeatureDetail.tsx` ("Ready to get started?" CTA + Sign Up button)
-- `src/components/demo/sections/DemoMovement.tsx` ("Get Started" in the card from screenshot 4)
-- `src/components/public-profile/PublicProfileHeader.tsx`, `PublicProfileCTA.tsx`
-- `src/components/profile-v2/PublicProfileLandingView.tsx`
-- `src/components/manifesto/ManifestoCTA.tsx`
-- `src/components/convey/ConveyDIADiscoveryCard.tsx`
-- `src/components/WhoIsDNAForSection.tsx`
-- `src/components/auth/BetaWaitlist.tsx`
-- `src/pages/dna/convene/EventDetail.tsx` (only the auth CTA labels, not the "Register" event action)
-- `src/components/tours/FeatureTour.tsx`, `src/components/onboarding/OnboardingTour.tsx`, `src/components/onboarding/FirstTimeWalkthrough.tsx` (final tour CTA)
+- Replace `Dialog / DialogContent / DialogHeader / DialogTitle / DialogDescription` with `ResponsiveModal / ResponsiveModalHeader / ResponsiveModalTitle / ResponsiveModalDescription / ResponsiveModalFooter` (same primitive used by `ShareDialog`).
+- Constrain width with `className="sm:max-w-[600px]"` on the modal so desktop is unchanged; mobile becomes a bottom drawer that never overflows horizontally.
+- Wrap body content in `px-4` and move the action row into `ResponsiveModalFooter` with `flex-col-reverse sm:flex-row sm:justify-end gap-2` so on mobile the primary button stacks full-width above the secondary and cannot cause horizontal growth.
+- Stabilise the CTA: keep the button label constant as `Reshare` regardless of `commentary` content (icon + label do not mutate on keystroke). This removes the width jump between screenshots 1 and 2.
+- Give the textarea `w-full` and the preview `Card` `w-full min-w-0` with `overflow-hidden`, and add `break-words` to the content `<p>` so long text wraps instead of forcing width.
 
-## Scope — button order
-
-Wherever "Sign In" and "Sign Up / Get Started" appear as a pair, flip so **Join Now renders first**, Sign In second. Confirmed locations:
-
-- `UnifiedHeader.tsx` (screenshot 1 pair)
-- `HeroSection.tsx` (screenshot 3 pair)
-- `PublicPostPage.tsx`, `PublicEventPage.tsx`, `InviteSignup.tsx` header CTAs
-- `PartnerWithDna.tsx`, `PartnerStart.tsx` CTA pairs
-- Any other file above that renders both buttons adjacent
-
-Visual styling stays the same: **Join Now = primary (filled emerald)**, **Sign In = secondary (outline)**.
-
-## Out of scope (intentionally NOT changed)
-
-- Internal code identifiers: `signUp()` function, `mode=signup` URL query, `/invite` route, table names (`waitlist_signups`, `hub_notification_signups`, `beta_signup_data`), component filenames (`InviteSignup.tsx`, `BetaSignupDialog`, `AmbassadorSignupDialog`)
-- The "Onboarding" tour "Get Started" that starts an in-app walkthrough for already-logged-in users — the user's request is about acquisition copy, not tour navigation. **Flag for confirmation:** should the tour CTAs also switch to "Join Now"? Default: leave them as "Get Started" since the user is already joined. Will confirm after review, or change if requested.
-- Reset password copy ("Enter the email you used to sign up") — descriptive prose, not a CTA
-- Admin/legacy files under `_archived/`
+No behavior/business-logic changes: `onReshare`, `onOpenChange`, commentary state, loading state, and legacy `onSuccess` fallback all preserved. The sibling `src/components/feed/ReshareDialog.tsx` (different, "Reshare Post" title) is not touched since screenshots show the `dialogs/ReshareDialog.tsx` variant.
 
 ## Verification
-
-- `rg "Sign [Uu]p|Get Started"` on `src/` after edits, review remaining hits are all internal/intentional
-- Spot-check the four screens from the uploaded screenshots (header, /auth, hero, demo movement card)
-- tsgo typecheck
+- Open the feed on mobile viewport (420px), press Reshare, confirm sheet slides up from bottom, no horizontal shift, textarea focus opens keyboard without the modal changing width or clipping the title/preview.
+- Type text: button label stays "Reshare", no layout jump.
+- Desktop: dialog still centered at 600px max width, footer buttons on one row.
