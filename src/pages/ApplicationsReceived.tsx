@@ -320,8 +320,7 @@ export default function ApplicationsReceived() {
       </div>
 
       {/* Action Confirmation Dialog */}
-      <Dialog open={!!selectedApplication && !!actionType} onOpenChange={() => closeDialog()}>
-        <DialogContent>
+      <ResponsiveModal open={!!selectedApplication && !!actionType} onOpenChange={() => closeDialog()}>
           <ResponsiveModalHeader>
             <ResponsiveModalTitle>{getDialogTitle()}</ResponsiveModalTitle>
             <ResponsiveModalDescription>{getDialogDescription()}</ResponsiveModalDescription>
