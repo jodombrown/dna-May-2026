@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
@@ -58,38 +57,36 @@ export function EditPostDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Edit post</DialogTitle>
-        </DialogHeader>
-        
-        <div className="py-4">
-          <Textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="What's on your mind?"
-            rows={6}
-            className="resize-none"
-          />
-          <p className="text-xs text-muted-foreground mt-2 text-right">
-            {content.length} characters
-          </p>
-        </div>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange} className="sm:max-w-lg">
+      <ResponsiveModalHeader>
+        <ResponsiveModalTitle>Edit post</ResponsiveModalTitle>
+      </ResponsiveModalHeader>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSubmit} 
-            disabled={isSubmitting || !content.trim()}
-            className="bg-dna-forest hover:bg-dna-forest/90"
-          >
-            {isSubmitting ? 'Saving...' : 'Save changes'}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <div className="px-4 py-4">
+        <Textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="What's on your mind?"
+          rows={6}
+          className="w-full resize-none"
+        />
+        <p className="text-xs text-muted-foreground mt-2 text-right">
+          {content.length} characters
+        </p>
+      </div>
+
+      <ResponsiveModalFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={isSubmitting || !content.trim()}
+          className="w-full sm:w-auto bg-dna-forest hover:bg-dna-forest/90"
+        >
+          {isSubmitting ? 'Saving...' : 'Save changes'}
+        </Button>
+      </ResponsiveModalFooter>
+    </ResponsiveModal>
   );
 }
