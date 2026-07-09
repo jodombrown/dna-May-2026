@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { PenSquare, Users, Newspaper, TrendingUp, Search, Clock, Camera, Calendar, BookOpen, Compass, Bookmark } from 'lucide-react';
@@ -18,7 +18,6 @@ import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrou
 import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
 import { FeedLeftPanel } from '@/components/feed/FeedLeftPanel';
 import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
-import { NewPostsIndicator } from '@/components/feed/NewPostsIndicator';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
@@ -57,7 +56,6 @@ const DnaFeed = () => {
   }, [location.search]);
   const [rankingMode, setRankingMode] = useState<RankingMode>('latest');
   const [showSearchDialog, setShowSearchDialog] = useState(false);
-  const [newPostCount, setNewPostCount] = useState(0);
   const [tabsVisible, setTabsVisible] = useState(true);
   const feedContainerRef = useRef<HTMLDivElement>(null);
   const mobileHeaderRef = useRef<HTMLDivElement>(null);
@@ -129,12 +127,6 @@ const DnaFeed = () => {
     };
   }, [isMobile]);
 
-  // New posts handler
-  const handleNewPostsClick = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setNewPostCount(0);
-  }, []);
-
   if (profileLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -182,9 +174,6 @@ const DnaFeed = () => {
               </div>
             </div>
           </div>
-
-          {/* New Posts Indicator */}
-          <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
           {/* Content with dynamic padding from measured header */}
           <main
@@ -248,9 +237,6 @@ const DnaFeed = () => {
     <div className="bg-background" ref={feedContainerRef}>
       {/* First-time user walkthrough */}
       <FirstTimeWalkthrough />
-
-      {/* New Posts Indicator */}
-      <NewPostsIndicator count={newPostCount} onClick={handleNewPostsClick} />
 
       {/* Independent scrolling 3-column layout */}
       <div
