@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { UniversalFeedItem, FeedFilters } from '@/types/feed';
 import { logHighError } from '@/lib/errorLogger';
 import { mapFeedRow, type FeedRpcRow } from '@/lib/feed/mapFeedRow';
+import { STALE_TIMES } from '@/lib/queryClient';
 
 /**
  * IMPORTANT: tabs differ ONLY by `tab` and `rankingMode` parameters passed
@@ -84,13 +85,14 @@ export const useInfiniteUniversalFeed = (filters: Omit<FeedFilters, 'limit' | 'o
       lastPage.length === PAGE_SIZE ? allPages.flat().length : undefined,
     initialPageParam: 0 as number,
     enabled: !!filters.viewerId,
+    staleTime: STALE_TIMES.feed,
   });
 
   // PERFORMANCE: Removed aggressive realtime subscriptions that were causing
   // excessive refetches. Feed updates are now handled through:
   // 1. Manual refetch when user creates content
   // 2. Pull-to-refresh on mobile
-  // 3. Periodic stale time expiration (2 minutes)
+  // 3. Periodic stale time expiration (STALE_TIMES.feed — 2 minutes)
   // This significantly reduces database load and improves responsiveness.
 
   // Flatten pages into single array, then apply client-side postType filter.
