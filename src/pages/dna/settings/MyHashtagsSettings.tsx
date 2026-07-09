@@ -7,7 +7,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
 import { useHashtagOwnership } from '@/hooks/useHashtagOwnership';
 
@@ -89,19 +95,17 @@ export default function MyHashtagsSettings() {
               </div>
 
               <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button disabled={!canCreateMore}>
+                <Button disabled={!canCreateMore}>
                     <Plus className="h-4 w-4 mr-2" />
                     Create Hashtag
                   </Button>
-                </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create Personal Hashtag</DialogTitle>
-                    <DialogDescription>
+                  <ResponsiveModalHeader>
+                    <ResponsiveModalTitle>Create Personal Hashtag</ResponsiveModalTitle>
+                    <ResponsiveModalDescription>
                       Create a hashtag that you own. Others will need your approval to use it.
-                    </DialogDescription>
-                  </DialogHeader>
+                    </ResponsiveModalDescription>
+                  </ResponsiveModalHeader>
                   <div className="space-y-4 py-4">
                     <div>
                       <label className="text-sm font-medium">Hashtag Name</label>
@@ -135,8 +139,7 @@ export default function MyHashtagsSettings() {
                       Create
                     </Button>
                   </div>
-                </DialogContent>
-              </Dialog>
+                </ResponsiveModal>
             </div>
           </CardContent>
         </Card>

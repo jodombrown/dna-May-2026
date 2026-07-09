@@ -32,13 +32,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import {
   Select,
   SelectContent,
@@ -816,12 +815,11 @@ const EventDetail = () => {
       </AlertDialog>
 
       {/* Report Dialog */}
-      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Report Event</DialogTitle>
-            <DialogDescription>Help us understand what's wrong with this event.</DialogDescription>
-          </DialogHeader>
+      <ResponsiveModal open={showReportDialog} onOpenChange={setShowReportDialog}>
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle>Report Event</ResponsiveModalTitle>
+            <ResponsiveModalDescription>Help us understand what's wrong with this event.</ResponsiveModalDescription>
+          </ResponsiveModalHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="report-reason">Reason</Label>
@@ -837,14 +835,13 @@ const EventDetail = () => {
               <Textarea id="report-details" placeholder="Provide any additional context..." value={reportDetails} onChange={e => setReportDetails(e.target.value)} rows={4} />
             </div>
           </div>
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button variant="outline" onClick={() => setShowReportDialog(false)}>Cancel</Button>
             <Button onClick={handleReportSubmit} disabled={reportEventMutation.isPending || !reportReason}>
               {reportEventMutation.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting...</> : 'Submit Report'}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveModalFooter>
+        </ResponsiveModal>
 
       {/* Share in Chat */}
       {event && (

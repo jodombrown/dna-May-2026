@@ -14,11 +14,12 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -166,11 +167,10 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({
       </DropdownMenu>
 
       {/* Feed Share Dialog */}
-      <Dialog open={showFeedShareDialog} onOpenChange={setShowFeedShareDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Share to Feed</DialogTitle>
-          </DialogHeader>
+      <ResponsiveModal open={showFeedShareDialog} onOpenChange={setShowFeedShareDialog} className="sm:max-w-md">
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle>Share to Feed</ResponsiveModalTitle>
+          </ResponsiveModalHeader>
           <div className="space-y-4">
             {/* Attribution preview */}
             {authorName && (
@@ -211,8 +211,7 @@ export const ShareMenu: React.FC<ShareMenuProps> = ({
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveModal>
     </>
   );
 };

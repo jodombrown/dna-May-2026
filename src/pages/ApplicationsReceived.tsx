@@ -10,13 +10,12 @@ import { Clock, CheckCircle, XCircle, Eye, FileText, Loader2 } from 'lucide-reac
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
@@ -323,10 +322,10 @@ export default function ApplicationsReceived() {
       {/* Action Confirmation Dialog */}
       <Dialog open={!!selectedApplication && !!actionType} onOpenChange={() => closeDialog()}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{getDialogTitle()}</DialogTitle>
-            <DialogDescription>{getDialogDescription()}</DialogDescription>
-          </DialogHeader>
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle>{getDialogTitle()}</ResponsiveModalTitle>
+            <ResponsiveModalDescription>{getDialogDescription()}</ResponsiveModalDescription>
+          </ResponsiveModalHeader>
 
           {selectedApplication && (
             <div className="py-4">
@@ -362,7 +361,7 @@ export default function ApplicationsReceived() {
             </div>
           )}
 
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button variant="outline" onClick={closeDialog}>
               Cancel
             </Button>
@@ -382,9 +381,8 @@ export default function ApplicationsReceived() {
               ) : null}
               Confirm
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveModalFooter>
+        </ResponsiveModal>
     </div>
   );
 }

@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Edit3 } from 'lucide-react';
@@ -60,17 +59,16 @@ export const EditPostDialog = ({
   const hasChanges = content.trim() !== initialContent.trim();
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-semibold">
+    <ResponsiveModal open={isOpen} onOpenChange={handleClose} className="sm:max-w-[600px]">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="flex items-center gap-2 text-xl font-semibold">
             <Edit3 className="h-5 w-5 text-dna-copper" />
             Edit Post
-          </DialogTitle>
-          <DialogDescription>
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription>
             Make changes to your post. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
 
         <div className="space-y-4 py-4">
           <Textarea
@@ -97,7 +95,7 @@ export const EditPostDialog = ({
           </div>
         </div>
 
-        <DialogFooter className="gap-2">
+        <ResponsiveModalFooter className="gap-2">
           <Button
             variant="outline"
             onClick={handleClose}
@@ -122,8 +120,7 @@ export const EditPostDialog = ({
               </>
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveModalFooter>
+      </ResponsiveModal>
   );
 };

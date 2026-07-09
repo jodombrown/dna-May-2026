@@ -3,12 +3,12 @@
 
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -134,8 +134,7 @@ export function NotifyMeModal({
 
   if (isSuccess) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md">
+      <ResponsiveModal open={isOpen} onOpenChange={onClose} className="sm:max-w-md">
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <CheckCircle2 className="w-16 h-16 text-dna-emerald mb-4" />
             <h3 className="text-xl font-semibold mb-2">You're on the List!</h3>
@@ -143,23 +142,21 @@ export function NotifyMeModal({
               We'll let you know as soon as {getHubName(hub)} launches.
             </p>
           </div>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveModal>
     );
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <ResponsiveModal open={isOpen} onOpenChange={onClose} className="sm:max-w-md">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-dna-emerald" />
             {title || getDefaultTitle()}
-          </DialogTitle>
-          <DialogDescription>
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription>
             {description || getDefaultDescription()}
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {/* Email */}
@@ -279,8 +276,7 @@ export function NotifyMeModal({
             We respect your privacy. Unsubscribe anytime.
           </p>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModal>
   );
 }
 

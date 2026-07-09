@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -152,14 +151,13 @@ export function CreateGroupDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Create a Group</DialogTitle>
-          <DialogDescription>
+    <ResponsiveModal open={isOpen} onOpenChange={onClose} className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>Create a Group</ResponsiveModalTitle>
+          <ResponsiveModalDescription>
             Build a community around shared interests, location, or identity
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
@@ -290,7 +288,7 @@ export function CreateGroupDialog({
           </div>
         </div>
 
-        <DialogFooter>
+        <ResponsiveModalFooter>
           <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
@@ -301,8 +299,7 @@ export function CreateGroupDialog({
           >
             {isSubmitting ? 'Creating...' : 'Create Group'}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveModalFooter>
+      </ResponsiveModal>
   );
 }

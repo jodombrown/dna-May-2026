@@ -8,12 +8,12 @@ import { LockKeyhole, Mail, User, MessageSquare, Calendar, Loader2, Linkedin } f
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { getErrorMessage } from '@/lib/errorLogger';
 
 interface BetaWaitlistProps {
@@ -247,11 +247,9 @@ export const BetaWaitlist = ({ onBack, open, onOpenChange }: BetaWaitlistProps) 
   // If used as a dialog
   if (open !== undefined && onOpenChange) {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[500px]">
+      <ResponsiveModal open={open} onOpenChange={onOpenChange} className="sm:max-w-[500px]">
           {content}
-        </DialogContent>
-      </Dialog>
+        </ResponsiveModal>
     );
   }
 

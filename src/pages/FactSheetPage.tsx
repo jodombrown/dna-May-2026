@@ -5,7 +5,13 @@ import { Separator } from '@/components/ui/separator';
 import { Download, Share2, Users, Target, TrendingUp, Globe, Heart, MapPin, Landmark, Building2, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { config } from '@/lib/config';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import {
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
@@ -661,20 +667,19 @@ const FactSheetPage = () => {
       </div>
 
       {/* Stakeholder Contact Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-dna-forest">
+      <ResponsiveModal open={dialogOpen} onOpenChange={setDialogOpen} className="sm:max-w-[500px]">
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle className="text-2xl font-bold text-dna-forest">
               {stakeholderType === 'User' && 'Join DNA as a User'}
               {stakeholderType === 'Partner' && 'Partner with DNA'}
               {stakeholderType === 'Investor' && 'Invest in DNA'}
-            </DialogTitle>
-            <DialogDescription>
+            </ResponsiveModalTitle>
+            <ResponsiveModalDescription>
               {stakeholderType === 'User' && 'Share your details and we\'ll help you get started on your diaspora journey.'}
               {stakeholderType === 'Partner' && 'Tell us about your organization and how we can collaborate.'}
               {stakeholderType === 'Investor' && 'Learn more about investment opportunities and our vision.'}
-            </DialogDescription>
-          </DialogHeader>
+            </ResponsiveModalDescription>
+          </ResponsiveModalHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div>
@@ -731,8 +736,7 @@ const FactSheetPage = () => {
               {isSubmitting ? 'Sending...' : 'Submit'}
             </Button>
           </form>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveModal>
     </div>
   );
 };

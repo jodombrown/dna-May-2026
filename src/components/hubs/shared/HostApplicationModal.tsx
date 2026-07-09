@@ -4,12 +4,12 @@
 import React, { useState } from 'react';
 import { MateMasie } from '@/components/icons/adinkra';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -130,8 +130,7 @@ export function HostApplicationModal({
 
   if (isSuccess) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-md">
+      <ResponsiveModal open={isOpen} onOpenChange={onClose} className="sm:max-w-md">
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <CheckCircle2 className="w-16 h-16 text-dna-emerald mb-4" />
             <h3 className="text-xl font-semibold mb-2">Application Received!</h3>
@@ -139,23 +138,21 @@ export function HostApplicationModal({
               We'll review your application and get back to you soon.
             </p>
           </div>
-        </DialogContent>
-      </Dialog>
+        </ResponsiveModal>
     );
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <ResponsiveModal open={isOpen} onOpenChange={onClose} className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="flex items-center gap-2">
             <MateMasie className="w-5 h-5 text-dna-copper" />
             {config.title}
-          </DialogTitle>
-          <DialogDescription>
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription>
             {config.description}
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {/* Name */}
@@ -264,8 +261,7 @@ export function HostApplicationModal({
             We typically respond within 5 business days.
           </p>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModal>
   );
 }
 

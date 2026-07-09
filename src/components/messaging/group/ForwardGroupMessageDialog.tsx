@@ -9,11 +9,12 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { groupMessageService } from '@/services/groupMessageService';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import {
   Drawer,
   DrawerContent,
@@ -206,13 +207,11 @@ export const ForwardGroupMessageDialog: React.FC<ForwardGroupMessageDialogProps>
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[80vh] flex flex-col gap-3">
-        <DialogHeader>
-          <DialogTitle className="text-base">Forward Message</DialogTitle>
-        </DialogHeader>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange} className="sm:max-w-md max-h-[80vh] flex flex-col gap-3">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="text-base">Forward Message</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
         {body}
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModal>
   );
 };

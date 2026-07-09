@@ -8,11 +8,12 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { GroupDetails, GroupMember, GroupPost } from '@/types/groups';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -116,11 +117,10 @@ function CommentDialog({ isOpen, onClose, postId, postAuthor }: CommentDialogPro
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh]">
-        <DialogHeader>
-          <DialogTitle>Comments on {postAuthor}'s post</DialogTitle>
-        </DialogHeader>
+    <ResponsiveModal open={isOpen} onOpenChange={onClose} className="sm:max-w-[600px] max-h-[80vh]">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>Comments on {postAuthor}'s post</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
 
         <div className="space-y-4">
           {/* Comments List */}
@@ -184,8 +184,7 @@ function CommentDialog({ isOpen, onClose, postId, postAuthor }: CommentDialogPro
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModal>
   );
 }
 
