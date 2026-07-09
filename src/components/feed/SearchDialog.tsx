@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Search, Filter, X, Calendar } from 'lucide-react';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -43,11 +44,10 @@ export const SearchDialog = ({ isOpen, onClose }: SearchDialogProps) => {
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle>Search Posts</DialogTitle>
-        </DialogHeader>
+    <ResponsiveModal open={isOpen} onOpenChange={onClose} className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>Search Posts</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
 
         <div className="space-y-4">
           {/* Search Input */}
@@ -207,7 +207,6 @@ export const SearchDialog = ({ isOpen, onClose }: SearchDialogProps) => {
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModal>
   );
 };

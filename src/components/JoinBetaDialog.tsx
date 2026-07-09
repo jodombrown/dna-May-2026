@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -90,17 +90,16 @@ const JoinBetaDialog: React.FC<JoinBetaDialogProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-dna-forest">
+    <ResponsiveModal open={isOpen} onOpenChange={onClose} className="sm:max-w-[500px]">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="text-2xl font-bold text-dna-forest">
             Join Our Beta Program
-          </DialogTitle>
-          <DialogDescription className="text-base">
+          </ResponsiveModalTitle>
+          <ResponsiveModalDescription className="text-base">
             Be among the first to experience the Diaspora Network of Africa platform. 
             Fill out the form below to join our beta program.
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveModalDescription>
+        </ResponsiveModalHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
@@ -181,8 +180,7 @@ const JoinBetaDialog: React.FC<JoinBetaDialogProps> = ({ isOpen, onClose }) => {
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModal>
   );
 };
 

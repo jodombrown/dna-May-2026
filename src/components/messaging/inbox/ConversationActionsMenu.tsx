@@ -19,13 +19,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
@@ -259,14 +258,13 @@ export const ConversationActionsMenu: React.FC<ConversationActionsMenuProps> = (
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Report {otherUser.full_name}</DialogTitle>
-            <DialogDescription>
+      <ResponsiveModal open={showReportDialog} onOpenChange={setShowReportDialog} className="sm:max-w-md">
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle>Report {otherUser.full_name}</ResponsiveModalTitle>
+            <ResponsiveModalDescription>
               Tell us what's wrong. Reports are reviewed confidentially.
-            </DialogDescription>
-          </DialogHeader>
+            </ResponsiveModalDescription>
+          </ResponsiveModalHeader>
           <div className="space-y-3">
             <div className="space-y-2">
               <Label className="text-sm font-medium">Reason</Label>
@@ -305,16 +303,15 @@ export const ConversationActionsMenu: React.FC<ConversationActionsMenuProps> = (
               />
             </div>
           </div>
-          <DialogFooter>
+          <ResponsiveModalFooter>
             <Button variant="outline" onClick={() => setShowReportDialog(false)} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button onClick={handleConfirmReport} disabled={isSubmitting || !reportReason}>
               {isSubmitting ? 'Submitting...' : 'Submit report'}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveModalFooter>
+        </ResponsiveModal>
     </>
   );
 };

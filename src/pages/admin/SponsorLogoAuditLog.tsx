@@ -33,12 +33,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 
 type ActionType = 'upload' | 'update' | 'delete';
 
@@ -388,12 +388,12 @@ export default function SponsorLogoAuditLog() {
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Audit entry details</DialogTitle>
-            <DialogDescription>
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle>Audit entry details</ResponsiveModalTitle>
+            <ResponsiveModalDescription>
               Server-recorded details for this sponsor logo action.
-            </DialogDescription>
-          </DialogHeader>
+            </ResponsiveModalDescription>
+          </ResponsiveModalHeader>
           {selected && (
             <div className="space-y-3 text-sm">
               <div>
@@ -454,8 +454,7 @@ export default function SponsorLogoAuditLog() {
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </ResponsiveModal>
     </div>
   );
 }

@@ -3,11 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { messageService } from '@/services/messageService';
 import type { EntityReferenceData, ConversationListItem } from '@/services/messageTypes';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  ResponsiveModal,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+} from '@/components/ui/responsive-modal';
 import {
   Drawer,
   DrawerContent,
@@ -221,13 +222,11 @@ export const ConversationPicker: React.FC<ConversationPickerProps> = ({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[80vh] flex flex-col gap-3">
-        <DialogHeader>
-          <DialogTitle className="text-base">Share in Chat</DialogTitle>
-        </DialogHeader>
+    <ResponsiveModal open={open} onOpenChange={onOpenChange} className="sm:max-w-md max-h-[80vh] flex flex-col gap-3">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="text-base">Share in Chat</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
         {pickerContent}
-      </DialogContent>
-    </Dialog>
+      </ResponsiveModal>
   );
 };
