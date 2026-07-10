@@ -273,7 +273,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Check user's email notification preferences
     const { data: preferences, error: prefsError } = await supabase
-      .from('adin_preferences')
+      .from('dia_preferences')
       .select('email_enabled, notification_frequency, quiet_hours_enabled, quiet_hours_start, quiet_hours_end, timezone, unsubscribe_token, email_connections, email_comments, email_reactions, email_mentions, email_messages, email_events, email_stories')
       .eq('user_id', data.user_id)
       .single();

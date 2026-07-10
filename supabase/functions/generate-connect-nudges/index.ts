@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
           const topSuggestions = suggestions.slice(0, 3);
           
           // Create nudge
-          await supabase.from('adin_nudges').insert({
+          await supabase.from('dia_nudges').insert({
             user_id: candidate.user_id,
             message: `You're new to DNA! Here are ${topSuggestions.length} members you might want to connect with.`,
             action_url: '/dna/connect/discover',
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
 
       for (const user of inactiveUsers) {
         // Create re-engagement nudge
-        await supabase.from('adin_nudges').insert({
+        await supabase.from('dia_nudges').insert({
           user_id: user.user_id,
           message: 'Come back and discover new members in your network!',
           action_url: '/dna/connect/discover',

@@ -112,7 +112,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Check user preferences for push notifications
     const { data: preferences } = await supabase
-      .from('adin_preferences')
+      .from('dia_preferences')
       .select('in_app_enabled')
       .eq('user_id', data.user_id)
       .single();

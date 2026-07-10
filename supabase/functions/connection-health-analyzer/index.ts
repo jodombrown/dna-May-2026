@@ -177,7 +177,7 @@ serve(async (req) => {
             .single()
 
           // Create nudge for user A
-          await supabase.from('adin_nudges').insert({
+          await supabase.from('dia_nudges').insert({
             user_id: connection.requester_id,
             connection_id: connection.recipient_id,
             nudge_type: 'weak_connection',
@@ -188,7 +188,7 @@ serve(async (req) => {
           })
 
           // Create nudge for user B
-          await supabase.from('adin_nudges').insert({
+          await supabase.from('dia_nudges').insert({
             user_id: connection.recipient_id,
             connection_id: connection.requester_id,
             nudge_type: 'weak_connection',
