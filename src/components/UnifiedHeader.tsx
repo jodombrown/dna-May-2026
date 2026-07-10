@@ -40,7 +40,9 @@ import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const UnifiedHeader = () => {
-  const { user, profile, signOut, loading } = useAuth();
+  const { user, profile: authProfile, signOut, loading } = useAuth();
+  const { data: liveProfile } = useProfile();
+  const profile = liveProfile ?? authProfile;
   const { open: openAccountDrawer } = useAccountDrawer();
   const { isMobile } = useMobile();
   const headerRef = useRef<HTMLElement>(null);
