@@ -171,7 +171,7 @@ export const PROFILE_SELECT_COLUMNS = ([
   'diaspora_networks',
   'mentorship_areas',
   'city',
-  'phone',
+  // 'phone' — revoked SELECT for anon/authenticated (2026-07-09 lockdown). Fetch via get_own_profile RPC.
   'education',
   'certifications',
   'innovation_pathways',
@@ -186,14 +186,14 @@ export const PROFILE_SELECT_COLUMNS = ([
   'notifications_enabled',
   'organization',
   'pronouns',
-  'whatsapp_number',
+  // 'whatsapp_number' — revoked SELECT for anon/authenticated (2026-07-09 lockdown). Fetch via get_own_profile RPC.
   'preferred_contact_method',
   'timezone',
   'consent_marketing_emails',
   'consent_partner_intros',
   'consent_event_invites',
   'consent_public_search',
-  'phone_number',
+  // 'phone_number' — revoked SELECT for anon/authenticated (2026-07-09 lockdown). Fetch via get_own_profile RPC.
   'contact_number_visibility',
   'allow_profile_sharing',
   'ethnic_heritage',
