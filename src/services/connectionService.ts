@@ -25,7 +25,7 @@ interface ConnectionRequestRpcResponse {
 }
 
 /**
- * Response from rpc_adin_recommend_people RPC (legacy DB name, UI uses DIA)
+ * Response from rpc_dia_recommend_people RPC
  */
 interface DiaRecommendationResponse {
   matched_user_id: string;
@@ -380,8 +380,8 @@ export const connectionService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
 
-    // Use rpc_adin_recommend_people which uses auth.uid() internally
-    const { data, error } = await supabase.rpc('rpc_adin_recommend_people');
+    // Use rpc_dia_recommend_people which uses auth.uid() internally
+    const { data, error } = await supabase.rpc('rpc_dia_recommend_people');
 
     if (error) {
       return [];

@@ -33,9 +33,9 @@ export const useDiaPreferences = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Use adin_preferences table (legacy name, UI displays as DIA)
+      // Use dia_preferences table (legacy name, UI displays as DIA)
       let { data, error } = await supabase
-        .from('adin_preferences')
+        .from('dia_preferences')
         .select('*')
         .eq('user_id', user.id)
         .single();
@@ -43,7 +43,7 @@ export const useDiaPreferences = () => {
       // If no preferences exist, create default ones
       if (error && error.code === 'PGRST116') {
         const { data: newPrefs, error: insertError } = await supabase
-          .from('adin_preferences')
+          .from('dia_preferences')
           .insert({
             user_id: user.id,
             notification_frequency: 'normal',
@@ -73,9 +73,9 @@ export const useUpdateDiaPreferences = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Use adin_preferences table (legacy name, UI displays as DIA)
+      // Use dia_preferences table (legacy name, UI displays as DIA)
       const { data, error } = await supabase
-        .from('adin_preferences')
+        .from('dia_preferences')
         .update(preferences as any)
         .eq('user_id', user.id)
         .select()

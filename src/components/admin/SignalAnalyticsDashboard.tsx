@@ -47,7 +47,7 @@ const SignalAnalyticsDashboard = () => {
       
       // Fetch overall metrics
       const { data: signals, error: signalsError } = await supabase
-        .from('adin_signals')
+        .from('dia_signals')
         .select('*');
 
       if (signalsError) throw signalsError;

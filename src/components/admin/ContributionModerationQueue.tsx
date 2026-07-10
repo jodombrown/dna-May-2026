@@ -38,7 +38,7 @@ const ContributionModerationQueue = () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('adin_contributor_requests')
+        .from('dia_contributor_requests')
         .select(`
           id,
           user_id,
@@ -87,7 +87,7 @@ const ContributionModerationQueue = () => {
       if (!user.user) throw new Error('Not authenticated');
 
       const { error } = await supabase
-        .from('adin_contributor_requests')
+        .from('dia_contributor_requests')
         .update({ 
           status,
           reviewed_by: user.user.id,
