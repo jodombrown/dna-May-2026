@@ -390,7 +390,7 @@ export const connectionService = {
     if (!data || !Array.isArray(data)) return [];
 
     // Cast to proper type
-    const recommendations = data as DiaRecommendationResponse[];
+    const recommendations = data as unknown as DiaRecommendationResponse[];
 
     // Fetch profile details for the matched users
     const userIds = recommendations.map((item) => item.matched_user_id).filter(Boolean);
