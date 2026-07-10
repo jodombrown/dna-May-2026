@@ -46,8 +46,8 @@ serve(async (req) => {
 
     console.log(`Triggering DIA prompt for user ${user_id} with event ${event_type}`)
 
-    // Call the trigger_adin_prompt function (legacy DB name)
-    const { data, error } = await supabase.rpc('trigger_adin_prompt', {
+    // Call trigger_dia_prompt (renamed from trigger_adin_prompt in B3 move 1; verified present in live catalog 2026-07-10)
+    const { data, error } = await supabase.rpc('trigger_dia_prompt', {
       target_user_id: user_id,
       event_type: event_type
     })
