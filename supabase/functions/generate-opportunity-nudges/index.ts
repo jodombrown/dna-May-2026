@@ -258,7 +258,7 @@ async function generateOpportunityNudges(supabase: any, userId: string): Promise
 
   // Check user preferences for contribute nudges
   const { data: prefs } = await supabase
-    .from('adin_preferences')
+    .from('dia_preferences')
     .select('*')
     .eq('user_id', userId)
     .single()
@@ -431,7 +431,7 @@ serve(async (req) => {
       try {
         // Check if user already has recent opportunity nudges
         const { data: recentNudges } = await supabase
-          .from('adin_nudges')
+          .from('dia_nudges')
           .select('id')
           .eq('user_id', user.id)
           .in('nudge_type', ['opportunity_match', 'opportunity_trending', 'contribution_impact'])
@@ -448,7 +448,7 @@ serve(async (req) => {
         // Insert nudges (limit to 2 per user per run)
         for (const nudge of nudges.slice(0, 2)) {
           const { error: insertError } = await supabase
-            .from('adin_nudges')
+            .from('dia_nudges')
             .insert({
               user_id: nudge.user_id,
               nudge_type: nudge.nudge_type,

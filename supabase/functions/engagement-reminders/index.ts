@@ -60,7 +60,7 @@ async function generateNudgesForUser(supabase: any, userId: string, tier: string
 
   // Check user's nudge preferences
   const { data: prefs } = await supabase
-    .from('adin_preferences')
+    .from('dia_preferences')
     .select('*')
     .eq('user_id', userId)
     .single()
@@ -182,7 +182,7 @@ serve(async (req) => {
       try {
         // Check if user already has recent nudges
         const { data: recentNudges } = await supabase
-          .from('adin_nudges')
+          .from('dia_nudges')
           .select('id')
           .eq('user_id', user.user_id)
           .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
@@ -198,7 +198,7 @@ serve(async (req) => {
         // Insert nudges
         for (const nudge of nudges) {
           const { error: insertError } = await supabase
-            .from('adin_nudges')
+            .from('dia_nudges')
             .insert(nudge)
 
           if (insertError) {
