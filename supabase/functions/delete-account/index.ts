@@ -60,12 +60,8 @@ Deno.serve(async (req) => {
       { table: "connection_events", col: "actor" },
       { table: "connections", col: "a" },
       { table: "connections", col: "b" },
-      { table: "adin_nudges", col: "user_id" },
-      { table: "adin_recommendations", col: "user_id" },
-      { table: "adin_connection_matches", col: "user_id" },
-      { table: "adin_connection_matches", col: "matched_user_id" },
-      { table: "adin_connection_signals", col: "source_user" },
-      { table: "adin_connection_signals", col: "target_user" },
+      { table: "dia_nudges", col: "user_id" },
+      { table: "dia_recommendations", col: "user_id" },
       { table: "profiles", col: "id" },
     ];
 
