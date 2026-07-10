@@ -44,249 +44,6 @@ export type Database = {
         }
         Relationships: []
       }
-      adin_contributor_requests: {
-        Row: {
-          admin_notes: string | null
-          country_focus: string
-          created_at: string
-          description: string
-          evidence_links: string[] | null
-          id: string
-          impact_type: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          admin_notes?: string | null
-          country_focus: string
-          created_at?: string
-          description: string
-          evidence_links?: string[] | null
-          id?: string
-          impact_type: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          admin_notes?: string | null
-          country_focus?: string
-          created_at?: string
-          description?: string
-          evidence_links?: string[] | null
-          id?: string
-          impact_type?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      adin_nudges: {
-        Row: {
-          connection_id: string
-          created_at: string
-          id: string
-          message: string
-          nudge_type: string
-          payload: Json | null
-          resolved_at: string | null
-          status: string
-          user_id: string
-        }
-        Insert: {
-          connection_id: string
-          created_at?: string
-          id?: string
-          message: string
-          nudge_type: string
-          payload?: Json | null
-          resolved_at?: string | null
-          status?: string
-          user_id: string
-        }
-        Update: {
-          connection_id?: string
-          created_at?: string
-          id?: string
-          message?: string
-          nudge_type?: string
-          payload?: Json | null
-          resolved_at?: string | null
-          status?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      adin_preferences: {
-        Row: {
-          created_at: string | null
-          email_comments: boolean | null
-          email_connections: boolean | null
-          email_enabled: boolean | null
-          email_events: boolean | null
-          email_mentions: boolean | null
-          email_messages: boolean | null
-          email_reactions: boolean | null
-          email_stories: boolean | null
-          id: string
-          in_app_enabled: boolean | null
-          notification_frequency: string | null
-          nudge_categories: Json | null
-          quiet_hours_enabled: boolean | null
-          quiet_hours_end: string | null
-          quiet_hours_start: string | null
-          timezone: string | null
-          unsubscribe_token: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          email_comments?: boolean | null
-          email_connections?: boolean | null
-          email_enabled?: boolean | null
-          email_events?: boolean | null
-          email_mentions?: boolean | null
-          email_messages?: boolean | null
-          email_reactions?: boolean | null
-          email_stories?: boolean | null
-          id?: string
-          in_app_enabled?: boolean | null
-          notification_frequency?: string | null
-          nudge_categories?: Json | null
-          quiet_hours_enabled?: boolean | null
-          quiet_hours_end?: string | null
-          quiet_hours_start?: string | null
-          timezone?: string | null
-          unsubscribe_token?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          email_comments?: boolean | null
-          email_connections?: boolean | null
-          email_enabled?: boolean | null
-          email_events?: boolean | null
-          email_mentions?: boolean | null
-          email_messages?: boolean | null
-          email_reactions?: boolean | null
-          email_stories?: boolean | null
-          id?: string
-          in_app_enabled?: boolean | null
-          notification_frequency?: string | null
-          nudge_categories?: Json | null
-          quiet_hours_enabled?: boolean | null
-          quiet_hours_end?: string | null
-          quiet_hours_start?: string | null
-          timezone?: string | null
-          unsubscribe_token?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      adin_recommendations: {
-        Row: {
-          created_at: string
-          expires_at: string | null
-          for_connection_id: string | null
-          id: string
-          payload: Json | null
-          rec_type: string
-          score: number
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string | null
-          for_connection_id?: string | null
-          id?: string
-          payload?: Json | null
-          rec_type: string
-          score?: number
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string | null
-          for_connection_id?: string | null
-          id?: string
-          payload?: Json | null
-          rec_type?: string
-          score?: number
-          user_id?: string
-        }
-        Relationships: []
-      }
-      adin_signals: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          cta: string | null
-          description: string | null
-          id: string
-          link: string | null
-          region_focus: string[] | null
-          sector_focus: string[] | null
-          seen: boolean | null
-          signal_data: Json | null
-          signal_type: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          cta?: string | null
-          description?: string | null
-          id?: string
-          link?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          seen?: boolean | null
-          signal_data?: Json | null
-          signal_type: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          cta?: string | null
-          description?: string | null
-          id?: string
-          link?: string | null
-          region_focus?: string[] | null
-          sector_focus?: string[] | null
-          seen?: boolean | null
-          signal_data?: Json | null
-          signal_type?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "adin_signals_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "adin_signals_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       admin_activity_log: {
         Row: {
           action: string
@@ -2175,6 +1932,51 @@ export type Database = {
         }
         Relationships: []
       }
+      dia_contributor_requests: {
+        Row: {
+          admin_notes: string | null
+          country_focus: string
+          created_at: string
+          description: string
+          evidence_links: string[] | null
+          id: string
+          impact_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          country_focus: string
+          created_at?: string
+          description: string
+          evidence_links?: string[] | null
+          id?: string
+          impact_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          country_focus?: string
+          created_at?: string
+          description?: string
+          evidence_links?: string[] | null
+          id?: string
+          impact_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       dia_insights: {
         Row: {
           category: string | null
@@ -2325,6 +2127,111 @@ export type Database = {
         }
         Relationships: []
       }
+      dia_nudges: {
+        Row: {
+          connection_id: string
+          created_at: string
+          id: string
+          message: string
+          nudge_type: string
+          payload: Json | null
+          resolved_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string
+          id?: string
+          message: string
+          nudge_type: string
+          payload?: Json | null
+          resolved_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          nudge_type?: string
+          payload?: Json | null
+          resolved_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dia_preferences: {
+        Row: {
+          created_at: string | null
+          email_comments: boolean | null
+          email_connections: boolean | null
+          email_enabled: boolean | null
+          email_events: boolean | null
+          email_mentions: boolean | null
+          email_messages: boolean | null
+          email_reactions: boolean | null
+          email_stories: boolean | null
+          id: string
+          in_app_enabled: boolean | null
+          notification_frequency: string | null
+          nudge_categories: Json | null
+          quiet_hours_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          timezone: string | null
+          unsubscribe_token: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_comments?: boolean | null
+          email_connections?: boolean | null
+          email_enabled?: boolean | null
+          email_events?: boolean | null
+          email_mentions?: boolean | null
+          email_messages?: boolean | null
+          email_reactions?: boolean | null
+          email_stories?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          notification_frequency?: string | null
+          nudge_categories?: Json | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          unsubscribe_token?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_comments?: boolean | null
+          email_connections?: boolean | null
+          email_enabled?: boolean | null
+          email_events?: boolean | null
+          email_mentions?: boolean | null
+          email_messages?: boolean | null
+          email_reactions?: boolean | null
+          email_stories?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          notification_frequency?: string | null
+          nudge_categories?: Json | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          unsubscribe_token?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       dia_queries: {
         Row: {
           cache_hits: number | null
@@ -2402,6 +2309,99 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      dia_recommendations: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          for_connection_id: string | null
+          id: string
+          payload: Json | null
+          rec_type: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          for_connection_id?: string | null
+          id?: string
+          payload?: Json | null
+          rec_type: string
+          score?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          for_connection_id?: string | null
+          id?: string
+          payload?: Json | null
+          rec_type?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dia_signals: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          cta: string | null
+          description: string | null
+          id: string
+          link: string | null
+          region_focus: string[] | null
+          sector_focus: string[] | null
+          seen: boolean | null
+          signal_data: Json | null
+          signal_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          cta?: string | null
+          description?: string | null
+          id?: string
+          link?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
+          seen?: boolean | null
+          signal_data?: Json | null
+          signal_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          cta?: string | null
+          description?: string | null
+          id?: string
+          link?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
+          seen?: boolean | null
+          signal_data?: Json | null
+          signal_type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adin_signals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adin_signals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       dia_user_usage: {
         Row: {
@@ -7100,8 +7100,6 @@ export type Database = {
         Row: {
           account_visibility: string | null
           achievements: string | null
-          adin_mode: string | null
-          adin_prompt_status: string | null
           advocacy_interests: string[] | null
           africa_focus_areas: string[] | null
           africa_visit_frequency: string | null
@@ -7157,6 +7155,8 @@ export type Database = {
           deleted_at: string | null
           dia_insight: string | null
           dia_insight_updated_at: string | null
+          dia_mode: string | null
+          dia_prompt_status: string | null
           diaspora_networks: string[] | null
           display_name: string | null
           education: string | null
@@ -7307,8 +7307,6 @@ export type Database = {
         Insert: {
           account_visibility?: string | null
           achievements?: string | null
-          adin_mode?: string | null
-          adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
           africa_visit_frequency?: string | null
@@ -7364,6 +7362,8 @@ export type Database = {
           deleted_at?: string | null
           dia_insight?: string | null
           dia_insight_updated_at?: string | null
+          dia_mode?: string | null
+          dia_prompt_status?: string | null
           diaspora_networks?: string[] | null
           display_name?: string | null
           education?: string | null
@@ -7514,8 +7514,6 @@ export type Database = {
         Update: {
           account_visibility?: string | null
           achievements?: string | null
-          adin_mode?: string | null
-          adin_prompt_status?: string | null
           advocacy_interests?: string[] | null
           africa_focus_areas?: string[] | null
           africa_visit_frequency?: string | null
@@ -7571,6 +7569,8 @@ export type Database = {
           deleted_at?: string | null
           dia_insight?: string | null
           dia_insight_updated_at?: string | null
+          dia_mode?: string | null
+          dia_prompt_status?: string | null
           diaspora_networks?: string[] | null
           display_name?: string | null
           education?: string | null
@@ -10398,54 +10398,6 @@ export type Database = {
           },
         ]
       }
-      user_adin_profile: {
-        Row: {
-          contributor_impact_type: string | null
-          contributor_score: number | null
-          contributor_verified_at: string | null
-          created_at: string
-          engagement_pillars: string[] | null
-          id: string
-          industries: string[] | null
-          interests: string[] | null
-          is_verified_contributor: boolean | null
-          last_active: string | null
-          skills: string[] | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          contributor_impact_type?: string | null
-          contributor_score?: number | null
-          contributor_verified_at?: string | null
-          created_at?: string
-          engagement_pillars?: string[] | null
-          id?: string
-          industries?: string[] | null
-          interests?: string[] | null
-          is_verified_contributor?: boolean | null
-          last_active?: string | null
-          skills?: string[] | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          contributor_impact_type?: string | null
-          contributor_score?: number | null
-          contributor_verified_at?: string | null
-          created_at?: string
-          engagement_pillars?: string[] | null
-          id?: string
-          industries?: string[] | null
-          interests?: string[] | null
-          is_verified_contributor?: boolean | null
-          last_active?: string | null
-          skills?: string[] | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       user_badges: {
         Row: {
           badge_id: string
@@ -10599,6 +10551,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_dia_profile: {
+        Row: {
+          contributor_impact_type: string | null
+          contributor_score: number | null
+          contributor_verified_at: string | null
+          created_at: string
+          engagement_pillars: string[] | null
+          id: string
+          industries: string[] | null
+          interests: string[] | null
+          is_verified_contributor: boolean | null
+          last_active: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
+          created_at?: string
+          engagement_pillars?: string[] | null
+          id?: string
+          industries?: string[] | null
+          interests?: string[] | null
+          is_verified_contributor?: boolean | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
+          created_at?: string
+          engagement_pillars?: string[] | null
+          id?: string
+          industries?: string[] | null
+          interests?: string[] | null
+          is_verified_contributor?: boolean | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_engagement_tracking: {
         Row: {
@@ -11200,7 +11200,250 @@ export type Database = {
       }
     }
     Views: {
-      adin_cost_tracking: {
+      adin_contributor_requests: {
+        Row: {
+          admin_notes: string | null
+          country_focus: string | null
+          created_at: string | null
+          description: string | null
+          evidence_links: string[] | null
+          id: string | null
+          impact_type: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          country_focus?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_links?: string[] | null
+          id?: string | null
+          impact_type?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          country_focus?: string | null
+          created_at?: string | null
+          description?: string | null
+          evidence_links?: string[] | null
+          id?: string | null
+          impact_type?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      adin_nudges: {
+        Row: {
+          connection_id: string | null
+          created_at: string | null
+          id: string | null
+          message: string | null
+          nudge_type: string | null
+          payload: Json | null
+          resolved_at: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          connection_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          message?: string | null
+          nudge_type?: string | null
+          payload?: Json | null
+          resolved_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          connection_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          message?: string | null
+          nudge_type?: string | null
+          payload?: Json | null
+          resolved_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      adin_preferences: {
+        Row: {
+          created_at: string | null
+          email_comments: boolean | null
+          email_connections: boolean | null
+          email_enabled: boolean | null
+          email_events: boolean | null
+          email_mentions: boolean | null
+          email_messages: boolean | null
+          email_reactions: boolean | null
+          email_stories: boolean | null
+          id: string | null
+          in_app_enabled: boolean | null
+          notification_frequency: string | null
+          nudge_categories: Json | null
+          quiet_hours_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          timezone: string | null
+          unsubscribe_token: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_comments?: boolean | null
+          email_connections?: boolean | null
+          email_enabled?: boolean | null
+          email_events?: boolean | null
+          email_mentions?: boolean | null
+          email_messages?: boolean | null
+          email_reactions?: boolean | null
+          email_stories?: boolean | null
+          id?: string | null
+          in_app_enabled?: boolean | null
+          notification_frequency?: string | null
+          nudge_categories?: Json | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          unsubscribe_token?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email_comments?: boolean | null
+          email_connections?: boolean | null
+          email_enabled?: boolean | null
+          email_events?: boolean | null
+          email_mentions?: boolean | null
+          email_messages?: boolean | null
+          email_reactions?: boolean | null
+          email_stories?: boolean | null
+          id?: string | null
+          in_app_enabled?: boolean | null
+          notification_frequency?: string | null
+          nudge_categories?: Json | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          timezone?: string | null
+          unsubscribe_token?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      adin_recommendations: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          for_connection_id: string | null
+          id: string | null
+          payload: Json | null
+          rec_type: string | null
+          score: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          for_connection_id?: string | null
+          id?: string | null
+          payload?: Json | null
+          rec_type?: string | null
+          score?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          for_connection_id?: string | null
+          id?: string | null
+          payload?: Json | null
+          rec_type?: string | null
+          score?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      adin_signals: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          cta: string | null
+          description: string | null
+          id: string | null
+          link: string | null
+          region_focus: string[] | null
+          sector_focus: string[] | null
+          seen: boolean | null
+          signal_data: Json | null
+          signal_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          cta?: string | null
+          description?: string | null
+          id?: string | null
+          link?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
+          seen?: boolean | null
+          signal_data?: Json | null
+          signal_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          cta?: string | null
+          description?: string | null
+          id?: string | null
+          link?: string | null
+          region_focus?: string[] | null
+          sector_focus?: string[] | null
+          seen?: boolean | null
+          signal_data?: Json | null
+          signal_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "adin_signals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "adin_signals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dia_cost_tracking: {
         Row: {
           avg_cost_per_query: number | null
           date: string | null
@@ -11210,7 +11453,7 @@ export type Database = {
         }
         Relationships: []
       }
-      adin_daily_stats: {
+      dia_daily_stats: {
         Row: {
           avg_response_time_ms: number | null
           cache_hit_rate: number | null
@@ -11222,7 +11465,7 @@ export type Database = {
         }
         Relationships: []
       }
-      adin_popular_queries: {
+      dia_popular_queries: {
         Row: {
           last_queried: string | null
           query_count: number | null
@@ -11366,6 +11609,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_adin_profile: {
+        Row: {
+          contributor_impact_type: string | null
+          contributor_score: number | null
+          contributor_verified_at: string | null
+          created_at: string | null
+          engagement_pillars: string[] | null
+          id: string | null
+          industries: string[] | null
+          interests: string[] | null
+          is_verified_contributor: boolean | null
+          last_active: string | null
+          skills: string[] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
+          created_at?: string | null
+          engagement_pillars?: string[] | null
+          id?: string | null
+          industries?: string[] | null
+          interests?: string[] | null
+          is_verified_contributor?: boolean | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          contributor_impact_type?: string | null
+          contributor_score?: number | null
+          contributor_verified_at?: string | null
+          created_at?: string | null
+          engagement_pillars?: string[] | null
+          id?: string | null
+          industries?: string[] | null
+          interests?: string[] | null
+          is_verified_contributor?: boolean | null
+          last_active?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_impact_summary: {
         Row: {
           collaborate_actions: number | null
@@ -11436,8 +11727,6 @@ export type Database = {
         Returns: {
           account_visibility: string | null
           achievements: string | null
-          adin_mode: string | null
-          adin_prompt_status: string | null
           advocacy_interests: string[] | null
           africa_focus_areas: string[] | null
           africa_visit_frequency: string | null
@@ -11493,6 +11782,8 @@ export type Database = {
           deleted_at: string | null
           dia_insight: string | null
           dia_insight_updated_at: string | null
+          dia_mode: string | null
+          dia_prompt_status: string | null
           diaspora_networks: string[] | null
           display_name: string | null
           education: string | null
@@ -11753,7 +12044,7 @@ export type Database = {
         Args: { p_user_id?: string; p_username: string }
         Returns: boolean
       }
-      cleanup_expired_adin_cache: { Args: never; Returns: number }
+      cleanup_expired_dia_cache: { Args: never; Returns: number }
       close_need_declaration: {
         Args: { declaration_id: string }
         Returns: {
@@ -12078,16 +12369,6 @@ export type Database = {
           target_name: string
         }[]
       }
-      get_adin_user_usage: {
-        Args: { p_user_id: string }
-        Returns: {
-          period_start: string
-          queries_remaining: number
-          query_count: number
-          query_limit: number
-          resets_at: string
-        }[]
-      }
       get_applications_for_opportunity: {
         Args: {
           p_cursor?: string
@@ -12219,6 +12500,16 @@ export type Database = {
           target_entity_id: string
           target_entity_type: string
           title: string
+        }[]
+      }
+      get_dia_user_usage: {
+        Args: { p_user_id: string }
+        Returns: {
+          period_start: string
+          queries_remaining: number
+          query_count: number
+          query_limit: number
+          resets_at: string
         }[]
       }
       get_email_digest_recipients: {
@@ -12685,7 +12976,11 @@ export type Database = {
           user_id: string
         }[]
       }
-      get_or_create_adin_preferences: {
+      get_or_create_conversation: {
+        Args: { p_other_user_id: string; p_user_id: string }
+        Returns: string
+      }
+      get_or_create_dia_preferences: {
         Args: { p_user_id: string }
         Returns: {
           created_at: string | null
@@ -12711,14 +13006,10 @@ export type Database = {
         }[]
         SetofOptions: {
           from: "*"
-          to: "adin_preferences"
+          to: "dia_preferences"
           isOneToOne: false
           isSetofReturn: true
         }
-      }
-      get_or_create_conversation: {
-        Args: { p_other_user_id: string; p_user_id: string }
-        Returns: string
       }
       get_or_create_hashtag: {
         Args: { p_display_name?: string; p_name: string }
@@ -12744,8 +13035,6 @@ export type Database = {
         Returns: {
           account_visibility: string | null
           achievements: string | null
-          adin_mode: string | null
-          adin_prompt_status: string | null
           advocacy_interests: string[] | null
           africa_focus_areas: string[] | null
           africa_visit_frequency: string | null
@@ -12801,6 +13090,8 @@ export type Database = {
           deleted_at: string | null
           dia_insight: string | null
           dia_insight_updated_at: string | null
+          dia_mode: string | null
+          dia_prompt_status: string | null
           diaspora_networks: string[] | null
           display_name: string | null
           education: string | null
@@ -13586,7 +13877,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      increment_adin_usage: {
+      increment_dia_usage: {
         Args: {
           p_estimated_cost?: number
           p_tokens_used?: number
@@ -13886,83 +14177,8 @@ export type Database = {
         }[]
       }
       roadmap_speakers_slugify: { Args: { input: string }; Returns: string }
-      rpc_adin_recommend_opportunities:
-        | {
-            Args: never
-            Returns: {
-              match_score: number
-              signal_created_at: string
-              signal_id: string
-              signal_title: string
-              signal_type: string
-            }[]
-          }
-        | {
-            Args: { p_limit?: number }
-            Returns: {
-              description: string
-              id: string
-              link: string
-              location: string
-              score: number
-              tags: string[]
-              title: string
-              type: string
-            }[]
-          }
-      rpc_adin_recommend_people:
-        | {
-            Args: never
-            Returns: {
-              match_reason: string
-              match_score: number
-              matched_user_id: string
-              shared_regions: string[]
-              shared_sectors: string[]
-            }[]
-          }
-        | {
-            Args: { p_limit?: number }
-            Returns: {
-              full_name: string
-              headline: string
-              score: number
-              user_id: string
-              username: string
-            }[]
-          }
-      rpc_adin_recommend_spaces:
-        | {
-            Args: never
-            Returns: {
-              match_score: number
-              space_id: string
-              space_name: string
-            }[]
-          }
-        | {
-            Args: { p_limit?: number }
-            Returns: {
-              description: string
-              id: string
-              score: number
-              tags: string[]
-              title: string
-              visibility: string
-            }[]
-          }
-      rpc_adin_recommendations_opportunities: {
-        Args: { p_limit?: number; p_threshold?: number; p_user_id: string }
-        Returns: {
-          match_score: number
-          signal_created_at: string
-          signal_id: string
-          signal_title: string
-          signal_type: string
-        }[]
-      }
-      rpc_adin_recommendations_people: {
-        Args: { p_limit?: number; p_user_id: string }
+      rpc_adin_recommend_people: {
+        Args: never
         Returns: {
           match_reason: string
           match_score: number
@@ -14003,6 +14219,16 @@ export type Database = {
             Returns: string
           }
       rpc_dashboard_counts: { Args: never; Returns: Json }
+      rpc_dia_recommend_people: {
+        Args: { p_limit?: number }
+        Returns: {
+          full_name: string
+          headline: string
+          score: number
+          user_id: string
+          username: string
+        }[]
+      }
       rpc_event_approve: {
         Args: { p_registration: string }
         Returns: undefined
@@ -14308,7 +14534,7 @@ export type Database = {
         Args: { p_conversation_id: string; p_new_owner_id: string }
         Returns: undefined
       }
-      trigger_adin_prompt: {
+      trigger_dia_prompt: {
         Args: { event_type: string; target_user_id: string }
         Returns: undefined
       }
@@ -14325,10 +14551,6 @@ export type Database = {
           speaker_name: string
         }[]
       }
-      update_adin_last_active: {
-        Args: { target_user_id: string }
-        Returns: undefined
-      }
       update_admin_session_activity: { Args: never; Returns: undefined }
       update_all_influence_scores: { Args: never; Returns: undefined }
       update_application_status: {
@@ -14338,6 +14560,10 @@ export type Database = {
           p_poster_notes?: string
         }
         Returns: string
+      }
+      update_dia_last_active: {
+        Args: { target_user_id: string }
+        Returns: undefined
       }
       update_event_attendee_count: {
         Args: { p_event: string }
