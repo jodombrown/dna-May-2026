@@ -46,7 +46,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Find user by unsubscribe token
     const { data: preferences, error: findError } = await supabase
-      .from('adin_preferences')
+      .from('dia_preferences')
       .select('user_id, email_enabled, email_connections, email_comments, email_reactions, email_mentions, email_messages, email_events, email_stories')
       .eq('unsubscribe_token', token)
       .single();
@@ -92,7 +92,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const { error: updateError } = await supabase
-      .from('adin_preferences')
+      .from('dia_preferences')
       .update(updateData)
       .eq('unsubscribe_token', token);
 
