@@ -369,31 +369,22 @@ const UnifiedHeader = () => {
               {/* Notifications Center — Sprint 4C unified (platform + DIA) */}
               {isAuthenticated && user && <UnifiedNotificationBell />}
               
-              {/* User Profile Dropdown */}
+              {/* User Profile — click avatar to open Account drawer (parity with mobile) */}
               {isAuthenticated && profile && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="ml-2">
-                      <Avatar className="w-8 h-8">
-                        <AvatarImage src={profile.avatar_url || undefined} />
-                        <AvatarFallback>
-                          {profile.full_name?.charAt(0) || profile.username?.charAt(0) || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={openAccountDrawer}>
-                      <User className="w-4 h-4 mr-2" />
-                      Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-2 p-1 rounded-full"
+                  onClick={openAccountDrawer}
+                  aria-label="Open account menu"
+                >
+                  <Avatar className="w-8 h-8">
+                    <AvatarImage src={profile.avatar_url || undefined} />
+                    <AvatarFallback>
+                      {profile.full_name?.charAt(0) || profile.username?.charAt(0) || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
               )}
               
               {/* Desktop Navigation - Public */}
