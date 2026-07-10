@@ -19,7 +19,7 @@ export const ConnectNudges: React.FC = () => {
     queryKey: ['connect-nudges', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data } = await supabase.from('adin_nudges').select('*').eq('user_id', user.id).eq('status', 'sent').limit(3);
+      const { data } = await supabase.from('dia_nudges').select('*').eq('user_id', user.id).eq('status', 'sent').limit(3);
       return data || [];
     },
     enabled: !!user,

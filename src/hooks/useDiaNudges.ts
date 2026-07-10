@@ -30,9 +30,9 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
     }
 
     setLoading(true);
-    // Use adin_nudges table (legacy name, UI displays as DIA)
+    // Use dia_nudges table (legacy name, UI displays as DIA)
     let query = supabase
-      .from("adin_nudges")
+      .from("dia_nudges")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
@@ -82,7 +82,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
         {
           event: '*',
           schema: 'public',
-          table: 'adin_nudges',
+          table: 'dia_nudges',
           filter: user ? `user_id=eq.${user.id}` : undefined,
         },
         () => {
@@ -98,7 +98,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
 
   const acceptNudge = async (nudgeId: string) => {
     const { error } = await supabase
-      .from("adin_nudges")
+      .from("dia_nudges")
       .update({ status: "accepted", resolved_at: new Date().toISOString() })
       .eq("id", nudgeId);
 
@@ -120,7 +120,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
 
   const dismissNudge = async (nudgeId: string) => {
     const { error } = await supabase
-      .from("adin_nudges")
+      .from("dia_nudges")
       .update({ status: "dismissed", resolved_at: new Date().toISOString() })
       .eq("id", nudgeId);
 
@@ -138,7 +138,7 @@ export function useDiaNudges(statusFilter?: 'sent' | 'all') {
 
   const snoozeNudge = async (nudgeId: string, until: string) => {
     const { error } = await supabase
-      .from("adin_nudges")
+      .from("dia_nudges")
       .update({
         status: "snoozed"
       })

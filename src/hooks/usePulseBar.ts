@@ -68,7 +68,7 @@ async function fetchConnectPulse(userId: string): Promise<ConnectPulse> {
 
   // Fetch connection recommendations
   const { data: recommendations } = await supabase
-    .from('adin_recommendations')
+    .from('dia_recommendations')
     .select('id')
     .eq('user_id', userId)
     .eq('rec_type', 'connection')
