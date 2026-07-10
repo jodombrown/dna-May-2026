@@ -5317,6 +5317,7 @@ export type Database = {
           edited_at: string | null
           forwarded_from_message_id: string | null
           id: string
+          is_deleted: boolean
           payload: Json | null
           read: boolean
           sender_id: string
@@ -5330,6 +5331,7 @@ export type Database = {
           edited_at?: string | null
           forwarded_from_message_id?: string | null
           id?: string
+          is_deleted?: boolean
           payload?: Json | null
           read?: boolean
           sender_id: string
@@ -5343,6 +5345,7 @@ export type Database = {
           edited_at?: string | null
           forwarded_from_message_id?: string | null
           id?: string
+          is_deleted?: boolean
           payload?: Json | null
           read?: boolean
           sender_id?: string
