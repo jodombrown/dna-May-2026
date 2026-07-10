@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSetCSSHeaderHeight } from '@/hooks/useSetCSSHeaderHeight';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
 import { useOptionalDashboard } from '@/contexts/DashboardContext';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
