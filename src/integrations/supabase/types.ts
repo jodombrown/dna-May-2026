@@ -3489,71 +3489,6 @@ export type Database = {
         }
         Relationships: []
       }
-      feed_bookmarks: {
-        Row: {
-          content_id: string
-          content_type: string
-          created_at: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          content_id: string
-          content_type: string
-          created_at?: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          content_id?: string
-          content_type?: string
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      feed_comments: {
-        Row: {
-          body: string
-          content_id: string
-          content_type: string
-          created_at: string
-          id: string
-          parent_comment_id: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          body: string
-          content_id: string
-          content_type: string
-          created_at?: string
-          id?: string
-          parent_comment_id?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          body?: string
-          content_id?: string
-          content_type?: string
-          created_at?: string
-          id?: string
-          parent_comment_id?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "feed_comments_parent_comment_id_fkey"
-            columns: ["parent_comment_id"]
-            isOneToOne: false
-            referencedRelation: "feed_comments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       feed_engagement_events: {
         Row: {
           action: string
@@ -3592,33 +3527,6 @@ export type Database = {
           post_type?: string
           surface?: string
           tab?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      feed_reactions: {
-        Row: {
-          content_id: string
-          content_type: string
-          created_at: string
-          id: string
-          reaction_type: string
-          user_id: string
-        }
-        Insert: {
-          content_id: string
-          content_type: string
-          created_at?: string
-          id?: string
-          reaction_type: string
-          user_id: string
-        }
-        Update: {
-          content_id?: string
-          content_type?: string
-          created_at?: string
-          id?: string
-          reaction_type?: string
           user_id?: string
         }
         Relationships: []
