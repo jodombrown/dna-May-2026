@@ -373,18 +373,33 @@ const UnifiedHeader = () => {
               {isAuthenticated && user && <UnifiedNotificationBell />}
               
               {/* User Profile — click avatar to open Account drawer (parity with mobile) */}
-              {isAuthenticated && profile && (
+              {isAuthenticated && (
                 <Button
                   variant="ghost"
                   size="sm"
                   className="ml-2 p-1 rounded-full"
-                  onClick={openAccountDrawer}
+                  onClick={() => {
+                    try {
+                      openAccountDrawer();
+                    } catch (err) {
+                      // Production-safe log: capture route + UA for drawer failures
+                      console.error('[UnifiedHeader] Account drawer failed to open', {
+                        route: location.pathname,
+                        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'ssr',
+                        error: err,
+                      });
+                    }
+                  }}
                   aria-label="Open account menu"
+                  data-testid="header-avatar-button"
                 >
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src={profile.avatar_url || undefined} />
+                    <AvatarImage src={profile?.avatar_url || undefined} />
                     <AvatarFallback>
-                      {profile.full_name?.charAt(0) || profile.username?.charAt(0) || 'U'}
+                      {profile?.full_name?.charAt(0) ||
+                        profile?.username?.charAt(0) ||
+                        user?.email?.charAt(0)?.toUpperCase() ||
+                        'U'}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
