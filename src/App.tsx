@@ -172,7 +172,7 @@ const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesS
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
 const SettingsRouteShell = lazy(() => import("./pages/dna/settings/SettingsRouteShell"));
 const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
-const DiaPage = lazy(() => import("./pages/dna/DiaPage"));
+
 const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
 const SpaceManagement = lazy(() => import("./pages/admin/spaces/SpaceManagement"));
 const SpaceModeration = lazy(() => import("./pages/admin/spaces/SpaceModeration"));
