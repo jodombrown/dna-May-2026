@@ -519,14 +519,14 @@ export function DiaSearch({
                     <button
                       key={event.id}
                       onClick={() => handleEventClick(event.id)}
-                      className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group"
+                      className="flex items-center justify-between gap-2 w-full p-2.5 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group min-w-0"
                     >
-                      <div>
-                        <p className="font-medium text-sm flex items-center gap-1">
-                          {event.title}
-                          <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm truncate flex items-center gap-1">
+                          <span className="truncate">{event.title}</span>
+                          <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[11px] text-muted-foreground truncate">
                           {new Date(event.start_date).toLocaleDateString(undefined, {
                             weekday: 'short',
                             month: 'short',
@@ -535,8 +535,8 @@ export function DiaSearch({
                           })}
                         </p>
                       </div>
-                      <Badge variant="outline" className="text-xs">
-                        {event.relevance}
+                      <Badge variant="outline" className="text-[10px] h-5 px-1.5 shrink-0 max-w-[40%] truncate">
+                        <span className="truncate">{event.relevance}</span>
                       </Badge>
                     </button>
                   ))}
