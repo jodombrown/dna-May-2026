@@ -81,6 +81,8 @@ interface DiaResponse {
     };
     cached: boolean;
     query_hash?: string;
+    follow_ups?: string[];
+    turns_remaining?: number;
   };
   usage: {
     queries_used: number;
