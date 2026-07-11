@@ -1,535 +1,313 @@
+// DIA search — platform-smart tool-loop.
+// Uses Lovable AI Gateway (Gemini) with OpenAI-compat function-calling to
+// decide when to hit platform tools vs. web search. All platform tools run
+// under the caller's JWT so RLS still guards every row.
+
+// deno-lint-ignore-file no-explicit-any
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  TOOL_DEFINITIONS,
+  executeTool,
+  makeUserClient,
+  emptyResults,
+  type AggregatedResults,
+} from "../_shared/dia-tools.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface DiaRequest {
-  query: string;
-  source?: string; // dashboard, connect, convene, etc.
-}
+const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const MODEL = "google/gemini-2.5-flash";
+const MAX_TOOL_STEPS = 6;
 
-interface PerplexityResponse {
-  choices: Array<{
-    message: {
-      content: string;
-    };
-  }>;
-  citations?: string[];
-  usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-  };
-}
+const SYSTEM_PROMPT = `You are DIA (Diaspora Intelligence Agent), the intelligence layer for DNA — the platform mobilizing the Global African Diaspora.
 
-interface NetworkMatches {
-  profiles: Array<{
-    id: string;
-    full_name: string;
-    headline: string;
-    avatar_url: string;
-    relevance: string;
-  }>;
-  events: Array<{
-    id: string;
-    title: string;
-    start_date: string;
-    relevance: string;
-  }>;
-  projects: Array<{
-    id: string;
-    name: string;
-    status: string;
-    relevance: string;
-  }>;
-  hashtags: Array<{
-    id: string;
-    name: string;
-    post_count: number;
-  }>;
-  opportunities: Array<{
-    id: string;
-    title: string;
-    type: string;
-    space_name?: string;
-    region?: string;
-    focus_areas?: string[];
-    relevance: string;
-  }>;
-}
+You have TWO kinds of tools:
+1. PLATFORM tools (search_my_network, search_platform_people, recent_convene_joins, find_events, find_spaces, find_opportunities, my_post_analytics, find_stories_and_posts) — these read the user's DNA data under their permissions.
+2. web_search — searches the OPEN WEB via Perplexity.
 
-// Utility: Normalize query for caching
+Routing rules (STRICT):
+- If the question is about "my network", "my connections", "my posts", "my events", "my spaces", things happening ON DNA, or lists of people/events/opportunities that DNA members would have — use PLATFORM tools FIRST. Never answer these from memory. Never call web_search for them.
+- Only use web_search for macro news, external facts, or clearly external topics.
+- You may call multiple platform tools if needed. Compose your answer from the tool results.
+- If a platform tool returns 0 results, say so plainly ("I looked and didn't find any X yet") and suggest one concrete adjacent action the user could take. Do NOT fabricate results. Do NOT switch to web_search as a workaround for missing platform data.
+- Keep answers concise (under 180 words), grounded in tool results, and never invent people or events.
+- Cite web sources only when web_search was actually used.`;
+
 function normalizeQuery(query: string): string {
-  return query
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, " ")
-    .replace(/[^\w\s]/g, "");
+  return query.toLowerCase().trim().replace(/\s+/g, " ").replace(/[^\w\s]/g, "");
 }
 
-// Utility: Generate SHA256 hash
 async function hashQuery(query: string): Promise<string> {
   const encoder = new TextEncoder();
-  const data = encoder.encode(query);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  const buf = await crypto.subtle.digest("SHA-256", encoder.encode(query));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-// Utility: Extract keywords from query
-function extractKeywords(query: string): string[] {
-  const stopWords = new Set([
-    "what", "how", "where", "when", "who", "why", "is", "are", "the", "a", "an",
-    "in", "on", "at", "to", "for", "of", "and", "or", "but", "with", "about",
-    "can", "could", "would", "should", "do", "does", "did", "have", "has", "had",
-    "be", "been", "being", "there", "their", "they", "this", "that", "these",
-    "those", "some", "any", "all", "most", "other", "into", "through", "during",
-    "before", "after", "above", "below", "between", "under", "again", "further",
-    "then", "once", "here", "there", "when", "where", "why", "how", "both",
-    "each", "few", "more", "most", "other", "some", "such", "no", "nor", "not",
-    "only", "own", "same", "so", "than", "too", "very", "just", "also",
-    "tell", "me", "find", "show", "give", "want", "need", "looking", "search"
-  ]);
-
-  return query
-    .toLowerCase()
-    .replace(/[^\w\s]/g, "")
-    .split(/\s+/)
-    .filter((word) => word.length > 2 && !stopWords.has(word));
+interface ChatMessage {
+  role: "system" | "user" | "assistant" | "tool";
+  content?: string | null;
+  tool_calls?: any[];
+  tool_call_id?: string;
+  name?: string;
 }
 
-// Call Perplexity API
-async function callPerplexity(query: string): Promise<PerplexityResponse> {
-  const apiKey = Deno.env.get("PERPLEXITY_API_KEY");
-  if (!apiKey) {
-    throw new Error("PERPLEXITY_API_KEY not configured");
-  }
-
-  const response = await fetch("https://api.perplexity.ai/chat/completions", {
+async function callGateway(messages: ChatMessage[], apiKey: string): Promise<any> {
+  const resp = await fetch(GATEWAY_URL, {
     method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "sonar",
-      messages: [
-        {
-          role: "system",
-          content: `You are DIA, the Diaspora Intelligence Agent.
-You are DNA's AI-powered intelligence layer built to mobilize the African diaspora toward Africa's progress.
-You specialize in providing accurate, up-to-date information about:
-- African economic opportunities and investments
-- Diaspora engagement and contributions to Africa
-- African countries, markets, and sectors
-- Pan-African business and professional opportunities
-- Cultural and social developments across the African continent
-
-Always provide balanced, factual information with clear citations.
-Focus on actionable insights that help diaspora professionals connect with African opportunities.
-Be concise but comprehensive. Use bullet points for clarity when listing multiple items.`,
-        },
-        {
-          role: "user",
-          content: query,
-        },
-      ],
-      max_tokens: 1024,
+      model: MODEL,
+      messages,
+      tools: TOOL_DEFINITIONS,
+      tool_choice: "auto",
       temperature: 0.2,
-      return_citations: true,
-      search_domain_filter: [], // No domain restrictions
-      search_recency_filter: "month", // Prefer recent information
+      max_tokens: 900,
     }),
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Perplexity API error: ${response.status} - ${errorText}`);
+  if (!resp.ok) {
+    const err = await resp.text();
+    throw new Error(`AI gateway ${resp.status}: ${err.slice(0, 300)}`);
   }
-
-  return await response.json();
+  return resp.json();
 }
 
-// Query DNA network for relevant matches
-async function queryNetworkMatches(
-  supabase: any,
-  keywords: string[]
-): Promise<NetworkMatches> {
-  const matches: NetworkMatches = {
-    profiles: [],
-    events: [],
-    projects: [],
-    hashtags: [],
-    opportunities: [],
+async function runToolLoop(
+  query: string,
+  userId: string,
+  accessToken: string,
+  apiKey: string,
+): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[] }> {
+  const userSupabase = makeUserClient(accessToken);
+  const ctx = { userId, supabase: userSupabase };
+  const results = emptyResults();
+  const citations: string[] = [];
+  const toolsFired: string[] = [];
+
+  const messages: ChatMessage[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+    { role: "user", content: query },
+  ];
+
+  for (let step = 0; step < MAX_TOOL_STEPS; step++) {
+    const completion = await callGateway(messages, apiKey);
+    const msg = completion?.choices?.[0]?.message;
+    if (!msg) throw new Error("Empty model response");
+
+    // Push assistant message (needed for tool-message threading)
+    messages.push({
+      role: "assistant",
+      content: msg.content ?? null,
+      tool_calls: msg.tool_calls,
+    });
+
+    const toolCalls = msg.tool_calls ?? [];
+    if (!toolCalls.length) {
+      // Final answer
+      return { answer: msg.content ?? "", citations, results, toolsFired };
+    }
+
+    // Execute each tool call, append tool messages
+    for (const call of toolCalls) {
+      const name = call.function?.name;
+      let args: any = {};
+      try { args = JSON.parse(call.function?.arguments ?? "{}"); } catch { args = {}; }
+      toolsFired.push(name);
+
+      const { text, results: partial } = await executeTool(name, args, ctx, citations);
+
+      // Merge partial results
+      if (partial.profiles?.length) results.profiles.push(...partial.profiles);
+      if (partial.events?.length) results.events.push(...partial.events);
+      if (partial.projects?.length) results.projects.push(...partial.projects);
+      if (partial.opportunities?.length) results.opportunities.push(...partial.opportunities);
+      if (partial.stories?.length) results.stories.push(...partial.stories);
+      if (partial.analytics) results.analytics = partial.analytics;
+
+      messages.push({
+        role: "tool",
+        tool_call_id: call.id,
+        name,
+        content: text,
+      });
+    }
+  }
+
+  // Hit step cap — ask model to summarize what it has
+  messages.push({ role: "user", content: "Summarize what you found based on the tool results above. Be concise." });
+  const final = await callGateway(messages.slice(0, -1).concat([{ role: "user", content: "Summarize the tool results concisely." }]), apiKey);
+  return {
+    answer: final?.choices?.[0]?.message?.content ?? "I gathered some results but couldn't finish synthesizing.",
+    citations,
+    results,
+    toolsFired,
   };
+}
 
-  if (keywords.length === 0) {
-    return matches;
-  }
-
-  try {
-    // Build OR filter for profiles - use valid columns only
-    const profileFilters = keywords.flatMap((k) => [
-      `headline.ilike.%${k}%`,
-      `bio.ilike.%${k}%`,
-      `location.ilike.%${k}%`
-    ]);
-
-    // Query profiles - using public profiles
-    const { data: profiles, error: profileError } = await supabase
-      .from("profiles")
-      .select("id, full_name, headline, avatar_url, location")
-      .eq("is_public", true)
-      .or(profileFilters.slice(0, 9).join(","))
-      .limit(5);
-
-    if (profileError) {
-      console.log("Profile query error:", profileError.message);
-    } else if (profiles && profiles.length > 0) {
-      matches.profiles = profiles.map((p: any) => ({
-        id: p.id,
-        full_name: p.full_name || "DNA Member",
-        headline: p.headline || "",
-        avatar_url: p.avatar_url || "",
-        relevance: "Expertise match",
-      }));
+// De-duplicate merged results by id
+function dedupe(results: AggregatedResults): AggregatedResults {
+  const uniq = <T extends { id?: string }>(arr: T[]) => {
+    const seen = new Set<string>();
+    const out: T[] = [];
+    for (const item of arr) {
+      const k = item.id ?? JSON.stringify(item);
+      if (!seen.has(k)) { seen.add(k); out.push(item); }
     }
-
-    // Query events - upcoming events (correct column: start_time)
-    const eventFilters = keywords.flatMap((k) => [
-      `title.ilike.%${k}%`,
-      `description.ilike.%${k}%`
-    ]);
-
-    const { data: events, error: eventError } = await supabase
-      .from("events")
-      .select("id, title, start_time, description")
-      .gte("start_time", new Date().toISOString())
-      .eq("is_cancelled", false)
-      .eq("is_public", true)
-      .or(eventFilters.slice(0, 6).join(","))
-      .order("start_time", { ascending: true })
-      .limit(3);
-
-    if (eventError) {
-      console.log("Event query error:", eventError.message);
-    } else if (events && events.length > 0) {
-      matches.events = events.map((e: any) => ({
-        id: e.id,
-        title: e.title,
-        start_date: e.start_time,
-        relevance: "Topic match",
-      }));
-    }
-
-    // Query collaboration spaces as projects (correct column: title)
-    const projectFilters = keywords.flatMap((k) => [
-      `title.ilike.%${k}%`,
-      `description.ilike.%${k}%`
-    ]);
-
-    const { data: projects, error: projectError } = await supabase
-      .from("collaboration_spaces")
-      .select("id, title, status, description")
-      .eq("status", "active")
-      .or(projectFilters.slice(0, 6).join(","))
-      .limit(3);
-
-    if (projectError) {
-      console.log("Project query error:", projectError.message);
-    } else if (projects && projects.length > 0) {
-      matches.projects = projects.map((p: any) => ({
-        id: p.id,
-        name: p.title,
-        status: p.status || "active",
-        relevance: "Related project",
-      }));
-    }
-
-    // Query hashtags (correct column: tag)
-    const hashtagFilters = keywords.map((k) => `tag.ilike.%${k}%`);
-
-    const { data: hashtags, error: hashtagError } = await supabase
-      .from("hashtags")
-      .select("id, tag, usage_count")
-      .or(hashtagFilters.join(","))
-      .order("usage_count", { ascending: false })
-      .limit(5);
-
-    if (hashtagError) {
-      console.log("Hashtag query error:", hashtagError.message);
-    } else if (hashtags && hashtags.length > 0) {
-      matches.hashtags = hashtags.map((h: any) => ({
-        id: h.id,
-        name: h.tag,
-        post_count: h.usage_count || 0,
-      }));
-    }
-
-    // Query contribution opportunities
-    const opportunityFilters = keywords.flatMap((k) => [
-      `title.ilike.%${k}%`,
-      `description.ilike.%${k}%`,
-      `region.ilike.%${k}%`
-    ]);
-
-    const { data: opportunities, error: opportunityError } = await supabase
-      .from("contribution_needs")
-      .select(`
-        id, title, type, description, region, focus_areas,
-        space:spaces(id, name)
-      `)
-      .in("status", ["open", "in_progress"])
-      .or(opportunityFilters.slice(0, 9).join(","))
-      .order("priority", { ascending: false })
-      .order("created_at", { ascending: false })
-      .limit(5);
-
-    if (opportunityError) {
-      console.log("Opportunity query error:", opportunityError.message);
-    } else if (opportunities && opportunities.length > 0) {
-      matches.opportunities = opportunities.map((o: any) => ({
-        id: o.id,
-        title: o.title,
-        type: o.type,
-        space_name: o.space?.name,
-        region: o.region,
-        focus_areas: o.focus_areas,
-        relevance: "Topic match",
-      }));
-    }
-  } catch (error) {
-    console.error("Error querying network matches:", error);
-  }
-
-  return matches;
+    return out;
+  };
+  return {
+    profiles: uniq(results.profiles),
+    events: uniq(results.events),
+    projects: uniq(results.projects),
+    hashtags: results.hashtags,
+    opportunities: uniq(results.opportunities),
+    stories: uniq(results.stories),
+    analytics: results.analytics,
+  };
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+    if (!lovableKey) {
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY missing" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const admin = createClient(supabaseUrl, serviceKey); // used only for auth check + rate-limit tables
 
-    // Get user from auth header
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized", message: "Authentication required" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Unauthorized", message: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
+    const { data: { user }, error: authError } = await admin.auth.getUser(token);
     if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: "Invalid token", message: "Please sign in to use DIA" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid token", message: "Please sign in to use DIA" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Parse request
-    const { query, source = "dashboard" }: DiaRequest = await req.json();
-
-    if (!query || query.trim().length === 0) {
-      return new Response(
-        JSON.stringify({ error: "Query is required", message: "Please enter a question" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const { query, source = "dashboard" } = await req.json();
+    if (!query || String(query).trim().length === 0) {
+      return new Response(JSON.stringify({ error: "Query is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-
-    if (query.length > 500) {
-      return new Response(
-        JSON.stringify({ error: "Query too long", message: "Maximum 500 characters allowed" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (String(query).length > 500) {
+      return new Response(JSON.stringify({ error: "Query too long", message: "Max 500 chars" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const startTime = Date.now();
-    const normalizedQuery = normalizeQuery(query);
-    const queryHash = await hashQuery(normalizedQuery);
+    const normalized = normalizeQuery(query);
+    const queryHash = await hashQuery(`${user.id}:${normalized}`);
 
-    // Step 1: Check user rate limits
+    // Rate limit
     const currentMonth = new Date();
-    currentMonth.setDate(1);
-    currentMonth.setHours(0, 0, 0, 0);
+    currentMonth.setDate(1); currentMonth.setHours(0, 0, 0, 0);
     const periodStart = currentMonth.toISOString().split("T")[0];
-
-    let { data: usage } = await supabase
-      .from("dia_user_usage")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("period_start", periodStart)
-      .single();
-
+    let { data: usage } = await admin.from("dia_user_usage").select("*")
+      .eq("user_id", user.id).eq("period_start", periodStart).single();
     if (!usage) {
-      // Create usage record for new period
-      const { data: newUsage, error: insertError } = await supabase
-        .from("dia_user_usage")
-        .insert({
-          user_id: user.id,
-          period_start: periodStart,
-          query_count: 0,
-          query_limit: 10, // Default free tier
-        })
-        .select()
-        .single();
-
-      if (insertError) {
-        console.error("Error creating usage record:", insertError);
-      }
+      const { data: newUsage } = await admin.from("dia_user_usage").insert({
+        user_id: user.id, period_start: periodStart, query_count: 0, query_limit: 10,
+      }).select().single();
       usage = newUsage;
     }
-
     if (usage && usage.query_count >= usage.query_limit) {
-      return new Response(
-        JSON.stringify({
-          error: "Monthly query limit reached",
-          message: "You've used all your DIA queries this month",
-          limit: usage.query_limit,
-          used: usage.query_count,
-          resets_at: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
-        }),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({
+        error: "Monthly query limit reached",
+        message: "You've used all your DIA queries this month",
+        limit: usage.query_limit, used: usage.query_count,
+        resets_at: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
+      }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Step 2: Check cache
-    const { data: cachedQuery } = await supabase
-      .from("dia_queries")
-      .select("*")
+    // Cache lookup (per-user, since tool results are user-scoped)
+    const { data: cached } = await admin.from("dia_queries").select("*")
       .eq("query_hash", queryHash)
-      .gt("expires_at", new Date().toISOString())
-      .single();
+      .gt("expires_at", new Date().toISOString()).maybeSingle();
 
     let response: any;
     let cacheHit = false;
+    let toolsFired: string[] = [];
 
-    if (cachedQuery) {
-      // Cache hit!
+    if (cached) {
       cacheHit = true;
       response = {
-        answer: cachedQuery.perplexity_response.choices[0].message.content,
-        citations: cachedQuery.citations || [],
-        network_matches: cachedQuery.network_matches || { profiles: [], events: [], projects: [], hashtags: [], opportunities: [] },
+        answer: cached.perplexity_response?.answer ?? "",
+        citations: cached.citations ?? [],
+        network_matches: cached.network_matches ?? emptyResults(),
         cached: true,
       };
-
-      // Increment cache hit counter (fire and forget)
-      supabase
-        .from("dia_queries")
-        .update({ cache_hits: (cachedQuery.cache_hits || 0) + 1 })
-        .eq("id", cachedQuery.id)
-        .then(() => {})
-        .catch((err: any) => console.error("Cache hit update failed:", err));
+      admin.from("dia_queries").update({ cache_hits: (cached.cache_hits ?? 0) + 1 })
+        .eq("id", cached.id).then(() => {}).catch(() => {});
     } else {
-      // Cache miss - call Perplexity
-      const perplexityResponse = await callPerplexity(query);
-      const keywords = extractKeywords(query);
-      const networkMatches = await queryNetworkMatches(supabase, keywords);
-
-      // Calculate estimated cost (Sonar: $1/1M input, $1/1M output + $5/1K requests)
-      const tokensUsed = (perplexityResponse.usage?.prompt_tokens || 0) +
-                         (perplexityResponse.usage?.completion_tokens || 0);
-      const tokenCost = tokensUsed * 0.000001; // $1 per 1M tokens
-      const requestCost = 0.005; // $5 per 1K requests = $0.005 per request
-      const estimatedCost = tokenCost + requestCost;
-
-      // Cache the response
-      const { error: cacheError } = await supabase.from("dia_queries").insert({
-        query_hash: queryHash,
-        query_text: query,
-        normalized_query: normalizedQuery,
-        perplexity_response: perplexityResponse,
-        citations: perplexityResponse.citations || [],
-        network_matches: networkMatches,
-        model_used: "sonar",
-        tokens_used: tokensUsed,
-        estimated_cost: estimatedCost,
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
-      });
-
-      if (cacheError) {
-        console.error("Cache insert error:", cacheError);
-      }
+      const loop = await runToolLoop(query, user.id, token, lovableKey);
+      const deduped = dedupe(loop.results);
+      toolsFired = loop.toolsFired;
 
       response = {
-        answer: perplexityResponse.choices[0].message.content,
-        citations: perplexityResponse.citations || [],
-        network_matches: networkMatches,
+        answer: loop.answer,
+        citations: loop.citations,
+        network_matches: deduped,
         cached: false,
       };
 
-      // Update user usage stats
-      const { error: usageError } = await supabase
-        .from("dia_user_usage")
-        .update({
-          query_count: (usage?.query_count || 0) + 1,
-          total_tokens_used: (usage?.total_tokens_used || 0) + tokensUsed,
-          total_estimated_cost: parseFloat((usage?.total_estimated_cost || 0)) + estimatedCost,
-          last_query_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id)
-        .eq("period_start", periodStart);
+      // Cache (24h)
+      await admin.from("dia_queries").insert({
+        query_hash: queryHash,
+        query_text: query,
+        normalized_query: normalized,
+        perplexity_response: { answer: loop.answer, tools_fired: toolsFired },
+        citations: loop.citations,
+        network_matches: deduped,
+        model_used: MODEL,
+        tokens_used: 0,
+        estimated_cost: 0,
+        expires_at: new Date(Date.now() + 24 * 3600_000).toISOString(),
+      }).then(() => {}).catch((e: any) => console.error("cache insert:", e?.message));
 
-      if (usageError) {
-        console.error("Usage update error:", usageError);
-      }
+      // Update usage
+      await admin.from("dia_user_usage").update({
+        query_count: (usage?.query_count ?? 0) + 1,
+        last_query_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }).eq("user_id", user.id).eq("period_start", periodStart);
     }
 
-    // Log the query (for analytics)
-    const { error: logError } = await supabase.from("dia_query_log").insert({
+    // Log
+    admin.from("dia_query_log").insert({
       user_id: user.id,
       query_text: query,
       cache_hit: cacheHit,
       response_time_ms: Date.now() - startTime,
-      source: source,
-    });
+      source,
+    }).then(() => {}).catch(() => {});
 
-    if (logError) {
-      console.error("Query log insert error:", logError);
-    }
-
-    // Return response
-    return new Response(
-      JSON.stringify({
-        success: true,
-        data: response,
-        usage: {
-          queries_used: (usage?.query_count || 0) + (cacheHit ? 0 : 1),
-          queries_limit: usage?.query_limit || 10,
-          queries_remaining: Math.max(0, (usage?.query_limit || 10) - (usage?.query_count || 0) - (cacheHit ? 0 : 1)),
-        },
-        response_time_ms: Date.now() - startTime,
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
-    );
-
-  } catch (error) {
-    console.error("DIA Search Error:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Internal server error",
-        message: error.message || "Something went wrong. Please try again."
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
-    );
+    return new Response(JSON.stringify({
+      success: true,
+      data: response,
+      usage: {
+        queries_used: (usage?.query_count ?? 0) + (cacheHit ? 0 : 1),
+        queries_limit: usage?.query_limit ?? 10,
+        queries_remaining: Math.max(0, (usage?.query_limit ?? 10) - (usage?.query_count ?? 0) - (cacheHit ? 0 : 1)),
+      },
+      response_time_ms: Date.now() - startTime,
+      tools_fired: toolsFired,
+    }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  } catch (err: any) {
+    console.error("DIA search error:", err?.message ?? err);
+    return new Response(JSON.stringify({
+      error: "Internal server error",
+      message: err?.message ?? "Something went wrong",
+    }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
