@@ -13485,11 +13485,15 @@ export type Database = {
           author_headline: string
           author_id: string
           author_username: string
+          bookmark_count: number
           comments_count: number
+          comments_disabled: boolean
           content: string
+          country_count: number
           created_at: string
           event_id: string
           gallery_urls: string[]
+          has_reshared: boolean
           id: string
           image_url: string
           likes_count: number
@@ -13499,6 +13503,7 @@ export type Database = {
           link_url: string
           linked_entity_id: string
           linked_entity_type: string
+          member_count: number
           metadata: Json
           original_author_avatar_url: string
           original_author_full_name: string
@@ -13511,13 +13516,18 @@ export type Database = {
           original_post_id: string
           post_type: string
           privacy_level: string
+          progress_pct: number
+          reshare_count: number
+          roles_needed: Json
           slug: string
           space_id: string
+          story_type: string
           subtitle: string
           title: string
           updated_at: string
           user_has_bookmarked: boolean
           user_has_liked: boolean
+          view_count: number
         }[]
       }
       get_unread_notification_count: {
