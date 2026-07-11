@@ -786,13 +786,10 @@ function App() {
                   <DiaPreferences />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/dia" element={
-                <OnboardingGuard>
-                  <DiaPage />
-                </OnboardingGuard>
-              } />
+              {/* /dna/dia is deprecated - DIA lives in a right-side sheet */}
+              <Route path="/dna/dia" element={<Navigate to="/dna/feed" replace />} />
               {/* Legacy route redirect (ADIN was renamed to DIA) */}
-              <Route path="/dna/adin" element={<Navigate to="/dna/dia" replace />} />
+              <Route path="/dna/adin" element={<Navigate to="/dna/feed" replace />} />
               {/* ========== ANALYTICS ========== */}
               <Route path="/dna/analytics" element={
                 <OnboardingGuard>
