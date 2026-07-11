@@ -10,8 +10,10 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SettingsLayout } from '@/components/settings/SettingsLayout';
-import { Loader2, Layout, Eye, RotateCcw } from 'lucide-react';
+import { Loader2, Layout, Eye, RotateCcw, Compass } from 'lucide-react';
 import { getErrorMessage } from '@/lib/errorLogger';
+import { useFirstRunTour } from '@/hooks/useFirstRunTour';
+
 
 interface DisplayPreferences {
   display_density: 'comfortable' | 'compact';
@@ -36,6 +38,8 @@ export default function PreferencesSettings() {
   const { data: profile, isLoading } = useProfile();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const tour = useFirstRunTour();
+
 
   const [preferences, setPreferences] = useState<DisplayPreferences>(DEFAULT_PREFERENCES);
   const [saving, setSaving] = useState(false);
@@ -243,6 +247,36 @@ export default function PreferencesSettings() {
           </CardContent>
         </Card>
 
+        {/* First-run tour */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Compass className="h-5 w-5" />
+              First-run tour
+            </CardTitle>
+            <CardDescription>
+              Restart the guided "first five moves" walkthrough. Steps you've
+              already completed on your profile will remain checked.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              disabled={tour.resetPending}
+              onClick={() => {
+                tour.resetTour();
+                toast({
+                  title: 'Tour restarted',
+                  description: 'Head to your feed to see the first-run tour again.',
+                });
+              }}
+            >
+              {tour.resetPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Restart tour
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Reset */}
         <Card>
           <CardHeader>
@@ -261,6 +295,7 @@ export default function PreferencesSettings() {
             </Button>
           </CardContent>
         </Card>
+
       </div>
     </SettingsLayout>
   );
