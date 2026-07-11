@@ -13,6 +13,9 @@ import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { GatedActionButton } from '@/components/gating/GatedActionButton';
+import type { FeatureKey } from '@/config/profileGates';
+
 
 interface ProfileV2EventsProps {
   profile: ProfileV2Data;
@@ -306,7 +309,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
     past: EventListItem[],
     emptyTitle: string,
     emptyDescription: string,
-    emptyAction: { label: string; onClick: () => void }
+    emptyAction: { label: string; onClick: () => void; gateFeature?: FeatureKey }
   ) => {
     if (upcoming.length === 0 && past.length === 0) {
       return (
@@ -319,13 +322,23 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             {emptyDescription}
           </p>
           {isOwner && (
-            <Button onClick={emptyAction.onClick}>
-              {emptyAction.label}
-            </Button>
+            emptyAction.gateFeature ? (
+              <GatedActionButton
+                feature={emptyAction.gateFeature}
+                onAllowed={emptyAction.onClick}
+              >
+                {emptyAction.label}
+              </GatedActionButton>
+            ) : (
+              <Button onClick={emptyAction.onClick}>
+                {emptyAction.label}
+              </Button>
+            )
           )}
         </div>
       );
     }
+
 
     return (
       <div className="space-y-6">
@@ -437,7 +450,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
               isOwner
                 ? 'Create your first event to bring the community together!'
                 : `${profile.full_name || 'This user'} hasn't hosted any events yet.`,
-              { label: 'Create Event', onClick: () => composer.open('event') }
+              { label: 'Create Event', onClick: () => composer.open('event'), gateFeature: 'event_create' }
             )}
           </TabsContent>
 

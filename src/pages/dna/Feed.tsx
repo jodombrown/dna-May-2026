@@ -263,7 +263,15 @@ const DnaFeed = () => {
         >
           {/* Hero Greeting Zone */}
           <div className="space-y-3 mb-3">
-            <FeedHeroGreeting onComposerOpen={(mode) => composer.open(mode as 'post' | 'event' | 'story')} />
+            <FeedHeroGreeting
+              onComposerOpen={(mode) => {
+                // Map 'post' greeting pill to the story composer since
+                // ComposerMode doesn't have a 'post' variant.
+                const resolved = mode === 'post' ? 'story' : mode;
+                composer.open(resolved as 'event' | 'story');
+              }}
+            />
+
             <ProfileCompletionNudge variant="banner" threshold={40} />
           </div>
 
