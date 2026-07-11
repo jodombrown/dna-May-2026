@@ -67,15 +67,10 @@ export const OnboardingRightRail: React.FC = () => {
   }
 
   if (stage === 'complete') {
-    // Quick-win: once the user hits 100%, hide this panel entirely.
-    // It will reappear automatically if completion later drops below 100%
-    // (the ack marker is auto-cleared by useProfileCompleteAck).
-    if (!acked) {
-      // Fire-and-forget: mark as acknowledged so the celebration state
-      // is persisted without ever rendering the card.
-      ack();
-    }
-    return null;
+    // Quick-win: at 100% the panel disappears entirely. Persist the ack
+    // so the celebration state is recorded; the row is auto-cleared by
+    // useProfileCompleteAck if completion later drops below 100%.
+    return <CompleteAutoAck acked={acked} ack={ack} />;
   }
 
 
