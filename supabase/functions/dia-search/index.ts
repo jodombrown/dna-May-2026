@@ -102,11 +102,19 @@ async function callGateway(messages: ChatMessage[], apiKey: string): Promise<any
   return resp.json();
 }
 
+// Prior turns replayed as follow-up context (max 4). Kept short to stay
+// under the token budget — we send the previous user question and a
+// truncated assistant answer, no tool payloads.
+interface PriorTurn { question: string; answer: string }
+const MAX_PRIOR_TURNS = 4;
+const PRIOR_ANSWER_CLIP = 600;
+
 async function runToolLoop(
   query: string,
   userId: string,
   accessToken: string,
   apiKey: string,
+  priorTurns: PriorTurn[] = [],
 ): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[]; tokensUsed: number }> {
   const userSupabase = makeUserClient(accessToken);
   const ctx = { userId, supabase: userSupabase };
@@ -122,8 +130,13 @@ async function runToolLoop(
 
   const messages: ChatMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: query },
   ];
+  // Replay up to MAX_PRIOR_TURNS previous Q&A pairs so DIA can refine.
+  for (const t of priorTurns.slice(-MAX_PRIOR_TURNS)) {
+    messages.push({ role: "user", content: t.question });
+    messages.push({ role: "assistant", content: (t.answer ?? "").slice(0, PRIOR_ANSWER_CLIP) });
+  }
+  messages.push({ role: "user", content: query });
 
   for (let step = 0; step < MAX_TOOL_STEPS; step++) {
     if (tokensUsed > MAX_TOKENS_TOTAL) break;
