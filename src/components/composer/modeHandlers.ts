@@ -11,9 +11,11 @@ import type { ComposerMode, ComposerFormData } from '@/hooks/useUniversalCompose
 import { supabase } from '@/integrations/supabase/client';
 import { MateMasie } from '@/components/icons/adinkra';
 import {
+  createFeedPost,
   createStandardPost,
   createStoryPost,
 } from '@/lib/feedWriter';
+import { createSpace, type SpaceType } from '@/services/spacesService';
 import type { UniversalFeedItem } from '@/types/feed';
 
 // ============================================================
@@ -179,6 +181,28 @@ function buildUniversalFeedItemForStory(
   };
 }
 
+/**
+ * Composer "Type" labels → DB space_type (spaces_space_type_check allows
+ * project | working_group | initiative | program). Labels the constraint
+ * doesn't know fold into their nearest kin.
+ */
+function toSpaceType(label?: string): SpaceType {
+  switch ((label ?? '').toLowerCase()) {
+    case 'project':
+    case 'venture':
+      return 'project';
+    case 'working group':
+    case 'working_group':
+      return 'working_group';
+    case 'program':
+      return 'program';
+    case 'initiative':
+    case 'campaign':
+    default:
+      return 'initiative';
+  }
+}
+
 // ============================================================
 // Mode Handlers
 // ============================================================
@@ -187,8 +211,8 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
   connect: {
     label: 'Make a Connection',
     shortLabel: 'Connect',
-    submitLabel: 'Share',
-    submittingLabel: 'Sharing...',
+    submitLabel: 'Post',
+    submittingLabel: 'Posting...',
     icon: 'UserPlus',
     accentColor: '#4A8D77',
     accentClass: 'bg-bevel-connect',
@@ -227,27 +251,29 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
   story: {
     label: 'Tell a Story',
     shortLabel: 'Tell',
-    submitLabel: 'Publish',
-    submittingLabel: 'Publishing...',
+    submitLabel: 'Post',
+    submittingLabel: 'Posting...',
     icon: 'BookOpen',
     accentColor: '#2A7A8C',
     accentClass: 'bg-[#2A7A8C]',
     hoverClass: 'hover:bg-[#236879]',
     glowClass: 'shadow-[0_0_12px_rgba(42,122,140,0.4)]',
+    // BD085 rebuild: the body is the only gate. A thought shared with the
+    // diaspora is a story, however short; the headline is optional.
     validate: (data) => {
       const errors: Record<string, string> = {};
-      if (!data.title || data.title.trim().length === 0) {
-        errors.title = 'Give your story a title';
-      }
-      if (!data.content || data.content.trim().length < 400) {
-        errors.content = 'Stories need at least 400 characters';
+      if (!data.content || data.content.trim().length === 0) {
+        errors.content = 'Write something to share';
       }
       return { isValid: Object.keys(errors).length === 0, errors };
     },
     submit: async (data, context) => {
+      const title =
+        (data.title && data.title.trim()) ||
+        data.content.trim().split('\n')[0].slice(0, 80);
       const story = await createStoryPost({
         authorId: context.userId,
-        storyTitle: data.title,
+        storyTitle: title,
         storyBody: data.content,
         storySubtitle: data.subtitle,
         storyType: data.storyType || 'update',
@@ -257,7 +283,7 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         eventId: context.eventId,
       });
 
-      const createdPost = buildUniversalFeedItemForStory(story, data, context);
+      const createdPost = buildUniversalFeedItemForStory(story, { ...data, title }, context);
       return { success: true, createdPost };
     },
     getDefaultValues: () => ({ title: '', content: '', subtitle: '', heroImage: undefined, storyType: undefined, galleryUrls: [] }),
@@ -268,58 +294,29 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
   event: {
     label: 'Host an Event',
     shortLabel: 'Host',
-    submitLabel: 'Create Event',
-    submittingLabel: 'Creating...',
+    submitLabel: 'Publish event',
+    submittingLabel: 'Publishing...',
     icon: 'Calendar',
     accentColor: '#C4942A',
     accentClass: 'bg-[#C4942A]',
     hoverClass: 'hover:bg-[#a87e24]',
     glowClass: 'shadow-[0_0_12px_rgba(196,148,42,0.4)]',
+    // BD085 rebuild: the body gates the button; the date gates the substrate.
+    // The composer parses the natural-language "When" into eventDate/eventTime
+    // before submit — if nothing parseable arrived, say so plainly.
     validate: (data) => {
       const errors: Record<string, string> = {};
-      if (!data.title || data.title.trim().length < 10) {
-        errors.title = 'Event title must be at least 10 characters';
+      if (!data.content || data.content.trim().length === 0) {
+        errors.content = 'Tell people what to expect';
       }
       if (!data.eventDate) {
-        errors.eventDate = 'When does it start?';
-      }
-      if (!data.eventEndDate && !data.eventEndTime) {
-        errors.eventEndDate = 'When does it end?';
-      }
-      if (data.eventDate && data.eventEndDate) {
-        const startStr = data.eventTime
-          ? `${data.eventDate}T${data.eventTime}:00`
-          : `${data.eventDate}T12:00:00`;
-        const endStr = data.eventEndTime
-          ? `${data.eventEndDate}T${data.eventEndTime}:00`
-          : `${data.eventEndDate}T13:00:00`;
-        if (new Date(startStr) >= new Date(endStr)) {
-          errors.eventEndDate = 'End time must be after start time';
-        }
-      }
-      if (data.eventDate) {
+        errors.eventDate = 'Add a date DIA can read — e.g. "Mar 15, 6:00pm"';
+      } else {
         const startStr = data.eventTime
           ? `${data.eventDate}T${data.eventTime}:00`
           : `${data.eventDate}T23:59:00`;
         if (new Date(startStr) <= new Date()) {
           errors.eventDate = 'Event must be in the future';
-        }
-      }
-      if (!data.content || data.content.trim().length < 50) {
-        errors.content = 'Tell people what to expect (at least 50 characters)';
-      }
-      const format = data.format || 'in_person';
-      if ((format === 'in_person' || format === 'hybrid') && !data.location) {
-        errors.location = 'Where is it happening?';
-      }
-      if ((format === 'virtual' || format === 'hybrid') && !data.meetingUrl) {
-        errors.meetingUrl = 'Add a meeting link';
-      }
-      if (data.maxAttendees !== undefined && data.maxAttendees !== null) {
-        if (!Number.isInteger(data.maxAttendees) || data.maxAttendees < 1) {
-          errors.maxAttendees = 'Capacity must be at least 1';
-        } else if (data.maxAttendees > 100000) {
-          errors.maxAttendees = 'Capacity is too large (max 100,000)';
         }
       }
       return { isValid: Object.keys(errors).length === 0, errors };
@@ -352,8 +349,12 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         locationCountry = 'Unknown';
       }
 
+      const title =
+        (data.title && data.title.trim()) ||
+        data.content.trim().split('\n')[0].slice(0, 80);
+
       const eventPayload = {
-        title: data.title || '',
+        title,
         description: data.content,
         event_type: data.eventType || 'meetup',
         format: data.format || 'in_person',
@@ -403,6 +404,10 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         return { success: false, error: response.data.error || 'Failed to create event' };
       }
 
+      // Post envelope: the events INSERT trigger (create_event_feed_post)
+      // already writes posts(post_type='event', linked_entity, author =
+      // organizer). Writing it here too would double-post.
+
       return { success: true, createdPost: null };
     },
     getDefaultValues: () => ({
@@ -417,26 +422,60 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
   },
 
   space: {
-    label: 'Start a Space',
+    label: 'Start a Collaboration',
     shortLabel: 'Start',
-    submitLabel: 'Launch Space',
-    submittingLabel: 'Launching...',
+    submitLabel: 'Create Space',
+    submittingLabel: 'Creating...',
     icon: 'MateMasie',
     accentColor: '#2D5A3D',
-    accentClass: 'bg-[#2D5A3D]',
-    hoverClass: 'hover:bg-[#244a32]',
+    accentClass: 'bg-bevel-space',
+    hoverClass: 'hover:bg-bevel-space/90',
     glowClass: 'shadow-[0_0_12px_rgba(45,90,61,0.4)]',
-    // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
-    validate: () => ({ isValid: true, errors: {} }),
-    submit: async () => {
+    // SPACE COMPOSES INLINE (BD087 reversal). Same substrate service the
+    // canonical /dna/collaborate creation page uses; the INSERT trigger seats
+    // the author as lead. Then the post envelope shares it to the feed.
+    validate: (data) => {
+      const errors: Record<string, string> = {};
+      if (!data.content || data.content.trim().length === 0) {
+        errors.content = 'Say what you are building';
+      }
+      return { isValid: Object.keys(errors).length === 0, errors };
+    },
+    submit: async (data, context) => {
+      const name =
+        (data.title && data.title.trim()) ||
+        data.content.trim().split('\n')[0].slice(0, 80);
+
+      const roles = (data.skillsNeeded ?? []).map((r) => r.trim()).filter(Boolean);
+
+      const created = await createSpace({
+        name,
+        createdBy: context.userId,
+        spaceType: toSpaceType(data.spaceCategory),
+        visibility: 'public',
+        description: data.content,
+        focusAreas: roles,
+      });
+
+      // Post envelope \u2014 the Space is shared to the feed as post_type='space'.
+      await createFeedPost({
+        authorId: context.userId,
+        postType: 'space',
+        content: data.content,
+        linkedEntityType: 'space',
+        linkedEntityId: created.id,
+        spaceId: created.id,
+        mediaUrl: data.mediaUrl,
+      });
+
       return { success: true, createdPost: null };
     },
     getDefaultValues: () => ({
       title: '', content: '', spaceCategory: undefined,
-      visibility: 'public', mediaUrl: undefined,
+      visibility: 'public', mediaUrl: undefined, skillsNeeded: [],
     }),
-    successMessage: 'Spaces are being rebuilt \u2014 coming soon.',
-    errorMessage: 'Spaces are being rebuilt \u2014 coming soon.',
+    successMessage: 'Space created and shared to your feed.',
+    errorMessage: "We couldn't create this Space. Your details are safe\u2014please try again.",
   },
 
   need: {
@@ -449,14 +488,13 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     accentClass: 'bg-bevel-opportunity',
     hoverClass: 'hover:bg-bevel-opportunity/90',
     glowClass: 'shadow-[0_0_12px_rgba(184,115,51,0.4)]',
-    // BD084: the give \u2192 to \u2192 impact triple. The impact is what makes someone act.
+    // BD084: the give \u2192 to \u2192 impact triple. The impact is what makes someone
+    // act \u2014 DIA extracts it, the fields invite it, but only the body gates
+    // the button (BD085 rebuild).
     validate: (data) => {
       const errors: Record<string, string> = {};
       if (!data.content || data.content.trim().length === 0) {
         errors.content = 'Say what you can give, or what you need';
-      }
-      if (!data.intendedImpact || data.intendedImpact.trim().length === 0) {
-        errors.intendedImpact = 'Name the consequence \u2014 the impact is what makes someone act';
       }
       return { isValid: Object.keys(errors).length === 0, errors };
     },
@@ -487,6 +525,23 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
 
       if (error || !row) {
         return { success: false, error: error?.message || 'Failed to post opportunity' };
+      }
+
+      // Post envelope (BD085 submit table): the opportunity also lands in the
+      // feed as post_type='need' with the linked entity. Non-fatal \u2014 the
+      // opportunity exists even if the envelope write fails.
+      try {
+        await createFeedPost({
+          authorId: context.userId,
+          postType: 'need',
+          content: data.content,
+          linkedEntityType: 'need',
+          linkedEntityId: row.id,
+          spaceId: context.spaceId,
+          mediaUrl: data.mediaUrl,
+        });
+      } catch {
+        // Envelope is best-effort; the substrate write already succeeded.
       }
 
       return { success: true, createdPost: null };

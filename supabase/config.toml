@@ -44,6 +44,8 @@ project_id = "ybhssuehmfnxrzneobok"
     verify_jwt = true
   [functions.curate-diaspora-events]
     verify_jwt = false
+  [functions.dia-compose-read]
+    verify_jwt = true
   [functions.dia-daily-pulse]
     verify_jwt = true
   [functions.dia-inbox-brief]

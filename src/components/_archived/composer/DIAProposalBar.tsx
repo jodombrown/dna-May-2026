@@ -1,3 +1,6 @@
+// RETIRED (Phase C composer rebuild): the regex extractor was replaced by the
+// dia-compose-read edge function, and the proposal bar by the quiet DIA line.
+// Kept for reference; excluded from the build (tsconfig excludes _archived).
 /**
  * DIA Proposal Bar (BD085)
  *
@@ -16,7 +19,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Sparkles, X, ArrowRight } from 'lucide-react';
-import { DIAExtraction } from '@/services/diaFieldExtraction';
+import { DIAExtraction } from './regexFieldExtraction';
 import { modeConfig } from '@/config/composerModes';
 import { cn } from '@/lib/utils';
 

@@ -26,14 +26,6 @@ export interface ComposerModeConfig {
   /** Placeholder in the body field. */
   placeholder: string;
   enabled: boolean;
-  /**
-   * Where the verb composes.
-   *   'inline'  — fields render in the composer
-   *   'route'   — the verb is a launcher; the substrate owns creation
-   */
-  composePath: 'inline' | 'route';
-  /** For composePath: 'route'. */
-  route?: string;
 }
 
 export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
@@ -43,7 +35,6 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
     bevelToken: 'bevel-connect',
     placeholder: 'Who are you looking for, or what are you offering?',
     enabled: true,
-    composePath: 'inline',
   },
   event: {
     label: 'Host an Event',
@@ -51,7 +42,6 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
     bevelToken: 'bevel-event',
     placeholder: 'Bring the diaspora together. What are you hosting?',
     enabled: true,
-    composePath: 'inline',
   },
   space: {
     label: 'Start a Collaboration',
@@ -59,10 +49,9 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
     bevelToken: 'bevel-space',
     placeholder: 'What are you building, and who do you need?',
     enabled: true,
-    // Collaborate rides the existing Spaces substrate, which already owns
-    // creation. The verb is a launcher, not a duplicate form.
-    composePath: 'route',
-    route: '/dna/collaborate/spaces/new',
+    // SPACE COMPOSES INLINE (reversal of BD087). On submit, the composer
+    // calls the same Spaces substrate service the /dna/collaborate flow
+    // uses — the member never leaves the composer.
   },
   need: {
     label: 'Offer or Ask',
@@ -70,7 +59,6 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
     bevelToken: 'bevel-opportunity',
     placeholder: 'What can you give, or what do you need?',
     enabled: true,
-    composePath: 'inline',
   },
   story: {
     label: 'Tell a Story',
@@ -78,7 +66,6 @@ export const COMPOSER_MODE_CONFIG: Record<ComposerMode, ComposerModeConfig> = {
     bevelToken: 'bevel-story',
     placeholder: "What's on your mind?",
     enabled: true,
-    composePath: 'inline',
   },
 };
 
