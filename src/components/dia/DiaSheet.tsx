@@ -114,6 +114,7 @@ const DiaSheet: React.FC = () => {
                   hideBrandInAnswer
                   initialQuery={seedPrompt}
                   autoSearch={!!seedPrompt && seedNonce > 0}
+                  suggestions={suggestions.length ? suggestions : undefined}
                 />
               </TabsContent>
 
