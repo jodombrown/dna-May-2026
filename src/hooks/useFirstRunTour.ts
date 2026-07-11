@@ -140,6 +140,40 @@ export function useFirstRunTour() {
     },
   });
 
+  // Realtime: invalidate signals + tour state the moment the user's
+  // connections or event RSVPs change, so the panel updates without a
+  // page refresh. The profile table already has its own realtime
+  // subscription in useProfile, which drives satisfiesField steps.
+  useEffect(() => {
+    if (!user?.id) return;
+    const uid = user.id;
+    const invalidateSignals = () => {
+      qc.invalidateQueries({ queryKey: ['first-run-tour-signals', uid] });
+    };
+    const connCh = supabase
+      .channel(`first-run-tour:conn:${uid}`)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'connections',
+        filter: `requester_id=eq.${uid}`,
+      }, invalidateSignals)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'connections',
+        filter: `recipient_id=eq.${uid}`,
+      }, invalidateSignals)
+      .subscribe();
+    const evtCh = supabase
+      .channel(`first-run-tour:evt:${uid}`)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'event_attendees',
+        filter: `user_id=eq.${uid}`,
+      }, invalidateSignals)
+      .subscribe();
+    return () => {
+      supabase.removeChannel(connCh);
+      supabase.removeChannel(evtCh);
+    };
+  }, [user?.id, qc]);
+
   const completedFieldIds = useMemo(
     () => new Set(completed.map((c) => c.field)),
     [completed],
