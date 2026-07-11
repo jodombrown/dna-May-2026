@@ -320,10 +320,12 @@ export const UniversalComposer = ({
   const handler = MODE_HANDLERS[mode];
   const canPost = body.trim().length > 0 && !isSubmitting;
 
-  const disabledModes: ComposerMode[] = [
-    ...(context.eventId ? (['event'] as ComposerMode[]) : []),
-    ...(context.spaceId ? (['space'] as ComposerMode[]) : []),
-  ];
+  // You can't compose an event inside an event, or a Space inside a Space.
+  const isModeDisabled = useCallback(
+    (m: ComposerMode) =>
+      (m === 'event' && !!context.eventId) || (m === 'space' && !!context.spaceId),
+    [context.eventId, context.spaceId]
+  );
 
   const author = {
     name: profile?.display_name || profile?.username || 'You',
@@ -364,7 +366,12 @@ export const UniversalComposer = ({
           <div className="flex w-full items-start gap-5">
             {/* ---- Writing column ---- */}
             <div className="min-w-0 flex-1 space-y-3">
-              <ComposerVerbRail mode={mode} onPick={pickVerb} disabledModes={disabledModes} />
+              <ComposerVerbRail
+                mode={mode}
+                onPick={pickVerb}
+                diaVerb={!userPickedVerb ? proposal?.verb ?? null : null}
+                disabled={isModeDisabled}
+              />
 
               {/* Textarea — always first. Writing is the whole point. */}
               <Textarea
