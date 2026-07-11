@@ -40,7 +40,7 @@ import { ComposerVerbRail } from './ComposerVerbRail';
 import { ComposerFields } from './ComposerFields';
 import { ComposerCardPreview } from './ComposerCardPreview';
 import { MediaUploadButton } from './fields/MediaUploadButton';
-import { parseNaturalWhen } from '@/lib/parseNaturalWhen';
+import { resolveDate, type ResolvedDate, type ResolvedPlace } from '@/services/composeResolvers';
 import { cn } from '@/lib/utils';
 
 interface UniversalComposerProps {
@@ -75,6 +75,8 @@ interface DraftV2 {
   body: string;
   fields: Record<string, string>;
   mediaUrl?: string;
+  roles?: string[];
+  galleryUrls?: string[];
   savedAt: number;
 }
 
@@ -98,6 +100,11 @@ export const UniversalComposer = ({
   const [body, setBody] = useState('');
   const [fields, setFields] = useState<Record<string, string>>({});
   const [mediaUrl, setMediaUrl] = useState<string | undefined>(undefined);
+  const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
+  // Resolved fields (BD089) — DIA hands an answer, the member confirms it.
+  const [resolvedWhen, setResolvedWhen] = useState<ResolvedDate | null>(null);
+  const [place, setPlace] = useState<ResolvedPlace | null>(null);
+  const [roles, setRoles] = useState<string[]>([]);
   const [userPickedVerb, setUserPickedVerb] = useState(false);
   const [ownedByAuthor, setOwnedByAuthor] = useState<Set<string>>(new Set());
   const [previewOpenMobile, setPreviewOpenMobile] = useState(false);
@@ -137,6 +144,41 @@ export const UniversalComposer = ({
     [releaseField]
   );
 
+  // DIA proposes natural language ("Saturday at 6pm"); we resolve it to a real
+  // instant the member can see and correct. Only while DIA still owns "when".
+  useEffect(() => {
+    if (!proposal?.fields.when || ownedByAuthor.has('when')) return;
+    setResolvedWhen(resolveDate(proposal.fields.when));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [proposal]);
+
+  // DIA proposes roles as a comma-string; seed the chips from it until touched.
+  useEffect(() => {
+    if (!proposal?.fields.roles || ownedByAuthor.has('roles')) return;
+    const parsed = proposal.fields.roles.split(',').map((r) => r.trim()).filter(Boolean);
+    if (parsed.length) setRoles(parsed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [proposal]);
+
+  // The member cleared DIA's date or picked their own → it is theirs now.
+  const handleResolvedWhenChange = useCallback(
+    (r: ResolvedDate | null) => {
+      setResolvedWhen(r);
+      setOwnedByAuthor((s) => new Set(s).add('when'));
+      releaseField('when');
+    },
+    [releaseField]
+  );
+
+  const handleRolesChange = useCallback(
+    (next: string[]) => {
+      setRoles(next);
+      setOwnedByAuthor((s) => new Set(s).add('roles'));
+      releaseField('roles');
+    },
+    [releaseField]
+  );
+
   const pickVerb = useCallback(
     (m: ComposerMode) => {
       setUserPickedVerb(true);
@@ -155,6 +197,10 @@ export const UniversalComposer = ({
     setBody('');
     setFields({});
     setMediaUrl(undefined);
+    setGalleryUrls([]);
+    setResolvedWhen(null);
+    setPlace(null);
+    setRoles([]);
     setUserPickedVerb(false);
     setOwnedByAuthor(new Set());
     setPreviewOpenMobile(false);
@@ -175,9 +221,16 @@ export const UniversalComposer = ({
       setBody(draft.body);
       setFields(draft.fields ?? {});
       setMediaUrl(draft.mediaUrl);
+      setGalleryUrls(draft.galleryUrls ?? []);
+      setRoles(draft.roles ?? []);
+      // A saved event keeps its resolved date; re-derive it from the phrase the
+      // member confirmed so the chip (not an empty picker) shows on restore.
+      if (draft.fields?.when) setResolvedWhen(resolveDate(draft.fields.when));
       setDraftSavedAt(draft.savedAt ?? null);
       // Restored fields are the author's — DIA does not overwrite a draft.
-      setOwnedByAuthor(new Set(Object.keys(draft.fields ?? {})));
+      const owned = new Set(Object.keys(draft.fields ?? {}));
+      if (draft.roles?.length) owned.add('roles');
+      setOwnedByAuthor(owned);
       if (draft.mode && draft.mode !== mode) onModeChange(draft.mode);
     } catch {
       // Unreadable draft — start clean.
@@ -195,7 +248,7 @@ export const UniversalComposer = ({
     draftTimerRef.current = setTimeout(() => {
       try {
         if (body.trim()) {
-          const draft: DraftV2 = { mode, body, fields, mediaUrl, savedAt: Date.now() };
+          const draft: DraftV2 = { mode, body, fields, mediaUrl, roles, galleryUrls, savedAt: Date.now() };
           localStorage.setItem(draftKey(userId), JSON.stringify(draft));
           setDraftSavedAt(draft.savedAt);
         } else {
@@ -207,7 +260,7 @@ export const UniversalComposer = ({
       }
     }, 600);
     return () => clearTimeout(draftTimerRef.current);
-  }, [body, fields, mediaUrl, mode, isOpen, userId, successData]);
+  }, [body, fields, mediaUrl, roles, galleryUrls, mode, isOpen, userId, successData]);
 
   // ---- Success: DIA doesn't ceremonize. Close, toast, clear. ---------------
   useEffect(() => {
@@ -226,11 +279,13 @@ export const UniversalComposer = ({
 
   // ---- Submit: route by verb to the substrate ------------------------------
   const buildFormData = useCallback((): ComposerFormData | null => {
-    const base: ComposerFormData = { content: body, mediaUrl };
+    const cleanedGallery = galleryUrls.filter((u) => typeof u === 'string' && u.length > 0);
+    const base: ComposerFormData = { content: body, mediaUrl, galleryUrls: cleanedGallery };
 
     switch (mode) {
       case 'story':
-        return { ...base, title: fields.title?.trim() || undefined };
+        // Hero → posts.image_url, gallery → posts.gallery_urls.
+        return { ...base, title: fields.title?.trim() || undefined, heroImage: mediaUrl };
 
       case 'connect':
         return {
@@ -250,34 +305,48 @@ export const UniversalComposer = ({
         };
 
       case 'space':
+        // roles[] → space_roles rows (handler inserts them after createSpace).
         return {
           ...base,
           title: fields.title?.trim() || undefined,
           spaceCategory: fields.type || undefined,
-          skillsNeeded: fields.roles
-            ? fields.roles.split(',').map((r) => r.trim()).filter(Boolean)
-            : [],
+          skillsNeeded: roles,
         };
 
       case 'event': {
-        const parsed = fields.when ? parseNaturalWhen(fields.when) : null;
-        if (fields.when && !parsed) {
-          toast('DIA couldn’t read that date', {
-            description: 'Try something like "Mar 15, 6:00pm" or "Saturday at 6pm".',
+        // Resolve, don't guess (BD089): DIA's natural-language "when" became a
+        // real instant the member confirmed. Write that instant + zone.
+        if (!resolvedWhen) {
+          toast('Add a date DIA can read', {
+            description: 'Try "Saturday at 6pm" above, or pick a date below.',
           });
           return null;
         }
+        const start = new Date(resolvedWhen.iso);
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const eventDate = `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())}`;
+        const eventTime = `${pad(start.getHours())}:${pad(start.getMinutes())}`;
+        const typedWhere = fields.where?.trim();
+
         return {
           ...base,
           title: fields.title?.trim() || undefined,
-          eventDate: parsed?.date,
-          eventTime: parsed?.time,
-          location: fields.where || undefined,
+          startTime: resolvedWhen.iso,
+          eventDate,
+          eventTime,
+          timezone: resolvedWhen.timezone,
+          // Geocoded point (BD089) → events.location_lat / location_lng. A failed
+          // geocode keeps the typed city as text and writes NULL coordinates.
+          location: place?.displayName || typedWhere || undefined,
+          locationCity: place?.city || typedWhere || undefined,
+          locationCountry: place?.country || (typedWhere ? 'Unknown' : undefined),
+          locationLat: place?.lat,
+          locationLng: place?.lng,
           format: FORMAT_TO_DB[fields.format] ?? 'in_person',
         };
       }
     }
-  }, [mode, body, fields, mediaUrl]);
+  }, [mode, body, fields, mediaUrl, galleryUrls, roles, resolvedWhen, place]);
 
   const handleSubmit = useCallback(() => {
     const formData = buildFormData();
@@ -333,13 +402,25 @@ export const UniversalComposer = ({
     avatarUrl: profile?.avatar_url,
   };
 
+  // The card reads flat strings; fold the resolved date/place/roles back in so
+  // the live preview shows what the member will actually post.
+  const previewFields = useMemo(
+    () => ({
+      ...fields,
+      ...(roles.length ? { roles: roles.join(', ') } : {}),
+      ...(resolvedWhen ? { when: resolvedWhen.label } : {}),
+      ...(place ? { where: `${place.city}${place.country ? `, ${place.country}` : ''}` } : {}),
+    }),
+    [fields, roles, resolvedWhen, place]
+  );
+
   const preview = (
     <ComposerCardPreview
       mode={mode}
       body={body}
-      fields={fields}
+      fields={previewFields}
       author={author}
-      mediaPreviewUrl={mediaUrl}
+      mediaPreviewUrl={mediaUrl || galleryUrls[0]}
     />
   );
 
@@ -389,6 +470,16 @@ export const UniversalComposer = ({
                 values={fields}
                 diaFilled={diaFilled}
                 onChange={editField}
+                resolvedWhen={resolvedWhen}
+                onResolvedWhenChange={handleResolvedWhenChange}
+                place={place}
+                onPlaceResolve={setPlace}
+                roles={roles}
+                onRolesChange={handleRolesChange}
+                mediaUrl={mediaUrl}
+                onMediaChange={setMediaUrl}
+                galleryUrls={galleryUrls}
+                onGalleryChange={setGalleryUrls}
               />
 
               {/* Mobile: the card is a toggle, never a second scroll region. */}

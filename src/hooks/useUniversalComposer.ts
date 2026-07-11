@@ -80,6 +80,8 @@ export interface ComposerFormData {
   eventTime?: string;
   eventEndDate?: string;
   eventEndTime?: string;
+  /** Resolved ISO 8601 instant (BD089) — preferred source for events.start_time. */
+  startTime?: string;
   timezone?: string;
   eventType?: 'conference' | 'workshop' | 'meetup' | 'webinar' | 'networking' | 'social' | 'other';
   location?: string;

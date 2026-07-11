@@ -92,6 +92,14 @@ export interface UniversalFeedItem {
   direction?: 'seeking' | 'offering' | null;
   sector?: string | null;
   where?: string | null;
+  // Collaborate (Space) facets — flattened by mapFeedRow (BD088) so the Space
+  // card reads live counts and open roles straight off the item.
+  member_count?: number | null;
+  country_count?: number | null;
+  roles_needed?: Array<{ id?: string; title?: string } | string> | null;
+  space_type?: string | null;
+  space_state?: 'recruiting' | 'update' | null;
+  progress_pct?: number | null;
 }
 
 /**

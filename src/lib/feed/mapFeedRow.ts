@@ -68,12 +68,26 @@ export interface FeedRpcRow {
   original_image_url?: string | null;
   original_created_at?: string | null;
   metadata?: Record<string, unknown> | null;
+  // Collaborate (Space) facets — surfaced by get_universal_feed (BD088).
+  member_count?: number | string | null;
+  country_count?: number | string | null;
+  roles_needed?: Array<{ id?: string; title?: string } | string> | null;
+  space_type?: string | null;
+  space_state?: string | null;
+  progress_pct?: number | string | null;
 }
 
 const toNumber = (value: number | string | null | undefined): number => {
   if (value === null || value === undefined) return 0;
   const n = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(n) ? n : 0;
+};
+
+/** Like toNumber, but preserves "absent" so a Space card can hide a stat. */
+const toNumberOrNull = (value: number | string | null | undefined): number | null => {
+  if (value === null || value === undefined || value === '') return null;
+  const n = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(n) ? n : null;
 };
 
 export const mapFeedRow = (row: FeedRpcRow): UniversalFeedItem => {
@@ -142,5 +156,23 @@ export const mapFeedRow = (row: FeedRpcRow): UniversalFeedItem => {
           : null,
     sector: facet('sector'),
     where: facet('where'),
+    // Collaborate (Space) facets — read the row column first (BD088 RPC), then
+    // fall back to metadata so a Space card shows live counts and open roles
+    // instead of view_count wearing a "members" label.
+    member_count: toNumberOrNull(row.member_count ?? (metadata?.member_count as number | string | undefined)),
+    country_count: toNumberOrNull(row.country_count ?? (metadata?.country_count as number | string | undefined)),
+    roles_needed:
+      row.roles_needed ??
+      (Array.isArray(metadata?.roles_needed)
+        ? (metadata?.roles_needed as Array<{ id?: string; title?: string } | string>)
+        : null),
+    space_type: row.space_type ?? (typeof metadata?.space_type === 'string' ? (metadata?.space_type as string) : null),
+    space_state:
+      row.space_state === 'recruiting' || row.space_state === 'update'
+        ? row.space_state
+        : metadata?.space_state === 'recruiting' || metadata?.space_state === 'update'
+          ? (metadata?.space_state as 'recruiting' | 'update')
+          : null,
+    progress_pct: toNumberOrNull(row.progress_pct ?? (metadata?.progress_pct as number | string | undefined)),
   };
 };
