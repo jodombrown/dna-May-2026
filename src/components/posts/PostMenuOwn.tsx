@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MoreHorizontal, Edit2, Trash2, Pin, MessageSquareOff, Link, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +20,14 @@ interface PostMenuOwnProps {
   isPinned?: boolean;
   commentsDisabled?: boolean;
   onUpdate?: () => void;
+  /**
+   * When the post is a canonical announcement for a linked entity
+   * (event, space, opportunity, story...), Edit must route to that
+   * entity's editor instead of the plain-text post editor. Otherwise
+   * the owner can only rewrite the auto-generated announcement copy
+   * and never fix the underlying event details.
+   */
+  editHref?: string;
 }
 
 export function PostMenuOwn({
@@ -29,8 +38,10 @@ export function PostMenuOwn({
   isPinned = false,
   commentsDisabled = false,
   onUpdate,
+  editHref,
 }: PostMenuOwnProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const navigate = useNavigate();
   
   const {
     deletePost,
@@ -56,7 +67,15 @@ export function PostMenuOwn({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+          <DropdownMenuItem
+            onClick={() => {
+              if (editHref) {
+                navigate(editHref);
+                return;
+              }
+              setShowEditDialog(true);
+            }}
+          >
             <Edit2 className="h-4 w-4 mr-2" />
             Edit post
           </DropdownMenuItem>
