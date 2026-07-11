@@ -91,6 +91,7 @@ const DiaSheet: React.FC = () => {
             <DiaHistory onQueryClick={handleFromOtherTab} />
           </TabsContent>
         </Tabs>
+        </div>
       </SheetContent>
     </Sheet>
   );
