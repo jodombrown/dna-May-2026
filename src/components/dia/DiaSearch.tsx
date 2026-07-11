@@ -237,6 +237,38 @@ function DiaNoResults({ onSuggestionClick }: { onSuggestionClick: (suggestion: s
   );
 }
 
+/**
+ * Turn any profile.full_name occurrence in the answer text into a clickable
+ * link that routes to that profile. Names are matched case-insensitively as
+ * whole-word matches; longer names are tried first so "Jane Doe" beats "Jane".
+ */
+function renderAnswerWithProfileLinks(
+  answer: string,
+  profiles: Array<{ id: string; full_name: string }>,
+  onClick: (id: string) => void,
+): React.ReactNode {
+  const named = profiles.filter((p) => p.full_name && p.full_name.trim().length > 1);
+  if (!named.length) return answer;
+  const sorted = [...named].sort((a, b) => b.full_name.length - a.full_name.length);
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`\\b(${sorted.map((p) => esc(p.full_name)).join('|')})\\b`, 'gi');
+  const parts = answer.split(pattern);
+  return parts.map((part, i) => {
+    const match = sorted.find((p) => p.full_name.toLowerCase() === part.toLowerCase());
+    if (!match) return <React.Fragment key={i}>{part}</React.Fragment>;
+    return (
+      <button
+        key={i}
+        type="button"
+        onClick={() => onClick(match.id)}
+        className="text-emerald-700 hover:underline font-medium"
+      >
+        {part}
+      </button>
+    );
+  });
+}
+
 export function DiaSearch({
   source = 'dashboard',
   placeholder = 'Ask DIA about African opportunities, markets, or trends...',
@@ -519,14 +551,14 @@ export function DiaSearch({
                     <button
                       key={event.id}
                       onClick={() => handleEventClick(event.id)}
-                      className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group"
+                      className="flex items-center justify-between gap-2 w-full p-2.5 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group min-w-0"
                     >
-                      <div>
-                        <p className="font-medium text-sm flex items-center gap-1">
-                          {event.title}
-                          <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm truncate flex items-center gap-1">
+                          <span className="truncate">{event.title}</span>
+                          <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[11px] text-muted-foreground truncate">
                           {new Date(event.start_date).toLocaleDateString(undefined, {
                             weekday: 'short',
                             month: 'short',
@@ -535,8 +567,8 @@ export function DiaSearch({
                           })}
                         </p>
                       </div>
-                      <Badge variant="outline" className="text-xs">
-                        {event.relevance}
+                      <Badge variant="outline" className="text-[10px] h-5 px-1.5 shrink-0 max-w-[40%] truncate">
+                        <span className="truncate">{event.relevance}</span>
                       </Badge>
                     </button>
                   ))}
@@ -724,18 +756,19 @@ export function DiaSearch({
                 )}
                 <div className="flex items-center gap-2">
                   {response.data.cached && (
-                    <Badge variant="secondary" className="text-xs">Cached</Badge>
+                    <Badge variant="secondary" className="text-[10px] h-4 px-1.5">Cached</Badge>
                   )}
-                  <Badge variant="outline" className="text-xs">
-                    {response.response_time_ms}ms
-                  </Badge>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="prose prose-sm max-w-none dark:prose-invert">
-                <p className="whitespace-pre-wrap text-foreground/80 leading-relaxed">
-                  {response.data.answer}
+                <p className="whitespace-pre-wrap text-foreground/85 leading-relaxed text-sm break-words">
+                  {renderAnswerWithProfileLinks(
+                    response.data.answer,
+                    response.data.network_matches?.profiles ?? [],
+                    (pid) => navigate(`/dna/${pid}`),
+                  )}
                 </p>
               </div>
 
