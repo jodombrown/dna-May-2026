@@ -19,6 +19,11 @@ import { MODE_HANDLERS } from '@/components/composer/modeHandlers';
 import type { ComposerSubmitContext } from '@/components/composer/modeHandlers';
 import { logHighError } from '@/lib/errorLogger';
 import type { UniversalFeedItem } from '@/types/feed';
+import { DEFAULT_MODE, type ComposerMode } from '@/config/composerModes';
+
+// Re-exported so existing importers keep resolving ComposerMode from this hook,
+// while the single source of truth lives in the composer-mode config (BD075).
+export type { ComposerMode };
 
 interface InfiniteFeedData {
   pages: UniversalFeedItem[][];
@@ -41,8 +46,6 @@ export interface ComposerSuccessData {
   createdTitle: string;
   formDataSnapshot: ComposerFormData;
 }
-
-export type ComposerMode = 'post' | 'story' | 'event' | 'need' | 'space' | 'community';
 
 export interface ComposerContext {
   spaceId?: string;
@@ -91,11 +94,18 @@ export interface ComposerFormData {
   agenda?: AgendaItem[];
   dressCode?: string;
   tags?: string[];
-  // Need specific
+  // Need specific (Contribute)
   needType?: 'funding' | 'expertise' | 'resources' | 'volunteers' | 'partnership';
   targetAmount?: number;
   currency?: string;
   neededBy?: string;
+  // Contribute — the give → to → impact triple (BD084). DIA proposes; the
+  // member owns the final value (BD085).
+  direction?: 'need' | 'offer';
+  category?: string;
+  giveWhat?: string;
+  giveTo?: string;
+  intendedImpact?: string;
   // Space specific
   spaceDescription?: string;
   spaceCategory?: string;
@@ -112,7 +122,7 @@ export const useUniversalComposer = (initialContext?: ComposerContext) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
-  const [mode, setMode] = useState<ComposerMode>('post');
+  const [mode, setMode] = useState<ComposerMode>(DEFAULT_MODE);
   const [context, setContext] = useState<ComposerContext>(initialContext || {});
   const [isSubmitting, setIsSubmitting] = useState(false);
 

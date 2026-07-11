@@ -24,12 +24,12 @@ import type { ComposerMode } from '@/hooks/useUniversalComposer';
 // ============================================================
 
 const MODE_TOOLTIPS: Record<
-  Exclude<ComposerMode, 'community'>,
+  ComposerMode,
   { title: string; description: string }
 > = {
-  post: {
-    title: 'Share a Post',
-    description: 'Share updates, thoughts, and links with your diaspora network.',
+  connect: {
+    title: 'Make a Connection',
+    description: 'Share who you are looking for, or what you are offering, with your diaspora network.',
   },
   story: {
     title: 'Tell a Story',
@@ -40,12 +40,12 @@ const MODE_TOOLTIPS: Record<
     description: 'Create virtual, in-person, or hybrid gatherings for your community.',
   },
   space: {
-    title: 'Start a Space',
+    title: 'Start a Collaboration',
     description: 'Launch a project or initiative and build a team to collaborate.',
   },
   need: {
-    title: 'Post an Opportunity',
-    description: 'Share what you need or what you can offer: money, time, skills, or knowledge.',
+    title: 'Offer or Ask',
+    description: 'Share what you can give, or what you need: time, skills, network, or knowledge.',
   },
 };
 
@@ -100,7 +100,7 @@ export const ComposerOnboarding = ({
     onComplete();
   };
 
-  const modes = Object.keys(MODE_TOOLTIPS) as Array<Exclude<ComposerMode, 'community'>>;
+  const modes = Object.keys(MODE_TOOLTIPS) as ComposerMode[];
 
   return (
     <div
@@ -109,7 +109,7 @@ export const ComposerOnboarding = ({
       onKeyDown={handleInteraction}
     >
       {/* Tooltip overlay — positioned relative to parent */}
-      {hoveredMode && hoveredMode !== 'community' && MODE_TOOLTIPS[hoveredMode] && (
+      {hoveredMode && MODE_TOOLTIPS[hoveredMode] && (
         <OnboardingTooltip
           mode={hoveredMode}
           tooltip={MODE_TOOLTIPS[hoveredMode]}
@@ -145,7 +145,7 @@ export const ComposerOnboarding = ({
 // ============================================================
 
 interface OnboardingTooltipProps {
-  mode: Exclude<ComposerMode, 'community'>;
+  mode: ComposerMode;
   tooltip: { title: string; description: string };
   accentColor: string;
   isMobile: boolean;

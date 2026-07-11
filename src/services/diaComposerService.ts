@@ -6,7 +6,7 @@
  */
 
 import {
-  ComposerMode,
+  type ComposerMode,
   type DIASuggestion,
   type DIAAmbientConfig,
   DIA_AMBIENT_DEFAULTS,
@@ -77,7 +77,7 @@ export const diaComposerService = {
     ];
 
     if (
-      currentMode !== ComposerMode.EVENT &&
+      currentMode !== 'event' &&
       eventPatterns.some((p) => p.test(lowerText))
     ) {
       return {
@@ -87,14 +87,14 @@ export const diaComposerService = {
           'This sounds like an event. Switch to Convene mode to add date, location, and registration?',
         action: {
           type: 'switch_mode',
-          payload: { targetMode: ComposerMode.EVENT },
+          payload: { targetMode: 'event' },
         },
         confidence: 0.75,
       };
     }
 
     if (
-      currentMode !== ComposerMode.OPPORTUNITY &&
+      currentMode !== 'need' &&
       opportunityPatterns.some((p) => p.test(lowerText))
     ) {
       return {
@@ -104,14 +104,14 @@ export const diaComposerService = {
           'This looks like an opportunity. Switch to Contribute mode for better matching?',
         action: {
           type: 'switch_mode',
-          payload: { targetMode: ComposerMode.OPPORTUNITY },
+          payload: { targetMode: 'need' },
         },
         confidence: 0.7,
       };
     }
 
     if (
-      currentMode !== ComposerMode.STORY &&
+      currentMode !== 'story' &&
       storyIndicators.filter(Boolean).length >= 2
     ) {
       return {
@@ -121,14 +121,14 @@ export const diaComposerService = {
           'This looks like it could be a Story. Stories get 3x more engagement on DNA.',
         action: {
           type: 'switch_mode',
-          payload: { targetMode: ComposerMode.STORY },
+          payload: { targetMode: 'story' },
         },
         confidence: 0.65,
       };
     }
 
     if (
-      currentMode !== ComposerMode.SPACE &&
+      currentMode !== 'space' &&
       spacePatterns.some((p) => p.test(lowerText))
     ) {
       return {
@@ -138,7 +138,7 @@ export const diaComposerService = {
           'This sounds like a collaboration. Switch to Collaborate mode to set up a Space?',
         action: {
           type: 'switch_mode',
-          payload: { targetMode: ComposerMode.SPACE },
+          payload: { targetMode: 'space' },
         },
         confidence: 0.7,
       };
@@ -225,7 +225,7 @@ export const diaComposerService = {
     mode: ComposerMode,
     fields: Record<string, unknown>
   ): Promise<DIASuggestion | null> {
-    if (mode === ComposerMode.EVENT) {
+    if (mode === 'event') {
       return {
         id: crypto.randomUUID(),
         type: 'cross_c_link',
@@ -235,7 +235,7 @@ export const diaComposerService = {
           type: 'navigate',
           payload: {
             openComposer: true,
-            mode: ComposerMode.SPACE,
+            mode: 'space',
             prefill: { relatedEventId: fields.id },
           },
         },
@@ -243,7 +243,7 @@ export const diaComposerService = {
       };
     }
 
-    if (mode === ComposerMode.OPPORTUNITY) {
+    if (mode === 'need') {
       return {
         id: crypto.randomUUID(),
         type: 'audience_suggestion',

@@ -8,9 +8,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
 import {
-  ComposerMode,
   CModule,
   MODE_TO_PRIMARY_C,
+  type ComposerMode,
   type ComposerBaseFields,
   type ComposerSubmission,
   type ComposerAttribution,
@@ -31,27 +31,27 @@ export const composerService = {
     submission: ComposerSubmission
   ): Promise<{ id: string; type: ComposerMode }> {
     const handlers: Record<ComposerMode, () => Promise<string>> = {
-      [ComposerMode.POST]: () =>
+      connect: () =>
         this.submitPost(
           submission.base,
           submission.modeFields as PostModeFields
         ),
-      [ComposerMode.STORY]: () =>
+      story: () =>
         this.submitStory(
           submission.base,
           submission.modeFields as StoryModeFields
         ),
-      [ComposerMode.EVENT]: () =>
+      event: () =>
         this.submitEvent(
           submission.base,
           submission.modeFields as EventModeFields
         ),
-      [ComposerMode.SPACE]: () =>
+      space: () =>
         this.submitSpace(
           submission.base,
           submission.modeFields as SpaceModeFields
         ),
-      [ComposerMode.OPPORTUNITY]: () =>
+      need: () =>
         this.submitOpportunity(
           submission.base,
           submission.modeFields as OpportunityModeFields
@@ -81,17 +81,17 @@ export const composerService = {
     }
 
     // If event has a related space, add COLLABORATE
-    if (mode === ComposerMode.EVENT && modeFields.relatedSpaceId) {
+    if (mode === 'event' && modeFields.relatedSpaceId) {
       secondaryCs.push(CModule.COLLABORATE);
     }
 
     // If opportunity has a related space, add COLLABORATE
-    if (mode === ComposerMode.OPPORTUNITY && modeFields.relatedSpaceId) {
+    if (mode === 'need' && modeFields.relatedSpaceId) {
       secondaryCs.push(CModule.COLLABORATE);
     }
 
     // If story has an event CTA, add CONVENE
-    if (mode === ComposerMode.STORY) {
+    if (mode === 'story') {
       const storyFields = modeFields as Partial<StoryModeFields>;
       if (storyFields.callToAction?.type === 'attend_event') {
         secondaryCs.push(CModule.CONVENE);

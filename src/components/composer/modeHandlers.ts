@@ -13,7 +13,6 @@ import { MateMasie } from '@/components/icons/adinkra';
 import {
   createStandardPost,
   createStoryPost,
-  createCommunityFeedPost,
 } from '@/lib/feedWriter';
 import type { UniversalFeedItem } from '@/types/feed';
 
@@ -185,15 +184,15 @@ function buildUniversalFeedItemForStory(
 // ============================================================
 
 export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
-  post: {
-    label: 'Share a Post',
-    shortLabel: 'Share',
+  connect: {
+    label: 'Make a Connection',
+    shortLabel: 'Connect',
     submitLabel: 'Share',
     submittingLabel: 'Sharing...',
-    icon: 'MessageSquare',
+    icon: 'UserPlus',
     accentColor: '#4A8D77',
-    accentClass: 'bg-[#4A8D77]',
-    hoverClass: 'hover:bg-[#3d7a66]',
+    accentClass: 'bg-bevel-connect',
+    hoverClass: 'hover:bg-bevel-connect/90',
     glowClass: 'shadow-[0_0_12px_rgba(74,141,119,0.4)]',
     validate: (data) => {
       const errors: Record<string, string> = {};
@@ -221,8 +220,8 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
       return { success: true, createdPost };
     },
     getDefaultValues: () => ({ content: '', mediaUrl: undefined, galleryUrls: [] }),
-    successMessage: 'Post shared!',
-    errorMessage: "We couldn't publish this post. Your text is safe\u2014please try again.",
+    successMessage: 'Shared!',
+    errorMessage: "We couldn't publish this. Your text is safe\u2014please try again.",
   },
 
   story: {
@@ -441,77 +440,63 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
   },
 
   need: {
-    label: 'Post an Opportunity',
-    shortLabel: 'Post',
-    submitLabel: 'Post Opportunity',
+    label: 'Offer or Ask',
+    shortLabel: 'Contribute',
+    submitLabel: 'Post',
     submittingLabel: 'Posting...',
-    icon: 'Lightbulb',
+    icon: 'Gift',
     accentColor: '#B87333',
-    accentClass: 'bg-[#B87333]',
-    hoverClass: 'hover:bg-[#9e632c]',
+    accentClass: 'bg-bevel-opportunity',
+    hoverClass: 'hover:bg-bevel-opportunity/90',
     glowClass: 'shadow-[0_0_12px_rgba(184,115,51,0.4)]',
-    // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
-    validate: () => ({ isValid: true, errors: {} }),
-    submit: async () => {
-      return { success: true, createdPost: null };
-    },
-    getDefaultValues: () => ({
-      title: '', content: '', needType: undefined,
-      targetAmount: undefined, currency: undefined, neededBy: undefined,
-    }),
-    successMessage: 'Opportunities are being rebuilt \u2014 coming soon.',
-    errorMessage: 'Opportunities are being rebuilt \u2014 coming soon.',
-  },
-
-  community: {
-    label: 'Community Post',
-    shortLabel: 'Community',
-    submitLabel: 'Share to Community',
-    submittingLabel: 'Sharing...',
-    icon: 'Users',
-    accentColor: '#4A8D77',
-    accentClass: 'bg-[#4A8D77]',
-    hoverClass: 'hover:bg-[#3d7a66]',
-    glowClass: 'shadow-[0_0_12px_rgba(74,141,119,0.4)]',
+    // BD084: the give \u2192 to \u2192 impact triple. The impact is what makes someone act.
     validate: (data) => {
       const errors: Record<string, string> = {};
       if (!data.content || data.content.trim().length === 0) {
-        errors.content = 'Write something to share';
+        errors.content = 'Say what you can give, or what you need';
+      }
+      if (!data.intendedImpact || data.intendedImpact.trim().length === 0) {
+        errors.intendedImpact = 'Name the consequence \u2014 the impact is what makes someone act';
       }
       return { isValid: Object.keys(errors).length === 0, errors };
     },
     submit: async (data, context) => {
-      if (!context.communityId) {
-        return { success: false, error: 'Community ID required for community posts' };
-      }
+      const direction = data.direction ?? 'need';
+      const title =
+        (data.giveWhat && data.giveWhat.trim()) ||
+        data.content.trim().slice(0, 80) ||
+        'Opportunity';
 
-      const { data: communityPostData, error: communityError } = await supabase
-        .from('community_posts')
-        .insert({
-          title: data.title,
-          content: data.content,
-          author_id: context.userId,
-          community_id: context.communityId,
-          media_url: data.mediaUrl,
-        })
-        .select()
+      // The columns exist (BD084 verified, 17/17). Write the triple.
+      const { data: row, error } = await supabase
+        .from('opportunities')
+        .insert([{
+          created_by: context.userId,
+          title,
+          description: data.content,
+          direction,
+          category: data.category ?? null,
+          give_what: data.giveWhat ?? null,
+          give_to: data.giveTo ?? null,
+          intended_impact: data.intendedImpact ?? null,
+          related_space_id: context.relatedSpaceId ?? null,
+          audience: 'public',
+        }])
+        .select('id')
         .single();
 
-      if (communityError) throw communityError;
-
-      await createCommunityFeedPost({
-        communityPostId: communityPostData.id,
-        content: data.content,
-        authorId: context.userId,
-        communityId: context.communityId,
-        mediaUrl: data.mediaUrl,
-      });
+      if (error || !row) {
+        return { success: false, error: error?.message || 'Failed to post opportunity' };
+      }
 
       return { success: true, createdPost: null };
     },
-    getDefaultValues: () => ({ title: '', content: '', mediaUrl: undefined }),
-    successMessage: 'Shared to community!',
-    errorMessage: "We couldn't share to this Community. Your post is safe\u2014please try again.",
+    getDefaultValues: () => ({
+      content: '', direction: 'need', category: undefined,
+      giveWhat: '', giveTo: '', intendedImpact: '',
+    }),
+    successMessage: 'Opportunity posted!',
+    errorMessage: "We couldn't post this. Your details are safe\u2014please try again.",
   },
 };
 

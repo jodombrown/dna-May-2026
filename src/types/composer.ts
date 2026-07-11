@@ -11,13 +11,10 @@
 // COMPOSER MODES
 // ============================================================
 
-export enum ComposerMode {
-  POST = 'post',
-  STORY = 'story',
-  EVENT = 'event',
-  SPACE = 'space',
-  OPPORTUNITY = 'opportunity',
-}
+// One union, one source of truth (BD075). ComposerMode lives in the
+// composer-mode config and is re-exported here for the PRD type surface.
+import type { ComposerMode } from '@/config/composerModes';
+export type { ComposerMode };
 
 export enum CModule {
   CONNECT = 'CONNECT',
@@ -29,20 +26,11 @@ export enum CModule {
 
 /** Maps composer modes to their primary C module */
 export const MODE_TO_PRIMARY_C: Record<ComposerMode, CModule> = {
-  [ComposerMode.POST]: CModule.CONNECT,
-  [ComposerMode.STORY]: CModule.CONVEY,
-  [ComposerMode.EVENT]: CModule.CONVENE,
-  [ComposerMode.SPACE]: CModule.COLLABORATE,
-  [ComposerMode.OPPORTUNITY]: CModule.CONTRIBUTE,
-};
-
-/** Visual labels for mode selector chips */
-export const MODE_LABELS: Record<ComposerMode, string> = {
-  [ComposerMode.POST]: 'Share a Thought',
-  [ComposerMode.STORY]: 'Tell a Story',
-  [ComposerMode.EVENT]: 'Host an Event',
-  [ComposerMode.SPACE]: 'Start a Project',
-  [ComposerMode.OPPORTUNITY]: 'Post an Opportunity',
+  connect: CModule.CONNECT,
+  event: CModule.CONVENE,
+  space: CModule.COLLABORATE,
+  need: CModule.CONTRIBUTE,
+  story: CModule.CONVEY,
 };
 
 /** C-module accent colors from DNA palette */

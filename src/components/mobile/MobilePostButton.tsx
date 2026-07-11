@@ -24,7 +24,7 @@ const MobilePostButton = () => {
     <>
       {/* Floating Action Button */}
       <Button
-        onClick={() => { haptic('medium'); composer.open('post'); }}
+        onClick={() => { haptic('medium'); composer.open('story'); }}
         className={cn(
           "fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full shadow-lg",
           "bg-[#4A8D77] hover:bg-[#3d7a66] text-white",
