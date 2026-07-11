@@ -121,6 +121,13 @@ export function useDIACompose({
         // A newer keystroke already superseded this read.
         if (mine !== seq.current) return;
 
+        // Raw read, in dev only — the record for diagnosing an apply-order bug
+        // (e.g. a "direction" the model returns as "offer" rendering as "need").
+        if (import.meta.env?.DEV) {
+          // eslint-disable-next-line no-console
+          console.debug('[dia-compose-read]', JSON.stringify(data));
+        }
+
         const mode = data?.verb ? VERB_TO_MODE[data.verb] : undefined;
         if (error || !mode) {
           setProposal(null); // silence, not an error

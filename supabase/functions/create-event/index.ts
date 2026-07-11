@@ -15,6 +15,8 @@ interface CreateEventRequest {
   location_address?: string;
   location_city?: string;
   location_country?: string;
+  location_lat?: number;
+  location_lng?: number;
   meeting_url?: string;
   meeting_platform?: string;
   start_time: string;
@@ -211,6 +213,8 @@ Deno.serve(async (req) => {
         location_address: eventData.location_address || null,
         location_city: eventData.location_city || null,
         location_country: eventData.location_country || null,
+        location_lat: eventData.location_lat ?? null,
+        location_lng: eventData.location_lng ?? null,
         meeting_url: eventData.meeting_url || null,
         meeting_platform: eventData.meeting_platform || null,
         start_time: eventData.start_time,

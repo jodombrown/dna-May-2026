@@ -371,11 +371,15 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
       return { isValid: Object.keys(errors).length === 0, errors };
     },
     submit: async (data, context) => {
-      const startTime = data.eventDate && data.eventTime
-        ? `${data.eventDate}T${data.eventTime}:00`
-        : data.eventDate
-          ? `${data.eventDate}T12:00:00`
-          : new Date().toISOString();
+      // Prefer the resolved ISO instant the member confirmed (BD089); fall back
+      // to the date/time strings, then to a safe default.
+      const startTime = data.startTime
+        ? data.startTime
+        : data.eventDate && data.eventTime
+          ? `${data.eventDate}T${data.eventTime}:00`
+          : data.eventDate
+            ? `${data.eventDate}T12:00:00`
+            : new Date().toISOString();
 
       const endTime = data.eventEndDate && data.eventEndTime
         ? `${data.eventEndDate}T${data.eventEndTime}:00`
@@ -383,19 +387,23 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
           ? `${data.eventEndDate}T13:00:00`
           : new Date(new Date(startTime).getTime() + 3600000).toISOString();
 
-      const locationParts = (data.location || '').split(',').map(p => p.trim());
       const isVirtual = data.format === 'virtual';
       const isHybrid = data.format === 'hybrid';
       const isInPerson = data.format === 'in_person' || !data.format;
 
-      let locationCity: string | undefined;
-      let locationCountry: string | undefined;
-      if ((isInPerson || isHybrid) && locationParts.length >= 2) {
-        locationCountry = locationParts[locationParts.length - 1];
-        locationCity = locationParts[locationParts.length - 2];
-      } else if ((isInPerson || isHybrid) && locationParts.length === 1) {
-        locationCity = locationParts[0];
-        locationCountry = 'Unknown';
+      // The geocoder resolved city/country (and lat/lng); only parse the raw
+      // location string when it didn't.
+      let locationCity = data.locationCity;
+      let locationCountry = data.locationCountry;
+      if ((isInPerson || isHybrid) && !locationCity) {
+        const locationParts = (data.location || '').split(',').map((p) => p.trim()).filter(Boolean);
+        if (locationParts.length >= 2) {
+          locationCountry = locationParts[locationParts.length - 1];
+          locationCity = locationParts[locationParts.length - 2];
+        } else if (locationParts.length === 1) {
+          locationCity = locationParts[0];
+          locationCountry = locationCountry || 'Unknown';
+        }
       }
 
       const title =
@@ -413,6 +421,9 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         location_name: (isInPerson || isHybrid) ? data.location : undefined,
         location_city: locationCity,
         location_country: locationCountry,
+        // Real point on the map (BD089) — the columns exist and were unused.
+        location_lat: (isInPerson || isHybrid) ? data.locationLat ?? null : null,
+        location_lng: (isInPerson || isHybrid) ? data.locationLng ?? null : null,
         meeting_url: (isVirtual || isHybrid) ? data.meetingUrl : undefined,
         max_attendees: data.maxAttendees,
         is_public: true,
@@ -505,6 +516,20 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         description: data.content,
         focusAreas: roles,
       });
+
+      // Roles \u2192 space_roles rows (BD088 reads roles_needed from this table).
+      // Best-effort: the Space exists even if a role row fails.
+      if (roles.length) {
+        const roleRows = roles.map((title, i) => ({
+          space_id: created.id,
+          title,
+          order_index: i,
+        }));
+        const { error: rolesError } = await supabase.from('space_roles').insert(roleRows);
+        if (rolesError) {
+          console.error('[composer:space] space_roles insert failed:', rolesError.message);
+        }
+      }
 
       // Post envelope \u2014 the Space is shared to the feed as post_type='space'.
       await createFeedPost({
