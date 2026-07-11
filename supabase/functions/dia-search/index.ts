@@ -380,7 +380,7 @@ serve(async (req) => {
         .eq("id", cached.id).then(() => {}).catch(() => {});
     } else {
       try {
-        const loop = await runToolLoop(query, user.id, token, lovableKey);
+        const loop = await runToolLoop(query, user.id, token, lovableKey, priorTurns);
         const deduped = dedupe(loop.results);
         toolsFired = loop.toolsFired;
         tokensUsed = loop.tokensUsed;
