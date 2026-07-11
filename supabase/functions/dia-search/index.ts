@@ -352,10 +352,13 @@ serve(async (req) => {
       }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Cache lookup (per-user, since tool results are user-scoped)
-    const { data: cached } = await admin.from("dia_queries").select("*")
-      .eq("query_hash", queryHash)
-      .gt("expires_at", new Date().toISOString()).maybeSingle();
+    // Cache lookup (per-user, since tool results are user-scoped).
+    // Follow-ups bypass the cache — they depend on prior_turns context.
+    const { data: cached } = isFollowUp
+      ? { data: null as any }
+      : await admin.from("dia_queries").select("*")
+          .eq("query_hash", queryHash)
+          .gt("expires_at", new Date().toISOString()).maybeSingle();
 
     let response: any;
     let cacheHit = false;
