@@ -233,8 +233,11 @@ export const UniversalComposer = ({
         return { ...base, title: fields.title?.trim() || undefined };
 
       case 'connect':
-        // Connect pipe lands next cycle; intent/where ride only in the body.
-        return base;
+        return {
+          ...base,
+          intent: fields.intent?.trim() || undefined,
+          where: fields.where?.trim() || undefined,
+        };
 
       case 'need':
         return {

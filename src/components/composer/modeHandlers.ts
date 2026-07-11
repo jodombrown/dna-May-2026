@@ -12,7 +12,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { MateMasie } from '@/components/icons/adinkra';
 import {
   createFeedPost,
-  createStandardPost,
   createStoryPost,
 } from '@/lib/feedWriter';
 import { createSpace, type SpaceType } from '@/services/spacesService';
@@ -225,25 +224,75 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
       }
       return { isValid: Object.keys(errors).length === 0, errors };
     },
+    // Connect has no separate entity table — the post IS the artifact
+    // (BD081). The ask's facets ride in posts.metadata and are surfaced by
+    // get_universal_feed, so the card can render the pill and context line.
     submit: async (data, context) => {
-      const post = await createStandardPost({
-        authorId: context.userId,
-        content: data.content,
-        mediaUrl: data.mediaUrl,
-        galleryUrls: data.galleryUrls,
-        spaceId: context.spaceId,
-        eventId: context.eventId,
-        linkUrl: data.linkUrl,
-        linkTitle: data.linkTitle,
-        linkDescription: data.linkDescription,
-        linkThumbnail: data.linkThumbnail,
-        linkProviderName: data.linkProviderName,
-      });
+      const metadata: Record<string, string> = {};
+      if (data.intent?.trim()) metadata.intent = data.intent.trim();
+      if (data.where?.trim()) metadata.where = data.where.trim();
+      if (data.sector?.trim()) metadata.sector = data.sector.trim();
 
-      const createdPost = buildUniversalFeedItemForPost(post, data, context);
+      const cleanedGallery = (data.galleryUrls ?? []).filter(
+        (u): u is string => typeof u === 'string' && u.length > 0
+      );
+
+      const { data: row, error } = await supabase
+        .from('posts')
+        .insert({
+          author_id: context.userId,
+          content: data.content.trim(),
+          post_type: 'connect',
+          image_url: data.mediaUrl || null,
+          gallery_urls: cleanedGallery.length ? cleanedGallery : null,
+          space_id: context.spaceId || null,
+          event_id: context.eventId || null,
+          privacy_level: 'public',
+          metadata,
+        })
+        .select('id, author_id, content, image_url, gallery_urls, created_at')
+        .single();
+
+      if (error || !row) {
+        return { success: false, error: error?.message || 'Failed to post connection ask' };
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username, full_name, avatar_url')
+        .eq('id', context.userId)
+        .single();
+
+      const createdPost: UniversalFeedItem = {
+        ...buildUniversalFeedItemForPost(
+          {
+            post_id: row.id,
+            author_id: row.author_id,
+            content: row.content ?? '',
+            image_url: row.image_url || undefined,
+            gallery_urls: row.gallery_urls ?? null,
+            created_at: row.created_at,
+            author_username: profile?.username || '',
+            author_full_name: profile?.full_name || '',
+            author_avatar_url: profile?.avatar_url || undefined,
+          },
+          data,
+          context
+        ),
+        post_type: 'connect',
+        metadata,
+        intent: metadata.intent ?? null,
+        where: metadata.where ?? null,
+        sector: metadata.sector ?? null,
+        direction: 'seeking',
+      };
+
       return { success: true, createdPost };
     },
-    getDefaultValues: () => ({ content: '', mediaUrl: undefined, galleryUrls: [] }),
+    getDefaultValues: () => ({
+      content: '', mediaUrl: undefined, galleryUrls: [],
+      intent: '', where: '',
+    }),
     successMessage: 'Shared!',
     errorMessage: "We couldn't publish this. Your text is safe\u2014please try again.",
   },

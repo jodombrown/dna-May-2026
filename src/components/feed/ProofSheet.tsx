@@ -166,34 +166,24 @@ function useProofPeople(kind: ProofSheetKind, entityId: string | null | undefine
       }
 
       // ---- mutual_connections ---------------------------------------------
+      // entityId is the *other person*. The live RPC is authoritative — it
+      // owns the accepted-connections intersection. ⚠ get_mutual_connections
+      // has a second overload (p_viewer_id/p_target_user_id/p_limit); named
+      // args make PostgREST resolve this one.
       if (kind === 'mutual_connections') {
-        // entityId is the *other person*. Their accepted connections ∩ mine.
-        const { data } = await supabase
-          .from('connections')
-          .select('requester_id, recipient_id')
-          .eq('status', 'accepted')
-          .or(`requester_id.eq.${entityId},recipient_id.eq.${entityId}`);
-
-        const theirs = new Set<string>();
-        (data ?? []).forEach((c: { requester_id: string; recipient_id: string }) => {
-          theirs.add(c.requester_id === entityId ? c.recipient_id : c.requester_id);
+        if (!user?.id) return [];
+        const { data, error } = await supabase.rpc('get_mutual_connections', {
+          user1_id: user.id,
+          user2_id: entityId!,
         });
-
-        const mutualIds = [...theirs].filter(
-          (id) => connectionIds.has(id) && id !== user?.id && id !== entityId
-        );
-        if (!mutualIds.length) return [];
-
-        const profiles = await fetchProfiles(mutualIds);
-        return mutualIds.map((id) => {
-          const p = profiles.get(id);
-          return {
-            user_id: id,
-            name: p ? nameOf(p) : 'Member',
-            username: p?.username ?? null,
-            avatar_url: p?.avatar_url ?? null,
-          };
-        });
+        if (error || !data) return [];
+        return data.map((p) => ({
+          user_id: p.id,
+          name: p.full_name || p.username || 'Member',
+          username: p.username,
+          avatar_url: p.avatar_url,
+          qualifier: p.headline ?? null,
+        }));
       }
 
       // ---- reactors — BD082 ------------------------------------------------
