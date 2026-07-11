@@ -98,6 +98,8 @@ interface DiaSearchProps {
   source?: string;
   placeholder?: string;
   compact?: boolean;
+  /** Hide the redundant "DIA" title inside the answer card (used inside DiaSheet, which already brands the surface). */
+  hideBrandInAnswer?: boolean;
   suggestions?: string[];
   initialQuery?: string;
   autoSearch?: boolean;
@@ -239,6 +241,7 @@ export function DiaSearch({
   source = 'dashboard',
   placeholder = 'Ask DIA about African opportunities, markets, or trends...',
   compact = false,
+  hideBrandInAnswer = false,
   suggestions,
   initialQuery = '',
   autoSearch = false,
@@ -648,58 +651,56 @@ export function DiaSearch({
         </Card>
       )}
 
-      {/* Search Input */}
+      {/* Search Input — auto-growing textarea + compact submit */}
       <form onSubmit={handleSearch} className="relative">
-        <div className="relative flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0">
-          <div className="relative flex-1">
-            <div className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-              <MateMasie className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" />
-            </div>
-            <Input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={compact ? "Ask DIA..." : placeholder}
-              className="pl-10 sm:pl-12 pr-4 sm:pr-28 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 border-border focus:border-emerald-500 transition-colors bg-background w-full"
-              disabled={isInputDisabled}
-              maxLength={500}
-            />
-            {/* Desktop button inside input */}
-            <Button
-              type="submit"
-              disabled={!query.trim() || isInputDisabled}
-              className="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 bg-emerald-600 hover:bg-emerald-700"
-            >
-              {searchMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Search className="h-4 w-4" />
-              )}
-              <span className="ml-2">Ask DIA</span>
-            </Button>
-          </div>
-          {/* Mobile button below input */}
+        <div className="relative rounded-xl border-2 border-border focus-within:border-emerald-500 transition-colors bg-background flex items-end gap-2 pl-3 pr-2 py-2">
+          <MateMasie className="h-4 w-4 text-emerald-600 mt-2 shrink-0" />
+          <textarea
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              // auto-grow
+              const el = e.target as HTMLTextAreaElement;
+              el.style.height = 'auto';
+              el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSearch(e as unknown as React.FormEvent);
+              }
+            }}
+            placeholder={compact ? 'Ask DIA…' : placeholder}
+            rows={1}
+            className="flex-1 resize-none bg-transparent text-sm sm:text-base leading-relaxed py-2 focus:outline-none placeholder:text-muted-foreground/70 max-h-[200px] overflow-y-auto"
+            disabled={isInputDisabled}
+            maxLength={500}
+            aria-label="Ask DIA"
+          />
           <Button
             type="submit"
+            size="icon"
             disabled={!query.trim() || isInputDisabled}
-            className="sm:hidden w-full bg-emerald-600 hover:bg-emerald-700 py-3"
+            className="h-9 w-9 rounded-lg bg-emerald-600 hover:bg-emerald-700 shrink-0"
+            aria-label="Ask DIA"
+            title="Ask DIA"
           >
             {searchMutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Search className="h-4 w-4" />
             )}
-            <span className="ml-2">Ask DIA</span>
           </Button>
         </div>
 
         {/* Usage indicator */}
         {response?.usage && !rateLimited && (
-          <div className="text-center sm:text-right sm:absolute sm:right-2 sm:-bottom-6 text-xs text-muted-foreground mt-2 sm:mt-0">
+          <div className="text-right text-[11px] text-muted-foreground mt-1.5">
             {response.usage.queries_remaining} queries remaining this month
           </div>
         )}
       </form>
+
 
       {/* Loading State */}
       {searchMutation.isPending && <DiaSearchSkeleton />}
@@ -709,12 +710,18 @@ export function DiaSearch({
         <div className="mt-8 space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
           {/* Main Answer */}
           <Card>
-            <CardHeader className="pb-3">
+            <CardHeader className={cn('pb-3', hideBrandInAnswer && 'pb-2')}>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <MateMasie className="h-5 w-5 text-emerald-600" />
-                  DIA
-                </CardTitle>
+                {hideBrandInAnswer ? (
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">
+                    Answer
+                  </span>
+                ) : (
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <MateMasie className="h-5 w-5 text-emerald-600" />
+                    DIA
+                  </CardTitle>
+                )}
                 <div className="flex items-center gap-2">
                   {response.data.cached && (
                     <Badge variant="secondary" className="text-xs">Cached</Badge>

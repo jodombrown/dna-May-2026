@@ -11,10 +11,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MateMasie } from '@/components/icons/adinkra';
 import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
+// Prompts DIA (Perplexity-powered) can actually research and answer well.
+// Platform-internal queries ("who in my network...") are intentionally excluded
+// until DIA's internal-data tools ship — see docs/M4-Recommendations-Reminders-Summary.md.
 const QUICK_PROMPTS = [
-  'Who in my network just joined Convene?',
-  'What returnees match my sector this week?',
-  'Surface stalled spaces I lead.',
+  'Latest fintech funding across Africa this month',
+  'Diaspora-led renewable energy projects in East Africa',
+  'Which African markets are hiring senior tech talent right now?',
 ];
 
 const truncate = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
