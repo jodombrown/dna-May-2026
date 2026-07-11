@@ -21,6 +21,8 @@ import {
   type OpportunityModeFields,
 } from '@/types/composer';
 import { extractHashtags } from '@/utils/hashtagUtils';
+import { createSpace } from '@/services/spacesService';
+import { createFeedPost } from '@/lib/feedWriter';
 
 export const composerService = {
   // ============================================
@@ -234,9 +236,29 @@ export const composerService = {
     base: ComposerBaseFields,
     fields: SpaceModeFields
   ): Promise<string> {
-    // collaboration_spaces table retired; creating a space from the composer is
-    // out of scope (canonical space creation lives under /dna/collaborate).
-    throw new Error('Space creation is not available.');
+    // SPACE COMPOSES INLINE (BD087 reversal). Same substrate service as
+    // /dna/collaborate/spaces/new — the spaces INSERT trigger seats the
+    // author as lead. Then the post envelope shares it to the feed.
+    const userId = (await supabase.auth.getUser()).data.user?.id;
+    if (!userId) throw new Error('Not authenticated');
+
+    const created = await createSpace({
+      name: (fields as { title?: string }).title || base.body.slice(0, 80),
+      createdBy: userId,
+      spaceType: 'initiative',
+      description: base.body,
+    });
+
+    await createFeedPost({
+      authorId: userId,
+      postType: 'space',
+      content: base.body,
+      linkedEntityType: 'space',
+      linkedEntityId: created.id,
+      spaceId: created.id,
+    });
+
+    return created.id;
   },
 
   async submitOpportunity(

@@ -40,6 +40,7 @@ import { cn } from '@/lib/utils';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { useEventDetailsForFeed } from '@/hooks/useEventDetailsForFeed';
+import { useEventRsvpFromFeed } from '@/hooks/useEventRsvpFromFeed';
 import { useMutualAttendees } from '@/hooks/useMutualAttendees';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { ProofSheet } from '@/components/feed/ProofSheet';
@@ -83,7 +84,17 @@ export const EventCard: React.FC<EventCardProps> = ({
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
   const { userHasBookmarked, toggleBookmark } = usePostBookmarks(item.post_id, currentUserId);
 
-  const isOwner = item.author_id === currentUserId;
+  // The card RSVPs on its own — the feed does not thread an onRsvp handler
+  // down, and a dead grey RSVP button is a bug, not a state.
+  const selfRsvp = useEventRsvpFromFeed(item.event_id, currentUserId);
+  const attending = onRsvp ? isAttending : selfRsvp.isAttending;
+
+  // You cannot attend what you are hosting. The envelope author is usually the
+  // host, but the events row is the source of truth — check both, so a stale
+  // or system-authored envelope can never hand the host a dead RSVP button.
+  const isOwner =
+    item.author_id === currentUserId ||
+    (!!eventDetails?.organizer_id && eventDetails.organizer_id === currentUserId);
   const authorName = item.author_display_name || item.author_username || 'Host';
 
   const title = eventDetails?.title || item.event_title || item.title || 'Event';
@@ -271,14 +282,18 @@ export const EventCard: React.FC<EventCardProps> = ({
             size="sm"
             className={cn(
               'flex-1 gap-1.5',
-              isAttending
+              attending
                 ? 'border border-bevel-event bg-transparent text-bevel-event hover:bg-bevel-event/5'
                 : 'bg-bevel-event text-white hover:bg-bevel-event/90'
             )}
-            disabled={!onRsvp || !item.event_id}
-            onClick={() => item.event_id && onRsvp?.(item.event_id)}
+            disabled={!item.event_id || selfRsvp.isPending}
+            onClick={() => {
+              if (!item.event_id) return;
+              if (onRsvp) onRsvp(item.event_id);
+              else selfRsvp.toggleRsvp();
+            }}
           >
-            {isAttending ? (
+            {attending ? (
               <>
                 <Check className="h-4 w-4" />
                 Going

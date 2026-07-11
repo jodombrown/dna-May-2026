@@ -10,6 +10,15 @@ export default {
 		"./src/**/*.{ts,tsx}",
 	],
 	prefix: "",
+	// ComposerCardPreview colors the live card from the active verb's bevel
+	// token at runtime (`border-${token}` etc.), which the JIT scanner cannot
+	// see. Safelist every class it can emit so the preview never loses its C
+	// color in a production build.
+	safelist: [
+		...['bevel-connect', 'bevel-event', 'bevel-space', 'bevel-opportunity', 'bevel-story'].flatMap(
+			(t) => [`border-${t}`, `text-${t}`, `bg-${t}`, `bg-${t}/10`, `bg-${t}/15`]
+		),
+	],
 	theme: {
 		container: {
 			center: true,
@@ -219,17 +228,20 @@ export default {
 					warning: 'hsl(var(--dna-warning))',
 					error: 'hsl(var(--dna-error))',
 					info: 'hsl(var(--dna-info))',
-					// Feed Card Bevel Colors
-					bevel: {
-						post: 'hsl(var(--bevel-post))',
-						connect: 'hsl(var(--bevel-connect))',
-						story: 'hsl(var(--bevel-story))',
-						event: 'hsl(var(--bevel-event))',
-						space: 'hsl(var(--bevel-space))',
-						opportunity: 'hsl(var(--bevel-opportunity))',
-						need: 'hsl(var(--bevel-need))',
-						offer: 'hsl(var(--bevel-offer))',
-					},
+				},
+				// Feed Card Bevel Colors (BD083). Top-level on purpose: every
+				// surface writes `bg-bevel-event` / `text-bevel-story` / …
+				// Nesting this under `dna` silently renamed the whole palette
+				// to `bg-dna-bevel-*` and left every card colorless.
+				bevel: {
+					post: 'hsl(var(--bevel-post))',
+					connect: 'hsl(var(--bevel-connect))',
+					story: 'hsl(var(--bevel-story))',
+					event: 'hsl(var(--bevel-event))',
+					space: 'hsl(var(--bevel-space))',
+					opportunity: 'hsl(var(--bevel-opportunity))',
+					need: 'hsl(var(--bevel-need))',
+					offer: 'hsl(var(--bevel-offer))',
 				},
 				// Country Flag Colors
 				morocco: {

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -17,7 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SpacesShell } from '@/components/collaborate/SpacesShell';
-import { slugify } from '@/utils/slugify';
+import { createSpace, type SpaceType } from '@/services/spacesService';
 import type { SpaceVisibility } from '@/types/collaborate';
 
 const SPACE_TYPES: { value: string; label: string }[] = [
@@ -32,24 +31,6 @@ const VISIBILITIES: { value: SpaceVisibility; label: string; hint: string }[] = 
   { value: 'public', label: 'Public', hint: 'Anyone can find this space and join instantly.' },
   { value: 'private', label: 'Private', hint: 'Invite-only. Hidden from everyone but members.' },
 ];
-
-/**
- * Build a slug that is free of collisions with spaces the caller can see.
- * A trailing unique suffix on insert conflict (below) covers private spaces
- * hidden by RLS that a SELECT can't detect.
- */
-async function buildUniqueSlug(name: string): Promise<string> {
-  const base = slugify(name) || 'space';
-  const { data } = await supabase
-    .from('spaces')
-    .select('slug')
-    .or(`slug.eq.${base},slug.like.${base}-%`);
-  const taken = new Set((data ?? []).map((r) => r.slug));
-  if (!taken.has(base)) return base;
-  let n = 2;
-  while (taken.has(`${base}-${n}`)) n += 1;
-  return `${base}-${n}`;
-}
 
 export default function CreateSpace() {
   const navigate = useNavigate();
@@ -74,41 +55,19 @@ export default function CreateSpace() {
 
     setSubmitting(true);
     try {
-      let slug = await buildUniqueSlug(name.trim());
-
-      const payload = {
+      // One code path for Space creation, shared with the Universal Composer
+      // (spacesService). The INSERT trigger seats the creator as lead.
+      const created = await createSpace({
         name: name.trim(),
+        createdBy: user.id,
+        spaceType: spaceType as SpaceType,
+        visibility,
         tagline: tagline.trim() || null,
         description: description.trim() || null,
-        space_type: spaceType,
-        visibility,
-        status: 'idea',
-        created_by: user.id,
-      };
-
-      // The INSERT trigger seats the creator as an active lead — do not insert
-      // the creator membership from here.
-      let { data, error } = await supabase
-        .from('spaces')
-        .insert({ ...payload, slug })
-        .select('slug')
-        .single();
-
-      // Retry once with a unique suffix if the slug collided with a space
-      // RLS hid from the pre-check (unique_violation).
-      if (error && error.code === '23505') {
-        slug = `${slug}-${Date.now().toString(36).slice(-4)}`;
-        ({ data, error } = await supabase
-          .from('spaces')
-          .insert({ ...payload, slug })
-          .select('slug')
-          .single());
-      }
-
-      if (error) throw error;
+      });
 
       toast.success('Space created.');
-      navigate(`/dna/collaborate/spaces/${data!.slug}`);
+      navigate(`/dna/collaborate/spaces/${created.slug}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not create the space.';
       toast.error(message);
