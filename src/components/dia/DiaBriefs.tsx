@@ -94,20 +94,20 @@ export function DiaBriefs({ onPromptClick }: DiaBriefsProps) {
             {briefs.map((b) => (
               <Card key={b.id} className="border-border/60">
                 <CardContent className="p-3">
-                  <p className="text-sm font-medium text-foreground">{b.headline}</p>
+                  <p className="text-sm font-medium text-foreground">{b.title}</p>
                   {b.body && <p className="text-xs text-muted-foreground mt-1 line-clamp-3">{b.body}</p>}
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-[10px] text-muted-foreground">
-                      {formatDistanceToNow(new Date(b.created_at), { addSuffix: true })}
+                      {formatDistanceToNow(new Date(b.generated_at), { addSuffix: true })}
                     </span>
-                    {b.prompt && onPromptClick && (
+                    {b.cta_label && onPromptClick && (
                       <Button
                         variant="ghost"
                         size="sm"
                         className="h-6 px-2 text-[11px] text-emerald-700 hover:text-emerald-800"
-                        onClick={() => onPromptClick(b.prompt!)}
+                        onClick={() => onPromptClick(b.title)}
                       >
-                        Ask DIA <ArrowRight className="h-3 w-3 ml-1" />
+                        {b.cta_label} <ArrowRight className="h-3 w-3 ml-1" />
                       </Button>
                     )}
                   </div>
@@ -127,16 +127,16 @@ export function DiaBriefs({ onPromptClick }: DiaBriefsProps) {
             {nudges.map((n) => (
               <Card key={n.id} className="border-border/60">
                 <CardContent className="p-3">
-                  <p className="text-sm font-medium text-foreground">{n.title}</p>
+                  <p className="text-sm font-medium text-foreground capitalize">{n.nudge_type.replace(/_/g, ' ')}</p>
                   {n.message && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{n.message}</p>}
-                  {n.suggested_prompt && onPromptClick && (
+                  {onPromptClick && n.message && (
                     <Button
                       variant="ghost"
                       size="sm"
                       className="h-6 px-2 mt-2 text-[11px] text-emerald-700 hover:text-emerald-800"
-                      onClick={() => onPromptClick(n.suggested_prompt!)}
+                      onClick={() => onPromptClick(n.message!)}
                     >
-                      {n.suggested_prompt} <ArrowRight className="h-3 w-3 ml-1" />
+                      Ask DIA <ArrowRight className="h-3 w-3 ml-1" />
                     </Button>
                   )}
                 </CardContent>
