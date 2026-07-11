@@ -98,13 +98,13 @@ function useMyConnections() {
     queryFn: async (): Promise<Set<string>> => {
       const { data } = await supabase
         .from('connections')
-        .select('requester_id, addressee_id')
+        .select('requester_id, recipient_id')
         .eq('status', 'accepted')
-        .or(`requester_id.eq.${user!.id},addressee_id.eq.${user!.id}`);
+        .or(`requester_id.eq.${user!.id},recipient_id.eq.${user!.id}`);
 
       const ids = new Set<string>();
-      (data ?? []).forEach((c: { requester_id: string; addressee_id: string }) => {
-        ids.add(c.requester_id === user!.id ? c.addressee_id : c.requester_id);
+      (data ?? []).forEach((c: { requester_id: string; recipient_id: string }) => {
+        ids.add(c.requester_id === user!.id ? c.recipient_id : c.requester_id);
       });
       return ids;
     },
@@ -170,13 +170,13 @@ function useProofPeople(kind: ProofSheetKind, entityId: string | null | undefine
         // entityId is the *other person*. Their accepted connections ∩ mine.
         const { data } = await supabase
           .from('connections')
-          .select('requester_id, addressee_id')
+          .select('requester_id, recipient_id')
           .eq('status', 'accepted')
-          .or(`requester_id.eq.${entityId},addressee_id.eq.${entityId}`);
+          .or(`requester_id.eq.${entityId},recipient_id.eq.${entityId}`);
 
         const theirs = new Set<string>();
-        (data ?? []).forEach((c: { requester_id: string; addressee_id: string }) => {
-          theirs.add(c.requester_id === entityId ? c.addressee_id : c.requester_id);
+        (data ?? []).forEach((c: { requester_id: string; recipient_id: string }) => {
+          theirs.add(c.requester_id === entityId ? c.recipient_id : c.requester_id);
         });
 
         const mutualIds = [...theirs].filter(
