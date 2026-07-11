@@ -28,7 +28,7 @@ interface PulseDockTrayProps {
 const PULSE_ITEMS = [
   { key: 'contribute', label: 'Contribute', icon: Adinkrahene, href: '/dna/contribute' },
   { key: 'convey', label: 'Convey', icon: Mpatapo, href: '/dna/convey' },
-  { key: 'dia', label: 'DIA', icon: MateMasie, href: '/dna/dia' },
+  { key: 'dia', label: 'DIA', icon: MateMasie, href: '__dia__' },
   { key: 'messages', label: 'Messages', icon: MessageCircle, href: '/dna/messages' },
   { key: 'digest', label: 'Digest', icon: Inbox, href: '__digest__' },
   { key: 'pulse', label: 'Daily Pulse', icon: Sunrise, href: '__pulse__' },
