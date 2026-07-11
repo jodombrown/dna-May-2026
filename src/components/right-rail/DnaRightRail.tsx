@@ -7,12 +7,15 @@ import { DiaDailyBrief } from './DiaDailyBrief';
 import { TrendingInDna } from './TrendingInDna';
 import { AskDiaCta } from './AskDiaCta';
 import { OnboardingRightRail } from './OnboardingRightRail';
+import { FirstRunActionTour } from '@/components/onboarding/FirstRunActionTour';
 
 export const DnaRightRail: React.FC = () => {
   return (
     <div className="space-y-3">
       <OnboardingRightRail />
+      <FirstRunActionTour />
       <PulseCompass />
+
       <DiaDailyBrief />
       <TrendingInDna />
       <AskDiaCta />
