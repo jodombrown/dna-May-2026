@@ -8,6 +8,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Search, History, Lightbulb } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { MateMasie } from '@/components/icons/adinkra';
 import { DiaSearch } from './DiaSearch';
 import DiaHistory from './DiaHistory';
