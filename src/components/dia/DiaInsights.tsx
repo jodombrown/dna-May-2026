@@ -122,10 +122,10 @@ export function DiaInsights({
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium flex items-center gap-2">
           <Lightbulb className="h-4 w-4" />
-          Trending Insights
+          Today's Insights
         </h3>
-        <span className="text-sm text-muted-foreground">
-          Click to explore
+        <span className="text-[11px] text-muted-foreground">
+          Refreshed daily
         </span>
       </div>
 
