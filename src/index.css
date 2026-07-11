@@ -334,7 +334,7 @@ html {
     --neutral-950: 16 18% 6%;
 
     /* Five C's tokens */
-    --c-connect: 28 55% 46%;       /* copper-500 */
+    --c-connect: 153 40% 30%;      /* Connect green #2D6A4F (BD083 fix) */
     --c-convene: 160 32% 42%;      /* emerald-500 */
     --c-collaborate: 210 40% 45%;
     --c-contribute: 0 30% 38%;
