@@ -13499,6 +13499,7 @@ export type Database = {
           link_url: string
           linked_entity_id: string
           linked_entity_type: string
+          metadata: Json
           original_author_avatar_url: string
           original_author_full_name: string
           original_author_headline: string

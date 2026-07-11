@@ -13,6 +13,7 @@ import { SpaceCard } from './cards/SpaceCard';
 import { NeedCard } from './cards/NeedCard';
 import { StoryCard } from './cards/StoryCard';
 import { OpportunityFeedCard } from './cards/OpportunityFeedCard';
+import { ConnectCard } from './cards/ConnectCard';
 
 interface UniversalFeedItemProps {
   item: UniversalFeedItemType;
@@ -73,6 +74,17 @@ export const UniversalFeedItemComponent: React.FC<UniversalFeedItemProps> = ({
     case 'need':
       return wrap(
         <OpportunityFeedCard item={item} currentUserId={currentUserId} onUpdate={onUpdate} />
+      );
+
+    case 'connect':
+      return wrap(
+        <ConnectCard
+          item={item}
+          currentUserId={currentUserId}
+          onUpdate={onUpdate}
+          showComments={showComments}
+          onCommentClick={handleCommentClick}
+        />
       );
 
     case 'reshare':

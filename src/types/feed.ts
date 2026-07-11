@@ -5,13 +5,14 @@
  * All content types (posts, events, spaces, needs, stories) flow through this system.
  */
 
-export type FeedItemType = 
-  | 'post' 
-  | 'reshare' 
-  | 'event' 
-  | 'space' 
-  | 'need' 
-  | 'story' 
+export type FeedItemType =
+  | 'post'
+  | 'reshare'
+  | 'event'
+  | 'space'
+  | 'need'
+  | 'story'
+  | 'connect'
   | 'community_post';
 
 export type LinkedEntityType = 
@@ -84,6 +85,13 @@ export interface UniversalFeedItem {
   original_created_at: string | null;
   // Gallery
   gallery_urls?: string[] | null;
+  // Facets carried in posts.metadata, flattened by mapFeedRow.
+  // Connect reads intent / direction / sector / where off the item.
+  metadata?: Record<string, unknown> | null;
+  intent?: string | null;
+  direction?: 'seeking' | 'offering' | null;
+  sector?: string | null;
+  where?: string | null;
 }
 
 /**

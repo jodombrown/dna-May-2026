@@ -94,6 +94,10 @@ export interface ComposerFormData {
   agenda?: AgendaItem[];
   dressCode?: string;
   tags?: string[];
+  // Connect specific — who they need, and where (DIA whitelist: intent, where)
+  intent?: string;
+  where?: string;
+  sector?: string;
   // Need specific (Contribute)
   needType?: 'funding' | 'expertise' | 'resources' | 'volunteers' | 'partnership';
   targetAmount?: number;

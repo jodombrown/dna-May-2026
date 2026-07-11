@@ -67,6 +67,7 @@ export interface FeedRpcRow {
   original_content?: string | null;
   original_image_url?: string | null;
   original_created_at?: string | null;
+  metadata?: Record<string, unknown> | null;
 }
 
 const toNumber = (value: number | string | null | undefined): number => {
@@ -77,6 +78,11 @@ const toNumber = (value: number | string | null | undefined): number => {
 
 export const mapFeedRow = (row: FeedRpcRow): UniversalFeedItem => {
   const linkMetadata = (row.link_metadata as UniversalFeedItem['link_metadata']) ?? null;
+  const metadata = row.metadata ?? null;
+  const facet = (key: string): string | null => {
+    const v = metadata?.[key];
+    return typeof v === 'string' && v.trim().length > 0 ? v : null;
+  };
 
   return {
     post_id: (row.post_id ?? row.id ?? '') as string,
@@ -125,5 +131,16 @@ export const mapFeedRow = (row: FeedRpcRow): UniversalFeedItem => {
     original_image_url: row.original_image_url ?? null,
     original_created_at: row.original_created_at ?? null,
     gallery_urls: row.gallery_urls ?? null,
+    metadata,
+    // Connect facets — flattened so cards read them straight off the item.
+    intent: facet('intent'),
+    direction:
+      metadata?.direction === 'offering'
+        ? 'offering'
+        : metadata?.direction === 'seeking'
+          ? 'seeking'
+          : null,
+    sector: facet('sector'),
+    where: facet('where'),
   };
 };
