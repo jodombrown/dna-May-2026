@@ -279,8 +279,31 @@ export function useFirstRunTour() {
   });
 
   const isComplete = completedCount === FIRST_RUN_TOUR_STEPS.length;
+  const completeAcked = useMemo(
+    () => rows.some((r) => r.selection_type === COMPLETE_ACK_TYPE),
+    [rows],
+  );
 
-  const shouldShow = !!user && !isLoading && !skipped && !isComplete;
+  const ackComplete = useMutation({
+    mutationFn: async () => {
+      if (!user?.id) return;
+      await supabase.from('user_onboarding_selections').insert([
+        {
+          user_id: user.id,
+          selection_type: COMPLETE_ACK_TYPE,
+          target_title: 'v1',
+          target_id: crypto.randomUUID(),
+        },
+      ]);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
+    },
+  });
+
+  // Show while there's still work OR while we're celebrating the finish.
+  const shouldShow =
+    !!user && !isLoading && !skipped && (!isComplete || !completeAcked);
 
   return {
     isLoading,
@@ -290,6 +313,7 @@ export function useFirstRunTour() {
     totalCount: FIRST_RUN_TOUR_STEPS.length,
     skipped,
     isComplete,
+    completeAcked,
     shouldShow,
     markStepDone: useCallback(
       (id: TourStepId) => markStepDone.mutate(id),
@@ -298,6 +322,7 @@ export function useFirstRunTour() {
     skipTour: useCallback(() => skipTour.mutate(), [skipTour]),
     reopenTour: useCallback(() => reopenTour.mutate(), [reopenTour]),
     resetTour: useCallback(() => resetTour.mutate(), [resetTour]),
+    ackComplete: useCallback(() => ackComplete.mutate(), [ackComplete]),
     resetPending: resetTour.isPending,
   };
 }
