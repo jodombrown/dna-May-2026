@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     // Fetch user profile to check eligibility - use actual profile fields for calculation
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('id, avatar_url, full_name, headline, profession, bio, linkedin_url, skills, focus_areas, interests, country_of_origin, current_country, languages, banner_url, industries')
+      .select('id, avatar_url, full_name, headline, profession, bio, linkedin_url, skills, focus_areas, interests, country, current_country, languages, banner_url, industries')
       .eq('id', user.id)
       .maybeSingle();
 
@@ -91,7 +91,7 @@ Deno.serve(async (req) => {
       if (Array.isArray(p.focus_areas) && p.focus_areas.length >= 2) points += 10;
       if (Array.isArray(p.interests) && p.interests.length >= 3) points += 10;
       // Pillar 4: Diaspora Context (15 pts)
-      if (p.country_of_origin) points += 5;
+      if (p.country) points += 5;
       if (p.current_country) points += 5;
       if (Array.isArray(p.languages) && p.languages.length >= 1) points += 5;
       // Pillar 5: Engagement (10 pts)
