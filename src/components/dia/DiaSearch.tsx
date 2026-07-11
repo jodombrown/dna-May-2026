@@ -995,6 +995,48 @@ export function DiaSearch({
               </CardContent>
             </Card>
           )}
+
+          {/* Follow-up chips + inline composer */}
+          {canFollowUp && (response.data.follow_ups?.length ?? 0) > 0 && (
+            <div className="space-y-2">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3 text-emerald-600" /> Ask a follow-up
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {response.data.follow_ups!.map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => handleSuggestionClick(f)}
+                    className="text-[12px] px-2.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 hover:bg-emerald-100 transition-colors"
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                {MAX_TURNS - totalTurns} {MAX_TURNS - totalTurns === 1 ? 'turn' : 'turns'} left in this thread
+              </p>
+            </div>
+          )}
+
+          {/* Thread cap reached — offer a clean restart */}
+          {!canFollowUp && (
+            <div className="rounded-lg border border-border/60 bg-muted/40 p-3 flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                You've reached the {MAX_TURNS}-turn limit for this thread.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={startNewThread}
+                className="h-7 text-xs"
+              >
+                <RotateCcw className="h-3 w-3 mr-1" /> New question
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
