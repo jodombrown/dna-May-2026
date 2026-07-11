@@ -447,6 +447,16 @@ serve(async (req) => {
       }).then(() => {}).catch(() => {});
     }
 
+    // Follow-up suggestions — only when there's room left in the thread.
+    // If we're already at MAX_PRIOR_TURNS priors, this is the final turn.
+    let followUps: string[] = [];
+    const turnsRemaining = MAX_PRIOR_TURNS - priorTurns.length;
+    if (turnsRemaining > 0 && response.answer) {
+      followUps = await generateFollowUps(rawQuery, response.answer, lovableKey);
+    }
+    response.follow_ups = followUps;
+    response.turns_remaining = turnsRemaining;
+
     return new Response(JSON.stringify({
       success: true,
       data: response,
@@ -458,6 +468,8 @@ serve(async (req) => {
       response_time_ms: Date.now() - startTime,
       tools_fired: toolsFired,
       query_hash: queryHash,
+      follow_ups: followUps,
+      turns_remaining: turnsRemaining,
     }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err: any) {
     console.error("DIA search error:", err?.message ?? err);
