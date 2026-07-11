@@ -45,6 +45,7 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
   const navigate = useNavigate();
   const [digestOpen, setDigestOpen] = useState(false);
   const [pulseOpen, setPulseOpen] = useState(false);
+  const { openWith: openDia } = useDiaSheet();
 
   const handleNavigation = (href: string) => {
     if (href === '__digest__') {
@@ -53,6 +54,11 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
     }
     if (href === '__pulse__') {
       setPulseOpen(true);
+      return;
+    }
+    if (href === '__dia__') {
+      onClose();
+      setTimeout(() => openDia(), 150);
       return;
     }
     onClose();
