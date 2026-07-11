@@ -7,7 +7,7 @@
  *
  * Storage model (uses the existing table as-is):
  *   selection_type = 'first_run_tour_step'   target_title = <step id>
- *   selection_type = 'first_run_tour_skip'   target_title = 'all'
+ *   selection_type = 'first_run_tour_skip'   target_title = 'all' | 'complete_v1'
  *
  * The step is considered auto-complete when its underlying profile
  * field is filled in (checked against `useOnboardingState.completed`).
@@ -93,7 +93,7 @@ interface SelectionRow {
 
 const STEP_TYPE = 'first_run_tour_step';
 const SKIP_TYPE = 'first_run_tour_skip';
-const COMPLETE_ACK_TYPE = 'first_run_tour_complete_acked';
+const COMPLETE_ACK_TARGET = 'complete_v1';
 
 export function useFirstRunTour() {
   const { user } = useAuth();
@@ -108,7 +108,7 @@ export function useFirstRunTour() {
         .from('user_onboarding_selections')
         .select('selection_type,target_title')
         .eq('user_id', user!.id)
-        .in('selection_type', [STEP_TYPE, SKIP_TYPE, COMPLETE_ACK_TYPE]);
+        .in('selection_type', [STEP_TYPE, SKIP_TYPE]);
       if (error) throw error;
       return (data ?? []) as SelectionRow[];
     },
@@ -280,7 +280,10 @@ export function useFirstRunTour() {
 
   const isComplete = completedCount === FIRST_RUN_TOUR_STEPS.length;
   const completeAcked = useMemo(
-    () => rows.some((r) => r.selection_type === COMPLETE_ACK_TYPE),
+    () =>
+      rows.some(
+        (r) => r.selection_type === SKIP_TYPE && r.target_title === COMPLETE_ACK_TARGET,
+      ),
     [rows],
   );
 
@@ -290,8 +293,8 @@ export function useFirstRunTour() {
       await supabase.from('user_onboarding_selections').insert([
         {
           user_id: user.id,
-          selection_type: COMPLETE_ACK_TYPE,
-          target_title: 'v1',
+          selection_type: SKIP_TYPE,
+          target_title: COMPLETE_ACK_TARGET,
           target_id: crypto.randomUUID(),
         },
       ]);
