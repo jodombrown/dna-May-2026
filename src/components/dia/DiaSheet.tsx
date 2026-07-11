@@ -17,6 +17,19 @@ import { useDiaSheet } from '@/contexts/DiaSheetContext';
 const DiaSheet: React.FC = () => {
   const { open, setOpen, seedPrompt, seedNonce, openWith } = useDiaSheet();
   const [tab, setTab] = useState<string>('search');
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  // Focus the search input as soon as the sheet finishes opening on the Ask tab.
+  React.useEffect(() => {
+    if (!open || tab !== 'search') return;
+    const t = window.setTimeout(() => {
+      const input = contentRef.current?.querySelector<HTMLInputElement>(
+        'input[type="text"], input:not([type])',
+      );
+      input?.focus();
+    }, 120);
+    return () => window.clearTimeout(t);
+  }, [open, tab, seedNonce]);
 
   const handleFromOtherTab = (query: string) => {
     openWith(query);
