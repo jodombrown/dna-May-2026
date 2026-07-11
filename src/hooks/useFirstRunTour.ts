@@ -36,6 +36,8 @@ export interface TourStep {
   href: string;
   /** profileCompletion field that satisfies this step, if any */
   satisfiesField?: string;
+  /** Short line rendered under the step when it's not yet complete. */
+  requirement: string;
 }
 
 export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
