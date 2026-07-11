@@ -219,12 +219,15 @@ html {
     --dna-error: 0 70% 45%; /* Warm red #CC3333 */
     --dna-info: 191 53% 35%; /* Deep Teal */
 
-    /* ── FEED CARD BEVEL COLORS ── */
+    /* ── FEED CARD BEVEL COLORS (BD083 locked palette) ── */
     --bevel-post: 215 16% 47%;
-    --bevel-story: 191 53% 35%; /* Convey teal */
-    --bevel-event: 39 65% 47%; /* Convene amber */
-    --bevel-space: 147 33% 27%; /* Collaborate forest */
-    --bevel-opportunity: 25 51% 46%; /* Contribute copper */
+    --bevel-connect: 153 40% 30%;      /* Connect  #2D6A4F */
+    --bevel-story: 0 22% 29%;          /* Convey   #5B3A3A */
+    --bevel-event: 29 57% 46%;         /* Convene  #B87333 */
+    --bevel-space: 180 62% 30%;        /* Collaborate #1D7A7A */
+    --bevel-opportunity: 46 65% 52%;   /* Contribute #D4AF37 */
+    --bevel-need: 46 65% 52%;
+    --bevel-offer: 46 65% 52%;
 
     /* ── ELEVATION / SHADOW SYSTEM ── */
     --shadow-level0: none;
@@ -241,7 +244,7 @@ html {
     --card-padding: 16px;
     --card-shadow: var(--shadow-level1);
     --card-shadow-hover: var(--shadow-level2);
-    --bevel-width: 3px;
+    --bevel-width: 4px;
 
     /* ── BORDER RADIUS TOKENS ── */
     --radius-sm: 6px;
@@ -331,7 +334,7 @@ html {
     --neutral-950: 16 18% 6%;
 
     /* Five C's tokens */
-    --c-connect: 28 55% 46%;       /* copper-500 */
+    --c-connect: 153 40% 30%;      /* Connect green #2D6A4F (BD083 fix) */
     --c-convene: 160 32% 42%;      /* emerald-500 */
     --c-collaborate: 210 40% 45%;
     --c-contribute: 0 30% 38%;
@@ -496,7 +499,7 @@ html {
     --destructive-foreground: 36 20% 97%;
 
     /* Five C's tokens (dark — same hues, copper/emerald hold) */
-    --c-connect: 28 55% 46%;
+    --c-connect: 153 40% 35%;      /* Connect green (BD083 fix, dark) */
     --c-convene: 160 28% 56%;
     --c-collaborate: 210 40% 55%;
     --c-contribute: 0 30% 48%;
