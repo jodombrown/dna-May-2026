@@ -15,7 +15,7 @@
  * the action outside the tour surface.
  */
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,6 +36,8 @@ export interface TourStep {
   href: string;
   /** profileCompletion field that satisfies this step, if any */
   satisfiesField?: string;
+  /** Short line rendered under the step when it's not yet complete. */
+  requirement: string;
 }
 
 export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
@@ -46,6 +48,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     ctaLabel: 'Add industries',
     href: '/dna/profile/edit#professional',
     satisfiesField: 'industries',
+    requirement: 'Select at least one industry in your profile.',
   },
   {
     id: 'bio',
@@ -54,6 +57,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     ctaLabel: 'Write bio',
     href: '/dna/profile/edit#professional',
     satisfiesField: 'bio',
+    requirement: 'Add a bio (a couple of sentences) in your profile.',
   },
   {
     id: 'skills',
@@ -62,6 +66,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     ctaLabel: 'Add skills',
     href: '/dna/profile/edit#discovery',
     satisfiesField: 'skills',
+    requirement: 'Add at least one skill in your profile.',
   },
   {
     id: 'first_connection',
@@ -69,6 +74,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     description: 'DIA has suggested people you should meet. Send one request.',
     ctaLabel: 'Discover people',
     href: '/dna/connect/discover',
+    requirement: 'Send and get one connection request accepted.',
   },
   {
     id: 'first_event',
@@ -76,6 +82,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     description: 'Browse upcoming diaspora events and RSVP to one.',
     ctaLabel: 'Browse events',
     href: '/dna/convene/events',
+    requirement: 'RSVP to at least one event.',
   },
 ];
 
@@ -86,6 +93,7 @@ interface SelectionRow {
 
 const STEP_TYPE = 'first_run_tour_step';
 const SKIP_TYPE = 'first_run_tour_skip';
+const COMPLETE_ACK_TYPE = 'first_run_tour_complete_acked';
 
 export function useFirstRunTour() {
   const { user } = useAuth();
@@ -100,7 +108,7 @@ export function useFirstRunTour() {
         .from('user_onboarding_selections')
         .select('selection_type,target_title')
         .eq('user_id', user!.id)
-        .in('selection_type', [STEP_TYPE, SKIP_TYPE]);
+        .in('selection_type', [STEP_TYPE, SKIP_TYPE, COMPLETE_ACK_TYPE]);
       if (error) throw error;
       return (data ?? []) as SelectionRow[];
     },
@@ -132,6 +140,40 @@ export function useFirstRunTour() {
       };
     },
   });
+
+  // Realtime: invalidate signals + tour state the moment the user's
+  // connections or event RSVPs change, so the panel updates without a
+  // page refresh. The profile table already has its own realtime
+  // subscription in useProfile, which drives satisfiesField steps.
+  useEffect(() => {
+    if (!user?.id) return;
+    const uid = user.id;
+    const invalidateSignals = () => {
+      qc.invalidateQueries({ queryKey: ['first-run-tour-signals', uid] });
+    };
+    const connCh = supabase
+      .channel(`first-run-tour:conn:${uid}`)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'connections',
+        filter: `requester_id=eq.${uid}`,
+      }, invalidateSignals)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'connections',
+        filter: `recipient_id=eq.${uid}`,
+      }, invalidateSignals)
+      .subscribe();
+    const evtCh = supabase
+      .channel(`first-run-tour:evt:${uid}`)
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'event_attendees',
+        filter: `user_id=eq.${uid}`,
+      }, invalidateSignals)
+      .subscribe();
+    return () => {
+      supabase.removeChannel(connCh);
+      supabase.removeChannel(evtCh);
+    };
+  }, [user?.id, qc]);
 
   const completedFieldIds = useMemo(
     () => new Set(completed.map((c) => c.field)),
@@ -237,8 +279,31 @@ export function useFirstRunTour() {
   });
 
   const isComplete = completedCount === FIRST_RUN_TOUR_STEPS.length;
+  const completeAcked = useMemo(
+    () => rows.some((r) => r.selection_type === COMPLETE_ACK_TYPE),
+    [rows],
+  );
 
-  const shouldShow = !!user && !isLoading && !skipped && !isComplete;
+  const ackComplete = useMutation({
+    mutationFn: async () => {
+      if (!user?.id) return;
+      await supabase.from('user_onboarding_selections').insert([
+        {
+          user_id: user.id,
+          selection_type: COMPLETE_ACK_TYPE,
+          target_title: 'v1',
+          target_id: crypto.randomUUID(),
+        },
+      ]);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
+    },
+  });
+
+  // Show while there's still work OR while we're celebrating the finish.
+  const shouldShow =
+    !!user && !isLoading && !skipped && (!isComplete || !completeAcked);
 
   return {
     isLoading,
@@ -248,6 +313,7 @@ export function useFirstRunTour() {
     totalCount: FIRST_RUN_TOUR_STEPS.length,
     skipped,
     isComplete,
+    completeAcked,
     shouldShow,
     markStepDone: useCallback(
       (id: TourStepId) => markStepDone.mutate(id),
@@ -256,6 +322,7 @@ export function useFirstRunTour() {
     skipTour: useCallback(() => skipTour.mutate(), [skipTour]),
     reopenTour: useCallback(() => reopenTour.mutate(), [reopenTour]),
     resetTour: useCallback(() => resetTour.mutate(), [resetTour]),
+    ackComplete: useCallback(() => ackComplete.mutate(), [ackComplete]),
     resetPending: resetTour.isPending,
   };
 }
