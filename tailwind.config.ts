@@ -222,10 +222,13 @@ export default {
 					// Feed Card Bevel Colors
 					bevel: {
 						post: 'hsl(var(--bevel-post))',
+						connect: 'hsl(var(--bevel-connect))',
 						story: 'hsl(var(--bevel-story))',
 						event: 'hsl(var(--bevel-event))',
 						space: 'hsl(var(--bevel-space))',
 						opportunity: 'hsl(var(--bevel-opportunity))',
+						need: 'hsl(var(--bevel-need))',
+						offer: 'hsl(var(--bevel-offer))',
 					},
 				},
 				// Country Flag Colors
