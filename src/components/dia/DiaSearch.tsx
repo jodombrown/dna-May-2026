@@ -710,12 +710,18 @@ export function DiaSearch({
         <div className="mt-8 space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
           {/* Main Answer */}
           <Card>
-            <CardHeader className="pb-3">
+            <CardHeader className={cn('pb-3', hideBrandInAnswer && 'pb-2')}>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <MateMasie className="h-5 w-5 text-emerald-600" />
-                  DIA
-                </CardTitle>
+                {hideBrandInAnswer ? (
+                  <span className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">
+                    Answer
+                  </span>
+                ) : (
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <MateMasie className="h-5 w-5 text-emerald-600" />
+                    DIA
+                  </CardTitle>
+                )}
                 <div className="flex items-center gap-2">
                   {response.data.cached && (
                     <Badge variant="secondary" className="text-xs">Cached</Badge>
