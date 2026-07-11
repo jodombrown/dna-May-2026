@@ -93,6 +93,7 @@ interface SelectionRow {
 
 const STEP_TYPE = 'first_run_tour_step';
 const SKIP_TYPE = 'first_run_tour_skip';
+const COMPLETE_ACK_TYPE = 'first_run_tour_complete_acked';
 
 export function useFirstRunTour() {
   const { user } = useAuth();
