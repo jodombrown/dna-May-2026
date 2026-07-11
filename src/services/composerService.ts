@@ -244,8 +244,7 @@ export const composerService = {
   ): Promise<string> {
     const userId = (await supabase.auth.getUser()).data.user?.id;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase.from('opportunities') as any)
+    const { data, error } = await supabase.from('opportunities')
       .insert({
         created_by: userId,
         title: fields.title,
@@ -265,6 +264,9 @@ export const composerService = {
         tags: base.tags.map((t) => t.label),
         audience: base.audience,
         media: base.media,
+        give_what: fields.giveWhat ?? null,
+        give_to: fields.giveTo ?? null,
+        intended_impact: fields.intendedImpact ?? null,
       })
       .select('id')
       .single();
