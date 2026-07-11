@@ -11770,6 +11770,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      can_view_profile_associations: {
+        Args: { _profile_id: string }
+        Returns: boolean
+      }
       check_event_permission: {
         Args: { p_event_id: string; p_permission: string; p_user_id: string }
         Returns: boolean
