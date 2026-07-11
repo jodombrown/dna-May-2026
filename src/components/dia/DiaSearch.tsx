@@ -724,11 +724,8 @@ export function DiaSearch({
                 )}
                 <div className="flex items-center gap-2">
                   {response.data.cached && (
-                    <Badge variant="secondary" className="text-xs">Cached</Badge>
+                    <Badge variant="secondary" className="text-[10px] h-4 px-1.5">Cached</Badge>
                   )}
-                  <Badge variant="outline" className="text-xs">
-                    {response.response_time_ms}ms
-                  </Badge>
                 </div>
               </div>
             </CardHeader>
