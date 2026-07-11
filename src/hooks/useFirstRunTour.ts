@@ -108,7 +108,7 @@ export function useFirstRunTour() {
         .from('user_onboarding_selections')
         .select('selection_type,target_title')
         .eq('user_id', user!.id)
-        .in('selection_type', [STEP_TYPE, SKIP_TYPE]);
+        .in('selection_type', [STEP_TYPE, SKIP_TYPE, COMPLETE_ACK_TYPE]);
       if (error) throw error;
       return (data ?? []) as SelectionRow[];
     },
