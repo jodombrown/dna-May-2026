@@ -731,8 +731,12 @@ export function DiaSearch({
             </CardHeader>
             <CardContent>
               <div className="prose prose-sm max-w-none dark:prose-invert">
-                <p className="whitespace-pre-wrap text-foreground/80 leading-relaxed">
-                  {response.data.answer}
+                <p className="whitespace-pre-wrap text-foreground/85 leading-relaxed text-sm break-words">
+                  {renderAnswerWithProfileLinks(
+                    response.data.answer,
+                    response.data.network_matches?.profiles ?? [],
+                    (pid) => navigate(`/dna/${pid}`),
+                  )}
                 </p>
               </div>
 
