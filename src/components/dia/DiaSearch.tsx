@@ -822,7 +822,28 @@ export function DiaSearch({
 
       {/* Response */}
       {response?.data && !rateLimited && !searchMutation.isPending && (
-        <div className="mt-8 space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
+        <div className="mt-6 space-y-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
+          {/* Prior turns in the thread — compact refined-question strips */}
+          {pastTurns.length > 0 && (
+            <div className="space-y-2">
+              {pastTurns.map((t, i) => (
+                <div key={i} className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">You asked</p>
+                  <p className="text-sm text-foreground/80 mt-0.5 line-clamp-2">{t.question}</p>
+                  <p className="text-[11px] text-muted-foreground/70 mt-1 line-clamp-2">{t.answer}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Current question strip when threaded */}
+          {pastTurns.length > 0 && currentQuestionRef.current && (
+            <div className="rounded-lg bg-emerald-50 border border-emerald-100 px-3 py-2">
+              <p className="text-[11px] uppercase tracking-wide text-emerald-700 font-medium">Follow-up</p>
+              <p className="text-sm text-foreground mt-0.5">{currentQuestionRef.current}</p>
+            </div>
+          )}
+
           {/* Main Answer */}
           <Card>
             <CardHeader className={cn('pb-3', hideBrandInAnswer && 'pb-2')}>
