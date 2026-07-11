@@ -172,7 +172,7 @@ const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesS
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
 const SettingsRouteShell = lazy(() => import("./pages/dna/settings/SettingsRouteShell"));
 const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
-const DiaPage = lazy(() => import("./pages/dna/DiaPage"));
+
 const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
 const SpaceManagement = lazy(() => import("./pages/admin/spaces/SpaceManagement"));
 const SpaceModeration = lazy(() => import("./pages/admin/spaces/SpaceModeration"));
@@ -786,13 +786,10 @@ function App() {
                   <DiaPreferences />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/dia" element={
-                <OnboardingGuard>
-                  <DiaPage />
-                </OnboardingGuard>
-              } />
+              {/* /dna/dia is deprecated - DIA lives in a right-side sheet */}
+              <Route path="/dna/dia" element={<Navigate to="/dna/feed" replace />} />
               {/* Legacy route redirect (ADIN was renamed to DIA) */}
-              <Route path="/dna/adin" element={<Navigate to="/dna/dia" replace />} />
+              <Route path="/dna/adin" element={<Navigate to="/dna/feed" replace />} />
               {/* ========== ANALYTICS ========== */}
               <Route path="/dna/analytics" element={
                 <OnboardingGuard>

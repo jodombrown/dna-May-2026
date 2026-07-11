@@ -50,8 +50,20 @@ export const DiaSheetProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   return <DiaSheetContext.Provider value={value}>{children}</DiaSheetContext.Provider>;
 };
 
+const NOOP_CTX: DiaSheetContextValue = {
+  open: false,
+  seedPrompt: '',
+  seedNonce: 0,
+  openWith: () => {
+    if (typeof window !== 'undefined') {
+      console.warn('[DiaSheet] openWith called outside <DiaSheetProvider>');
+    }
+  },
+  close: () => {},
+  setOpen: () => {},
+};
+
 export function useDiaSheet(): DiaSheetContextValue {
   const ctx = useContext(DiaSheetContext);
-  if (!ctx) throw new Error('useDiaSheet must be used inside <DiaSheetProvider>');
-  return ctx;
+  return ctx ?? NOOP_CTX;
 }

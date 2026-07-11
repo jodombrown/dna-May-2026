@@ -17,6 +17,19 @@ import { useDiaSheet } from '@/contexts/DiaSheetContext';
 const DiaSheet: React.FC = () => {
   const { open, setOpen, seedPrompt, seedNonce, openWith } = useDiaSheet();
   const [tab, setTab] = useState<string>('search');
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  // Focus the search input as soon as the sheet finishes opening on the Ask tab.
+  React.useEffect(() => {
+    if (!open || tab !== 'search') return;
+    const t = window.setTimeout(() => {
+      const input = contentRef.current?.querySelector<HTMLInputElement>(
+        'input[type="text"], input:not([type])',
+      );
+      input?.focus();
+    }, 120);
+    return () => window.clearTimeout(t);
+  }, [open, tab, seedNonce]);
 
   const handleFromOtherTab = (query: string) => {
     openWith(query);
@@ -46,6 +59,7 @@ const DiaSheet: React.FC = () => {
           </SheetTitle>
         </SheetHeader>
 
+        <div ref={contentRef} className="flex-1 flex flex-col min-h-0">
         <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col min-h-0">
           <TabsList className="mx-4 mt-3 grid grid-cols-3">
             <TabsTrigger value="search" className="flex items-center gap-1.5 text-xs">
@@ -77,6 +91,7 @@ const DiaSheet: React.FC = () => {
             <DiaHistory onQueryClick={handleFromOtherTab} />
           </TabsContent>
         </Tabs>
+        </div>
       </SheetContent>
     </Sheet>
   );
