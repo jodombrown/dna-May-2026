@@ -2282,30 +2282,45 @@ export type Database = {
       }
       dia_query_log: {
         Row: {
+          blocked_reason: string | null
           cache_hit: boolean | null
           created_at: string | null
+          error_message: string | null
           id: string
           query_text: string
           response_time_ms: number | null
           source: string | null
+          success: boolean | null
+          tokens_used: number | null
+          tools_fired: Json | null
           user_id: string | null
         }
         Insert: {
+          blocked_reason?: string | null
           cache_hit?: boolean | null
           created_at?: string | null
+          error_message?: string | null
           id?: string
           query_text: string
           response_time_ms?: number | null
           source?: string | null
+          success?: boolean | null
+          tokens_used?: number | null
+          tools_fired?: Json | null
           user_id?: string | null
         }
         Update: {
+          blocked_reason?: string | null
           cache_hit?: boolean | null
           created_at?: string | null
+          error_message?: string | null
           id?: string
           query_text?: string
           response_time_ms?: number | null
           source?: string | null
+          success?: boolean | null
+          tokens_used?: number | null
+          tools_fired?: Json | null
           user_id?: string | null
         }
         Relationships: []
