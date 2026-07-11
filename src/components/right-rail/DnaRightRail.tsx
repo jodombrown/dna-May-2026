@@ -6,14 +6,17 @@ import { PulseCompass } from './PulseCompass';
 import { DiaDailyBrief } from './DiaDailyBrief';
 import { TrendingInDna } from './TrendingInDna';
 import { AskDiaCta } from './AskDiaCta';
+import { OnboardingRightRail } from './OnboardingRightRail';
 
 export const DnaRightRail: React.FC = () => {
   return (
     <div className="space-y-3">
+      <OnboardingRightRail />
       <PulseCompass />
       <DiaDailyBrief />
       <TrendingInDna />
       <AskDiaCta />
+
 
       <div className="text-[11px] text-muted-foreground px-1 pt-1">
         <div className="flex flex-wrap gap-x-2 gap-y-1">
