@@ -121,8 +121,17 @@ const MissingRow: React.FC<{ item: ProfileFieldCheck }> = ({ item }) => (
 );
 
 const CompleteAutoAck: React.FC<{ acked: boolean; ack: () => void }> = ({ acked, ack }) => {
+  // Fire the ack at most once per mount. `ack` is a useCallback whose
+  // identity changes whenever the underlying mutation object changes
+  // (e.g. after invalidateQueries), so depending on it re-triggers the
+  // effect and creates an infinite update loop.
+  const firedRef = useRef(false);
   useEffect(() => {
-    if (!acked) ack();
+    if (!acked && !firedRef.current) {
+      firedRef.current = true;
+      ack();
+    }
+    if (acked) firedRef.current = true;
   }, [acked, ack]);
   return null;
 };
