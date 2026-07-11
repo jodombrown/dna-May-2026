@@ -340,9 +340,10 @@ export function DiaSearch({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not signed in');
-      const currentQuestion = pastTurns.length > 0
-        ? pastTurns[pastTurns.length - 1].question // this shouldn't happen; response corresponds to newest question
-        : query;
+      // The visible answer always corresponds to currentQuestionRef, which is
+      // set in onSuccess after each search. Fall back to query only if the ref
+      // is somehow empty (e.g., very first render race).
+      const currentQuestion = currentQuestionRef.current || query;
       // Use the response's own hashed identity plus the visible answer.
       await (supabase.from('dia_saved_answers' as any).insert({
         user_id: session.user.id,
