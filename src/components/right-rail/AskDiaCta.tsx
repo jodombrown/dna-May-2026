@@ -55,6 +55,22 @@ export const AskDiaCta: React.FC = () => {
     },
   });
 
+  const { data: chipData } = useQuery({
+    queryKey: ['ask-dia-smart-chips', user?.id ?? null],
+    enabled: !!user?.id,
+    staleTime: 10 * 60_000,
+    queryFn: async (): Promise<{ chips: SmartChip[]; personalized: boolean }> => {
+      const { data, error } = await supabase.functions.invoke<{
+        chips: SmartChip[];
+        personalized: boolean;
+      }>('dia-smart-chips', { body: {} });
+      if (error || !data) return { chips: FALLBACK_CHIPS, personalized: false };
+      return data;
+    },
+  });
+
+  const chips = chipData?.chips ?? FALLBACK_CHIPS;
+
   return (
     <section
       aria-label="Ask DIA"
@@ -71,7 +87,9 @@ export const AskDiaCta: React.FC = () => {
               Ask DIA
             </h3>
             <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
-              Real-time intelligence across the diaspora.
+              {chipData?.personalized
+                ? 'Tailored to your recent activity.'
+                : 'Real-time intelligence across the diaspora.'}
             </p>
           </div>
         </div>
@@ -87,13 +105,14 @@ export const AskDiaCta: React.FC = () => {
         )}
 
         <div className="flex flex-wrap gap-1.5">
-          {QUICK_PROMPTS.map((p) => (
+          {chips.map((c) => (
             <button
-              key={p}
-              onClick={() => openWith(p)}
-              className="text-[11px] px-2 py-1 rounded-full bg-muted hover:bg-[hsl(var(--dna-gold)/0.12)] hover:text-foreground text-muted-foreground transition-colors"
+              key={c.id}
+              onClick={() => openWith(c.prompt)}
+              title={c.prompt}
+              className="text-[11px] px-2 py-1 rounded-full bg-muted hover:bg-[hsl(var(--dna-gold)/0.12)] hover:text-foreground text-muted-foreground transition-colors max-w-full truncate"
             >
-              {p}
+              {c.label}
             </button>
           ))}
         </div>
