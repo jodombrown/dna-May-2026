@@ -107,12 +107,18 @@ async function runToolLoop(
   userId: string,
   accessToken: string,
   apiKey: string,
-): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[] }> {
+): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[]; tokensUsed: number }> {
   const userSupabase = makeUserClient(accessToken);
   const ctx = { userId, supabase: userSupabase };
   const results = emptyResults();
   const citations: string[] = [];
   const toolsFired: string[] = [];
+
+  // Phase 4: per-loop memoization + per-tool error budget
+  const toolCache = new Map<string, { text: string; partial: any }>();
+  const toolErrors = new Map<string, number>();
+  let totalToolCalls = 0;
+  let tokensUsed = 0;
 
   const messages: ChatMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
@@ -120,11 +126,12 @@ async function runToolLoop(
   ];
 
   for (let step = 0; step < MAX_TOOL_STEPS; step++) {
+    if (tokensUsed > MAX_TOKENS_TOTAL) break;
     const completion = await callGateway(messages, apiKey);
+    tokensUsed += completion?.usage?.total_tokens ?? 0;
     const msg = completion?.choices?.[0]?.message;
     if (!msg) throw new Error("Empty model response");
 
-    // Push assistant message (needed for tool-message threading)
     messages.push({
       role: "assistant",
       content: msg.content ?? null,
@@ -133,20 +140,48 @@ async function runToolLoop(
 
     const toolCalls = msg.tool_calls ?? [];
     if (!toolCalls.length) {
-      // Final answer
-      return { answer: msg.content ?? "", citations, results, toolsFired };
+      return { answer: msg.content ?? "", citations, results, toolsFired, tokensUsed };
     }
 
-    // Execute each tool call, append tool messages
     for (const call of toolCalls) {
+      if (totalToolCalls >= MAX_TOOL_CALLS_TOTAL) {
+        messages.push({ role: "tool", tool_call_id: call.id, name: call.function?.name, content: JSON.stringify({ error: "tool_budget_exhausted" }) });
+        continue;
+      }
+      totalToolCalls++;
+
       const name = call.function?.name;
       let args: any = {};
       try { args = JSON.parse(call.function?.arguments ?? "{}"); } catch { args = {}; }
+
+      // Skip tools that have errored too many times this loop
+      if ((toolErrors.get(name) ?? 0) >= MAX_TOOL_ERRORS) {
+        messages.push({ role: "tool", tool_call_id: call.id, name, content: JSON.stringify({ error: "tool_disabled_after_repeated_errors" }) });
+        continue;
+      }
+
+      // Per-loop memoization: identical (tool, args) returns cached result
+      const cacheKey = `${name}:${JSON.stringify(args)}`;
+      let text: string;
+      let partial: any;
+      const cached = toolCache.get(cacheKey);
+      if (cached) {
+        text = cached.text;
+        partial = cached.partial;
+      } else {
+        try {
+          const exec = await executeTool(name, args, ctx, citations);
+          text = exec.text;
+          partial = exec.results;
+          toolCache.set(cacheKey, { text, partial });
+        } catch (e: any) {
+          toolErrors.set(name, (toolErrors.get(name) ?? 0) + 1);
+          text = JSON.stringify({ error: e?.message ?? "tool_error" });
+          partial = {};
+        }
+      }
+
       toolsFired.push(name);
-
-      const { text, results: partial } = await executeTool(name, args, ctx, citations);
-
-      // Merge partial results
       if (partial.profiles?.length) results.profiles.push(...partial.profiles);
       if (partial.events?.length) results.events.push(...partial.events);
       if (partial.projects?.length) results.projects.push(...partial.projects);
@@ -154,23 +189,21 @@ async function runToolLoop(
       if (partial.stories?.length) results.stories.push(...partial.stories);
       if (partial.analytics) results.analytics = partial.analytics;
 
-      messages.push({
-        role: "tool",
-        tool_call_id: call.id,
-        name,
-        content: text,
-      });
+      messages.push({ role: "tool", tool_call_id: call.id, name, content: text });
     }
   }
 
-  // Hit step cap — ask model to summarize what it has
-  messages.push({ role: "user", content: "Summarize what you found based on the tool results above. Be concise." });
-  const final = await callGateway(messages.slice(0, -1).concat([{ role: "user", content: "Summarize the tool results concisely." }]), apiKey);
+  const final = await callGateway(
+    messages.concat([{ role: "user", content: "Summarize the tool results concisely." }]),
+    apiKey,
+  );
+  tokensUsed += final?.usage?.total_tokens ?? 0;
   return {
     answer: final?.choices?.[0]?.message?.content ?? "I gathered some results but couldn't finish synthesizing.",
     citations,
     results,
     toolsFired,
+    tokensUsed,
   };
 }
 
