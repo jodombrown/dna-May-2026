@@ -22,6 +22,33 @@ const corsHeaders = {
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MODEL = "google/gemini-2.5-flash";
 const MAX_TOOL_STEPS = 6;
+// Phase 4 guardrails
+const MAX_TOOL_CALLS_TOTAL = 12;   // hard cap across all steps
+const MAX_TOOL_ERRORS = 2;          // per-tool error budget before we drop it
+const MAX_TOKENS_TOTAL = 6000;      // rough cap across the whole loop
+
+// Very light prompt-injection heuristics. These are STRIPPED from the raw
+// query before we forward it to the model, so a hostile query can't easily
+// rewrite the system prompt or make DIA call web_search for private data.
+const INJECTION_PATTERNS: RegExp[] = [
+  /\bignore (all )?(previous|above|prior) (instructions|prompts?)\b/gi,
+  /\bdisregard (the )?system prompt\b/gi,
+  /\byou are now\b.{0,40}\b(assistant|dan|jailbreak|developer mode)\b/gi,
+  /\bprint (your )?(system|initial) prompt\b/gi,
+];
+
+function sanitizeQuery(raw: string): { clean: string; blocked: boolean; reason?: string } {
+  let clean = raw;
+  let hit = false;
+  for (const pat of INJECTION_PATTERNS) {
+    if (pat.test(clean)) { hit = true; clean = clean.replace(pat, "[redacted]"); }
+  }
+  // Block only if the ENTIRE query is basically the injection
+  if (hit && clean.replace(/\[redacted\]/g, "").trim().length < 8) {
+    return { clean, blocked: true, reason: "prompt_injection" };
+  }
+  return { clean, blocked: false, reason: hit ? "sanitized" : undefined };
+}
 
 const SYSTEM_PROMPT = `You are DIA (Diaspora Intelligence Agent), the intelligence layer for DNA — the platform mobilizing the Global African Diaspora.
 
@@ -80,12 +107,18 @@ async function runToolLoop(
   userId: string,
   accessToken: string,
   apiKey: string,
-): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[] }> {
+): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[]; tokensUsed: number }> {
   const userSupabase = makeUserClient(accessToken);
   const ctx = { userId, supabase: userSupabase };
   const results = emptyResults();
   const citations: string[] = [];
   const toolsFired: string[] = [];
+
+  // Phase 4: per-loop memoization + per-tool error budget
+  const toolCache = new Map<string, { text: string; partial: any }>();
+  const toolErrors = new Map<string, number>();
+  let totalToolCalls = 0;
+  let tokensUsed = 0;
 
   const messages: ChatMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
@@ -93,11 +126,12 @@ async function runToolLoop(
   ];
 
   for (let step = 0; step < MAX_TOOL_STEPS; step++) {
+    if (tokensUsed > MAX_TOKENS_TOTAL) break;
     const completion = await callGateway(messages, apiKey);
+    tokensUsed += completion?.usage?.total_tokens ?? 0;
     const msg = completion?.choices?.[0]?.message;
     if (!msg) throw new Error("Empty model response");
 
-    // Push assistant message (needed for tool-message threading)
     messages.push({
       role: "assistant",
       content: msg.content ?? null,
@@ -106,20 +140,48 @@ async function runToolLoop(
 
     const toolCalls = msg.tool_calls ?? [];
     if (!toolCalls.length) {
-      // Final answer
-      return { answer: msg.content ?? "", citations, results, toolsFired };
+      return { answer: msg.content ?? "", citations, results, toolsFired, tokensUsed };
     }
 
-    // Execute each tool call, append tool messages
     for (const call of toolCalls) {
+      if (totalToolCalls >= MAX_TOOL_CALLS_TOTAL) {
+        messages.push({ role: "tool", tool_call_id: call.id, name: call.function?.name, content: JSON.stringify({ error: "tool_budget_exhausted" }) });
+        continue;
+      }
+      totalToolCalls++;
+
       const name = call.function?.name;
       let args: any = {};
       try { args = JSON.parse(call.function?.arguments ?? "{}"); } catch { args = {}; }
+
+      // Skip tools that have errored too many times this loop
+      if ((toolErrors.get(name) ?? 0) >= MAX_TOOL_ERRORS) {
+        messages.push({ role: "tool", tool_call_id: call.id, name, content: JSON.stringify({ error: "tool_disabled_after_repeated_errors" }) });
+        continue;
+      }
+
+      // Per-loop memoization: identical (tool, args) returns cached result
+      const cacheKey = `${name}:${JSON.stringify(args)}`;
+      let text: string;
+      let partial: any;
+      const cached = toolCache.get(cacheKey);
+      if (cached) {
+        text = cached.text;
+        partial = cached.partial;
+      } else {
+        try {
+          const exec = await executeTool(name, args, ctx, citations);
+          text = exec.text;
+          partial = exec.results;
+          toolCache.set(cacheKey, { text, partial });
+        } catch (e: any) {
+          toolErrors.set(name, (toolErrors.get(name) ?? 0) + 1);
+          text = JSON.stringify({ error: e?.message ?? "tool_error" });
+          partial = {};
+        }
+      }
+
       toolsFired.push(name);
-
-      const { text, results: partial } = await executeTool(name, args, ctx, citations);
-
-      // Merge partial results
       if (partial.profiles?.length) results.profiles.push(...partial.profiles);
       if (partial.events?.length) results.events.push(...partial.events);
       if (partial.projects?.length) results.projects.push(...partial.projects);
@@ -127,23 +189,21 @@ async function runToolLoop(
       if (partial.stories?.length) results.stories.push(...partial.stories);
       if (partial.analytics) results.analytics = partial.analytics;
 
-      messages.push({
-        role: "tool",
-        tool_call_id: call.id,
-        name,
-        content: text,
-      });
+      messages.push({ role: "tool", tool_call_id: call.id, name, content: text });
     }
   }
 
-  // Hit step cap — ask model to summarize what it has
-  messages.push({ role: "user", content: "Summarize what you found based on the tool results above. Be concise." });
-  const final = await callGateway(messages.slice(0, -1).concat([{ role: "user", content: "Summarize the tool results concisely." }]), apiKey);
+  const final = await callGateway(
+    messages.concat([{ role: "user", content: "Summarize the tool results concisely." }]),
+    apiKey,
+  );
+  tokensUsed += final?.usage?.total_tokens ?? 0;
   return {
     answer: final?.choices?.[0]?.message?.content ?? "I gathered some results but couldn't finish synthesizing.",
     citations,
     results,
     toolsFired,
+    tokensUsed,
   };
 }
 
@@ -195,14 +255,28 @@ serve(async (req) => {
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const { query, source = "dashboard" } = await req.json();
-    if (!query || String(query).trim().length === 0) {
+    const { query: rawQuery, source = "dashboard" } = await req.json();
+    if (!rawQuery || String(rawQuery).trim().length === 0) {
       return new Response(JSON.stringify({ error: "Query is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    if (String(query).length > 500) {
+    if (String(rawQuery).length > 500) {
       return new Response(JSON.stringify({ error: "Query too long", message: "Max 500 chars" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Phase 4 guardrail: sanitize prompt-injection attempts
+    const { clean: query, blocked, reason: sanitizeReason } = sanitizeQuery(String(rawQuery));
+    if (blocked) {
+      admin.from("dia_query_log").insert({
+        user_id: user.id, query_text: rawQuery, cache_hit: false,
+        response_time_ms: 0, source, success: false,
+        blocked_reason: sanitizeReason, tools_fired: [],
+      }).then(() => {}).catch(() => {});
+      return new Response(JSON.stringify({
+        error: "Query blocked",
+        message: "Your question was blocked by DIA's safety filter. Try rephrasing.",
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     const startTime = Date.now();
@@ -238,59 +312,89 @@ serve(async (req) => {
     let response: any;
     let cacheHit = false;
     let toolsFired: string[] = [];
+    let tokensUsed = 0;
+    let loopError: string | undefined;
 
     if (cached) {
       cacheHit = true;
+      toolsFired = (cached.perplexity_response?.tools_fired as string[]) ?? [];
       response = {
         answer: cached.perplexity_response?.answer ?? "",
         citations: cached.citations ?? [],
         network_matches: cached.network_matches ?? emptyResults(),
         cached: true,
+        query_hash: queryHash,
       };
       admin.from("dia_queries").update({ cache_hits: (cached.cache_hits ?? 0) + 1 })
         .eq("id", cached.id).then(() => {}).catch(() => {});
     } else {
-      const loop = await runToolLoop(query, user.id, token, lovableKey);
-      const deduped = dedupe(loop.results);
-      toolsFired = loop.toolsFired;
+      try {
+        const loop = await runToolLoop(query, user.id, token, lovableKey);
+        const deduped = dedupe(loop.results);
+        toolsFired = loop.toolsFired;
+        tokensUsed = loop.tokensUsed;
 
-      response = {
-        answer: loop.answer,
-        citations: loop.citations,
-        network_matches: deduped,
-        cached: false,
-      };
+        response = {
+          answer: loop.answer,
+          citations: loop.citations,
+          network_matches: deduped,
+          cached: false,
+          query_hash: queryHash,
+        };
 
-      // Cache (24h)
-      await admin.from("dia_queries").insert({
-        query_hash: queryHash,
-        query_text: query,
-        normalized_query: normalized,
-        perplexity_response: { answer: loop.answer, tools_fired: toolsFired },
-        citations: loop.citations,
-        network_matches: deduped,
-        model_used: MODEL,
-        tokens_used: 0,
-        estimated_cost: 0,
-        expires_at: new Date(Date.now() + 24 * 3600_000).toISOString(),
-      }).then(() => {}).catch((e: any) => console.error("cache insert:", e?.message));
+        // Cache (24h)
+        await admin.from("dia_queries").insert({
+          query_hash: queryHash,
+          query_text: query,
+          normalized_query: normalized,
+          perplexity_response: { answer: loop.answer, tools_fired: toolsFired },
+          citations: loop.citations,
+          network_matches: deduped,
+          model_used: MODEL,
+          tokens_used: tokensUsed,
+          estimated_cost: 0,
+          expires_at: new Date(Date.now() + 24 * 3600_000).toISOString(),
+        }).then(() => {}).catch((e: any) => console.error("cache insert:", e?.message));
 
-      // Update usage
-      await admin.from("dia_user_usage").update({
-        query_count: (usage?.query_count ?? 0) + 1,
-        last_query_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }).eq("user_id", user.id).eq("period_start", periodStart);
+        // Update usage
+        await admin.from("dia_user_usage").update({
+          query_count: (usage?.query_count ?? 0) + 1,
+          last_query_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }).eq("user_id", user.id).eq("period_start", periodStart);
+      } catch (loopErr: any) {
+        loopError = loopErr?.message ?? "loop_error";
+        throw loopErr;
+      } finally {
+        // Phase 4 telemetry: always record even if the loop failed
+        admin.from("dia_query_log").insert({
+          user_id: user.id,
+          query_text: rawQuery,
+          cache_hit: cacheHit,
+          response_time_ms: Date.now() - startTime,
+          source,
+          tools_fired: toolsFired,
+          success: !loopError,
+          error_message: loopError,
+          tokens_used: tokensUsed,
+          blocked_reason: sanitizeReason,
+        }).then(() => {}).catch(() => {});
+      }
     }
 
-    // Log
-    admin.from("dia_query_log").insert({
-      user_id: user.id,
-      query_text: query,
-      cache_hit: cacheHit,
-      response_time_ms: Date.now() - startTime,
-      source,
-    }).then(() => {}).catch(() => {});
+    // Log cache-hit path (the loop path logs in its finally block)
+    if (cacheHit) {
+      admin.from("dia_query_log").insert({
+        user_id: user.id,
+        query_text: rawQuery,
+        cache_hit: true,
+        response_time_ms: Date.now() - startTime,
+        source,
+        tools_fired: toolsFired,
+        success: true,
+        blocked_reason: sanitizeReason,
+      }).then(() => {}).catch(() => {});
+    }
 
     return new Response(JSON.stringify({
       success: true,
@@ -302,6 +406,7 @@ serve(async (req) => {
       },
       response_time_ms: Date.now() - startTime,
       tools_fired: toolsFired,
+      query_hash: queryHash,
     }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err: any) {
     console.error("DIA search error:", err?.message ?? err);

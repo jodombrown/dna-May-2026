@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Users, Calendar, FolderKanban, Hash, ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen, ChevronDown, ChevronUp, Target } from 'lucide-react';
+import { Search, Users, Calendar, FolderKanban, Hash, ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen, ChevronDown, ChevronUp, Target, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -80,6 +80,7 @@ interface DiaResponse {
       }>;
     };
     cached: boolean;
+    query_hash?: string;
   };
   usage: {
     queries_used: number;
@@ -296,6 +297,22 @@ export function DiaSearch({
   const [response, setResponse] = useState<DiaResponse | null>(null);
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
+  const [feedbackSent, setFeedbackSent] = useState<'up' | 'down' | null>(null);
+
+  const sendFeedback = async (helpful: boolean) => {
+    const queryHash = response?.data?.query_hash;
+    if (!queryHash || feedbackSent) return;
+    setFeedbackSent(helpful ? 'up' : 'down');
+    try {
+      await supabase.functions.invoke('dia-feedback', {
+        body: { query_hash: queryHash, helpful },
+      });
+      toast.success(helpful ? 'Thanks — glad it helped' : 'Thanks — DIA will learn from this');
+    } catch {
+      setFeedbackSent(null);
+      toast.error("Couldn't record feedback");
+    }
+  };
 
   // Auto-search when triggered from history or insights
   React.useEffect(() => {
@@ -343,6 +360,7 @@ export function DiaSearch({
     onSuccess: (data) => {
       setResponse(data);
       setRateLimited(false);
+      setFeedbackSent(null);
       if (data.data.cached) {
         toast.info('Retrieved from cache', { duration: 2000 });
       }
@@ -818,6 +836,43 @@ export function DiaSearch({
                       )}
                     </Button>
                   )}
+                </div>
+              )}
+
+              {/* Phase 4 feedback loop */}
+              {response.data.query_hash && (
+                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+                  <span className="text-[11px] text-muted-foreground">Was this helpful?</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => sendFeedback(true)}
+                      disabled={!!feedbackSent}
+                      className={cn(
+                        "h-7 w-7 inline-flex items-center justify-center rounded-md transition-colors",
+                        feedbackSent === 'up'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                      aria-label="Helpful"
+                    >
+                      <ThumbsUp className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => sendFeedback(false)}
+                      disabled={!!feedbackSent}
+                      className={cn(
+                        "h-7 w-7 inline-flex items-center justify-center rounded-md transition-colors",
+                        feedbackSent === 'down'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                      aria-label="Not helpful"
+                    >
+                      <ThumbsDown className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               )}
             </CardContent>
