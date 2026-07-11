@@ -63,28 +63,26 @@ export function DiaInsights({
   onInsightClick
 }: DiaInsightsProps) {
   const { data: insights, isLoading, error } = useQuery({
-    queryKey: ['dia-insights', limit, category, showFeaturedOnly],
+    queryKey: ['dia-insights-daily', limit, category, showFeaturedOnly],
+    staleTime: 15 * 60_000,
     queryFn: async () => {
-      // Type assertion needed as dia_insights table was added after types generation
+      // Ensure today's set exists (idempotent, fast path returns quickly).
+      await supabase.functions.invoke('dia-daily-insights', { body: {} }).catch(() => null);
+
+      const today = new Date().toISOString().slice(0, 10);
       const { data, error } = await (supabase
         .from('dia_insights' as any)
         .select('id, title, description, query_prompt, category, region, is_featured, click_count')
         .eq('is_active', true)
+        .eq('start_date', today)
         .order('display_order', { ascending: true })
         .limit(limit) as any);
 
       if (error) throw error;
 
       let results = (data || []) as Insight[];
-
-      if (category) {
-        results = results.filter(i => i.category === category);
-      }
-
-      if (showFeaturedOnly) {
-        results = results.filter(i => i.is_featured);
-      }
-
+      if (category) results = results.filter(i => i.category === category);
+      if (showFeaturedOnly) results = results.filter(i => i.is_featured);
       return results;
     },
   });
