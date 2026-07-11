@@ -219,12 +219,15 @@ html {
     --dna-error: 0 70% 45%; /* Warm red #CC3333 */
     --dna-info: 191 53% 35%; /* Deep Teal */
 
-    /* ── FEED CARD BEVEL COLORS ── */
+    /* ── FEED CARD BEVEL COLORS (BD083 locked palette) ── */
     --bevel-post: 215 16% 47%;
-    --bevel-story: 191 53% 35%; /* Convey teal */
-    --bevel-event: 39 65% 47%; /* Convene amber */
-    --bevel-space: 147 33% 27%; /* Collaborate forest */
-    --bevel-opportunity: 25 51% 46%; /* Contribute copper */
+    --bevel-connect: 153 40% 30%;      /* Connect  #2D6A4F */
+    --bevel-story: 0 22% 29%;          /* Convey   #5B3A3A */
+    --bevel-event: 29 57% 46%;         /* Convene  #B87333 */
+    --bevel-space: 180 62% 30%;        /* Collaborate #1D7A7A */
+    --bevel-opportunity: 46 65% 52%;   /* Contribute #D4AF37 */
+    --bevel-need: 46 65% 52%;
+    --bevel-offer: 46 65% 52%;
 
     /* ── ELEVATION / SHADOW SYSTEM ── */
     --shadow-level0: none;
