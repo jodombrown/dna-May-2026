@@ -298,6 +298,24 @@ export function DiaSearch({
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
   const [feedbackSent, setFeedbackSent] = useState<'up' | 'down' | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  // Follow-up thread: prior turns in this conversation. Capped in the UI at
+  // MAX_TURNS total (root + follow-ups). Each turn stores the question and a
+  // clipped answer we replay to the backend so DIA can refine.
+  const MAX_TURNS = 5;
+  interface Turn { question: string; answer: string }
+  const [pastTurns, setPastTurns] = useState<Turn[]>([]);
+  const totalTurns = pastTurns.length + (response ? 1 : 0);
+  const canFollowUp = totalTurns < MAX_TURNS;
+
+  const startNewThread = () => {
+    setPastTurns([]);
+    setResponse(null);
+    setFeedbackSent(null);
+    setSaved(false);
+    setQuery('');
+  };
 
   const sendFeedback = async (helpful: boolean) => {
     const queryHash = response?.data?.query_hash;
@@ -314,25 +332,59 @@ export function DiaSearch({
     }
   };
 
+  const saveAnswer = async () => {
+    if (!response?.data || saved) return;
+    setSaved(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not signed in');
+      const currentQuestion = pastTurns.length > 0
+        ? pastTurns[pastTurns.length - 1].question // this shouldn't happen; response corresponds to newest question
+        : query;
+      // Use the response's own hashed identity plus the visible answer.
+      await (supabase.from('dia_saved_answers' as any).insert({
+        user_id: session.user.id,
+        query_text: currentQuestion || 'Untitled question',
+        answer: response.data.answer,
+        tool_results: response.data.network_matches ?? {},
+        citations: response.data.citations ?? [],
+        query_hash: response.data.query_hash ?? null,
+      }) as any);
+      toast.success('Saved');
+    } catch {
+      setSaved(false);
+      toast.error("Couldn't save");
+    }
+  };
+
   // Auto-search when triggered from history or insights
   React.useEffect(() => {
     if (autoSearch && initialQuery && !hasAutoSearched.current && !rateLimited) {
       hasAutoSearched.current = true;
-      searchMutation.mutate(initialQuery);
+      searchMutation.mutate({ question: initialQuery, isFollowUp: false });
     }
   }, [autoSearch, initialQuery, rateLimited]);
 
   const searchMutation = useMutation({
-    mutationFn: async (searchQuery: string) => {
+    mutationFn: async ({ question, isFollowUp }: { question: string; isFollowUp: boolean }) => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
+      // Build prior_turns from what we already have in the thread. If this is
+      // a follow-up we include the current on-screen answer too.
+      const priorTurns: Turn[] = isFollowUp && response
+        ? [...pastTurns, { question: currentQuestionRef.current ?? '', answer: response.data.answer }]
+        : [];
+
       const res = await supabase.functions.invoke('dia-search', {
-        body: { query: searchQuery, source },
+        body: {
+          query: question,
+          source,
+          prior_turns: priorTurns.map((t) => ({ question: t.question, answer: t.answer })),
+        },
       });
 
       if (res.error) {
-        // Handle structured errors from edge function
         if (res.error.message) {
           try {
             const errorData = JSON.parse(res.error.message);
@@ -344,23 +396,31 @@ export function DiaSearch({
         throw res.error;
       }
 
-      // Check for rate limit in response
       if (res.data?.error === 'Monthly query limit reached') {
         setRateLimited(true);
         setRateLimitInfo({
           limit: res.data.limit,
           used: res.data.used,
-          resets_at: res.data.resets_at
+          resets_at: res.data.resets_at,
         });
         throw new Error('Monthly query limit reached');
       }
 
-      return res.data as DiaResponse;
+      return { data: res.data as DiaResponse, isFollowUp, question, priorTurns };
     },
-    onSuccess: (data) => {
+    onSuccess: ({ data, isFollowUp, question, priorTurns }) => {
+      // If this was a follow-up, push the previous answer into pastTurns
+      // before replacing `response` with the new one.
+      if (isFollowUp) {
+        setPastTurns([...priorTurns]);
+      } else {
+        setPastTurns([]);
+      }
+      currentQuestionRef.current = question;
       setResponse(data);
       setRateLimited(false);
       setFeedbackSent(null);
+      setSaved(false);
       if (data.data.cached) {
         toast.info('Retrieved from cache', { duration: 2000 });
       }
@@ -370,35 +430,38 @@ export function DiaSearch({
 
       if (errorMessage.includes('Monthly query limit') || errorMessage.includes('limit reached')) {
         setRateLimited(true);
-        toast.error("Monthly Query Limit Reached", {
-          description: "You've used all your DIA queries this month."
+        toast.error('Monthly Query Limit Reached', {
+          description: "You've used all your DIA queries this month.",
         });
       } else if (errorMessage.includes('Unauthorized') || errorMessage.includes('Not authenticated')) {
         toast.error('Please sign in to use DIA');
       } else if (errorMessage.includes('Query too long')) {
-        toast.error('Query too long', {
-          description: 'Maximum 500 characters allowed'
-        });
+        toast.error('Query too long', { description: 'Maximum 500 characters allowed' });
       } else {
-        toast.error('Search failed', {
-          description: 'Please try again.'
-        });
+        toast.error('Search failed', { description: 'Please try again.' });
       }
     },
   });
 
+  // Track the currently-visible question (needed when threading follow-ups)
+  const currentQuestionRef = React.useRef<string | null>(null);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedQuery = query.trim();
-    if (trimmedQuery && !rateLimited) {
-      searchMutation.mutate(trimmedQuery);
-    }
+    if (!trimmedQuery || rateLimited) return;
+    const isFollowUp = !!response && canFollowUp;
+    searchMutation.mutate({ question: trimmedQuery, isFollowUp });
+    setQuery('');
   };
 
   const handleSuggestionClick = (suggestion: string) => {
     if (rateLimited) return;
-    setQuery(suggestion);
-    searchMutation.mutate(suggestion);
+    // Suggestions/chips at the empty state = fresh thread; chips under an
+    // existing answer = follow-up.
+    const isFollowUp = !!response && canFollowUp;
+    setQuery('');
+    searchMutation.mutate({ question: suggestion, isFollowUp });
   };
 
   const handleProfileClick = (profileId: string) => {
