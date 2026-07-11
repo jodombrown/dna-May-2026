@@ -11,13 +11,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MateMasie } from '@/components/icons/adinkra';
 import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
-// Prompts DIA (Perplexity-powered) can actually research and answer well.
-// Platform-internal queries ("who in my network...") are intentionally excluded
-// until DIA's internal-data tools ship — see docs/M4-Recommendations-Reminders-Summary.md.
-const QUICK_PROMPTS = [
-  'Latest fintech funding across Africa this month',
-  'Diaspora-led renewable energy projects in East Africa',
-  'Which African markets are hiring senior tech talent right now?',
+interface SmartChip {
+  id: string;
+  label: string;
+  prompt: string;
+  kind: 'network' | 'event' | 'space' | 'analytics' | 'discover';
+}
+
+const FALLBACK_CHIPS: SmartChip[] = [
+  { id: 'f1', label: 'Latest African fintech funding', prompt: 'Latest fintech funding across Africa this month', kind: 'discover' },
+  { id: 'f2', label: 'Diaspora renewable projects', prompt: 'Diaspora-led renewable energy projects in East Africa', kind: 'discover' },
+  { id: 'f3', label: 'Markets hiring tech talent', prompt: 'Which African markets are hiring senior tech talent right now?', kind: 'discover' },
 ];
 
 const truncate = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
