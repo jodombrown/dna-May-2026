@@ -22,6 +22,33 @@ const corsHeaders = {
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MODEL = "google/gemini-2.5-flash";
 const MAX_TOOL_STEPS = 6;
+// Phase 4 guardrails
+const MAX_TOOL_CALLS_TOTAL = 12;   // hard cap across all steps
+const MAX_TOOL_ERRORS = 2;          // per-tool error budget before we drop it
+const MAX_TOKENS_TOTAL = 6000;      // rough cap across the whole loop
+
+// Very light prompt-injection heuristics. These are STRIPPED from the raw
+// query before we forward it to the model, so a hostile query can't easily
+// rewrite the system prompt or make DIA call web_search for private data.
+const INJECTION_PATTERNS: RegExp[] = [
+  /\bignore (all )?(previous|above|prior) (instructions|prompts?)\b/gi,
+  /\bdisregard (the )?system prompt\b/gi,
+  /\byou are now\b.{0,40}\b(assistant|dan|jailbreak|developer mode)\b/gi,
+  /\bprint (your )?(system|initial) prompt\b/gi,
+];
+
+function sanitizeQuery(raw: string): { clean: string; blocked: boolean; reason?: string } {
+  let clean = raw;
+  let hit = false;
+  for (const pat of INJECTION_PATTERNS) {
+    if (pat.test(clean)) { hit = true; clean = clean.replace(pat, "[redacted]"); }
+  }
+  // Block only if the ENTIRE query is basically the injection
+  if (hit && clean.replace(/\[redacted\]/g, "").trim().length < 8) {
+    return { clean, blocked: true, reason: "prompt_injection" };
+  }
+  return { clean, blocked: false, reason: hit ? "sanitized" : undefined };
+}
 
 const SYSTEM_PROMPT = `You are DIA (Diaspora Intelligence Agent), the intelligence layer for DNA — the platform mobilizing the Global African Diaspora.
 
