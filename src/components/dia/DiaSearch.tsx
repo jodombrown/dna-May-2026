@@ -80,6 +80,7 @@ interface DiaResponse {
       }>;
     };
     cached: boolean;
+    query_hash?: string;
   };
   usage: {
     queries_used: number;
