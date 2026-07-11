@@ -1,7 +1,7 @@
 /**
  * useProfileCompleteAck — tracks whether the user has dismissed the
  * "Profile at 100%" celebration card, persisted in
- * `user_onboarding_selections` (selection_type = 'profile_complete_acked').
+ * `user_onboarding_selections` as an allowed onboarding marker.
  *
  * Behavior:
  *  - `acked` is true once the celebration has been dismissed.
@@ -16,8 +16,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-const ACK_TYPE = 'profile_complete_acked';
-const ACK_TITLE = 'v1';
+const ACK_SELECTION_TYPE = 'user_connect';
+const ACK_TITLE = 'profile_complete_acked:v1';
 // Strict 100 threshold: as soon as the user drops even a single point
 // below 100 we clear the ack so the progress panel returns.
 const RESET_THRESHOLD = 100;
@@ -35,7 +35,8 @@ export function useProfileCompleteAck(currentPercent: number) {
         .from('user_onboarding_selections')
         .select('id')
         .eq('user_id', user!.id)
-        .eq('selection_type', ACK_TYPE)
+        .eq('selection_type', ACK_SELECTION_TYPE)
+        .eq('target_title', ACK_TITLE)
         .limit(1);
       if (error) throw error;
       return (data?.length ?? 0) > 0;
@@ -49,7 +50,7 @@ export function useProfileCompleteAck(currentPercent: number) {
       await supabase.from('user_onboarding_selections').insert([
         {
           user_id: user.id,
-          selection_type: ACK_TYPE,
+          selection_type: ACK_SELECTION_TYPE,
           target_title: ACK_TITLE,
           target_id: crypto.randomUUID(),
         },
@@ -67,7 +68,8 @@ export function useProfileCompleteAck(currentPercent: number) {
         .from('user_onboarding_selections')
         .delete()
         .eq('user_id', user.id)
-        .eq('selection_type', ACK_TYPE);
+        .eq('selection_type', ACK_SELECTION_TYPE)
+        .eq('target_title', ACK_TITLE);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['profile-complete-ack', user?.id] });

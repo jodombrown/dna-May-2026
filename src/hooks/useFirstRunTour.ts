@@ -6,8 +6,7 @@
  * devices and sessions.
  *
  * Storage model (uses the existing table as-is):
- *   selection_type = 'first_run_tour_step'   target_title = <step id>
- *   selection_type = 'first_run_tour_skip'   target_title = 'all'
+ *   selection_type = 'user_connect'   target_title = first-run marker
  *
  * The step is considered auto-complete when its underlying profile
  * field is filled in (checked against `useOnboardingState.completed`).
@@ -91,9 +90,15 @@ interface SelectionRow {
   target_title: string | null;
 }
 
-const STEP_TYPE = 'first_run_tour_step';
-const SKIP_TYPE = 'first_run_tour_skip';
-const COMPLETE_ACK_TYPE = 'first_run_tour_complete_acked';
+const SELECTION_TYPE = 'user_connect';
+const STEP_TARGET_PREFIX = 'first_run_tour_step:';
+const SKIP_TARGET = 'first_run_tour_skip:all';
+const COMPLETE_ACK_TARGET = 'first_run_tour_complete:ack_v1';
+const TOUR_TARGETS = [
+  SKIP_TARGET,
+  COMPLETE_ACK_TARGET,
+  ...FIRST_RUN_TOUR_STEPS.map((step) => `${STEP_TARGET_PREFIX}${step.id}`),
+];
 
 export function useFirstRunTour() {
   const { user } = useAuth();
@@ -108,7 +113,8 @@ export function useFirstRunTour() {
         .from('user_onboarding_selections')
         .select('selection_type,target_title')
         .eq('user_id', user!.id)
-        .in('selection_type', [STEP_TYPE, SKIP_TYPE, COMPLETE_ACK_TYPE]);
+        .eq('selection_type', SELECTION_TYPE)
+        .in('target_title', TOUR_TARGETS);
       if (error) throw error;
       return (data ?? []) as SelectionRow[];
     },
@@ -184,14 +190,14 @@ export function useFirstRunTour() {
     () =>
       new Set(
         rows
-          .filter((r) => r.selection_type === STEP_TYPE && r.target_title)
-          .map((r) => r.target_title as string),
+          .filter((r) => r.selection_type === SELECTION_TYPE && r.target_title?.startsWith(STEP_TARGET_PREFIX))
+          .map((r) => r.target_title?.replace(STEP_TARGET_PREFIX, '') as string),
       ),
     [rows],
   );
 
   const skipped = useMemo(
-    () => rows.some((r) => r.selection_type === SKIP_TYPE),
+    () => rows.some((r) => r.selection_type === SELECTION_TYPE && r.target_title === SKIP_TARGET),
     [rows],
   );
 
@@ -217,8 +223,8 @@ export function useFirstRunTour() {
       await supabase.from('user_onboarding_selections').insert([
         {
           user_id: user.id,
-          selection_type: STEP_TYPE,
-          target_title: stepId,
+          selection_type: SELECTION_TYPE,
+          target_title: `${STEP_TARGET_PREFIX}${stepId}`,
           target_id: crypto.randomUUID(),
         },
       ]);
@@ -234,8 +240,8 @@ export function useFirstRunTour() {
       await supabase.from('user_onboarding_selections').insert([
         {
           user_id: user.id,
-          selection_type: SKIP_TYPE,
-          target_title: 'all',
+          selection_type: SELECTION_TYPE,
+          target_title: SKIP_TARGET,
           target_id: crypto.randomUUID(),
         },
       ]);
@@ -252,7 +258,8 @@ export function useFirstRunTour() {
         .from('user_onboarding_selections')
         .delete()
         .eq('user_id', user.id)
-        .eq('selection_type', SKIP_TYPE);
+        .eq('selection_type', SELECTION_TYPE)
+        .eq('target_title', SKIP_TARGET);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
@@ -271,7 +278,8 @@ export function useFirstRunTour() {
         .from('user_onboarding_selections')
         .delete()
         .eq('user_id', user.id)
-        .in('selection_type', [SKIP_TYPE, STEP_TYPE]);
+        .eq('selection_type', SELECTION_TYPE)
+        .in('target_title', TOUR_TARGETS);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
@@ -280,7 +288,10 @@ export function useFirstRunTour() {
 
   const isComplete = completedCount === FIRST_RUN_TOUR_STEPS.length;
   const completeAcked = useMemo(
-    () => rows.some((r) => r.selection_type === COMPLETE_ACK_TYPE),
+    () =>
+      rows.some(
+        (r) => r.selection_type === SELECTION_TYPE && r.target_title === COMPLETE_ACK_TARGET,
+      ),
     [rows],
   );
 
@@ -290,8 +301,8 @@ export function useFirstRunTour() {
       await supabase.from('user_onboarding_selections').insert([
         {
           user_id: user.id,
-          selection_type: COMPLETE_ACK_TYPE,
-          target_title: 'v1',
+          selection_type: SELECTION_TYPE,
+          target_title: COMPLETE_ACK_TARGET,
           target_id: crypto.randomUUID(),
         },
       ]);

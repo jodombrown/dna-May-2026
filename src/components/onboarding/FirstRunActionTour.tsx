@@ -6,7 +6,7 @@
  * `user_onboarding_selections`).
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, X, CheckCircle2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -28,6 +28,12 @@ export const FirstRunActionTour: React.FC = () => {
     markStepDone,
     ackComplete,
   } = useFirstRunTour();
+  const [isHiding, setIsHiding] = useState(false);
+
+  useEffect(() => {
+    if (shouldShow) return;
+    setIsHiding(false);
+  }, [shouldShow]);
 
   // Only show the action tour after the wizard is done and before the
   // profile is essentially complete. First-run users get the wizard,
@@ -42,7 +48,11 @@ export const FirstRunActionTour: React.FC = () => {
   // Celebration state: all 5 done, hasn't been acknowledged yet.
   if (isComplete) {
     return (
-      <Card className="p-4 border border-dna-emerald/40 bg-dna-emerald/5">
+      <Card
+        className={`p-4 border border-dna-emerald/40 bg-dna-emerald/5 transition-opacity duration-200 motion-reduce:transition-none ${
+          isHiding ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
         <div className="flex items-start gap-2 mb-2">
           <CheckCircle2 className="h-5 w-5 text-dna-emerald shrink-0" aria-hidden />
           <div>
@@ -53,7 +63,15 @@ export const FirstRunActionTour: React.FC = () => {
             </p>
           </div>
         </div>
-        <Button size="sm" className="w-full" onClick={() => ackComplete()}>
+        <Button
+          size="sm"
+          className="w-full"
+          disabled={isHiding}
+          onClick={() => {
+            setIsHiding(true);
+            window.setTimeout(() => ackComplete(), 200);
+          }}
+        >
           Got it, hide this
         </Button>
       </Card>
