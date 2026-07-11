@@ -244,7 +244,7 @@ html {
     --card-padding: 16px;
     --card-shadow: var(--shadow-level1);
     --card-shadow-hover: var(--shadow-level2);
-    --bevel-width: 3px;
+    --bevel-width: 4px;
 
     /* ── BORDER RADIUS TOKENS ── */
     --radius-sm: 6px;
