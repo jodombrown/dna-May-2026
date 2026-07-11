@@ -48,6 +48,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     ctaLabel: 'Add industries',
     href: '/dna/profile/edit#professional',
     satisfiesField: 'industries',
+    requirement: 'Select at least one industry in your profile.',
   },
   {
     id: 'bio',
@@ -56,6 +57,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     ctaLabel: 'Write bio',
     href: '/dna/profile/edit#professional',
     satisfiesField: 'bio',
+    requirement: 'Add a bio (a couple of sentences) in your profile.',
   },
   {
     id: 'skills',
@@ -64,6 +66,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     ctaLabel: 'Add skills',
     href: '/dna/profile/edit#discovery',
     satisfiesField: 'skills',
+    requirement: 'Add at least one skill in your profile.',
   },
   {
     id: 'first_connection',
@@ -71,6 +74,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     description: 'DIA has suggested people you should meet. Send one request.',
     ctaLabel: 'Discover people',
     href: '/dna/connect/discover',
+    requirement: 'Send and get one connection request accepted.',
   },
   {
     id: 'first_event',
@@ -78,6 +82,7 @@ export const FIRST_RUN_TOUR_STEPS: TourStep[] = [
     description: 'Browse upcoming diaspora events and RSVP to one.',
     ctaLabel: 'Browse events',
     href: '/dna/convene/events',
+    requirement: 'RSVP to at least one event.',
   },
 ];
 
