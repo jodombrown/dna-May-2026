@@ -120,4 +120,11 @@ const MissingRow: React.FC<{ item: ProfileFieldCheck }> = ({ item }) => (
   </li>
 );
 
+const CompleteAutoAck: React.FC<{ acked: boolean; ack: () => void }> = ({ acked, ack }) => {
+  useEffect(() => {
+    if (!acked) ack();
+  }, [acked, ack]);
+  return null;
+};
+
 export default OnboardingRightRail;
