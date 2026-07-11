@@ -68,8 +68,9 @@ export const OnboardingRightRail: React.FC = () => {
 
   if (stage === 'complete') {
     // Once the user has dismissed the celebration, disappear entirely.
-    // The panel returns automatically if their completion later drops
-    // below 95% (see useProfileCompleteAck for the auto-clear).
+    // The panel (with its percentage) only comes back if completion
+    // later drops below 100% (see useProfileCompleteAck for the auto-clear).
+
     if (acked) return null;
 
     return (

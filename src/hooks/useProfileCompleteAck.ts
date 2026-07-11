@@ -18,7 +18,10 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const ACK_TYPE = 'profile_complete_acked';
 const ACK_TITLE = 'v1';
-const RESET_THRESHOLD = 95;
+// Strict 100 threshold: as soon as the user drops even a single point
+// below 100 we clear the ack so the progress panel returns.
+const RESET_THRESHOLD = 100;
+
 
 export function useProfileCompleteAck(currentPercent: number) {
   const { user } = useAuth();
