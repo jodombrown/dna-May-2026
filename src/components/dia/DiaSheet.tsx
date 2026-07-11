@@ -7,13 +7,14 @@ import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Search, History, Lightbulb } from 'lucide-react';
+import { Search, History, Lightbulb, Bookmark } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { MateMasie } from '@/components/icons/adinkra';
 import { DiaSearch } from './DiaSearch';
 import DiaHistory from './DiaHistory';
-import DiaInsights from './DiaInsights';
+import DiaBriefs from './DiaBriefs';
+import DiaSaved from './DiaSaved';
 import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 // Subtle Kente-inspired background, matching the Make an Introduction modal feel.
@@ -94,15 +95,18 @@ const DiaSheet: React.FC = () => {
 
           <div ref={contentRef} className="flex-1 flex flex-col min-h-0">
             <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="mx-4 mt-3 grid grid-cols-3 bg-muted/60">
-                <TabsTrigger value="search" className="flex items-center gap-1.5 text-xs">
-                  <Search className="h-3.5 w-3.5" /> Ask
+              <TabsList className="mx-4 mt-3 grid grid-cols-4 bg-muted/60">
+                <TabsTrigger value="search" className="flex items-center gap-1 text-[11px]">
+                  <Search className="h-3 w-3" /> Ask
                 </TabsTrigger>
-                <TabsTrigger value="insights" className="flex items-center gap-1.5 text-xs">
-                  <Lightbulb className="h-3.5 w-3.5" /> Insights
+                <TabsTrigger value="briefs" className="flex items-center gap-1 text-[11px]">
+                  <Lightbulb className="h-3 w-3" /> Briefs
                 </TabsTrigger>
-                <TabsTrigger value="history" className="flex items-center gap-1.5 text-xs">
-                  <History className="h-3.5 w-3.5" /> History
+                <TabsTrigger value="saved" className="flex items-center gap-1 text-[11px]">
+                  <Bookmark className="h-3 w-3" /> Saved
+                </TabsTrigger>
+                <TabsTrigger value="history" className="flex items-center gap-1 text-[11px]">
+                  <History className="h-3 w-3" /> History
                 </TabsTrigger>
               </TabsList>
 
@@ -118,8 +122,12 @@ const DiaSheet: React.FC = () => {
                 />
               </TabsContent>
 
-              <TabsContent value="insights" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
-                <DiaInsights onInsightClick={handleFromOtherTab} />
+              <TabsContent value="briefs" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+                <DiaBriefs onPromptClick={handleFromOtherTab} />
+              </TabsContent>
+
+              <TabsContent value="saved" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+                <DiaSaved onQueryClick={handleFromOtherTab} />
               </TabsContent>
 
               <TabsContent value="history" className="flex-1 overflow-y-auto px-4 py-4 mt-0">

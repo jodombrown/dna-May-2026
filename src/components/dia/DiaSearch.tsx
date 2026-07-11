@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Users, Calendar, FolderKanban, Hash, ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen, ChevronDown, ChevronUp, Target, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Search, Users, Calendar, FolderKanban, Hash, ExternalLink, Loader2, AlertCircle, ArrowUpRight, BookOpen, ChevronDown, ChevronUp, Target, ThumbsUp, ThumbsDown, Bookmark, BookmarkCheck, Sparkles, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,6 +81,8 @@ interface DiaResponse {
     };
     cached: boolean;
     query_hash?: string;
+    follow_ups?: string[];
+    turns_remaining?: number;
   };
   usage: {
     queries_used: number;
@@ -298,6 +300,24 @@ export function DiaSearch({
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
   const [feedbackSent, setFeedbackSent] = useState<'up' | 'down' | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  // Follow-up thread: prior turns in this conversation. Capped in the UI at
+  // MAX_TURNS total (root + follow-ups). Each turn stores the question and a
+  // clipped answer we replay to the backend so DIA can refine.
+  const MAX_TURNS = 5;
+  interface Turn { question: string; answer: string }
+  const [pastTurns, setPastTurns] = useState<Turn[]>([]);
+  const totalTurns = pastTurns.length + (response ? 1 : 0);
+  const canFollowUp = totalTurns < MAX_TURNS;
+
+  const startNewThread = () => {
+    setPastTurns([]);
+    setResponse(null);
+    setFeedbackSent(null);
+    setSaved(false);
+    setQuery('');
+  };
 
   const sendFeedback = async (helpful: boolean) => {
     const queryHash = response?.data?.query_hash;
@@ -314,25 +334,59 @@ export function DiaSearch({
     }
   };
 
+  const saveAnswer = async () => {
+    if (!response?.data || saved) return;
+    setSaved(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not signed in');
+      const currentQuestion = pastTurns.length > 0
+        ? pastTurns[pastTurns.length - 1].question // this shouldn't happen; response corresponds to newest question
+        : query;
+      // Use the response's own hashed identity plus the visible answer.
+      await (supabase.from('dia_saved_answers' as any).insert({
+        user_id: session.user.id,
+        query_text: currentQuestion || 'Untitled question',
+        answer: response.data.answer,
+        tool_results: response.data.network_matches ?? {},
+        citations: response.data.citations ?? [],
+        query_hash: response.data.query_hash ?? null,
+      }) as any);
+      toast.success('Saved');
+    } catch {
+      setSaved(false);
+      toast.error("Couldn't save");
+    }
+  };
+
   // Auto-search when triggered from history or insights
   React.useEffect(() => {
     if (autoSearch && initialQuery && !hasAutoSearched.current && !rateLimited) {
       hasAutoSearched.current = true;
-      searchMutation.mutate(initialQuery);
+      searchMutation.mutate({ question: initialQuery, isFollowUp: false });
     }
   }, [autoSearch, initialQuery, rateLimited]);
 
   const searchMutation = useMutation({
-    mutationFn: async (searchQuery: string) => {
+    mutationFn: async ({ question, isFollowUp }: { question: string; isFollowUp: boolean }) => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
+      // Build prior_turns from what we already have in the thread. If this is
+      // a follow-up we include the current on-screen answer too.
+      const priorTurns: Turn[] = isFollowUp && response
+        ? [...pastTurns, { question: currentQuestionRef.current ?? '', answer: response.data.answer }]
+        : [];
+
       const res = await supabase.functions.invoke('dia-search', {
-        body: { query: searchQuery, source },
+        body: {
+          query: question,
+          source,
+          prior_turns: priorTurns.map((t) => ({ question: t.question, answer: t.answer })),
+        },
       });
 
       if (res.error) {
-        // Handle structured errors from edge function
         if (res.error.message) {
           try {
             const errorData = JSON.parse(res.error.message);
@@ -344,23 +398,31 @@ export function DiaSearch({
         throw res.error;
       }
 
-      // Check for rate limit in response
       if (res.data?.error === 'Monthly query limit reached') {
         setRateLimited(true);
         setRateLimitInfo({
           limit: res.data.limit,
           used: res.data.used,
-          resets_at: res.data.resets_at
+          resets_at: res.data.resets_at,
         });
         throw new Error('Monthly query limit reached');
       }
 
-      return res.data as DiaResponse;
+      return { data: res.data as DiaResponse, isFollowUp, question, priorTurns };
     },
-    onSuccess: (data) => {
+    onSuccess: ({ data, isFollowUp, question, priorTurns }) => {
+      // If this was a follow-up, push the previous answer into pastTurns
+      // before replacing `response` with the new one.
+      if (isFollowUp) {
+        setPastTurns([...priorTurns]);
+      } else {
+        setPastTurns([]);
+      }
+      currentQuestionRef.current = question;
       setResponse(data);
       setRateLimited(false);
       setFeedbackSent(null);
+      setSaved(false);
       if (data.data.cached) {
         toast.info('Retrieved from cache', { duration: 2000 });
       }
@@ -370,35 +432,38 @@ export function DiaSearch({
 
       if (errorMessage.includes('Monthly query limit') || errorMessage.includes('limit reached')) {
         setRateLimited(true);
-        toast.error("Monthly Query Limit Reached", {
-          description: "You've used all your DIA queries this month."
+        toast.error('Monthly Query Limit Reached', {
+          description: "You've used all your DIA queries this month.",
         });
       } else if (errorMessage.includes('Unauthorized') || errorMessage.includes('Not authenticated')) {
         toast.error('Please sign in to use DIA');
       } else if (errorMessage.includes('Query too long')) {
-        toast.error('Query too long', {
-          description: 'Maximum 500 characters allowed'
-        });
+        toast.error('Query too long', { description: 'Maximum 500 characters allowed' });
       } else {
-        toast.error('Search failed', {
-          description: 'Please try again.'
-        });
+        toast.error('Search failed', { description: 'Please try again.' });
       }
     },
   });
 
+  // Track the currently-visible question (needed when threading follow-ups)
+  const currentQuestionRef = React.useRef<string | null>(null);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedQuery = query.trim();
-    if (trimmedQuery && !rateLimited) {
-      searchMutation.mutate(trimmedQuery);
-    }
+    if (!trimmedQuery || rateLimited) return;
+    const isFollowUp = !!response && canFollowUp;
+    searchMutation.mutate({ question: trimmedQuery, isFollowUp });
+    setQuery('');
   };
 
   const handleSuggestionClick = (suggestion: string) => {
     if (rateLimited) return;
-    setQuery(suggestion);
-    searchMutation.mutate(suggestion);
+    // Suggestions/chips at the empty state = fresh thread; chips under an
+    // existing answer = follow-up.
+    const isFollowUp = !!response && canFollowUp;
+    setQuery('');
+    searchMutation.mutate({ question: suggestion, isFollowUp });
   };
 
   const handleProfileClick = (profileId: string) => {
@@ -757,7 +822,28 @@ export function DiaSearch({
 
       {/* Response */}
       {response?.data && !rateLimited && !searchMutation.isPending && (
-        <div className="mt-8 space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
+        <div className="mt-6 space-y-4 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
+          {/* Prior turns in the thread — compact refined-question strips */}
+          {pastTurns.length > 0 && (
+            <div className="space-y-2">
+              {pastTurns.map((t, i) => (
+                <div key={i} className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">You asked</p>
+                  <p className="text-sm text-foreground/80 mt-0.5 line-clamp-2">{t.question}</p>
+                  <p className="text-[11px] text-muted-foreground/70 mt-1 line-clamp-2">{t.answer}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Current question strip when threaded */}
+          {pastTurns.length > 0 && currentQuestionRef.current && (
+            <div className="rounded-lg bg-emerald-50 border border-emerald-100 px-3 py-2">
+              <p className="text-[11px] uppercase tracking-wide text-emerald-700 font-medium">Follow-up</p>
+              <p className="text-sm text-foreground mt-0.5">{currentQuestionRef.current}</p>
+            </div>
+          )}
+
           {/* Main Answer */}
           <Card>
             <CardHeader className={cn('pb-3', hideBrandInAnswer && 'pb-2')}>
@@ -776,6 +862,23 @@ export function DiaSearch({
                   {response.data.cached && (
                     <Badge variant="secondary" className="text-[10px] h-4 px-1.5">Cached</Badge>
                   )}
+                  <button
+                    type="button"
+                    onClick={saveAnswer}
+                    disabled={saved}
+                    className={cn(
+                      'inline-flex items-center justify-center h-6 w-6 rounded-md transition-colors',
+                      saved
+                        ? 'text-emerald-700'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    )}
+                    aria-label={saved ? 'Saved' : 'Save answer'}
+                    title={saved ? 'Saved' : 'Save answer'}
+                  >
+                    {saved
+                      ? <BookmarkCheck className="h-3.5 w-3.5" />
+                      : <Bookmark className="h-3.5 w-3.5" />}
+                  </button>
                 </div>
               </div>
             </CardHeader>
@@ -891,6 +994,48 @@ export function DiaSearch({
                 {renderNetworkMatches()}
               </CardContent>
             </Card>
+          )}
+
+          {/* Follow-up chips + inline composer */}
+          {canFollowUp && (response.data.follow_ups?.length ?? 0) > 0 && (
+            <div className="space-y-2">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3 text-emerald-600" /> Ask a follow-up
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {response.data.follow_ups!.map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => handleSuggestionClick(f)}
+                    className="text-[12px] px-2.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 hover:bg-emerald-100 transition-colors"
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                {MAX_TURNS - totalTurns} {MAX_TURNS - totalTurns === 1 ? 'turn' : 'turns'} left in this thread
+              </p>
+            </div>
+          )}
+
+          {/* Thread cap reached — offer a clean restart */}
+          {!canFollowUp && (
+            <div className="rounded-lg border border-border/60 bg-muted/40 p-3 flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                You've reached the {MAX_TURNS}-turn limit for this thread.
+              </p>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={startNewThread}
+                className="h-7 text-xs"
+              >
+                <RotateCcw className="h-3 w-3 mr-1" /> New question
+              </Button>
+            </div>
           )}
         </div>
       )}

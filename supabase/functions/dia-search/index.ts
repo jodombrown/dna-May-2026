@@ -102,11 +102,19 @@ async function callGateway(messages: ChatMessage[], apiKey: string): Promise<any
   return resp.json();
 }
 
+// Prior turns replayed as follow-up context (max 4). Kept short to stay
+// under the token budget — we send the previous user question and a
+// truncated assistant answer, no tool payloads.
+interface PriorTurn { question: string; answer: string }
+const MAX_PRIOR_TURNS = 4;
+const PRIOR_ANSWER_CLIP = 600;
+
 async function runToolLoop(
   query: string,
   userId: string,
   accessToken: string,
   apiKey: string,
+  priorTurns: PriorTurn[] = [],
 ): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[]; tokensUsed: number }> {
   const userSupabase = makeUserClient(accessToken);
   const ctx = { userId, supabase: userSupabase };
@@ -122,8 +130,13 @@ async function runToolLoop(
 
   const messages: ChatMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: query },
   ];
+  // Replay up to MAX_PRIOR_TURNS previous Q&A pairs so DIA can refine.
+  for (const t of priorTurns.slice(-MAX_PRIOR_TURNS)) {
+    messages.push({ role: "user", content: t.question });
+    messages.push({ role: "assistant", content: (t.answer ?? "").slice(0, PRIOR_ANSWER_CLIP) });
+  }
+  messages.push({ role: "user", content: query });
 
   for (let step = 0; step < MAX_TOOL_STEPS; step++) {
     if (tokensUsed > MAX_TOKENS_TOTAL) break;
@@ -229,6 +242,33 @@ function dedupe(results: AggregatedResults): AggregatedResults {
   };
 }
 
+// Generate 3 short follow-up prompts based on the current answer.
+// One cheap gateway call, no tools, ~60 tokens out.
+async function generateFollowUps(question: string, answer: string, apiKey: string): Promise<string[]> {
+  try {
+    const resp = await fetch(GATEWAY_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: MODEL,
+        temperature: 0.4,
+        max_tokens: 120,
+        messages: [
+          { role: "system", content: "You suggest 3 concise follow-up questions a DNA (Diaspora Network of Africa) member could ask DIA next, based on the answer they just received. Each under 60 chars. Output ONLY a JSON array of 3 strings, nothing else." },
+          { role: "user", content: `Question: ${question}\n\nAnswer: ${answer.slice(0, 800)}\n\nSuggest 3 follow-ups as JSON array.` },
+        ],
+      }),
+    });
+    if (!resp.ok) return [];
+    const j = await resp.json();
+    const raw: string = j?.choices?.[0]?.message?.content ?? "";
+    const match = raw.match(/\[[\s\S]*\]/);
+    if (!match) return [];
+    const arr = JSON.parse(match[0]);
+    return Array.isArray(arr) ? arr.filter((s) => typeof s === "string").slice(0, 3) : [];
+  } catch { return []; }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -255,7 +295,15 @@ serve(async (req) => {
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const { query: rawQuery, source = "dashboard" } = await req.json();
+    const body = await req.json();
+    const rawQuery: string = body?.query;
+    const source: string = body?.source ?? "dashboard";
+    const priorTurns: PriorTurn[] = Array.isArray(body?.prior_turns) ? body.prior_turns : [];
+    const isFollowUp = priorTurns.length > 0;
+    if (priorTurns.length > MAX_PRIOR_TURNS) {
+      return new Response(JSON.stringify({ error: "Thread limit reached", message: "Start a new question to keep asking." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     if (!rawQuery || String(rawQuery).trim().length === 0) {
       return new Response(JSON.stringify({ error: "Query is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -304,10 +352,13 @@ serve(async (req) => {
       }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Cache lookup (per-user, since tool results are user-scoped)
-    const { data: cached } = await admin.from("dia_queries").select("*")
-      .eq("query_hash", queryHash)
-      .gt("expires_at", new Date().toISOString()).maybeSingle();
+    // Cache lookup (per-user, since tool results are user-scoped).
+    // Follow-ups bypass the cache — they depend on prior_turns context.
+    const { data: cached } = isFollowUp
+      ? { data: null as any }
+      : await admin.from("dia_queries").select("*")
+          .eq("query_hash", queryHash)
+          .gt("expires_at", new Date().toISOString()).maybeSingle();
 
     let response: any;
     let cacheHit = false;
@@ -329,7 +380,7 @@ serve(async (req) => {
         .eq("id", cached.id).then(() => {}).catch(() => {});
     } else {
       try {
-        const loop = await runToolLoop(query, user.id, token, lovableKey);
+        const loop = await runToolLoop(query, user.id, token, lovableKey, priorTurns);
         const deduped = dedupe(loop.results);
         toolsFired = loop.toolsFired;
         tokensUsed = loop.tokensUsed;
@@ -396,6 +447,16 @@ serve(async (req) => {
       }).then(() => {}).catch(() => {});
     }
 
+    // Follow-up suggestions — only when there's room left in the thread.
+    // If we're already at MAX_PRIOR_TURNS priors, this is the final turn.
+    let followUps: string[] = [];
+    const turnsRemaining = MAX_PRIOR_TURNS - priorTurns.length;
+    if (turnsRemaining > 0 && response.answer) {
+      followUps = await generateFollowUps(rawQuery, response.answer, lovableKey);
+    }
+    response.follow_ups = followUps;
+    response.turns_remaining = turnsRemaining;
+
     return new Response(JSON.stringify({
       success: true,
       data: response,
@@ -407,6 +468,8 @@ serve(async (req) => {
       response_time_ms: Date.now() - startTime,
       tools_fired: toolsFired,
       query_hash: queryHash,
+      follow_ups: followUps,
+      turns_remaining: turnsRemaining,
     }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err: any) {
     console.error("DIA search error:", err?.message ?? err);

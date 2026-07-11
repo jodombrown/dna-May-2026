@@ -2358,6 +2358,39 @@ export type Database = {
         }
         Relationships: []
       }
+      dia_saved_answers: {
+        Row: {
+          answer: string
+          citations: Json | null
+          created_at: string
+          id: string
+          query_hash: string | null
+          query_text: string
+          tool_results: Json | null
+          user_id: string
+        }
+        Insert: {
+          answer: string
+          citations?: Json | null
+          created_at?: string
+          id?: string
+          query_hash?: string | null
+          query_text: string
+          tool_results?: Json | null
+          user_id: string
+        }
+        Update: {
+          answer?: string
+          citations?: Json | null
+          created_at?: string
+          id?: string
+          query_hash?: string | null
+          query_text?: string
+          tool_results?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       dia_signals: {
         Row: {
           created_at: string | null
