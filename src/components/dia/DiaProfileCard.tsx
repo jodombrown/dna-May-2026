@@ -61,28 +61,25 @@ export function DiaProfileCard({
     return (
       <button
         onClick={handleViewProfile}
-        className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group w-full"
+        className="flex items-center gap-2 p-2.5 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer text-left group w-full min-w-0"
       >
-        <Avatar className="h-10 w-10 shrink-0">
+        <Avatar className="h-9 w-9 shrink-0">
           <AvatarImage src={avatar_url} alt={full_name} />
-          <AvatarFallback className="bg-emerald-100 text-emerald-700">
+          <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xs">
             {full_name?.charAt(0) || '?'}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
           <p className="font-medium text-sm truncate flex items-center gap-1">
-            {full_name}
+            <span className="truncate">{full_name}</span>
             <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
           </p>
-          <p className="text-xs text-muted-foreground truncate">
-            {headline}
-          </p>
+          {(headline || relevance) && (
+            <p className="text-[11px] text-muted-foreground truncate">
+              {headline || relevance}
+            </p>
+          )}
         </div>
-        {relevance && (
-          <Badge variant="secondary" className={cn("text-xs shrink-0", getRelevanceColor(relevance))}>
-            {relevance}
-          </Badge>
-        )}
       </button>
     );
   }
