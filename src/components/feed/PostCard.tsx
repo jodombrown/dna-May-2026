@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -50,6 +51,7 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
@@ -291,7 +293,18 @@ export function PostCard({ post }: PostCardProps) {
           <DropdownMenuContent align="end">
             {isOwnPost && (
               <>
-                <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    // Event posts route to the canonical event editor so
+                    // organizers edit the underlying event, not just the
+                    // auto-generated feed announcement text.
+                    if (post.post_type === 'event' && post.event_id) {
+                      navigate(`/dna/convene/events/${post.event_id}/edit`);
+                      return;
+                    }
+                    setShowEditDialog(true);
+                  }}
+                >
                   <Edit3 className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
