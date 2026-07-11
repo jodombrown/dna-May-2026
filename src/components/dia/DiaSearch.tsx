@@ -241,6 +241,7 @@ export function DiaSearch({
   source = 'dashboard',
   placeholder = 'Ask DIA about African opportunities, markets, or trends...',
   compact = false,
+  hideBrandInAnswer = false,
   suggestions,
   initialQuery = '',
   autoSearch = false,
