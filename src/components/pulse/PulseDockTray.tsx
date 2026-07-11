@@ -17,6 +17,7 @@ import { MateMasie, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
 import { InboxDigestSheet } from './InboxDigestSheet';
 import { DailyPulseSheet } from './DailyPulseSheet';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
+import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 interface PulseDockTrayProps {
   open: boolean;
