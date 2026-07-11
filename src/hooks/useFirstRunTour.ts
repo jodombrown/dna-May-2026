@@ -107,6 +107,32 @@ export function useFirstRunTour() {
     staleTime: 60_000,
   });
 
+  // Real-signal detection so a step is marked done even if the user
+  // performed the action outside this tour surface (e.g. accepted a
+  // connection request from the pulse, or RSVP'd from Convene).
+  const { data: signals } = useQuery({
+    queryKey: ['first-run-tour-signals', user?.id],
+    enabled: !!user?.id,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const [conn, evt] = await Promise.all([
+        supabase
+          .from('connections')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'accepted')
+          .or(`requester_id.eq.${user!.id},recipient_id.eq.${user!.id}`),
+        supabase
+          .from('event_attendees')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user!.id),
+      ]);
+      return {
+        hasConnection: (conn.count ?? 0) > 0,
+        hasEvent: (evt.count ?? 0) > 0,
+      };
+    },
+  });
+
   const completedFieldIds = useMemo(
     () => new Set(completed.map((c) => c.field)),
     [completed],
