@@ -499,7 +499,7 @@ html {
     --destructive-foreground: 36 20% 97%;
 
     /* Five C's tokens (dark — same hues, copper/emerald hold) */
-    --c-connect: 28 55% 46%;
+    --c-connect: 153 40% 35%;      /* Connect green (BD083 fix, dark) */
     --c-convene: 160 28% 56%;
     --c-collaborate: 210 40% 55%;
     --c-contribute: 0 30% 48%;
