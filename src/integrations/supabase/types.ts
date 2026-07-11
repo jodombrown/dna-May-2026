@@ -5793,14 +5793,31 @@ export type Database = {
       }
       opportunities: {
         Row: {
+          audience: string
+          budget_range: Json | null
+          category: string | null
+          compensation_details: Json
+          compensation_type: string | null
           created_at: string
           created_by: string
+          deadline: string | null
           description: string | null
+          direction: string | null
+          duration: string | null
+          give_to: string | null
+          give_what: string | null
           id: string
           image_url: string | null
+          intended_impact: string | null
           link: string | null
           location: string | null
+          location_relevance: string | null
+          media: Json
+          related_space_id: string | null
+          requirements: string | null
           space_id: string | null
+          specific_country: string | null
+          specific_region: string | null
           status: string
           tags: string[] | null
           title: string
@@ -5809,14 +5826,31 @@ export type Database = {
           visibility: string
         }
         Insert: {
+          audience?: string
+          budget_range?: Json | null
+          category?: string | null
+          compensation_details?: Json
+          compensation_type?: string | null
           created_at?: string
           created_by: string
+          deadline?: string | null
           description?: string | null
+          direction?: string | null
+          duration?: string | null
+          give_to?: string | null
+          give_what?: string | null
           id?: string
           image_url?: string | null
+          intended_impact?: string | null
           link?: string | null
           location?: string | null
+          location_relevance?: string | null
+          media?: Json
+          related_space_id?: string | null
+          requirements?: string | null
           space_id?: string | null
+          specific_country?: string | null
+          specific_region?: string | null
           status?: string
           tags?: string[] | null
           title: string
@@ -5825,14 +5859,31 @@ export type Database = {
           visibility?: string
         }
         Update: {
+          audience?: string
+          budget_range?: Json | null
+          category?: string | null
+          compensation_details?: Json
+          compensation_type?: string | null
           created_at?: string
           created_by?: string
+          deadline?: string | null
           description?: string | null
+          direction?: string | null
+          duration?: string | null
+          give_to?: string | null
+          give_what?: string | null
           id?: string
           image_url?: string | null
+          intended_impact?: string | null
           link?: string | null
           location?: string | null
+          location_relevance?: string | null
+          media?: Json
+          related_space_id?: string | null
+          requirements?: string | null
           space_id?: string | null
+          specific_country?: string | null
+          specific_region?: string | null
           status?: string
           tags?: string[] | null
           title?: string
@@ -5853,6 +5904,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_related_space_id_fkey"
+            columns: ["related_space_id"]
+            isOneToOne: false
+            referencedRelation: "spaces"
             referencedColumns: ["id"]
           },
         ]

@@ -6,6 +6,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 import {
   ComposerMode,
   CModule,
@@ -244,16 +245,15 @@ export const composerService = {
   ): Promise<string> {
     const userId = (await supabase.auth.getUser()).data.user?.id;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase.from('opportunities') as any)
-      .insert({
+    const { data, error } = await supabase.from('opportunities')
+      .insert([{
         created_by: userId,
         title: fields.title,
         description: base.body,
         direction: fields.direction,
         category: fields.category,
         compensation_type: fields.compensation,
-        compensation_details: fields.compensationDetails ?? {},
+        compensation_details: (fields.compensationDetails ?? {}) as unknown as Json,
         location_relevance: fields.locationRelevance,
         specific_region: fields.specificRegion,
         specific_country: fields.specificCountry,
@@ -261,11 +261,14 @@ export const composerService = {
         deadline: fields.deadline?.toISOString(),
         requirements: fields.requirements,
         related_space_id: fields.relatedSpaceId,
-        budget_range: fields.budgetRange ?? null,
+        budget_range: (fields.budgetRange ?? null) as unknown as Json,
         tags: base.tags.map((t) => t.label),
         audience: base.audience,
-        media: base.media,
-      })
+        media: base.media as unknown as Json,
+        give_what: fields.giveWhat ?? null,
+        give_to: fields.giveTo ?? null,
+        intended_impact: fields.intendedImpact ?? null,
+      }])
       .select('id')
       .single();
 

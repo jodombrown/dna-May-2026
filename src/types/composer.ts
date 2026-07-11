@@ -375,6 +375,10 @@ export interface OpportunityModeFields {
   requirements?: string;
   relatedSpaceId?: string;
   budgetRange?: BudgetRange;
+  /** BD084 - the give -> to -> impact triple. DIA proposes; the author owns the final value. */
+  giveWhat?: string;
+  giveTo?: string;
+  intendedImpact?: string;
 }
 
 export interface CompensationDetails {
