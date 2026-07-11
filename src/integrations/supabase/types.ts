@@ -2388,14 +2388,14 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "adin_signals_user_id_fkey"
+            foreignKeyName: "dia_signals_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "adin_signals_user_id_fkey"
+            foreignKeyName: "dia_signals_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "public_profiles"
