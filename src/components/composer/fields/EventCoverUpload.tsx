@@ -45,7 +45,9 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
       onUpload(url);
       toast({ description: 'Cover image uploaded!' });
     } catch (error) {
-      toast({ title: 'Upload failed', description: 'Please try again', variant: 'destructive' });
+      const msg = error instanceof Error ? error.message : 'Please try again';
+      console.error('[EventCoverUpload] upload failed:', error);
+      toast({ title: 'Upload failed', description: msg, variant: 'destructive' });
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
