@@ -245,7 +245,7 @@ export const composerService = {
     const userId = (await supabase.auth.getUser()).data.user?.id;
 
     const { data, error } = await supabase.from('opportunities')
-      .insert({
+      .insert([{
         created_by: userId,
         title: fields.title,
         description: base.body,
