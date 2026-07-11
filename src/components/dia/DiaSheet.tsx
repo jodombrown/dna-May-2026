@@ -15,6 +15,7 @@ import { DiaSearch } from './DiaSearch';
 import DiaHistory from './DiaHistory';
 import DiaBriefs from './DiaBriefs';
 import DiaSaved from './DiaSaved';
+import { DiaInsights } from './DiaInsights';
 import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 // Subtle Kente-inspired background, matching the Make an Introduction modal feel.
