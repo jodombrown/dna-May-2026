@@ -1,101 +1,54 @@
-## Scope
+## Goal
+Turn DIA into a persistent right-side sheet (like the Universal Composer) instead of navigating to `/dna/dia`. Every "Ask DIA" entry point (right-rail card, suggested prompts, "Start a conversation") opens the sheet and, when a prompt is clicked, immediately runs that prompt inside the sheet.
 
-Five things, all building on the Phase 1-4 work already in place:
+## UX
 
-1. Adaptive onboarding right-rail behavior (esp. hide-forever-once-100%)
-2. Unit tests for the gate + completion math
-3. Verify tour deep links + auto-advance-on-real-completion
-4. "Restart onboarding tour" button in Settings > Preferences
-5. Gate the Create Event entry buttons with a progress + deep-link notice
+- New right-side sheet: `DiaSheet` (Vaul on mobile, Radix Sheet on desktop, right-anchored, ~440px wide, full height, scrim on mobile only).
+- Header: MateMasie mark + "DIA" + Alpha chip + close button.
+- Body tabs: **Ask** (default), **Insights**, **History** — same three surfaces from `DiaPage`, but rendered inside the sheet.
+- Composer pinned at the bottom of the Ask tab (textarea + send), matching the composer's visual language (rounded input, copper primary send button, subtle border, no shadow).
+- Streaming answer area above the composer with markdown rendering, source chips, and a "New conversation" action.
+- Respect `prefers-reduced-motion`; opacity-only reveal <=200ms per motion rules.
 
-## Details
+## Behavior
 
-### 1. Adaptive right-rail states (`OnboardingRightRail.tsx` + `useOnboardingState.ts`)
-
-Three explicit states, matching what the user described:
-
-- **New authorised user** (`stage === 'first_run'`) — Welcome card + "Start setup" CTA (already implemented, keep as-is).
-- **Returning, incomplete** (`getting_started` / `active`) — Progress bar + prioritised checklist + deep link (already implemented, keep as-is).
-- **Complete** (`stage === 'complete'`) — Show the "Profile at 100%" celebration card **once**, then hide the panel entirely on subsequent loads. Persistence: insert a `user_onboarding_selections` row (`selection_type='profile_complete_acked'`, `target_title='v1'`). Behavior:
-  - First time reaching 100%: show the celebration card with a small "Got it" dismiss button.
-  - After dismissal: panel returns `null` for all future sessions while percent stays ≥ 95%.
-  - If completion later drops below 95% (user removes a field), the getting-started/active panel returns and the ack row is cleared automatically the next time they hit 100% again (delete the ack when percent < 95).
-
-Extend `useOnboardingState` with a `completionAcked: boolean` derived from the same query so the rail can gate on it.
-
-### 2. Unit tests
-
-New file: `src/lib/__tests__/featureGate.test.ts` (vitest, matches existing pattern in `src/test/`).
-
-Cases:
-
-- `calculateProfileCompletionPts`
-  - Empty / null profile → 0.
-  - Fully populated profile (all 14 fields valid) → 100.
-  - Whitespace-only strings are treated as empty (bio="   " → not counted).
-  - Skills array with fewer than 3 valid entries → skills field not counted.
-- `getMissingFields`
-  - Returns fields sorted by priority asc, then points desc.
-  - Empty profile returns all 14 fields.
-- `evaluateFeatureGate`
-  - `event_create` on a profile missing `bio` → `allowed=false`, `missing` contains `bio`.
-  - `event_create` on a complete profile → `allowed=true`, `missing=[]`.
-  - `post_create` on a profile at 25% overall but with avatar/full_name/headline complete → `allowed=false` (percent gate).
-  - Each key in `FEATURE_GATES` returns a well-formed `GateResult` (label, reason, percent, minPercent).
-- Gate/scorer field-id sync
-  - Every field id in every `FEATURE_GATES[k].fields` must exist in the ids returned by `getProfileFieldChecks(fullProfile)`. This catches drift if someone renames a field in the scorer without updating gates.
-
-### 3. Tour verification
-
-Two concerns, both fixed in `useFirstRunTour.ts` + `FirstRunActionTour.tsx`:
-
-- **Deep link correctness** — audit each step's `href` against the actual routes:
-  - `sectors` / `bio` → `/dna/profile/edit#professional` ✓ (route exists)
-  - `skills` → `/dna/profile/edit#discovery` ✓
-  - `first_connection` → `/dna/connect/discover` ✓
-  - `first_event` → `/dna/convene/events` ✓ (route exists)
-- **Advance only on real completion** — steps with a `satisfiesField` are already tied to the profileCompletion scorer, so they only turn green when the field truly satisfies the scorer's rule (e.g., bio ≥ 50 chars, skills ≥ 3 entries). Remove the optimistic `markStepDone` call that currently fires for `sectors` / `bio` / `skills` when the user clicks their CTA — those must stay pending until the underlying field is real. Keep optimistic marking only for `first_connection` and `first_event` (no field to observe).
-- Add a small vitest for the state derivation: given a set of `completed` field ids and a set of persisted step markers, assert which steps are `done`.
-
-### 4. Restart tour button
-
-Add a "Restart first-run tour" row to `src/pages/dna/settings/PreferencesSettings.tsx`. It:
-
-- Reads `useFirstRunTour()`.
-- Shows a description + a `Restart tour` button.
-- On click: call `reopenTour()` (deletes the skip row) AND clear the individual step markers so all 5 steps come back. Requires extending `useFirstRunTour` with a `resetTour()` method that deletes both the skip row and every `first_run_tour_step` row for the user, then invalidates the query.
-- After click, toast "Tour restarted" and let the user navigate to the feed.
-
-### 5. Event Create gate
-
-The "Create Event" entry points today are:
-- `src/components/feed/FeedHeroGreeting.tsx` (quick action pill)
-- `src/components/profile-v2/ProfileV2Events.tsx` (empty-state CTA)
-
-Both currently open the universal composer in `event` mode. Wrap the click with the gate:
-
-- New component `src/components/gating/GatedActionButton.tsx` — thin wrapper: takes `feature` (a `FeatureKey`), `onAllowed`, and normal button props. If the gate allows, invokes `onAllowed`; if locked, opens a `ResponsiveModal` containing `<FeatureGateNotice feature={...} />` (which already shows progress bar `X% / 60%`, missing fields, and a "Complete profile" deep link to `/dna/profile/edit`).
-- Swap the two Create Event triggers to use `GatedActionButton` with `feature="event_create"`.
-- Bonus: same wrapper is drop-in for future gates (Space create, Contribute post, Story publish).
+1. **Global open state** via a new `DiaSheetContext` (`open`, `openWith(prompt?)`, `close`). Provider mounted in `App.tsx` alongside other global providers. The sheet itself is lazy-loaded and only mounts when `open === true` (performance rule #1).
+2. **Right-rail "Ask DIA" card** (`src/components/right-rail/AskDiaCard.tsx` or wherever it lives — locate via rg):
+   - "Start a conversation" -> `openWith()` (empty).
+   - Each suggested prompt chip -> `openWith(prompt)` which opens the sheet AND auto-submits that prompt.
+   - Remove the `navigate('/dna/dia')` calls.
+3. **Any other DIA entry points** (e.g., hub DIA panels' "Ask DIA about X") route through `openWith(seedPrompt)` instead of navigating.
+4. **Route `/dna/dia`**: keep the route but redirect to previous location and auto-open the sheet, so old links still work without a dead page.
+5. **Auto-submit**: when `openWith(prompt)` fires, the Ask tab seeds the input, triggers the same submit path as manual send, and streams the answer inline — no page nav, no reload.
 
 ## Files
 
 New:
-- `src/components/gating/GatedActionButton.tsx`
-- `src/lib/__tests__/featureGate.test.ts`
-- `src/hooks/__tests__/useFirstRunTour.derive.test.ts` (pure-logic derivation test)
+- `src/contexts/DiaSheetContext.tsx` — provider + `useDiaSheet()` hook.
+- `src/components/dia/DiaSheet.tsx` — sheet shell (ResponsiveModal-style right anchor), lazy default export.
+- `src/components/dia/DiaSheetAsk.tsx` — Ask tab: seeded input, submit, streaming answer list.
+- `src/components/dia/DiaSheetMount.tsx` — lazy loader gated on `open`.
 
-Modified:
-- `src/hooks/useOnboardingState.ts` — expose `completionAcked`.
-- `src/components/right-rail/OnboardingRightRail.tsx` — hide-after-ack behavior for complete stage; add "Got it" ack action.
-- `src/hooks/useFirstRunTour.ts` — add `resetTour()`, remove premature optimistic `markStepDone` for field-backed steps.
-- `src/components/onboarding/FirstRunActionTour.tsx` — remove optimistic mark for `sectors` / `bio` / `skills`.
-- `src/pages/dna/settings/PreferencesSettings.tsx` — add "Restart first-run tour" row.
-- `src/components/feed/FeedHeroGreeting.tsx` — Event pill uses `GatedActionButton`.
-- `src/components/profile-v2/ProfileV2Events.tsx` — empty-state CTA uses `GatedActionButton`.
+Edited:
+- `src/App.tsx` — wrap tree in `DiaSheetProvider`, mount `<DiaSheetMount />` once globally.
+- `src/components/right-rail/DnaRightRail.tsx` (and the Ask DIA card component) — wire chips + button to `useDiaSheet().openWith`.
+- `src/components/hubs/shared/HubDIAPanel.tsx` — `onAskDIA` calls `openWith` instead of navigating.
+- `src/pages/dna/DiaPage.tsx` — becomes a thin redirect that calls `openWith()` on mount and `navigate(-1)` (fallback `/dna/feed`), so `/dna/dia` no longer renders a full page.
 
-## Out of scope
+Reused:
+- Existing `DiaSearch`, `DiaHistory`, `DiaInsights` components are refactored slightly so `DiaSearch` accepts an `onSubmitted` callback and can be embedded inside the sheet (no container padding assumptions).
 
-- No changes to the underlying composer, event form, or `create-event` edge function.
-- No new persisted table columns — reusing `user_onboarding_selections` with new `selection_type` values (`profile_complete_acked`).
-- No changes to Phase 1-2 security triggers or right-rail composition beyond what's listed above.
+## Technical Details
+
+- `openWith(prompt?: string)` stores `{ open: true, seedPrompt: prompt, seedNonce: Date.now() }`. The Ask tab watches `seedNonce` to trigger a fresh auto-submit even when the same prompt is chosen twice.
+- Submission uses the existing DIA search hook/edge function that `DiaSearch` already calls — no backend changes.
+- Sheet uses `Sheet`/`SheetContent side="right"` from shadcn on desktop and Vaul `Drawer` from bottom on mobile (via `useIsMobile`), keeping consistency with existing ResponsiveModal.
+- History persistence continues to use the current DIA history storage; no schema changes.
+- Realtime/perf: no new Supabase channels. Sheet content only mounts on open (React.lazy + Suspense).
+
+## Out of Scope
+
+- No visual redesign of the answer rendering beyond fitting the 440px column.
+- No changes to DIA edge functions or model routing.
+
+Confirm and I'll build it.

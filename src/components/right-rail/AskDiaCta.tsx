@@ -1,14 +1,15 @@
 /**
  * AskDiaCta — persistent CTA for the right rail with quick prompt chips.
+ * Opens the global DIA right-side sheet instead of navigating to /dna/dia.
  */
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Clock } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { MateMasie } from '@/components/icons/adinkra';
+import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 const QUICK_PROMPTS = [
   'Who in my network just joined Convene?',
@@ -25,8 +26,8 @@ interface LastQuery {
 }
 
 export const AskDiaCta: React.FC = () => {
-  const navigate = useNavigate();
   const { user } = useAuth();
+  const { openWith } = useDiaSheet();
 
   const { data: lastQuery } = useQuery({
     queryKey: ['ask-dia-last-query', user?.id ?? null],
@@ -46,16 +47,6 @@ export const AskDiaCta: React.FC = () => {
       return (data as LastQuery | null) ?? null;
     },
   });
-
-  const askWith = (q?: string) => {
-    const url = q ? `/dna/dia?q=${encodeURIComponent(q)}` : '/dna/dia';
-    navigate(url);
-  };
-
-  const continueLast = () => {
-    if (!lastQuery) return;
-    navigate(`/dna/dia?q=${encodeURIComponent(lastQuery.query_text)}`);
-  };
 
   return (
     <section
@@ -80,7 +71,7 @@ export const AskDiaCta: React.FC = () => {
 
         {lastQuery && (
           <button
-            onClick={continueLast}
+            onClick={() => openWith(lastQuery.query_text)}
             className="w-full flex items-center gap-1.5 text-[11px] text-dna-copper hover:underline text-left"
           >
             <Clock className="h-3 w-3 shrink-0" />
@@ -92,7 +83,7 @@ export const AskDiaCta: React.FC = () => {
           {QUICK_PROMPTS.map((p) => (
             <button
               key={p}
-              onClick={() => askWith(p)}
+              onClick={() => openWith(p)}
               className="text-[11px] px-2 py-1 rounded-full bg-muted hover:bg-[hsl(var(--dna-gold)/0.12)] hover:text-foreground text-muted-foreground transition-colors"
             >
               {p}
@@ -101,7 +92,7 @@ export const AskDiaCta: React.FC = () => {
         </div>
 
         <button
-          onClick={() => askWith()}
+          onClick={() => openWith()}
           className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-full bg-dna-gold text-white text-sm font-medium hover:bg-dna-gold-dark transition-colors min-h-[40px]"
         >
           <span>Start a conversation</span>

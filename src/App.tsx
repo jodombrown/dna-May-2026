@@ -10,6 +10,8 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
 import { AccountDrawerProvider } from "@/contexts/AccountDrawerContext";
+import { DiaSheetProvider } from "@/contexts/DiaSheetContext";
+import DiaSheetMount from "@/components/dia/DiaSheetMount";
 import { HelmetProvider } from 'react-helmet-async';
 import BadgeToastListener from '@/components/notifications/BadgeToastListener';
 import BaseLayout from "@/layouts/BaseLayout";
@@ -353,6 +355,8 @@ function App() {
                 <AccountDrawerProvider>
                   <ViewStateProvider>
                     <MessageProvider>
+                      <DiaSheetProvider>
+                      <DiaSheetMount />
                       <BaseLayout>
                         <Suspense fallback={<PageLoader />}>
                           <Routes>
@@ -907,6 +911,7 @@ function App() {
                   </Suspense>
                 <BadgeToastListener />
               </BaseLayout>
+                      </DiaSheetProvider>
                 </MessageProvider>
               </ViewStateProvider>
               </AccountDrawerProvider>
