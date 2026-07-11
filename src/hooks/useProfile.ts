@@ -13,7 +13,9 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { profilesService } from '@/services/profilesService';
+import { getPrimaryOriginCode } from '@/lib/memberHeritage';
 import { STALE_TIMES } from '@/lib/queryClient';
+
 
 interface ProfileChannelEntry {
   channel: RealtimeChannel;
@@ -61,14 +63,26 @@ export const useProfile = () => {
     queryKey: ['profile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      
+
       try {
         const data = await profilesService.getCurrentUserProfile(user.id);
-        return data;
+        if (!data) return data;
+
+        // BD038: primary origin country moved off `profiles` onto
+        // `member_heritage`. Hydrate it back onto the profile object
+        // so downstream consumers (profile completion scorer, feature
+        // gates, cards) see a single, consistent shape.
+        try {
+          const origin = await getPrimaryOriginCode(user.id);
+          return { ...data, primary_origin_country: origin ?? null } as typeof data;
+        } catch {
+          return { ...data, primary_origin_country: null } as typeof data;
+        }
       } catch (error) {
         throw error;
       }
     },
+
     enabled: !!user?.id,
     staleTime: STALE_TIMES.profile,
     retry: 3,
