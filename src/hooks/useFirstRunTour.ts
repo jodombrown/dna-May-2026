@@ -175,7 +175,6 @@ export function useFirstRunTour() {
     },
   });
 
-
   const reopenTour = useMutation({
     mutationFn: async () => {
       if (!user?.id) return;
@@ -184,6 +183,25 @@ export function useFirstRunTour() {
         .delete()
         .eq('user_id', user.id)
         .eq('selection_type', SKIP_TYPE);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
+    },
+  });
+
+  const resetTour = useMutation({
+    mutationFn: async () => {
+      if (!user?.id) return;
+      // Wipe both the skip marker and every persisted step marker so
+      // the tour comes back in its untouched state. Steps whose
+      // underlying profile field is filled will still show as done
+      // via satisfiesField auto-detect - that's intentional (real
+      // progress isn't undone by resetting the tour).
+      await supabase
+        .from('user_onboarding_selections')
+        .delete()
+        .eq('user_id', user.id)
+        .in('selection_type', [SKIP_TYPE, STEP_TYPE]);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
@@ -209,5 +227,28 @@ export function useFirstRunTour() {
     ),
     skipTour: useCallback(() => skipTour.mutate(), [skipTour]),
     reopenTour: useCallback(() => reopenTour.mutate(), [reopenTour]),
+    resetTour: useCallback(() => resetTour.mutate(), [resetTour]),
+    resetPending: resetTour.isPending,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Pure derivation helper (exported for unit tests)
+// ---------------------------------------------------------------------------
+
+/**
+ * Derive per-step done state given the persisted explicit-done step ids
+ * and the set of profile completion field ids the user has satisfied.
+ */
+export function deriveTourStepStates(
+  explicitlyDone: ReadonlySet<string>,
+  completedFieldIds: ReadonlySet<string>,
+): Array<{ step: TourStep; done: boolean }> {
+  return FIRST_RUN_TOUR_STEPS.map((s) => ({
+    step: s,
+    done:
+      explicitlyDone.has(s.id) ||
+      (s.satisfiesField ? completedFieldIds.has(s.satisfiesField) : false),
+  }));
+}
+
