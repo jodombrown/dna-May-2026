@@ -8,6 +8,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Search, History, Lightbulb } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { MateMasie } from '@/components/icons/adinkra';
 import { DiaSearch } from './DiaSearch';
 import DiaHistory from './DiaHistory';
@@ -17,10 +19,27 @@ import { useDiaSheet } from '@/contexts/DiaSheetContext';
 // Subtle Kente-inspired background, matching the Make an Introduction modal feel.
 const KENTE_PATTERN = `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C4942A' stroke-width='1'%3E%3Cpath d='M0 20h40M20 0v40M0 0h40v40H0z'/%3E%3Crect x='5' y='5' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3Crect x='25' y='25' width='10' height='10' fill='%23C4942A' fill-opacity='0.3'/%3E%3C/g%3E%3C/svg%3E")`;
 
+interface SmartChip { id: string; label: string; prompt: string; kind: string }
+
 const DiaSheet: React.FC = () => {
   const { open, setOpen, seedPrompt, seedNonce, openWith } = useDiaSheet();
   const [tab, setTab] = useState<string>('search');
   const contentRef = React.useRef<HTMLDivElement>(null);
+
+  const { data: chipData } = useQuery({
+    queryKey: ['dia-sheet-smart-chips'],
+    enabled: open,
+    staleTime: 10 * 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke<{ chips: SmartChip[] }>(
+        'dia-smart-chips',
+        { body: {} },
+      );
+      if (error || !data) return { chips: [] as SmartChip[] };
+      return data;
+    },
+  });
+  const suggestions = (chipData?.chips ?? []).map((c) => c.prompt);
 
   React.useEffect(() => {
     if (!open || tab !== 'search') return;
@@ -95,6 +114,7 @@ const DiaSheet: React.FC = () => {
                   hideBrandInAnswer
                   initialQuery={seedPrompt}
                   autoSearch={!!seedPrompt && seedNonce > 0}
+                  suggestions={suggestions.length ? suggestions : undefined}
                 />
               </TabsContent>
 
