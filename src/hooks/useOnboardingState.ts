@@ -45,7 +45,11 @@ export interface OnboardingState {
 }
 
 const GETTING_STARTED_MAX = 60;
-const ACTIVE_MAX = 95;
+// `complete` only fires at a true 100%. This is intentional: users
+// want a quick win once they hit 100 and shouldn't see any percentage
+// or checklist again until their completion drops back below 100.
+const ACTIVE_MAX = 100;
+
 
 export function useOnboardingState(): OnboardingState {
   const { user, loading: authLoading } = useAuth();
