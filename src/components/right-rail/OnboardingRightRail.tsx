@@ -6,7 +6,7 @@
  * the rest of the rail composes cleanly.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
