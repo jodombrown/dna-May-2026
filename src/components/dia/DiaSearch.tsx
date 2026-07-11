@@ -360,6 +360,7 @@ export function DiaSearch({
     onSuccess: (data) => {
       setResponse(data);
       setRateLimited(false);
+      setFeedbackSent(null);
       if (data.data.cached) {
         toast.info('Retrieved from cache', { duration: 2000 });
       }
