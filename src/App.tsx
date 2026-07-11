@@ -911,6 +911,7 @@ function App() {
                   </Suspense>
                 <BadgeToastListener />
               </BaseLayout>
+                      </DiaSheetProvider>
                 </MessageProvider>
               </ViewStateProvider>
               </AccountDrawerProvider>
