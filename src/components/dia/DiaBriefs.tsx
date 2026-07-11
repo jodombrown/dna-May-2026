@@ -18,17 +18,16 @@ interface DiaBriefsProps {
 
 interface BriefCard {
   id: string;
-  headline: string;
+  title: string;
   body: string | null;
-  prompt: string | null;
-  created_at: string;
+  cta_label: string | null;
+  generated_at: string;
 }
 
 interface Nudge {
   id: string;
-  title: string;
+  nudge_type: string;
   message: string | null;
-  suggested_prompt: string | null;
   created_at: string;
 }
 
@@ -41,13 +40,14 @@ export function DiaBriefs({ onPromptClick }: DiaBriefsProps) {
 
       const [briefsRes, nudgesRes] = await Promise.all([
         (supabase.from('dia_brief_cards' as any)
-          .select('id, headline, body, prompt, created_at')
+          .select('id, title, body, cta_label, generated_at')
           .eq('user_id', session.user.id)
-          .order('created_at', { ascending: false })
+          .order('generated_at', { ascending: false })
           .limit(6) as any),
         (supabase.from('dia_nudges' as any)
-          .select('id, title, message, suggested_prompt, created_at')
+          .select('id, nudge_type, message, created_at')
           .eq('user_id', session.user.id)
+          .eq('status', 'pending')
           .order('created_at', { ascending: false })
           .limit(6) as any),
       ]);
