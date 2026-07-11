@@ -242,6 +242,33 @@ function dedupe(results: AggregatedResults): AggregatedResults {
   };
 }
 
+// Generate 3 short follow-up prompts based on the current answer.
+// One cheap gateway call, no tools, ~60 tokens out.
+async function generateFollowUps(question: string, answer: string, apiKey: string): Promise<string[]> {
+  try {
+    const resp = await fetch(GATEWAY_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: MODEL,
+        temperature: 0.4,
+        max_tokens: 120,
+        messages: [
+          { role: "system", content: "You suggest 3 concise follow-up questions a DNA (Diaspora Network of Africa) member could ask DIA next, based on the answer they just received. Each under 60 chars. Output ONLY a JSON array of 3 strings, nothing else." },
+          { role: "user", content: `Question: ${question}\n\nAnswer: ${answer.slice(0, 800)}\n\nSuggest 3 follow-ups as JSON array.` },
+        ],
+      }),
+    });
+    if (!resp.ok) return [];
+    const j = await resp.json();
+    const raw: string = j?.choices?.[0]?.message?.content ?? "";
+    const match = raw.match(/\[[\s\S]*\]/);
+    if (!match) return [];
+    const arr = JSON.parse(match[0]);
+    return Array.isArray(arr) ? arr.filter((s) => typeof s === "string").slice(0, 3) : [];
+  } catch { return []; }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
