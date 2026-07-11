@@ -98,6 +98,8 @@ interface DiaSearchProps {
   source?: string;
   placeholder?: string;
   compact?: boolean;
+  /** Hide the redundant "DIA" title inside the answer card (used inside DiaSheet, which already brands the surface). */
+  hideBrandInAnswer?: boolean;
   suggestions?: string[];
   initialQuery?: string;
   autoSearch?: boolean;
