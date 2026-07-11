@@ -2282,6 +2282,7 @@ export type Database = {
       }
       dia_query_log: {
         Row: {
+          archived_at: string | null
           blocked_reason: string | null
           cache_hit: boolean | null
           created_at: string | null
@@ -2296,6 +2297,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          archived_at?: string | null
           blocked_reason?: string | null
           cache_hit?: boolean | null
           created_at?: string | null
@@ -2310,6 +2312,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          archived_at?: string | null
           blocked_reason?: string | null
           cache_hit?: boolean | null
           created_at?: string | null
@@ -13890,6 +13893,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      purge_expired_dia_history: { Args: never; Returns: undefined }
       purge_stale_curations: { Args: never; Returns: number }
       reactivate_personal_hashtag: {
         Args: { p_hashtag_id: string; p_user_id: string }
