@@ -96,9 +96,12 @@ const DiaSheet: React.FC = () => {
 
           <div ref={contentRef} className="flex-1 flex flex-col min-h-0">
             <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="mx-4 mt-3 grid grid-cols-4 bg-muted/60">
+              <TabsList className="mx-4 mt-3 grid grid-cols-5 bg-muted/60">
                 <TabsTrigger value="search" className="flex items-center gap-1 text-[11px]">
                   <Search className="h-3 w-3" /> Ask
+                </TabsTrigger>
+                <TabsTrigger value="insights" className="flex items-center gap-1 text-[11px]">
+                  <TrendingUp className="h-3 w-3" /> Insights
                 </TabsTrigger>
                 <TabsTrigger value="briefs" className="flex items-center gap-1 text-[11px]">
                   <Lightbulb className="h-3 w-3" /> Briefs
