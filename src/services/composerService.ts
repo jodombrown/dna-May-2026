@@ -267,7 +267,7 @@ export const composerService = {
         give_what: fields.giveWhat ?? null,
         give_to: fields.giveTo ?? null,
         intended_impact: fields.intendedImpact ?? null,
-      })
+      }])
       .select('id')
       .single();
 
