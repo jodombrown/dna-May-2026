@@ -6,9 +6,9 @@
  * the rest of the rail composes cleanly.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Sparkle } from 'lucide-react';
+import { ArrowRight, Sparkle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -67,42 +67,10 @@ export const OnboardingRightRail: React.FC = () => {
   }
 
   if (stage === 'complete') {
-    // Once the user has dismissed the celebration, disappear entirely.
-    // The panel (with its percentage) only comes back if completion
-    // later drops below 100% (see useProfileCompleteAck for the auto-clear).
-
-    if (acked) return null;
-
-    return (
-      <Card className="p-4 border border-border">
-        <div className="flex items-center gap-2 mb-1">
-          <CheckCircle2 className="h-4 w-4 text-dna-emerald" aria-hidden />
-          <p className="text-sm font-semibold">Profile at 100%</p>
-        </div>
-        <p className="text-xs text-muted-foreground mb-3">
-          You're set. Keep growing your network and sharing your story.
-        </p>
-        <div className="flex flex-col gap-1.5 mb-2">
-          <Button asChild variant="outline" size="sm" className="w-full justify-between">
-            <Link to="/dna/connect/discover">
-              Find more people <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm" className="w-full justify-between">
-            <Link to="/dna/convene/events">
-              Browse events <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </Button>
-        </div>
-        <button
-          type="button"
-          onClick={() => ack()}
-          className="w-full text-[11px] text-muted-foreground hover:text-foreground transition-colors mt-1"
-        >
-          Got it, hide this
-        </button>
-      </Card>
-    );
+    // Quick-win: at 100% the panel disappears entirely. Persist the ack
+    // so the celebration state is recorded; the row is auto-cleared by
+    // useProfileCompleteAck if completion later drops below 100%.
+    return <CompleteAutoAck acked={acked} ack={ack} />;
   }
 
 
@@ -151,5 +119,12 @@ const MissingRow: React.FC<{ item: ProfileFieldCheck }> = ({ item }) => (
     </Link>
   </li>
 );
+
+const CompleteAutoAck: React.FC<{ acked: boolean; ack: () => void }> = ({ acked, ack }) => {
+  useEffect(() => {
+    if (!acked) ack();
+  }, [acked, ack]);
+  return null;
+};
 
 export default OnboardingRightRail;
