@@ -155,13 +155,15 @@ export function useFirstRunTour() {
 
   const stepStates = useMemo(
     () =>
-      FIRST_RUN_TOUR_STEPS.map((s) => ({
-        step: s,
-        done:
+      FIRST_RUN_TOUR_STEPS.map((s) => {
+        let done =
           explicitlyDone.has(s.id) ||
-          (s.satisfiesField ? completedFieldIds.has(s.satisfiesField) : false),
-      })),
-    [completedFieldIds, explicitlyDone],
+          (s.satisfiesField ? completedFieldIds.has(s.satisfiesField) : false);
+        if (!done && s.id === 'first_connection' && signals?.hasConnection) done = true;
+        if (!done && s.id === 'first_event' && signals?.hasEvent) done = true;
+        return { step: s, done };
+      }),
+    [completedFieldIds, explicitlyDone, signals],
   );
 
   const completedCount = stepStates.filter((s) => s.done).length;
