@@ -13,7 +13,9 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useOnboardingState } from '@/hooks/useOnboardingState';
+import { useProfileCompleteAck } from '@/hooks/useProfileCompleteAck';
 import type { ProfileFieldCheck } from '@/lib/profileCompletion';
+
 
 // Map profileCompletion field ids to the editor tab that hosts them.
 const FIELD_TO_EDIT_HASH: Record<string, string> = {
@@ -40,6 +42,7 @@ function editHref(field?: string) {
 
 export const OnboardingRightRail: React.FC = () => {
   const { stage, percent, missing, nextField } = useOnboardingState();
+  const { acked, ack } = useProfileCompleteAck(percent);
 
   if (stage === 'loading' || stage === 'signed_out') return null;
 
@@ -64,6 +67,11 @@ export const OnboardingRightRail: React.FC = () => {
   }
 
   if (stage === 'complete') {
+    // Once the user has dismissed the celebration, disappear entirely.
+    // The panel returns automatically if their completion later drops
+    // below 95% (see useProfileCompleteAck for the auto-clear).
+    if (acked) return null;
+
     return (
       <Card className="p-4 border border-border">
         <div className="flex items-center gap-2 mb-1">
@@ -73,7 +81,7 @@ export const OnboardingRightRail: React.FC = () => {
         <p className="text-xs text-muted-foreground mb-3">
           You're set. Keep growing your network and sharing your story.
         </p>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 mb-2">
           <Button asChild variant="outline" size="sm" className="w-full justify-between">
             <Link to="/dna/connect/discover">
               Find more people <ArrowRight className="h-3.5 w-3.5" />
@@ -85,9 +93,17 @@ export const OnboardingRightRail: React.FC = () => {
             </Link>
           </Button>
         </div>
+        <button
+          type="button"
+          onClick={() => ack()}
+          className="w-full text-[11px] text-muted-foreground hover:text-foreground transition-colors mt-1"
+        >
+          Got it, hide this
+        </button>
       </Card>
     );
   }
+
 
   // getting_started or active — show progress + prioritised checklist
   const heading = stage === 'getting_started' ? 'Complete your profile' : 'A few more touches';
