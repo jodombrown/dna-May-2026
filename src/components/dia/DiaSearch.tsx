@@ -838,6 +838,43 @@ export function DiaSearch({
                   )}
                 </div>
               )}
+
+              {/* Phase 4 feedback loop */}
+              {response.data.query_hash && (
+                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+                  <span className="text-[11px] text-muted-foreground">Was this helpful?</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => sendFeedback(true)}
+                      disabled={!!feedbackSent}
+                      className={cn(
+                        "h-7 w-7 inline-flex items-center justify-center rounded-md transition-colors",
+                        feedbackSent === 'up'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                      aria-label="Helpful"
+                    >
+                      <ThumbsUp className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => sendFeedback(false)}
+                      disabled={!!feedbackSent}
+                      className={cn(
+                        "h-7 w-7 inline-flex items-center justify-center rounded-md transition-colors",
+                        feedbackSent === 'down'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                      aria-label="Not helpful"
+                    >
+                      <ThumbsDown className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
