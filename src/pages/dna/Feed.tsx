@@ -162,7 +162,7 @@ const DnaFeed = () => {
                 variant="feed"
                 showSearch={true}
                 onSearchClick={() => setShowSearchDialog(true)}
-                onComposerClick={() => composer.open('post')}
+                onComposerClick={() => composer.open('story')}
                 className="border-b-0"
               />
             </div>
@@ -201,7 +201,7 @@ const DnaFeed = () => {
                 }
                 emptyAction={
                   <Button
-                    onClick={() => composer.open('post')}
+                    onClick={() => composer.open('story')}
                     className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
                   >
                     <PenSquare className="h-4 w-4 mr-2" />
@@ -272,7 +272,7 @@ const DnaFeed = () => {
             {/* Chat-style Composer Bar */}
             <div
               className="flex items-center gap-3 bg-card rounded-full px-3 py-2 shadow-dna-1 border border-border/40 cursor-pointer hover:shadow-dna-2 transition-all duration-200"
-              onClick={() => composer.open('post')}
+              onClick={() => composer.open('story')}
             >
               <Avatar className="h-8 w-8 shrink-0">
                 <AvatarImage src={profile.avatar_url || ''} />
@@ -283,7 +283,7 @@ const DnaFeed = () => {
               </span>
               <div className="flex items-center gap-1">
                 <button
-                  onClick={(e) => { e.stopPropagation(); composer.open('post'); }}
+                  onClick={(e) => { e.stopPropagation(); composer.open('story'); }}
                   className="p-1.5 rounded-full hover:bg-muted transition-colors"
                   title="Photo"
                 >
@@ -417,7 +417,7 @@ const DnaFeed = () => {
               }
               emptyAction={
                 <Button
-                  onClick={() => composer.open('post')}
+                  onClick={() => composer.open('story')}
                   className="bg-dna-emerald hover:bg-dna-emerald/90 text-white mt-4"
                 >
                   <PenSquare className="h-4 w-4 mr-2" />

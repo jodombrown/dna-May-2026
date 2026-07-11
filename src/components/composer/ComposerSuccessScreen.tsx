@@ -33,12 +33,11 @@ interface ComposerSuccessScreenProps {
 }
 
 const MODE_TO_BEVEL: Record<ComposerMode, FeedCardBevelType> = {
-  post: 'post',
+  connect: 'connect',
   story: 'story',
   event: 'event',
   space: 'space',
   need: 'need',
-  community: 'post',
 };
 
 export const ComposerSuccessScreen = ({

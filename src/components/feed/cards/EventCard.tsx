@@ -31,6 +31,7 @@ import {
   Smile,
   Users,
   ChevronRight,
+  Settings2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { formatDistanceToNow } from 'date-fns';
@@ -253,31 +254,43 @@ export const EventCard: React.FC<EventCardProps> = ({
         </button>
       )}
 
-      {/* One-tap RSVP from the feed */}
+      {/* One-tap RSVP from the feed. You cannot attend what you are hosting —
+          the owner gets Manage, not a dead RSVP button. */}
       <div className="mt-3 flex gap-2">
-        <Button
-          size="sm"
-          className={cn(
-            'flex-1 gap-1.5',
-            isAttending
-              ? 'border border-bevel-event bg-transparent text-bevel-event hover:bg-bevel-event/5'
-              : 'bg-bevel-event text-white hover:bg-bevel-event/90'
-          )}
-          disabled={!onRsvp || !item.event_id}
-          onClick={() => item.event_id && onRsvp?.(item.event_id)}
-        >
-          {isAttending ? (
-            <>
-              <Check className="h-4 w-4" />
-              Going
-            </>
-          ) : (
-            <>
-              <CalendarPlus className="h-4 w-4" />
-              RSVP
-            </>
-          )}
-        </Button>
+        {isOwner ? (
+          <Button
+            size="sm"
+            className="flex-1 gap-1.5 bg-bevel-event text-white hover:bg-bevel-event/90"
+            onClick={() => navigate(`/dna/convene/events/${slug}/manage`)}
+          >
+            <Settings2 className="h-4 w-4" />
+            Manage
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            className={cn(
+              'flex-1 gap-1.5',
+              isAttending
+                ? 'border border-bevel-event bg-transparent text-bevel-event hover:bg-bevel-event/5'
+                : 'bg-bevel-event text-white hover:bg-bevel-event/90'
+            )}
+            disabled={!onRsvp || !item.event_id}
+            onClick={() => item.event_id && onRsvp?.(item.event_id)}
+          >
+            {isAttending ? (
+              <>
+                <Check className="h-4 w-4" />
+                Going
+              </>
+            ) : (
+              <>
+                <CalendarPlus className="h-4 w-4" />
+                RSVP
+              </>
+            )}
+          </Button>
+        )}
         <Button size="sm" variant="outline" onClick={() => navigate(eventHref)}>
           Details
         </Button>

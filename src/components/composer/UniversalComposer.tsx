@@ -30,7 +30,7 @@ import { DraftStatusIndicator } from './draft/DraftStatusIndicator';
 import { DiscardDraftConfirmation } from './draft/DiscardDraftConfirmation';
 import { DraftConflictDialog } from './draft/DraftConflictDialog';
 import { ComposerSuccessScreen } from './ComposerSuccessScreen';
-import { DIAIntentBar } from './DIAIntentBar';
+import { DIAProposalBar } from './DIAProposalBar';
 import { ComposerOnboarding, useComposerOnboarding } from './ComposerOnboarding';
 import { MODE_HANDLERS } from './modeHandlers';
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
@@ -40,7 +40,8 @@ import { toast } from 'sonner';
 
 import { useNavigate } from 'react-router-dom';
 import { diaComposerService } from '@/services/diaComposerService';
-import { detectIntent, type IntentSuggestion } from '@/services/diaIntentDetectionService';
+import { extract, type DIAExtraction } from '@/services/diaFieldExtraction';
+import { modeConfig } from '@/config/composerModes';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -51,7 +52,7 @@ import {
 import { useDraftStatus, formatRelative } from '@/hooks/composer/useDraftStatus';
 import { trackComposerEvent, ageMinutes, type DiscardSource } from '@/lib/composerAnalytics';
 import type { PostCreationSuggestion } from '@/services/diaPostCreationService';
-import { ComposerMode as PRDComposerMode, type DIASuggestion } from '@/types/composer';
+import { type DIASuggestion } from '@/types/composer';
 import type { ValidationResult } from './modeHandlers';
 
 
@@ -106,10 +107,16 @@ export const UniversalComposer = ({
   const triggerElementRef = useRef<HTMLElement | null>(null);
 
 
-  // Sprint 3B: Intent detection state
-  const [intentSuggestion, setIntentSuggestion] = useState<IntentSuggestion | null>(null);
-  const [dismissedModes, setDismissedModes] = useState<Set<ComposerMode>>(new Set());
-  const debouncedContent = useDebounce(sharedContent, 500);
+  // DIA Proposal (BD085): DIA proposes the verb AND the fields in one move the
+  // member accepts or dismisses. Replaces the old DIAIntentBar, which only
+  // nagged you to switch modes after you had already typed.
+  const [proposal, setProposal] = useState<DIAExtraction | null>(null);
+  const [diaDismissed, setDiaDismissed] = useState(false);
+  const [userPickedMode, setUserPickedMode] = useState(false);
+  // Field keys DIA proposed and the member has not yet edited. The mark means
+  // "DIA suggested this," never "DIA owns this" — cleared the moment they edit.
+  const [diaProposed, setDiaProposed] = useState<Set<string>>(new Set());
+  const debouncedContent = useDebounce(sharedContent, 400);
 
   // Sprint 3B: Onboarding
   const { isFirstTime, markComplete } = useComposerOnboarding();
@@ -161,10 +168,9 @@ export const UniversalComposer = ({
     }
 
     diaDebounceRef.current = setTimeout(async () => {
-      const prdMode = mode as unknown as PRDComposerMode;
       const suggestion = await diaComposerService.analyzeContent(
         formData.content,
-        prdMode
+        mode
       );
       setDiaSuggestion(suggestion);
     }, 1500);
@@ -174,26 +180,21 @@ export const UniversalComposer = ({
     };
   }, [formData.content, mode]);
 
-  // Sprint 3B: Intent detection — runs on debounced content, separate from DIA ambient
+  // DIA reads the body (debounced ~400ms — DIA should feel like it is reading,
+  // not watching) and proposes a verb + fields. Silent once dismissed or once
+  // the member has picked a verb themselves.
   useEffect(() => {
-    if (debouncedContent.length < 30) {
-      setIntentSuggestion(null);
-      return;
-    }
+    if (diaDismissed || userPickedMode) return;
+    setProposal(extract(debouncedContent));
+  }, [debouncedContent, diaDismissed, userPickedMode]);
 
-    const suggestion = detectIntent(debouncedContent, mode, {
-      dismissedModes,
-      confidenceThreshold: 0.7,
-    });
-
-    setIntentSuggestion(suggestion);
-  }, [debouncedContent, mode, dismissedModes]);
-
-  // Reset intent state when composer opens/closes
+  // Reset proposal state when composer opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setIntentSuggestion(null);
-      setDismissedModes(new Set());
+      setProposal(null);
+      setDiaDismissed(false);
+      setUserPickedMode(false);
+      setDiaProposed(new Set());
       setHasAttemptedSubmit(false);
     }
   }, [isOpen]);
@@ -247,7 +248,7 @@ export const UniversalComposer = ({
     const suppressed = Date.now() - lastDiscardAtRef.current < 60_000;
     if (suppressed) return;
 
-    const modeLabel = MODE_LABELS[mode] ?? 'Draft';
+    const modeLabel = modeConfig(mode).label ?? 'Draft';
     toast(`${modeLabel} draft restored`, {
       description: formatRelative(meta.savedAt),
       duration: 5000,
@@ -488,7 +489,7 @@ export const UniversalComposer = ({
     setValidationErrors({});
     onSubmit(formData);
     setDiaSuggestion(null);
-    setIntentSuggestion(null);
+    setProposal(null);
   };
 
   // Sprint 3B: Clear form data when success screen is dismissed
@@ -498,7 +499,8 @@ export const UniversalComposer = ({
     setSharedMedia(undefined);
     setModeFieldCache({});
     setDiaSuggestion(null);
-    setIntentSuggestion(null);
+    setProposal(null);
+    setDiaProposed(new Set());
     onDismissSuccess();
   }, [onDismissSuccess]);
 
@@ -533,6 +535,17 @@ export const UniversalComposer = ({
         }
         return next;
       });
+      // BD085: the moment the member touches a field, DIA's mark clears — the
+      // mark means "DIA suggested this," never "DIA owns this."
+      setDiaProposed(prev => {
+        if (prev.size === 0) return prev;
+        let changed = false;
+        const next = new Set(prev);
+        for (const key of fieldKeys) {
+          if (next.delete(key)) changed = true;
+        }
+        return changed ? next : prev;
+      });
     }
   }, []);
 
@@ -548,19 +561,45 @@ export const UniversalComposer = ({
     setDiaSuggestion(null);
   }, []);
 
-  // Sprint 3B: Intent bar accept — switch mode with text preservation
-  const handleIntentAccept = useCallback((suggestedMode: ComposerMode) => {
-    onModeChange(suggestedMode);
-    setIntentSuggestion(null);
-  }, [onModeChange]);
+  // BD085: map DIA's extracted fields onto the composer form. Every proposed
+  // field lands in an editable input; the member owns the final value.
+  const applyFields = useCallback((fields: DIAExtraction['fields']) => {
+    const updates: Partial<ComposerFormData> = {};
+    if (fields.title !== undefined) updates.title = fields.title;
+    if (fields.subtitle !== undefined) updates.subtitle = fields.subtitle;
+    if (fields.location !== undefined) updates.location = fields.location;
+    if (fields.eventType !== undefined) updates.format = fields.eventType;
+    if (fields.direction !== undefined) updates.direction = fields.direction;
+    if (fields.category !== undefined) updates.category = fields.category;
+    if (fields.giveWhat !== undefined) updates.giveWhat = fields.giveWhat;
+    if (fields.giveTo !== undefined) updates.giveTo = fields.giveTo;
+    if (fields.intendedImpact !== undefined) updates.intendedImpact = fields.intendedImpact;
+    setFormData(prev => ({ ...prev, ...updates }));
+  }, []);
 
-  // Sprint 3B: Intent bar dismiss — track dismissed mode for this session
-  const handleIntentDismiss = useCallback(() => {
-    if (intentSuggestion) {
-      setDismissedModes(prev => new Set([...prev, intentSuggestion.suggestedMode]));
+  // Accept the verb + all proposed fields. The composer switches verb and
+  // pre-fills the card; every field stays editable and is marked as DIA's.
+  const handleProposalAccept = useCallback((p: DIAExtraction) => {
+    // Collaborate is a launcher, not an inline form (BD075) — route instead.
+    const cfg = modeConfig(p.mode);
+    if (cfg.composePath === 'route' && cfg.route) {
+      onClose();
+      navigate(cfg.route);
+      setProposal(null);
+      return;
     }
-    setIntentSuggestion(null);
-  }, [intentSuggestion]);
+    setUserPickedMode(true);
+    onModeChange(p.mode);
+    applyFields(p.fields);
+    setDiaProposed(new Set(Object.keys(p.fields)));
+    setProposal(null);
+  }, [onModeChange, applyFields, onClose, navigate]);
+
+  // Not this — DIA stays quiet for the rest of this compose.
+  const handleProposalDismiss = useCallback(() => {
+    setProposal(null);
+    setDiaDismissed(true);
+  }, []);
 
   // Validation via MODE_HANDLERS (replaces switch/case getValidationMessage)
   const getValidationState = (): { isValid: boolean; message: string | null } => {
@@ -594,6 +633,18 @@ export const UniversalComposer = ({
         <ComposerModeSelector
           currentMode={mode}
           onModeChange={(newMode) => {
+            // Collaborate is a launcher, not a form (BD075): the Spaces
+            // substrate already owns creation. Route and close the composer.
+            const cfg = modeConfig(newMode);
+            if (cfg.composePath === 'route' && cfg.route) {
+              if (isFirstTime) markComplete();
+              onClose();
+              navigate(cfg.route);
+              return;
+            }
+            // The member picked a verb themselves — DIA stays quiet.
+            setUserPickedMode(true);
+            setProposal(null);
             onModeChange(newMode);
             // Sprint 3B: Mark onboarding complete on first mode interaction
             if (isFirstTime) markComplete();
@@ -614,7 +665,7 @@ export const UniversalComposer = ({
       {/* Context Badge */}
       <div className="flex items-center gap-2 flex-wrap">
         <p className="text-sm text-muted-foreground">
-          {getSubheader(mode)}
+          {modeConfig(mode).placeholder}
         </p>
         {getContextBadge(context)}
       </div>
@@ -626,16 +677,17 @@ export const UniversalComposer = ({
         context={context}
         onChange={updateFormData}
         validationErrors={validationErrors}
+        diaProposed={diaProposed}
       />
 
-      {/* Sprint 3B: Intent Detection Bar — between text input and DIA suggestions */}
-      {intentSuggestion && !diaSuggestion && (
-        <DIAIntentBar
-          suggestion={intentSuggestion}
-          onAccept={handleIntentAccept}
-          onDismiss={handleIntentDismiss}
-        />
-      )}
+      {/* DIA Proposal Bar (BD085) — proposes the verb AND the fields in one move.
+          Hidden once the member has already chosen this verb themselves. */}
+      <DIAProposalBar
+        proposal={proposal}
+        onAccept={handleProposalAccept}
+        onDismiss={handleProposalDismiss}
+        hidden={!proposal || proposal.mode === mode}
+      />
 
       {/* DIA Suggestion Bar (Sprint 3A ambient analysis) */}
       {diaSuggestion && (
@@ -726,27 +778,6 @@ export const UniversalComposer = ({
     </>
   );
 };
-
-const MODE_LABELS: Record<ComposerMode, string> = {
-  post: 'Post',
-  story: 'Story',
-  event: 'Event',
-  need: 'Need',
-  space: 'Space',
-  community: 'Community',
-};
-
-function getSubheader(mode: ComposerMode): string {
-  switch (mode) {
-    case 'post': return "What's on your mind?";
-    case 'story': return 'Tell a longer narrative';
-    case 'event': return 'Host something for the community';
-    case 'need': return 'Ask for help or offer support';
-    case 'space': return 'Start a space or project';
-    case 'community': return 'Share with your community';
-    default: return '';
-  }
-}
 
 function getContextBadge(context: ComposerContext): React.ReactNode {
   if (context.spaceId) {

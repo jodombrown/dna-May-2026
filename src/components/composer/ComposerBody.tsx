@@ -1,15 +1,15 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useProfile } from '@/hooks/useProfile';
 import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniversalComposer';
 import { RebuildingCard } from '@/components/shared/RebuildingPlaceholder';
 import { FieldError } from './fields/FieldError';
-import { MediaUploadButton } from './fields/MediaUploadButton';
 import { PostModeFields } from './fields/PostModeFields';
 import { StoryModeFields } from './fields/StoryModeFields';
 import { EventModeFields } from './fields/EventModeFields';
+import {
+  OpportunityModeFields,
+  type OpportunityFieldValues,
+} from './fields/OpportunityModeFields';
 
 interface ComposerBodyProps {
   mode: ComposerMode;
@@ -17,6 +17,8 @@ interface ComposerBodyProps {
   context: ComposerContext;
   onChange: (updates: Partial<ComposerFormData>) => void;
   validationErrors?: Record<string, string>;
+  /** Field keys DIA proposed and the member has not yet edited (BD085). */
+  diaProposed?: Set<string>;
 }
 
 export const ComposerBody = ({
@@ -25,6 +27,7 @@ export const ComposerBody = ({
   context,
   onChange,
   validationErrors = {},
+  diaProposed,
 }: ComposerBodyProps) => {
   const { data: profile } = useProfile();
 
@@ -55,7 +58,7 @@ export const ComposerBody = ({
       </div>
 
       {/* Mode-specific fields with inline validation errors */}
-      {renderModeFields(mode, formData, onChange, validationErrors)}
+      {renderModeFields(mode, formData, onChange, validationErrors, diaProposed)}
     </div>
   );
 };
@@ -64,10 +67,11 @@ function renderModeFields(
   mode: ComposerMode,
   formData: ComposerFormData,
   onChange: (updates: Partial<ComposerFormData>) => void,
-  validationErrors: Record<string, string> = {}
+  validationErrors: Record<string, string> = {},
+  diaProposed?: Set<string>
 ) {
   switch (mode) {
-    case 'post':
+    case 'connect':
       return (
         <>
           <PostModeFields formData={formData} onChange={onChange} validationErrors={validationErrors} />
@@ -82,34 +86,27 @@ function renderModeFields(
       return <EventModeFields formData={formData} onChange={onChange} validationErrors={validationErrors} />;
 
     case 'need':
-      // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
-      return <RebuildingCard module="contribute" />;
+      // Contribute — the give → to → impact triple (BD084). The field UI that
+      // did not exist. DIA proposes; the member owns the final value (BD085).
+      return (
+        <OpportunityModeFields
+          values={{
+            direction: formData.direction ?? 'need',
+            category: formData.category,
+            giveWhat: formData.giveWhat,
+            giveTo: formData.giveTo,
+            intendedImpact: formData.intendedImpact,
+          }}
+          onChange={(patch) => onChange(patch)}
+          diaProposed={diaProposed as Set<keyof OpportunityFieldValues> | undefined}
+          errors={validationErrors as Partial<Record<keyof OpportunityFieldValues, string>>}
+        />
+      );
 
     case 'space':
-      // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
+      // Collaborate rides the existing Spaces substrate; the verb is a launcher.
+      // Reaching this state means a direct open('space') — show the placeholder.
       return <RebuildingCard module="collaborate" />;
-
-    case 'community':
-      return (
-        <>
-          <div>
-            <Label>Title (optional)</Label>
-            <Input
-              placeholder="Post title"
-              value={formData.title || ''}
-              onChange={(e) => onChange({ title: e.target.value })}
-            />
-          </div>
-          <Textarea
-            placeholder="Share with your community..."
-            value={formData.content}
-            onChange={(e) => onChange({ content: e.target.value })}
-            className="min-h-[120px] resize-none"
-          />
-          <FieldError field="content" errors={validationErrors} />
-          <MediaUploadButton onUpload={(url) => onChange({ mediaUrl: url })} />
-        </>
-      );
 
     default:
       return null;

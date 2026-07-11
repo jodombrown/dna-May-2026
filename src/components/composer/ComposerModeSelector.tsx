@@ -16,7 +16,7 @@ import { COMPOSER_MODE_CONFIG } from '@/config/composerModes';
 import { MODE_HANDLERS } from './modeHandlers';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/useMobile';
-import { MessageSquare, BookOpen, Calendar, Lightbulb, LucideIcon } from 'lucide-react';
+import { UserPlus, BookOpen, Calendar, Gift, LucideIcon } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
 
 interface ComposerModeSelectorProps {
@@ -31,12 +31,14 @@ interface ModeChipConfig {
   activeBgClass: string;
 }
 
+// The five verbs (BD075). No generic 'post' chip — plain text is Convey.
+// Colors are BD083 bevel tokens, not hardcoded hexes.
 const modeChips: ModeChipConfig[] = [
-  { id: 'post', icon: MessageSquare, activeBgClass: 'bg-[#4A8D77]' },
-  { id: 'story', icon: BookOpen, activeBgClass: 'bg-[#2A7A8C]' },
-  { id: 'event', icon: Calendar, activeBgClass: 'bg-[#C4942A]' },
-  { id: 'space', icon: MateMasie, activeBgClass: 'bg-[#2D5A3D]' },
-  { id: 'need', icon: Lightbulb, activeBgClass: 'bg-[#B87333]' },
+  { id: 'connect', icon: UserPlus, activeBgClass: 'bg-bevel-connect' },
+  { id: 'event',   icon: Calendar, activeBgClass: 'bg-bevel-event' },
+  { id: 'space',   icon: MateMasie, activeBgClass: 'bg-bevel-space' },
+  { id: 'need',    icon: Gift, activeBgClass: 'bg-bevel-opportunity' },
+  { id: 'story',   icon: BookOpen, activeBgClass: 'bg-bevel-story' },
 ];
 
 export const ComposerModeSelector = ({
@@ -87,10 +89,12 @@ export const ComposerModeSelector = ({
     >
       {enabledChips.map((chip) => {
         const Icon = chip.icon;
-        const handler = MODE_HANDLERS[chip.id];
         const isActive = currentMode === chip.id;
         const disabled = isDisabled(chip.id);
-        const chipLabel = isMobile ? handler.shortLabel : handler.label;
+        // Labels are the five verbs, from the mode config (Marketing Voice).
+        const chipLabel = isMobile
+          ? MODE_HANDLERS[chip.id].shortLabel
+          : COMPOSER_MODE_CONFIG[chip.id].label;
 
         return (
           <button
