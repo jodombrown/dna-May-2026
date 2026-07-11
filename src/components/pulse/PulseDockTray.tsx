@@ -17,6 +17,7 @@ import { MateMasie, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
 import { InboxDigestSheet } from './InboxDigestSheet';
 import { DailyPulseSheet } from './DailyPulseSheet';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
+import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 interface PulseDockTrayProps {
   open: boolean;
@@ -27,7 +28,7 @@ interface PulseDockTrayProps {
 const PULSE_ITEMS = [
   { key: 'contribute', label: 'Contribute', icon: Adinkrahene, href: '/dna/contribute' },
   { key: 'convey', label: 'Convey', icon: Mpatapo, href: '/dna/convey' },
-  { key: 'dia', label: 'DIA', icon: MateMasie, href: '/dna/dia' },
+  { key: 'dia', label: 'DIA', icon: MateMasie, href: '__dia__' },
   { key: 'messages', label: 'Messages', icon: MessageCircle, href: '/dna/messages' },
   { key: 'digest', label: 'Digest', icon: Inbox, href: '__digest__' },
   { key: 'pulse', label: 'Daily Pulse', icon: Sunrise, href: '__pulse__' },
@@ -44,6 +45,7 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
   const navigate = useNavigate();
   const [digestOpen, setDigestOpen] = useState(false);
   const [pulseOpen, setPulseOpen] = useState(false);
+  const { openWith: openDia } = useDiaSheet();
 
   const handleNavigation = (href: string) => {
     if (href === '__digest__') {
@@ -52,6 +54,11 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
     }
     if (href === '__pulse__') {
       setPulseOpen(true);
+      return;
+    }
+    if (href === '__dia__') {
+      onClose();
+      setTimeout(() => openDia(), 150);
       return;
     }
     onClose();
