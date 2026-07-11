@@ -144,11 +144,14 @@ export function useFirstRunTour() {
   const markStepDone = useMutation({
     mutationFn: async (stepId: TourStepId) => {
       if (!user?.id) return;
-      await supabase.from('user_onboarding_selections').insert({
-        user_id: user.id,
-        selection_type: STEP_TYPE,
-        target_title: stepId,
-      });
+      await supabase.from('user_onboarding_selections').insert([
+        {
+          user_id: user.id,
+          selection_type: STEP_TYPE,
+          target_title: stepId,
+          target_id: crypto.randomUUID(),
+        },
+      ]);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
@@ -158,16 +161,20 @@ export function useFirstRunTour() {
   const skipTour = useMutation({
     mutationFn: async () => {
       if (!user?.id) return;
-      await supabase.from('user_onboarding_selections').insert({
-        user_id: user.id,
-        selection_type: SKIP_TYPE,
-        target_title: 'all',
-      });
+      await supabase.from('user_onboarding_selections').insert([
+        {
+          user_id: user.id,
+          selection_type: SKIP_TYPE,
+          target_title: 'all',
+          target_id: crypto.randomUUID(),
+        },
+      ]);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['first-run-tour', user?.id] });
     },
   });
+
 
   const reopenTour = useMutation({
     mutationFn: async () => {
