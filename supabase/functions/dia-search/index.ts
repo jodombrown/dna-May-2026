@@ -295,7 +295,15 @@ serve(async (req) => {
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const { query: rawQuery, source = "dashboard" } = await req.json();
+    const body = await req.json();
+    const rawQuery: string = body?.query;
+    const source: string = body?.source ?? "dashboard";
+    const priorTurns: PriorTurn[] = Array.isArray(body?.prior_turns) ? body.prior_turns : [];
+    const isFollowUp = priorTurns.length > 0;
+    if (priorTurns.length > MAX_PRIOR_TURNS) {
+      return new Response(JSON.stringify({ error: "Thread limit reached", message: "Start a new question to keep asking." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     if (!rawQuery || String(rawQuery).trim().length === 0) {
       return new Response(JSON.stringify({ error: "Query is required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
