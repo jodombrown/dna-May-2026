@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Search, History, Lightbulb, Bookmark } from 'lucide-react';
+import { Search, History, Lightbulb, Bookmark, TrendingUp } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { MateMasie } from '@/components/icons/adinkra';
@@ -15,6 +15,7 @@ import { DiaSearch } from './DiaSearch';
 import DiaHistory from './DiaHistory';
 import DiaBriefs from './DiaBriefs';
 import DiaSaved from './DiaSaved';
+import { DiaInsights } from './DiaInsights';
 import { useDiaSheet } from '@/contexts/DiaSheetContext';
 
 // Subtle Kente-inspired background, matching the Make an Introduction modal feel.
@@ -95,9 +96,12 @@ const DiaSheet: React.FC = () => {
 
           <div ref={contentRef} className="flex-1 flex flex-col min-h-0">
             <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col min-h-0">
-              <TabsList className="mx-4 mt-3 grid grid-cols-4 bg-muted/60">
+              <TabsList className="mx-4 mt-3 grid grid-cols-5 bg-muted/60">
                 <TabsTrigger value="search" className="flex items-center gap-1 text-[11px]">
                   <Search className="h-3 w-3" /> Ask
+                </TabsTrigger>
+                <TabsTrigger value="insights" className="flex items-center gap-1 text-[11px]">
+                  <TrendingUp className="h-3 w-3" /> Insights
                 </TabsTrigger>
                 <TabsTrigger value="briefs" className="flex items-center gap-1 text-[11px]">
                   <Lightbulb className="h-3 w-3" /> Briefs
@@ -121,6 +125,12 @@ const DiaSheet: React.FC = () => {
                   suggestions={suggestions.length ? suggestions : undefined}
                 />
               </TabsContent>
+
+              <TabsContent value="insights" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+                <DiaInsights limit={6} onInsightClick={handleFromOtherTab} />
+              </TabsContent>
+
+
 
               <TabsContent value="briefs" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
                 <DiaBriefs onPromptClick={handleFromOtherTab} />
