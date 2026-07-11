@@ -126,6 +126,12 @@ const DiaSheet: React.FC = () => {
                 />
               </TabsContent>
 
+              <TabsContent value="insights" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
+                <DiaInsights limit={6} onInsightClick={handleFromOtherTab} />
+              </TabsContent>
+
+
+
               <TabsContent value="briefs" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
                 <DiaBriefs onPromptClick={handleFromOtherTab} />
               </TabsContent>
