@@ -297,6 +297,22 @@ export function DiaSearch({
   const [response, setResponse] = useState<DiaResponse | null>(null);
   const [rateLimited, setRateLimited] = useState(false);
   const [rateLimitInfo, setRateLimitInfo] = useState<{ limit: number; used: number; resets_at: string } | null>(null);
+  const [feedbackSent, setFeedbackSent] = useState<'up' | 'down' | null>(null);
+
+  const sendFeedback = async (helpful: boolean) => {
+    const queryHash = response?.data?.query_hash;
+    if (!queryHash || feedbackSent) return;
+    setFeedbackSent(helpful ? 'up' : 'down');
+    try {
+      await supabase.functions.invoke('dia-feedback', {
+        body: { query_hash: queryHash, helpful },
+      });
+      toast.success(helpful ? 'Thanks — glad it helped' : 'Thanks — DIA will learn from this');
+    } catch {
+      setFeedbackSent(null);
+      toast.error("Couldn't record feedback");
+    }
+  };
 
   // Auto-search when triggered from history or insights
   React.useEffect(() => {
