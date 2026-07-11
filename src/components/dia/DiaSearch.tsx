@@ -862,6 +862,23 @@ export function DiaSearch({
                   {response.data.cached && (
                     <Badge variant="secondary" className="text-[10px] h-4 px-1.5">Cached</Badge>
                   )}
+                  <button
+                    type="button"
+                    onClick={saveAnswer}
+                    disabled={saved}
+                    className={cn(
+                      'inline-flex items-center justify-center h-6 w-6 rounded-md transition-colors',
+                      saved
+                        ? 'text-emerald-700'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    )}
+                    aria-label={saved ? 'Saved' : 'Save answer'}
+                    title={saved ? 'Saved' : 'Save answer'}
+                  >
+                    {saved
+                      ? <BookmarkCheck className="h-3.5 w-3.5" />
+                      : <Bookmark className="h-3.5 w-3.5" />}
+                  </button>
                 </div>
               </div>
             </CardHeader>
