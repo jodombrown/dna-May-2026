@@ -237,6 +237,38 @@ function DiaNoResults({ onSuggestionClick }: { onSuggestionClick: (suggestion: s
   );
 }
 
+/**
+ * Turn any profile.full_name occurrence in the answer text into a clickable
+ * link that routes to that profile. Names are matched case-insensitively as
+ * whole-word matches; longer names are tried first so "Jane Doe" beats "Jane".
+ */
+function renderAnswerWithProfileLinks(
+  answer: string,
+  profiles: Array<{ id: string; full_name: string }>,
+  onClick: (id: string) => void,
+): React.ReactNode {
+  const named = profiles.filter((p) => p.full_name && p.full_name.trim().length > 1);
+  if (!named.length) return answer;
+  const sorted = [...named].sort((a, b) => b.full_name.length - a.full_name.length);
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`\\b(${sorted.map((p) => esc(p.full_name)).join('|')})\\b`, 'gi');
+  const parts = answer.split(pattern);
+  return parts.map((part, i) => {
+    const match = sorted.find((p) => p.full_name.toLowerCase() === part.toLowerCase());
+    if (!match) return <React.Fragment key={i}>{part}</React.Fragment>;
+    return (
+      <button
+        key={i}
+        type="button"
+        onClick={() => onClick(match.id)}
+        className="text-emerald-700 hover:underline font-medium"
+      >
+        {part}
+      </button>
+    );
+  });
+}
+
 export function DiaSearch({
   source = 'dashboard',
   placeholder = 'Ask DIA about African opportunities, markets, or trends...',
