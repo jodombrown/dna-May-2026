@@ -44,7 +44,7 @@ const EventsIndex = () => {
       let query = supabase
         .from('events')
         .select('*')
-        .eq('is_cancelled', false);
+        .eq('status', 'published');
 
       // Time filter
       const now = new Date().toISOString();

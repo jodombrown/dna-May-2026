@@ -68,7 +68,7 @@ serve(async (req) => {
       .select('id, title, start_time, format, location_name, location_city, meeting_url, organizer_id, group_id')
       .gte('start_time', in24Hours.toISOString())
       .lte('start_time', in26Hours.toISOString())
-      .eq('is_cancelled', false);
+      .neq('status', 'cancelled');
 
     if (eventsError) {
       console.error('Error fetching events:', eventsError);

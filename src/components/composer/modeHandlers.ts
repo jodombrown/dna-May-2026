@@ -426,7 +426,10 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
         location_lng: (isInPerson || isHybrid) ? data.locationLng ?? null : null,
         meeting_url: (isVirtual || isHybrid) ? data.meetingUrl : undefined,
         max_attendees: data.maxAttendees,
-        is_public: true,
+        // Hitting post in the inline composer means publish, to everyone.
+        // Explicit, not defaulted (create-event defaults to draft).
+        status: 'published',
+        visibility: 'public',
         requires_approval: false,
         allow_guests: true,
         cover_image_url: data.mediaUrl,

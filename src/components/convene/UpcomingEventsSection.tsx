@@ -54,7 +54,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
             organizer_id
           `)
           .eq('organizer_id', user.id)
-          .eq('is_cancelled', false)
+          .neq('status', 'cancelled')
           .gte('start_time', now)
           .order('start_time', { ascending: true })
           .limit(5);
@@ -90,7 +90,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
               organizer_id
             `)
             .in('id', eventIds)
-            .eq('is_cancelled', false)
+            .neq('status', 'cancelled')
             .gte('start_time', now)
             .order('start_time', { ascending: true })
             .limit(5);

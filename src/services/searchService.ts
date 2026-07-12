@@ -206,7 +206,7 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
     const { data: events, error: eventsError } = await supabase
       .from('events')
       .select('id, title, description, location_name, location_city, start_time, cover_image_url, created_at, event_type, is_cancelled')
-      .eq('is_cancelled', false)
+      .eq('status', 'published')
       .or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location_name.ilike.${searchTerm},location_city.ilike.${searchTerm}`)
       .limit(10);
 

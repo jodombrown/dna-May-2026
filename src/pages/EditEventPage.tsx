@@ -6,6 +6,20 @@ import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { EventFormFields, EventFormData } from '@/components/convene/EventFormFields';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  eventStateWrite,
+  isEventStatus,
+  isEventVisibility,
+  type EventStatus,
+  type EventVisibility,
+} from '@/lib/events/state';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -25,8 +39,14 @@ export default function EditEventPage() {
   const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
 
   // Settings state (separate from the main form)
-  const [settings, setSettings] = useState({
-    is_public: true,
+  const [settings, setSettings] = useState<{
+    status: EventStatus;
+    visibility: EventVisibility;
+    requires_approval: boolean;
+    allow_guests: boolean;
+  }>({
+    status: 'draft',
+    visibility: 'public',
     requires_approval: false,
     allow_guests: false,
   });
@@ -89,7 +109,22 @@ export default function EditEventPage() {
       });
 
       if (error) throw error;
-      return data?.[0] || null;
+      const details = data?.[0] || null;
+      if (!details) return null;
+
+      // get_event_details predates the (status, visibility) columns —
+      // fetch them directly until the RPC is updated.
+      const { data: stateRow } = await supabase
+        .from('events')
+        .select('status, visibility')
+        .eq('id', resolvedEventId)
+        .maybeSingle();
+
+      return {
+        ...details,
+        status: stateRow?.status ?? null,
+        visibility: stateRow?.visibility ?? null,
+      };
     },
     enabled: !!resolvedEventId && !!user,
   });
@@ -158,7 +193,16 @@ export default function EditEventPage() {
       });
 
       setSettings({
-        is_public: event.is_public ?? true,
+        status: isEventStatus(event.status)
+          ? event.status
+          : event.is_cancelled
+            ? 'cancelled'
+            : 'draft',
+        visibility: isEventVisibility(event.visibility)
+          ? event.visibility
+          : event.is_public === false
+            ? 'private'
+            : 'public',
         requires_approval: event.requires_approval ?? false,
         allow_guests: event.allow_guests ?? false,
       });
@@ -247,7 +291,14 @@ export default function EditEventPage() {
           end_time,
           max_attendees: formData.maxAttendees || null,
           cover_image_url: formData.coverImageUrl || null,
-          is_public: settings.is_public,
+          // (status, visibility) plus the transitional legacy mirror.
+          // Cancelled/completed events keep their status — this page only
+          // moves an event between draft and published.
+          ...eventStateWrite(
+            settings.status === 'draft' || settings.status === 'published'
+              ? { status: settings.status, visibility: settings.visibility }
+              : { visibility: settings.visibility }
+          ),
           requires_approval: settings.requires_approval,
           allow_guests: settings.allow_guests,
           timezone: formData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -351,18 +402,62 @@ export default function EditEventPage() {
           </div>
 
           <div className="space-y-4 mt-4">
+            {settings.status === 'draft' || settings.status === 'published' ? (
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="event-status" className="text-sm font-medium">Publish Status</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Drafts are only visible to you
+                  </p>
+                </div>
+                <Select
+                  value={settings.status}
+                  onValueChange={(value) =>
+                    setSettings(s => ({ ...s, status: value as EventStatus }))
+                  }
+                >
+                  <SelectTrigger id="event-status" className="w-44">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Save as draft</SelectItem>
+                    <SelectItem value="published">Published</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-sm font-medium">Publish Status</Label>
+                  <p className="text-xs text-muted-foreground">
+                    This event is {settings.status} and can no longer be published from here
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <div>
-                <Label htmlFor="is-public" className="text-sm font-medium">Public Event</Label>
+                <Label htmlFor="event-visibility" className="text-sm font-medium">Audience</Label>
                 <p className="text-xs text-muted-foreground">
-                  Anyone can discover and view this event
+                  Who can discover and view this event
                 </p>
               </div>
-              <Switch
-                id="is-public"
-                checked={settings.is_public}
-                onCheckedChange={(checked) => setSettings(s => ({ ...s, is_public: checked }))}
-              />
+              <Select
+                value={settings.visibility}
+                onValueChange={(value) =>
+                  setSettings(s => ({ ...s, visibility: value as EventVisibility }))
+                }
+              >
+                <SelectTrigger id="event-visibility" className="w-44">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="public">Public</SelectItem>
+                  <SelectItem value="community">Community</SelectItem>
+                  <SelectItem value="private">Private</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-center justify-between">

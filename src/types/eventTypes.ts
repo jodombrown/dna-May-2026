@@ -19,6 +19,8 @@ export interface Event {
   start_time?: string;
   end_time?: string;
   timezone?: string;
+  status?: string;
+  visibility?: string;
   is_public?: boolean;
   requires_approval?: boolean;
   allow_guests?: boolean;

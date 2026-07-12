@@ -39,7 +39,7 @@ export const useLiveEvents = (limit: number = 10) => {
         const { data, error: fetchError } = await supabase
           .from('events')
           .select('*')
-          .eq('is_cancelled', false)
+          .eq('status', 'published')
           .order('start_time', { ascending: true })
           .limit(limit);
 

@@ -14,9 +14,8 @@ export function useConveneCities() {
       const { data, error } = await supabase
         .from('events')
         .select('location_city, location_country')
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .not('location_city', 'is', null)
         .gte('start_time', new Date().toISOString());
 

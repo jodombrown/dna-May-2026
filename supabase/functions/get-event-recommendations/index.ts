@@ -69,8 +69,8 @@ serve(async (req) => {
       .from('events')
       .select('id, title, description, event_type, format, location_city, location_country, start_time')
       .gte('start_time', new Date().toISOString())
-      .eq('is_cancelled', false)
-      .eq('is_public', true)
+      .eq('status', 'published')
+      .eq('visibility', 'public')
       .order('start_time')
       .limit(50);
 

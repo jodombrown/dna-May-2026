@@ -70,7 +70,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
 
       // For non-owners, filter out private and cancelled events
       if (!isOwner) {
-        query = query.eq('is_public', true).eq('is_cancelled', false);
+        query = query.eq('status', 'published').eq('visibility', 'public');
       }
 
       const { data, error } = await query;
@@ -183,7 +183,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
 
       // For non-owners, filter out private and cancelled events
       if (!isOwner) {
-        query = query.eq('is_public', true).eq('is_cancelled', false);
+        query = query.eq('status', 'published').eq('visibility', 'public');
       }
 
       const { data: events, error: eventsError } = await query;

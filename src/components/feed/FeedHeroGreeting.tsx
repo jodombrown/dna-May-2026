@@ -31,7 +31,7 @@ export const FeedHeroGreeting: React.FC<FeedHeroGreetingProps> = ({ onComposerOp
       const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
       const [eventsRes, connectionsRes, postsRes] = await Promise.all([
-        supabase.from('events').select('id', { count: 'exact', head: true }).gte('start_time', new Date().toISOString()).eq('is_published', true),
+        supabase.from('events').select('id', { count: 'exact', head: true }).gte('start_time', new Date().toISOString()).eq('status', 'published'),
         supabase.from('connections').select('id', { count: 'exact', head: true }).gte('created_at', weekAgo).eq('status', 'accepted'),
         supabase.from('posts').select('id', { count: 'exact', head: true }).gte('created_at', dayAgo),
       ]);

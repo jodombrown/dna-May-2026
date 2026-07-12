@@ -37,8 +37,8 @@ const HUB_CONFIGS: Record<HubType, HubModeConfig> = {
       const { count, error } = await supabase
         .from('events')
         .select('id', { count: 'exact', head: true })
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', new Date().toISOString());
       return { count, error };
     })

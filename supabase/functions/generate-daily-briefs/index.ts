@@ -124,8 +124,8 @@ async function generateConveneSignal(_ctx: UserContext): Promise<SignalCandidate
     .select('id, title, start_time')
     .gte('start_time', new Date().toISOString())
     .lte('start_time', new Date(Date.now() + 14 * 86400000).toISOString())
-    .eq('is_public', true)
-    .eq('is_cancelled', false)
+    .eq('status', 'published')
+    .eq('visibility', 'public')
     .order('start_time', { ascending: true })
     .limit(3);
 
