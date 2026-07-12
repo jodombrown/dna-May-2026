@@ -126,7 +126,9 @@ const ManagementCheckInDashboard = lazy(() => import("./components/convene/manag
 const CommunicationsHub = lazy(() => import("./components/convene/management/communications/CommunicationsHub"));
 const ManagementAnalyticsDashboard = lazy(() => import("./components/convene/management/analytics/AnalyticsDashboard"));
 const TeamManager = lazy(() => import("./components/convene/management/team/TeamManager"));
-const EventSettingsPage = lazy(() => import("./components/convene/management/settings/EventSettingsPage"));
+// Event settings folded into the unified event form (EditEventPage) — old
+// /manage/settings links redirect there.
+const EventSettingsRedirect = lazy(() => import("./components/routing/EventSettingsRedirect"));
 
 // Collaborate M1-M5 pages
 const CollaborateHub = lazy(() => import("./pages/dna/collaborate/CollaborateHub"));
@@ -603,7 +605,7 @@ function App() {
                 <Route path="communications" element={<CommunicationsHub />} />
                 <Route path="analytics" element={<ManagementAnalyticsDashboard />} />
                 <Route path="team" element={<TeamManager />} />
-                <Route path="settings" element={<EventSettingsPage />} />
+                <Route path="settings" element={<EventSettingsRedirect />} />
               </Route>
 
               <Route path="/dna/convene/my-events" element={

@@ -36,7 +36,8 @@ const navItems: NavItem[] = [
   { label: 'Communications', path: 'communications', icon: Mail, roles: ['owner', 'co-host', 'manager'] },
   { label: 'Analytics', path: 'analytics', icon: BarChart3, roles: ['owner', 'co-host', 'manager', 'promoter'] },
   { label: 'Team', path: 'team', icon: UserCog, roles: ['owner', 'co-host'] },
-  { label: 'Settings', path: 'settings', icon: Settings, roles: ['owner', 'co-host'] },
+  // Settings folded into the unified event form — the route redirects to /edit.
+  { label: 'Edit event', path: 'settings', icon: Settings, roles: ['owner', 'co-host'] },
 ];
 
 export interface EventManagementContextType {

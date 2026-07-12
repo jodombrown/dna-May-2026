@@ -13,6 +13,11 @@ interface AgendaItem {
   title: string;
 }
 
+interface Speaker {
+  name: string;
+  title?: string;
+}
+
 interface CreateEventRequest {
   title: string;
   description: string;
@@ -39,9 +44,13 @@ interface CreateEventRequest {
   cover_image_url?: string;
   // New structured fields
   subtitle?: string;
+  short_description?: string;
   agenda?: AgendaItem[];
+  speakers?: Speaker[];
   dress_code?: string;
   tags?: string[];
+  group_id?: string;
+  is_flagship?: boolean;
 }
 
 Deno.serve(async (req) => {
@@ -154,13 +163,14 @@ Deno.serve(async (req) => {
     // Parse request body
     const eventData: CreateEventRequest = await req.json();
 
-    // Validation
-    if (!eventData.title || eventData.title.length < 10 || eventData.title.length > 200) {
-      throw new Error('Title must be between 10 and 200 characters');
+    // Validation — mirrors the DB CHECK constraints (and eventFormSchema),
+    // ONE idea of what an event is: title 1..200, description 1..5000.
+    if (!eventData.title?.trim() || eventData.title.length > 200) {
+      throw new Error('Title must be between 1 and 200 characters');
     }
 
-    if (!eventData.description || eventData.description.length < 50) {
-      throw new Error('Description must be at least 50 characters');
+    if (!eventData.description?.trim() || eventData.description.length > 5000) {
+      throw new Error('Description must be between 1 and 5,000 characters');
     }
 
     if (!eventData.start_time || !eventData.end_time) {
@@ -180,10 +190,11 @@ Deno.serve(async (req) => {
       throw new Error('Event end time must be after start time');
     }
 
-    // Validate format-specific requirements
+    // Validate format-specific requirements — matches the DB valid_location
+    // CHECK: virtual, or a venue name or a city.
     if (eventData.format === 'in_person' || eventData.format === 'hybrid') {
-      if (!eventData.location_city || !eventData.location_country) {
-        throw new Error('Location city and country are required for in-person or hybrid events');
+      if (!eventData.location_name && !eventData.location_city) {
+        throw new Error('In-person and hybrid events need a venue name or a city');
       }
     }
 
@@ -257,9 +268,13 @@ Deno.serve(async (req) => {
         slug: eventSlug,
         // New structured fields
         subtitle: eventData.subtitle || null,
+        short_description: eventData.short_description || null,
         agenda: eventData.agenda || [],
+        speakers: eventData.speakers || [],
         dress_code: eventData.dress_code || null,
         tags: eventData.tags || [],
+        group_id: eventData.group_id || null,
+        is_flagship: eventData.is_flagship === true,
       })
       .select()
       .single();

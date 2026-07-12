@@ -350,136 +350,16 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     accentClass: 'bg-[#C4942A]',
     hoverClass: 'hover:bg-[#a87e24]',
     glowClass: 'shadow-[0_0_12px_rgba(196,148,42,0.4)]',
-    // BD085 rebuild: the body gates the button; the date gates the substrate.
-    // The composer parses the natural-language "When" into eventDate/eventTime
-    // before submit — if nothing parseable arrived, say so plainly.
-    validate: (data) => {
-      const errors: Record<string, string> = {};
-      if (!data.content || data.content.trim().length === 0) {
-        errors.content = 'Tell people what to expect';
-      }
-      if (!data.eventDate) {
-        errors.eventDate = 'Add a date DIA can read — e.g. "Mar 15, 6:00pm"';
-      } else {
-        const startStr = data.eventTime
-          ? `${data.eventDate}T${data.eventTime}:00`
-          : `${data.eventDate}T23:59:00`;
-        if (new Date(startStr) <= new Date()) {
-          errors.eventDate = 'Event must be in the future';
-        }
-      }
-      return { isValid: Object.keys(errors).length === 0, errors };
-    },
-    submit: async (data, context) => {
-      // Prefer the resolved ISO instant the member confirmed (BD089); fall back
-      // to the date/time strings, then to a safe default.
-      const startTime = data.startTime
-        ? data.startTime
-        : data.eventDate && data.eventTime
-          ? `${data.eventDate}T${data.eventTime}:00`
-          : data.eventDate
-            ? `${data.eventDate}T12:00:00`
-            : new Date().toISOString();
-
-      const endTime = data.eventEndDate && data.eventEndTime
-        ? `${data.eventEndDate}T${data.eventEndTime}:00`
-        : data.eventEndDate
-          ? `${data.eventEndDate}T13:00:00`
-          : new Date(new Date(startTime).getTime() + 3600000).toISOString();
-
-      const isVirtual = data.format === 'virtual';
-      const isHybrid = data.format === 'hybrid';
-      const isInPerson = data.format === 'in_person' || !data.format;
-
-      // The geocoder resolved city/country (and lat/lng); only parse the raw
-      // location string when it didn't.
-      let locationCity = data.locationCity;
-      let locationCountry = data.locationCountry;
-      if ((isInPerson || isHybrid) && !locationCity) {
-        const locationParts = (data.location || '').split(',').map((p) => p.trim()).filter(Boolean);
-        if (locationParts.length >= 2) {
-          locationCountry = locationParts[locationParts.length - 1];
-          locationCity = locationParts[locationParts.length - 2];
-        } else if (locationParts.length === 1) {
-          locationCity = locationParts[0];
-          locationCountry = locationCountry || 'Unknown';
-        }
-      }
-
-      const title =
-        (data.title && data.title.trim()) ||
-        data.content.trim().split('\n')[0].slice(0, 80);
-
-      const eventPayload = {
-        title,
-        description: data.content,
-        event_type: data.eventType || 'meetup',
-        format: data.format || 'in_person',
-        start_time: startTime,
-        end_time: endTime,
-        timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-        location_name: (isInPerson || isHybrid) ? data.location : undefined,
-        location_city: locationCity,
-        location_country: locationCountry,
-        // Real point on the map (BD089) — the columns exist and were unused.
-        location_lat: (isInPerson || isHybrid) ? data.locationLat ?? null : null,
-        location_lng: (isInPerson || isHybrid) ? data.locationLng ?? null : null,
-        meeting_url: (isVirtual || isHybrid) ? data.meetingUrl : undefined,
-        max_attendees: data.maxAttendees,
-        // Hitting post in the inline composer means publish, to everyone.
-        // Explicit, not defaulted (create-event defaults to draft).
-        status: 'published',
-        visibility: 'public',
-        requires_approval: false,
-        allow_guests: true,
-        cover_image_url: data.mediaUrl,
-        subtitle: data.subtitle || undefined,
-        agenda: data.agenda || [],
-        dress_code: data.dressCode || undefined,
-        tags: data.tags || [],
-      };
-
-      const { data: authData } = await supabase.auth.getSession();
-      const response = await supabase.functions.invoke('create-event', {
-        body: eventPayload,
-        headers: {
-          Authorization: `Bearer ${authData.session?.access_token}`,
-        },
-      });
-
-      if (response.error) {
-        const errorContext = response.error.context;
-        let errorMessage = 'Failed to create event';
-        try {
-          if (errorContext && typeof errorContext.json === 'function') {
-            const errorBody = await errorContext.json();
-            if (errorBody?.error) {
-              errorMessage = errorBody.error;
-            }
-          }
-        } catch {
-          // Use default message if parsing fails
-        }
-        return { success: false, error: errorMessage };
-      }
-
-      if (response.data && !response.data.success) {
-        return { success: false, error: response.data.error || 'Failed to create event' };
-      }
-
-      // Post envelope: the events INSERT trigger (create_event_feed_post)
-      // already writes posts(post_type='event', linked_entity, author =
-      // organizer). Writing it here too would double-post.
-
-      return { success: true, createdPost: null };
-    },
-    getDefaultValues: () => ({
-      title: '', content: '', eventDate: undefined, eventTime: undefined,
-      eventEndDate: undefined, eventEndTime: undefined, eventType: undefined,
-      format: undefined, location: '', meetingUrl: '', mediaUrl: undefined,
-      maxAttendees: undefined, subtitle: '', agenda: [], dressCode: undefined, tags: [],
-      timezone: undefined,
+    // THE UNIFIED EVENT FORM owns validation and submission for events
+    // (eventFormSchema / useEventForm / <EventForm level="compact"> in the
+    // composer). This entry keeps the verb's rail labels and styling only —
+    // the composer never routes an event through handler.submit anymore.
+    validate: () => ({ isValid: true, errors: {} }),
+    submit: async () => ({
+      success: false,
+      error: 'Events are submitted through the unified event form',
     }),
+    getDefaultValues: () => ({ content: '' }),
     successMessage: 'Event created!',
     errorMessage: "We couldn't create this Event. Your details are safe\u2014please try again.",
   },
