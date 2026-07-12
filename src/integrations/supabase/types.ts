@@ -3386,13 +3386,13 @@ export type Database = {
           slug: string | null
           speakers: Json | null
           start_time: string
-          status: string | null
+          status: string
           subtitle: string | null
           tags: string[] | null
           timezone: string
           title: string
           updated_at: string
-          visibility: string | null
+          visibility: string
         }
         Insert: {
           agenda?: Json | null
@@ -3430,13 +3430,13 @@ export type Database = {
           slug?: string | null
           speakers?: Json | null
           start_time: string
-          status?: string | null
+          status?: string
           subtitle?: string | null
           tags?: string[] | null
           timezone?: string
           title: string
           updated_at?: string
-          visibility?: string | null
+          visibility?: string
         }
         Update: {
           agenda?: Json | null
@@ -3474,13 +3474,13 @@ export type Database = {
           slug?: string | null
           speakers?: Json | null
           start_time?: string
-          status?: string | null
+          status?: string
           subtitle?: string | null
           tags?: string[] | null
           timezone?: string
           title?: string
           updated_at?: string
-          visibility?: string | null
+          visibility?: string
         }
         Relationships: [
           {
