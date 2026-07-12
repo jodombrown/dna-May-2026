@@ -250,7 +250,7 @@ export const UniversalComposer = ({
     draftTimerRef.current = setTimeout(() => {
       try {
         if (body.trim()) {
-          const draft: DraftV2 = { mode, body, fields, mediaUrl, roles, galleryUrls, savedAt: Date.now() };
+          const draft: DraftV2 = { mode, body, fields, mediaUrl, roles, galleryUrls, resolvedWhen, savedAt: Date.now() };
           localStorage.setItem(draftKey(userId), JSON.stringify(draft));
           setDraftSavedAt(draft.savedAt);
         } else {
