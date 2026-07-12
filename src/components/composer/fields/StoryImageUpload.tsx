@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { uploadMedia } from '@/lib/uploadMedia';
-import { compressImage } from '@/lib/compressImage';
+import { compressAndTinify } from '@/lib/compressImage';
 
 interface StoryImageUploadProps {
   currentImageUrl?: string;
