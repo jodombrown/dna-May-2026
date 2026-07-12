@@ -262,7 +262,7 @@ export const UniversalComposer = ({
       }
     }, 600);
     return () => clearTimeout(draftTimerRef.current);
-  }, [body, fields, mediaUrl, roles, galleryUrls, mode, isOpen, userId, successData]);
+  }, [body, fields, mediaUrl, roles, galleryUrls, resolvedWhen, mode, isOpen, userId, successData]);
 
   // ---- Success: DIA doesn't ceremonize. Close, toast, clear. ---------------
   useEffect(() => {
