@@ -115,33 +115,33 @@ const DiaSheet: React.FC = () => {
               </TabsList>
 
               <TabsContent value="search" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
-                <DiaSearch
-                  key={`ask-${seedNonce}`}
-                  source="dia-sheet"
-                  compact
-                  hideBrandInAnswer
-                  initialQuery={seedPrompt}
-                  autoSearch={!!seedPrompt && seedNonce > 0}
-                  suggestions={suggestions.length ? suggestions : undefined}
-                />
+                {tab === 'search' && (
+                  <DiaSearch
+                    key={`ask-${seedNonce}`}
+                    source="dia-sheet"
+                    compact
+                    hideBrandInAnswer
+                    initialQuery={seedPrompt}
+                    autoSearch={!!seedPrompt && seedNonce > 0}
+                    suggestions={suggestions.length ? suggestions : undefined}
+                  />
+                )}
               </TabsContent>
 
               <TabsContent value="insights" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
-                <DiaInsights limit={6} onInsightClick={handleFromOtherTab} />
+                {tab === 'insights' && <DiaInsights limit={6} onInsightClick={handleFromOtherTab} />}
               </TabsContent>
 
-
-
               <TabsContent value="briefs" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
-                <DiaBriefs onPromptClick={handleFromOtherTab} />
+                {tab === 'briefs' && <DiaBriefs onPromptClick={handleFromOtherTab} />}
               </TabsContent>
 
               <TabsContent value="saved" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
-                <DiaSaved onQueryClick={handleFromOtherTab} />
+                {tab === 'saved' && <DiaSaved onQueryClick={handleFromOtherTab} />}
               </TabsContent>
 
               <TabsContent value="history" className="flex-1 overflow-y-auto px-4 py-4 mt-0">
-                <DiaHistory onQueryClick={handleFromOtherTab} />
+                {tab === 'history' && <DiaHistory onQueryClick={handleFromOtherTab} />}
               </TabsContent>
             </Tabs>
           </div>
