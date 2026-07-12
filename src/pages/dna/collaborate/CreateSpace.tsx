@@ -77,7 +77,7 @@ export default function CreateSpace() {
   };
 
   return (
-    <SpacesShell maxWidthClassName="max-w-2xl">
+    <SpacesShell maxWidthClassName="max-w-2xl" tabs={null}>
       <Link
         to="/dna/collaborate/spaces"
         className="mb-4 inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"

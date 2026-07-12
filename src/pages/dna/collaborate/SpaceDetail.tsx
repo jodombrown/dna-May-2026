@@ -72,7 +72,7 @@ export default function SpaceDetail() {
 
   if (isLoading) {
     return (
-      <SpacesShell maxWidthClassName="max-w-3xl">
+      <SpacesShell maxWidthClassName="max-w-3xl" tabs={null}>
         <Skeleton className="h-8 w-2/3" />
         <Skeleton className="mt-3 h-4 w-1/2" />
         <Skeleton className="mt-6 h-40 w-full rounded-lg" />
@@ -82,7 +82,7 @@ export default function SpaceDetail() {
 
   if (isError || !space) {
     return (
-      <SpacesShell maxWidthClassName="max-w-3xl">
+      <SpacesShell maxWidthClassName="max-w-3xl" tabs={null}>
         <Card className="p-8 text-center">
           <h1 className="text-lg font-semibold text-foreground">Space not found</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -99,7 +99,7 @@ export default function SpaceDetail() {
   const isLead = myMembership?.role === 'lead';
 
   return (
-    <SpacesShell maxWidthClassName="max-w-3xl">
+    <SpacesShell maxWidthClassName="max-w-3xl" tabs={null}>
       <Link
         to="/dna/collaborate/spaces"
         className="mb-4 inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
