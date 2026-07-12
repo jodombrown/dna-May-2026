@@ -62,6 +62,8 @@ project_id = "ybhssuehmfnxrzneobok"
     verify_jwt = false
   [functions.generate-connect-nudges]
     verify_jwt = false
+  [functions.geocode-city]
+    verify_jwt = true
   [functions.get-event-recommendations]
     verify_jwt = true
   [functions.link-preview]
