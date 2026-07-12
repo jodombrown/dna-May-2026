@@ -46,7 +46,7 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
     setIsUploading(true);
     try {
       // Auto-compress oversized images down to <=5MB / 1920px max
-      const file = await compressImage(original, {
+      const file = await compressAndTinify(original, {
         maxDimension: 1920,
         maxSizeBytes: 5 * 1024 * 1024,
       });

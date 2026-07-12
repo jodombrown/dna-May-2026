@@ -94,3 +94,5 @@ export async function compressAndTinify(
 ): Promise<File> {
   const resized = await compressImage(file, opts);
   return tinifyImage(resized);
+}
+
