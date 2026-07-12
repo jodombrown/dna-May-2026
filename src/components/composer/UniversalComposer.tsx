@@ -77,6 +77,7 @@ interface DraftV2 {
   mediaUrl?: string;
   roles?: string[];
   galleryUrls?: string[];
+  resolvedWhen?: ResolvedDate | null;
   savedAt: number;
 }
 
@@ -223,9 +224,10 @@ export const UniversalComposer = ({
       setMediaUrl(draft.mediaUrl);
       setGalleryUrls(draft.galleryUrls ?? []);
       setRoles(draft.roles ?? []);
-      // A saved event keeps its resolved date; re-derive it from the phrase the
-      // member confirmed so the chip (not an empty picker) shows on restore.
-      if (draft.fields?.when) setResolvedWhen(resolveDate(draft.fields.when));
+      // A saved event keeps its resolved date. Prefer the persisted resolved
+      // instant; fall back to re-parsing the phrase DIA had populated.
+      if (draft.resolvedWhen) setResolvedWhen(draft.resolvedWhen);
+      else if (draft.fields?.when) setResolvedWhen(resolveDate(draft.fields.when));
       setDraftSavedAt(draft.savedAt ?? null);
       // Restored fields are the author's — DIA does not overwrite a draft.
       const owned = new Set(Object.keys(draft.fields ?? {}));
@@ -248,7 +250,7 @@ export const UniversalComposer = ({
     draftTimerRef.current = setTimeout(() => {
       try {
         if (body.trim()) {
-          const draft: DraftV2 = { mode, body, fields, mediaUrl, roles, galleryUrls, savedAt: Date.now() };
+          const draft: DraftV2 = { mode, body, fields, mediaUrl, roles, galleryUrls, resolvedWhen, savedAt: Date.now() };
           localStorage.setItem(draftKey(userId), JSON.stringify(draft));
           setDraftSavedAt(draft.savedAt);
         } else {
@@ -260,7 +262,7 @@ export const UniversalComposer = ({
       }
     }, 600);
     return () => clearTimeout(draftTimerRef.current);
-  }, [body, fields, mediaUrl, roles, galleryUrls, mode, isOpen, userId, successData]);
+  }, [body, fields, mediaUrl, roles, galleryUrls, resolvedWhen, mode, isOpen, userId, successData]);
 
   // ---- Success: DIA doesn't ceremonize. Close, toast, clear. ---------------
   useEffect(() => {
