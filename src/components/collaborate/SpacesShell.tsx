@@ -4,6 +4,7 @@
 
 import { type ReactNode } from 'react';
 import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
+import { CollaborateMobileTabs } from '@/components/collaborate/CollaborateMobileTabs';
 
 interface SpacesShellProps {
   children: ReactNode;
@@ -15,6 +16,14 @@ interface SpacesShellProps {
   onSearchChange?: (value: string) => void;
   /** Max width of the centered content column. */
   maxWidthClassName?: string;
+  /**
+   * Optional menu-nav row rendered directly beneath the header. Defaults to
+   * the shared CollaborateMobileTabs so every Collaborate surface shows the
+   * same second row (Spaces / My Spaces / Discover), matching the pattern
+   * used by Feed / Connect / Convene / Contribute. Pass `null` to opt out
+   * (e.g. Space detail / board / settings sub-pages).
+   */
+  tabs?: ReactNode;
 }
 
 export function SpacesShell({
@@ -23,6 +32,7 @@ export function SpacesShell({
   searchQuery,
   onSearchChange,
   maxWidthClassName = 'max-w-4xl',
+  tabs = <CollaborateMobileTabs />,
 }: SpacesShellProps) {
   // If the caller doesn't wire searchQuery/onSearchChange, fall back to a
   // non-interactive static bubble so the mobile header doesn't render a
@@ -40,7 +50,7 @@ export function SpacesShell({
       };
 
   return (
-    <DnaMobileHubShell bubble={bubble}>
+    <DnaMobileHubShell bubble={bubble} tabs={tabs ?? undefined}>
       <div className="min-h-[60vh] bg-background">
         <div className={`mx-auto ${maxWidthClassName} px-4 py-6 sm:py-8`}>
           {children}
