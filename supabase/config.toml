@@ -94,8 +94,6 @@ project_id = "ybhssuehmfnxrzneobok"
     verify_jwt = false
   [functions.unsubscribe-email]
     verify_jwt = false
-  [functions.update-event]
-    verify_jwt = true
   [functions.verify-payment]
     verify_jwt = true
 
