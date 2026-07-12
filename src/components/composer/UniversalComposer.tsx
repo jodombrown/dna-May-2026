@@ -224,9 +224,10 @@ export const UniversalComposer = ({
       setMediaUrl(draft.mediaUrl);
       setGalleryUrls(draft.galleryUrls ?? []);
       setRoles(draft.roles ?? []);
-      // A saved event keeps its resolved date; re-derive it from the phrase the
-      // member confirmed so the chip (not an empty picker) shows on restore.
-      if (draft.fields?.when) setResolvedWhen(resolveDate(draft.fields.when));
+      // A saved event keeps its resolved date. Prefer the persisted resolved
+      // instant; fall back to re-parsing the phrase DIA had populated.
+      if (draft.resolvedWhen) setResolvedWhen(draft.resolvedWhen);
+      else if (draft.fields?.when) setResolvedWhen(resolveDate(draft.fields.when));
       setDraftSavedAt(draft.savedAt ?? null);
       // Restored fields are the author's — DIA does not overwrite a draft.
       const owned = new Set(Object.keys(draft.fields ?? {}));
