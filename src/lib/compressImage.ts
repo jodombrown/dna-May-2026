@@ -65,3 +65,37 @@ export async function compressImage(
     lastModified: Date.now(),
   });
 }
+
+/**
+ * Server-side TinyPNG optimization. Best for PNG palette reduction and JPEG
+ * re-encoding beyond what a browser canvas can do. Falls back to the input
+ * file if the edge function fails so uploads never block on this.
+ */
+export async function tinifyImage(file: File): Promise<File> {
+  if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) return file;
+  try {
+    const { data, error } = await supabase.functions.invoke('compress-image', {
+      body: await file.arrayBuffer(),
+      headers: { 'Content-Type': file.type },
+    });
+    if (error || !data) return file;
+    const blob = data instanceof Blob ? data : new Blob([data as ArrayBuffer], { type: file.type });
+    if (blob.size === 0 || blob.size >= file.size) return file;
+    return new File([blob], file.name, { type: file.type, lastModified: Date.now() });
+  } catch {
+    return file;
+  }
+}
+
+/** Convenience: canvas resize, then TinyPNG polish. */
+export async function compressAndTinify(
+  file: File,
+  opts?: Parameters<typeof compressImage>[1],
+): Promise<File> {
+  const resized = await compressImage(file, opts);
+  return tinifyImage(resized);
+}
+    type: outType,
+    lastModified: Date.now(),
+  });
+}
