@@ -6,4 +6,3 @@ export { default as CheckInDashboard } from './checkin/CheckInDashboard';
 export { default as CommunicationsHub } from './communications/CommunicationsHub';
 export { default as AnalyticsDashboard } from './analytics/AnalyticsDashboard';
 export { default as TeamManager } from './team/TeamManager';
-export { default as EventSettingsPage } from './settings/EventSettingsPage';

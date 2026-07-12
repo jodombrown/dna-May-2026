@@ -25,9 +25,6 @@ import {
 import { ArrowRight, Sparkles, X } from 'lucide-react';
 import { ComposerMode } from '@/config/composerModes';
 import { cn } from '@/lib/utils';
-import { ComposerDateField, ComposerPlaceField } from './ComposerResolvedFields';
-import type { ResolvedDate, ResolvedPlace } from '@/services/composeResolvers';
-import { EventCoverUpload } from './fields/EventCoverUpload';
 import { StoryImageUpload } from './fields/StoryImageUpload';
 import { StoryGalleryUpload } from './fields/StoryGalleryUpload';
 import { MultiAttachmentUploader } from './fields/MultiAttachmentUploader';
@@ -39,14 +36,6 @@ export interface ComposerFieldsProps {
   diaFilled: Set<string>;
   /** Patch a field. Marks it as the author's from now on. */
   onChange: (key: string, value: string) => void;
-  // ---- Resolved fields (BD089) — DIA hands an answer, not a raw string ----
-  /** Convene's resolved "when", or null when DIA couldn't read one. */
-  resolvedWhen: ResolvedDate | null;
-  /** Member cleared DIA's date, or picked their own. */
-  onResolvedWhenChange: (resolved: ResolvedDate | null) => void;
-  /** Convene's geocoded place — the composer writes lat/lng on submit. */
-  place: ResolvedPlace | null;
-  onPlaceResolve: (place: ResolvedPlace | null) => void;
   // ---- Collaborate roles — chips, not a comma-string ----
   roles: string[];
   onRolesChange: (roles: string[]) => void;
@@ -60,7 +49,6 @@ export interface ComposerFieldsProps {
 }
 
 const KINDS = ['Expertise', 'Time', 'Network', 'Knowledge', 'Mentorship', 'Partnership', 'Resources'];
-const FORMATS = ['In person', 'Virtual', 'Hybrid'];
 const SPACE_TYPES = ['Initiative', 'Project', 'Venture', 'Working group', 'Campaign'];
 
 const DiaMark: React.FC = () => (
@@ -198,10 +186,6 @@ export const ComposerFields: React.FC<ComposerFieldsProps> = ({
   values,
   diaFilled,
   onChange,
-  resolvedWhen,
-  onResolvedWhenChange,
-  place,
-  onPlaceResolve,
   roles,
   onRolesChange,
   mediaUrl,
@@ -247,47 +231,8 @@ export const ComposerFields: React.FC<ComposerFieldsProps> = ({
   }
 
   // ---- CONVENE ------------------------------------------------------------
-  if (mode === 'event') {
-    return (
-      <div className="space-y-2.5">
-        <div className="flex gap-2">
-          <Field {...common('title')} label="Event name" placeholder="African Tech Summit" />
-        </div>
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start">
-          {/* DIA hands over a resolved instant (BD089); dismiss it for a picker. */}
-          <div className="min-w-0 flex-1">
-            <ComposerDateField
-              resolved={resolvedWhen}
-              fromDIA={diaFilled.has('when')}
-              onChange={onResolvedWhenChange}
-            />
-          </div>
-          {/* Geocode to a real point so the event shows on the map / "near you". */}
-          <div className="min-w-0 flex-1">
-            <ComposerPlaceField
-              city={values.where ?? ''}
-              onCityChange={(v) => onChange('where', v)}
-              onResolve={onPlaceResolve}
-              fromDIA={diaFilled.has('where')}
-              purpose={
-                values.where?.trim()
-                  ? `People browsing ${values.where.trim()} will find this event.`
-                  : undefined
-              }
-            />
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Choice {...common('format')} label="Format" options={FORMATS} placeholder="In person" />
-        </div>
-        <EventCoverUpload
-          currentImageUrl={mediaUrl}
-          onUpload={onMediaChange}
-          onRemove={() => onMediaChange(undefined)}
-        />
-      </div>
-    );
-  }
+  // Events are NOT rendered here: the composer mounts the unified
+  // <EventForm level="compact"> instead (src/components/events/EventForm.tsx).
 
   // ---- COLLABORATE — composes here, never navigates away -------------------
   if (mode === 'space') {

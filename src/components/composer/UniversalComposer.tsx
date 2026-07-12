@@ -28,7 +28,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Loader2, Sparkles } from 'lucide-react';
-import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useDIACompose } from '@/hooks/useDIACompose';
@@ -40,7 +39,10 @@ import { ComposerVerbRail } from './ComposerVerbRail';
 import { ComposerFields } from './ComposerFields';
 import { ComposerCardPreview } from './ComposerCardPreview';
 import { MediaUploadButton } from './fields/MediaUploadButton';
-import { resolveDate, type ResolvedDate, type ResolvedPlace } from '@/services/composeResolvers';
+import { resolveDate, type ResolvedDate } from '@/services/composeResolvers';
+import { EventForm } from '@/components/events/EventForm';
+import type { EventFormValues } from '@/lib/events/eventFormSchema';
+import { utcToWallTime, browserTimezone } from '@/lib/events/timezone';
 import { cn } from '@/lib/utils';
 
 interface UniversalComposerProps {
@@ -102,9 +104,8 @@ export const UniversalComposer = ({
   const [fields, setFields] = useState<Record<string, string>>({});
   const [mediaUrl, setMediaUrl] = useState<string | undefined>(undefined);
   const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
-  // Resolved fields (BD089) — DIA hands an answer, the member confirms it.
+  // Resolved date (BD089) — DIA hands an answer; it seeds the event form.
   const [resolvedWhen, setResolvedWhen] = useState<ResolvedDate | null>(null);
-  const [place, setPlace] = useState<ResolvedPlace | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const [userPickedVerb, setUserPickedVerb] = useState(false);
   const [ownedByAuthor, setOwnedByAuthor] = useState<Set<string>>(new Set());
@@ -161,16 +162,6 @@ export const UniversalComposer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [proposal]);
 
-  // The member cleared DIA's date or picked their own → it is theirs now.
-  const handleResolvedWhenChange = useCallback(
-    (r: ResolvedDate | null) => {
-      setResolvedWhen(r);
-      setOwnedByAuthor((s) => new Set(s).add('when'));
-      releaseField('when');
-    },
-    [releaseField]
-  );
-
   const handleRolesChange = useCallback(
     (next: string[]) => {
       setRoles(next);
@@ -200,7 +191,6 @@ export const UniversalComposer = ({
     setMediaUrl(undefined);
     setGalleryUrls([]);
     setResolvedWhen(null);
-    setPlace(null);
     setRoles([]);
     setUserPickedVerb(false);
     setOwnedByAuthor(new Set());
@@ -279,6 +269,50 @@ export const UniversalComposer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [successData]);
 
+  // ---- Convene: the unified event form (compact level, expands in place) ---
+  // Hosting an event IS authoring an event — same schema, same submit path as
+  // the full form. What the member wrote before the verb flipped seeds the
+  // form: body → description, DIA's title/when/where → their fields.
+  const isEventMode = mode === 'event';
+  const eventSeed = useMemo<Partial<EventFormValues> | null>(() => {
+    if (!isEventMode) return null;
+    const seed: Partial<EventFormValues> = {};
+    if (body.trim()) seed.description = body.trim();
+    if (fields.title?.trim()) seed.title = fields.title.trim();
+    if (mediaUrl) seed.cover_image_url = mediaUrl;
+    if (fields.format && FORMAT_TO_DB[fields.format]) seed.format = FORMAT_TO_DB[fields.format];
+    if (resolvedWhen) {
+      const zone = browserTimezone();
+      const start = utcToWallTime(resolvedWhen.iso, zone);
+      const end = utcToWallTime(
+        new Date(new Date(resolvedWhen.iso).getTime() + 2 * 3600_000).toISOString(),
+        zone
+      );
+      seed.startDate = start.date;
+      seed.startTime = start.time;
+      seed.endDate = end.date;
+      seed.endTime = end.time;
+    }
+    if (fields.where?.trim()) {
+      seed.location_city = fields.where.trim();
+    }
+    return seed;
+    // Snapshot on entering event mode — the form owns its state from there.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEventMode]);
+
+  const handleEventPublished = useCallback(() => {
+    if (userId) {
+      try {
+        localStorage.removeItem(draftKey(userId));
+      } catch {
+        // best-effort
+      }
+    }
+    clearAll();
+    onClose();
+  }, [userId, clearAll, onClose]);
+
   // ---- Submit: route by verb to the substrate ------------------------------
   const buildFormData = useCallback((): ComposerFormData | null => {
     const cleanedGallery = galleryUrls.filter((u) => typeof u === 'string' && u.length > 0);
@@ -315,40 +349,11 @@ export const UniversalComposer = ({
           skillsNeeded: roles,
         };
 
-      case 'event': {
-        // Resolve, don't guess (BD089): DIA's natural-language "when" became a
-        // real instant the member confirmed. Write that instant + zone.
-        if (!resolvedWhen) {
-          toast('Add a date DIA can read', {
-            description: 'Try "Saturday at 6pm" above, or pick a date below.',
-          });
-          return null;
-        }
-        const start = new Date(resolvedWhen.iso);
-        const pad = (n: number) => String(n).padStart(2, '0');
-        const eventDate = `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())}`;
-        const eventTime = `${pad(start.getHours())}:${pad(start.getMinutes())}`;
-        const typedWhere = fields.where?.trim();
-
-        return {
-          ...base,
-          title: fields.title?.trim() || undefined,
-          startTime: resolvedWhen.iso,
-          eventDate,
-          eventTime,
-          timezone: resolvedWhen.timezone,
-          // Geocoded point (BD089) → events.location_lat / location_lng. A failed
-          // geocode keeps the typed city as text and writes NULL coordinates.
-          location: place?.displayName || typedWhere || undefined,
-          locationCity: place?.city || typedWhere || undefined,
-          locationCountry: place?.country || (typedWhere ? 'Unknown' : undefined),
-          locationLat: place?.lat,
-          locationLng: place?.lng,
-          format: FORMAT_TO_DB[fields.format] ?? 'in_person',
-        };
-      }
+      case 'event':
+        // Events submit through EventForm/useEventForm — never through here.
+        return null;
     }
-  }, [mode, body, fields, mediaUrl, galleryUrls, roles, resolvedWhen, place]);
+  }, [mode, body, fields, mediaUrl, galleryUrls, roles]);
 
   const handleSubmit = useCallback(() => {
     const formData = buildFormData();
@@ -404,16 +409,15 @@ export const UniversalComposer = ({
     avatarUrl: profile?.avatar_url,
   };
 
-  // The card reads flat strings; fold the resolved date/place/roles back in so
+  // The card reads flat strings; fold the resolved date/roles back in so
   // the live preview shows what the member will actually post.
   const previewFields = useMemo(
     () => ({
       ...fields,
       ...(roles.length ? { roles: roles.join(', ') } : {}),
       ...(resolvedWhen ? { when: resolvedWhen.label } : {}),
-      ...(place ? { where: `${place.city}${place.country ? `, ${place.country}` : ''}` } : {}),
     }),
-    [fields, roles, resolvedWhen, place]
+    [fields, roles, resolvedWhen]
   );
 
   const preview = (
@@ -452,40 +456,50 @@ export const UniversalComposer = ({
             <div className="min-w-0 flex-1 space-y-3">
               <ComposerVerbRail mode={mode} onPick={pickVerb} disabledModes={disabledModes} />
 
-              {/* Textarea — always first. Writing is the whole point. */}
-              <Textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder={modeConfig(mode).placeholder}
-                autoFocus
-                className="min-h-[120px] resize-y text-[15px] leading-relaxed"
-              />
+              {isEventMode ? (
+                /* Hosting an event renders the unified event form at its
+                   compact level; "More options" expands it right here. */
+                <EventForm
+                  key="composer-event-form"
+                  level="compact"
+                  mode="create"
+                  initialValues={eventSeed ?? undefined}
+                  onSuccess={handleEventPublished}
+                />
+              ) : (
+                <>
+                  {/* Textarea — always first. Writing is the whole point. */}
+                  <Textarea
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    placeholder={modeConfig(mode).placeholder}
+                    autoFocus
+                    className="min-h-[120px] resize-y text-[15px] leading-relaxed"
+                  />
 
-              {/* The DIA line — it reports; it does not interrupt. */}
-              <div className="flex min-h-[18px] items-center gap-1.5 text-xs" aria-live="polite">
-                {diaLine && <Sparkles className="h-3 w-3 flex-shrink-0 text-bevel-opportunity" />}
-                {diaLine}
-              </div>
+                  {/* The DIA line — it reports; it does not interrupt. */}
+                  <div className="flex min-h-[18px] items-center gap-1.5 text-xs" aria-live="polite">
+                    {diaLine && <Sparkles className="h-3 w-3 flex-shrink-0 text-bevel-opportunity" />}
+                    {diaLine}
+                  </div>
 
-              <ComposerFields
-                mode={mode}
-                values={fields}
-                diaFilled={diaFilled}
-                onChange={editField}
-                resolvedWhen={resolvedWhen}
-                onResolvedWhenChange={handleResolvedWhenChange}
-                place={place}
-                onPlaceResolve={setPlace}
-                roles={roles}
-                onRolesChange={handleRolesChange}
-                mediaUrl={mediaUrl}
-                onMediaChange={setMediaUrl}
-                galleryUrls={galleryUrls}
-                onGalleryChange={setGalleryUrls}
-              />
+                  <ComposerFields
+                    mode={mode}
+                    values={fields}
+                    diaFilled={diaFilled}
+                    onChange={editField}
+                    roles={roles}
+                    onRolesChange={handleRolesChange}
+                    mediaUrl={mediaUrl}
+                    onMediaChange={setMediaUrl}
+                    galleryUrls={galleryUrls}
+                    onGalleryChange={setGalleryUrls}
+                  />
+                </>
+              )}
 
               {/* Mobile: the card is a toggle, never a second scroll region. */}
-              <div className="lg:hidden">
+              {!isEventMode && <div className="lg:hidden">
                 <button
                   type="button"
                   onClick={() => setPreviewOpenMobile((v) => !v)}
@@ -497,46 +511,53 @@ export const UniversalComposer = ({
                   />
                 </button>
                 {previewOpenMobile && <div className="mt-2">{preview}</div>}
-              </div>
+              </div>}
             </div>
 
             {/* ---- Live card preview (desktop) ---- */}
-            <div className="sticky top-0 hidden w-[300px] flex-shrink-0 lg:block">
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-                Your card, as the diaspora sees it
-              </p>
-              {preview}
-            </div>
+            {!isEventMode && (
+              <div className="sticky top-0 hidden w-[300px] flex-shrink-0 lg:block">
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                  Your card, as the diaspora sees it
+                </p>
+                {preview}
+              </div>
+            )}
           </div>
         </div>
 
         {/* ---- Tools · Draft · POST ---- */}
+        {/* Event mode: EventForm carries its own publish controls above. */}
         <div
           className="flex-shrink-0 border-t bg-background px-4 pt-3 sm:px-6"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 12px), 12px)' }}
         >
           <div className="flex items-center gap-2">
-            <MediaUploadButton
-              label=""
-              onUpload={setMediaUrl}
-              currentMediaUrl={mediaUrl}
-              onRemove={() => setMediaUrl(undefined)}
-            />
+            {!isEventMode && (
+              <MediaUploadButton
+                label=""
+                onUpload={setMediaUrl}
+                currentMediaUrl={mediaUrl}
+                onRemove={() => setMediaUrl(undefined)}
+              />
+            )}
             <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">
-              {draftSavedAt ? 'Draft saved' : ''}
+              {!isEventMode && draftSavedAt ? 'Draft saved' : ''}
             </span>
             <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
             {/* Every verb has one. Labeled for what it does. */}
-            <Button
-              onClick={handleSubmit}
-              disabled={!canPost}
-              className={cn('min-h-[44px] min-w-[130px] font-semibold', POST_FILL[mode])}
-            >
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isSubmitting ? handler.submittingLabel : handler.submitLabel}
-            </Button>
+            {!isEventMode && (
+              <Button
+                onClick={handleSubmit}
+                disabled={!canPost}
+                className={cn('min-h-[44px] min-w-[130px] font-semibold', POST_FILL[mode])}
+              >
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isSubmitting ? handler.submittingLabel : handler.submitLabel}
+              </Button>
+            )}
           </div>
         </div>
       </SheetContent>
