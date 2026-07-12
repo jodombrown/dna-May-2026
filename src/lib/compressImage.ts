@@ -1,3 +1,5 @@
+import { supabase } from '@/integrations/supabase/client';
+
 /**
  * Client-side image compression using canvas.
  * Downscales oversized images to fit within maxDimension and target size.
