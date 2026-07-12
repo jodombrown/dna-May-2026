@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { uploadMedia } from '@/lib/uploadMedia';
+import { compressImage } from '@/lib/compressImage';
 
 interface StoryImageUploadProps {
   currentImageUrl?: string;
@@ -19,11 +20,11 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
+    const original = e.target.files?.[0];
+    if (!original || !user) return;
 
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
+    if (!validTypes.includes(original.type)) {
       toast({
         title: 'Invalid file type',
         description: 'Please upload a JPG, PNG, or WebP image.',
@@ -32,10 +33,11 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    // Hard ceiling before compression (avoid decoding absurd files)
+    if (original.size > 25 * 1024 * 1024) {
       toast({
         title: 'File too large',
-        description: 'Please upload an image smaller than 5MB.',
+        description: 'Please upload an image smaller than 25MB.',
         variant: 'destructive',
       });
       return;
@@ -43,9 +45,18 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
 
     setIsUploading(true);
     try {
+      // Auto-compress oversized images down to <=5MB / 1920px max
+      const file = await compressImage(original, {
+        maxDimension: 1920,
+        maxSizeBytes: 5 * 1024 * 1024,
+      });
       const url = await uploadMedia(file, user.id, 'story-hero-images');
       onUpload(url);
-      toast({ description: 'Hero image uploaded successfully.' });
+      const savedPct =
+        file.size < original.size
+          ? ` (optimized ${Math.round((1 - file.size / original.size) * 100)}%)`
+          : '';
+      toast({ description: `Hero image uploaded successfully.${savedPct}` });
     } catch (error) {
       toast({
         title: 'Upload failed',
@@ -102,7 +113,7 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
             <>
               <ImagePlus className="h-8 w-8" />
               <p className="text-sm font-medium">Add Hero Image</p>
-              <p className="text-xs">Landscape photos work best. JPG/PNG up to 5MB.</p>
+              <p className="text-xs">Landscape photos work best. Large images are auto-optimized (up to 25MB).</p>
             </>
           )}
         </div>

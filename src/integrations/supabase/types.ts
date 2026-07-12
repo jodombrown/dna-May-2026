@@ -3903,6 +3903,39 @@ export type Database = {
           },
         ]
       }
+      geocode_cache: {
+        Row: {
+          city: string | null
+          country: string | null
+          country_code: string | null
+          created_at: string
+          display_name: string | null
+          lat: number
+          lng: number
+          query: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string
+          display_name?: string | null
+          lat: number
+          lng: number
+          query: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          created_at?: string
+          display_name?: string | null
+          lat?: number
+          lng?: number
+          query?: string
+        }
+        Relationships: []
+      }
       geographic_relevance: {
         Row: {
           created_at: string | null
