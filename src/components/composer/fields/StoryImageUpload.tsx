@@ -113,7 +113,7 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
             <>
               <ImagePlus className="h-8 w-8" />
               <p className="text-sm font-medium">Add Hero Image</p>
-              <p className="text-xs">Landscape photos work best. JPG/PNG up to 5MB.</p>
+              <p className="text-xs">Landscape photos work best. Large images are auto-optimized (up to 25MB).</p>
             </>
           )}
         </div>
