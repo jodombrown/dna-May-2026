@@ -75,7 +75,7 @@ async function checkUpcomingEvents(userId: string): Promise<UpcomingEvent[]> {
     .from('events')
     .select('id, organizer_id, start_time')
     .eq('organizer_id', userId)
-    .eq('is_cancelled', false)
+    .neq('status', 'cancelled')
     .gt('start_time', now.toISOString())
     .lt('start_time', oneHourFromNow)
     .limit(5);

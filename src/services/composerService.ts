@@ -208,7 +208,10 @@ export const composerService = {
       related_space_id: fields.relatedSpaceId,
       rsvp_questions: fields.rsvpQuestions ?? [],
       cover_image_url: fields.coverImage?.url ?? base.media[0]?.url ?? null,
-      is_public: base.audience === 'public',
+      // Hitting post in the inline composer means publish, to everyone.
+      // Explicit, not defaulted (create-event defaults to draft).
+      status: 'published',
+      visibility: 'public',
       requires_approval: false,
       allow_guests: true,
       composer_mode: 'event',

@@ -136,7 +136,7 @@ export function ConveneDIADiscoveryCard({
         .in('id', eventIds)
         .gte('start_time', now.toISOString())
         .lte('start_time', weekEnd.toISOString())
-        .eq('is_cancelled', false);
+        .eq('status', 'published');
 
       if (!events || events.length === 0) return 0;
 

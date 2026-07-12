@@ -76,9 +76,8 @@ export function useHeroEvent(selectedCity: string | null) {
       let query = supabase
         .from('events')
         .select(BASE_SELECT)
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(1);
@@ -121,9 +120,8 @@ export function useWeekendEvents(selectedCity: string | null) {
       let query = supabase
         .from('events')
         .select(BASE_SELECT)
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', fridayStart.toISOString())
         .lte('start_time', sundayEnd.toISOString())
         .order('start_time', { ascending: true })
@@ -177,9 +175,8 @@ export function useNetworkEvents() {
         .from('events')
         .select(BASE_SELECT)
         .in('id', eventIds)
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(10);
@@ -200,9 +197,8 @@ export function useDiasporaEvents(excludeIds: string[] = []) {
       const { data, error } = await supabase
         .from('events')
         .select(BASE_SELECT)
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(15);

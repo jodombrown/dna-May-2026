@@ -172,9 +172,8 @@ export function ConveneDiscovery() {
           organizer_id, is_curated, curated_source, curated_source_url,
           event_attendees(count)
         `)
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(20);

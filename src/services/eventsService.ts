@@ -11,7 +11,7 @@ interface EventSearchFilters {
 }
 
 export const searchEvents = async (searchTerm: string = '', filters: EventSearchFilters = {}): Promise<Event[]> => {
-  let query = supabase.from('events').select('*').eq('is_cancelled', false);
+  let query = supabase.from('events').select('*').eq('status', 'published');
   
   if (searchTerm && searchTerm.trim()) {
     const term = searchTerm.trim();

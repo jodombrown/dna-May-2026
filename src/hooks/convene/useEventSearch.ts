@@ -48,9 +48,8 @@ export function useEventSearch(searchTerm: string, filters: EventSearchFilters =
           cover_image_url, event_type, format, max_attendees, organizer_id,
           event_attendees(count)
         `)
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(20);
@@ -141,9 +140,8 @@ export function useTrendingEvents() {
           cover_image_url, event_type, format, max_attendees, organizer_id,
           event_attendees(count)
         `)
-        .eq('is_cancelled', false)
-        .eq('is_public', true)
-        .eq('is_published', true)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
         .gte('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
         .limit(5);

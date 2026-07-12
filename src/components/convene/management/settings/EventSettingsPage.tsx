@@ -51,6 +51,11 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  eventStateWrite,
+  isEventVisibility,
+  type EventVisibility,
+} from '@/lib/events/state';
 import { useEventManagement } from '../EventManagementLayout';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -67,7 +72,13 @@ const EventSettingsPage: React.FC = () => {
   const [maxAttendees, setMaxAttendees] = useState<number | null>(event.max_attendees);
   const [requiresApproval, setRequiresApproval] = useState(event.requires_approval || false);
   const [allowGuests, setAllowGuests] = useState(event.allow_guests !== false);
-  const [isPublic, setIsPublic] = useState(event.is_public !== false);
+  const [visibility, setVisibility] = useState<EventVisibility>(
+    isEventVisibility(event.visibility)
+      ? event.visibility
+      : event.is_public === false
+        ? 'private'
+        : 'public'
+  );
   const [slug, setSlug] = useState(event.slug || '');
 
   // Dialog states
@@ -142,7 +153,8 @@ const EventSettingsPage: React.FC = () => {
       const { error } = await supabase
         .from('events')
         .update({
-          is_public: isPublic,
+          // visibility plus the transitional legacy is_public mirror
+          ...eventStateWrite({ visibility }),
           slug: slug || null,
         })
         .eq('id', event.id);
@@ -164,7 +176,8 @@ const EventSettingsPage: React.FC = () => {
       const { error } = await supabase
         .from('events')
         .update({
-          is_cancelled: true,
+          // status: 'cancelled' plus the transitional legacy mirror
+          ...eventStateWrite({ status: 'cancelled' }),
           cancellation_reason: 'Cancelled by organizer',
         })
         .eq('id', event.id);
@@ -393,16 +406,24 @@ const EventSettingsPage: React.FC = () => {
             <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label htmlFor="is-public">Public Event</Label>
+                  <Label htmlFor="event-visibility">Audience</Label>
                   <p className="text-sm text-muted-foreground">
-                    Visible in event listings and searchable
+                    Who can see and access your event
                   </p>
                 </div>
-                <Switch
-                  id="is-public"
-                  checked={isPublic}
-                  onCheckedChange={setIsPublic}
-                />
+                <Select
+                  value={visibility}
+                  onValueChange={(value) => setVisibility(value as EventVisibility)}
+                >
+                  <SelectTrigger id="event-visibility" className="w-44">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Public</SelectItem>
+                    <SelectItem value="community">Community</SelectItem>
+                    <SelectItem value="private">Private</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <Separator />

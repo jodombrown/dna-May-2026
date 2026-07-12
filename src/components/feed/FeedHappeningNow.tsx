@@ -33,7 +33,7 @@ export const FeedHappeningNow: React.FC = () => {
       const { data } = await supabase
         .from('events')
         .select('id, title, start_time, end_time, location_name')
-        .eq('is_published', true)
+        .eq('status', 'published')
         .lte('start_time', twoHoursFromNow.toISOString())
         .or(`end_time.gte.${now.toISOString()},end_time.is.null`)
         .order('start_time', { ascending: true })

@@ -52,8 +52,8 @@ Deno.serve(async (req) => {
     const { data: events } = await supabase
       .from('events')
       .select('slug, updated_at')
+      .eq('status', 'published')
       .eq('visibility', 'public')
-      .eq('is_cancelled', false)
       .gte('end_time', thirtyDaysAgo.toISOString())
       .order('start_time', { ascending: false })
       .limit(500);

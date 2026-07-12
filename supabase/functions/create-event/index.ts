@@ -1,5 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.9';
 import { corsHeaders } from '../_shared/cors.ts';
+import {
+  eventStateWrite,
+  isEventStatus,
+  isEventVisibility,
+  type EventStatus,
+  type EventVisibility,
+} from '../_shared/event-state.ts';
 
 interface AgendaItem {
   time: string;
@@ -23,6 +30,9 @@ interface CreateEventRequest {
   end_time: string;
   timezone?: string;
   max_attendees?: number;
+  status?: string;
+  visibility?: string;
+  /** Legacy audience flag — only consulted when `visibility` is absent. */
   is_public?: boolean;
   requires_approval?: boolean;
   allow_guests?: boolean;
@@ -187,6 +197,22 @@ Deno.serve(async (req) => {
       throw new Error('Max attendees must be greater than 0');
     }
 
+    // Canonical event state. Default status to 'draft' and visibility to
+    // 'public' when absent; a stale client that still sends only the legacy
+    // is_public flag keeps its intended audience.
+    if (eventData.status !== undefined && !isEventStatus(eventData.status)) {
+      throw new Error('Invalid status: must be one of draft, published, cancelled, completed');
+    }
+    if (eventData.visibility !== undefined && !isEventVisibility(eventData.visibility)) {
+      throw new Error('Invalid visibility: must be one of public, community, private');
+    }
+    const status: EventStatus = isEventStatus(eventData.status) ? eventData.status : 'draft';
+    const visibility: EventVisibility = isEventVisibility(eventData.visibility)
+      ? eventData.visibility
+      : eventData.is_public === false
+        ? 'private'
+        : 'public';
+
     console.log('Validation passed, creating event...');
 
     // Generate SEO-friendly slug from title
@@ -221,11 +247,12 @@ Deno.serve(async (req) => {
         end_time: eventData.end_time,
         timezone: eventData.timezone || 'UTC',
         max_attendees: eventData.max_attendees || null,
-        is_public: eventData.is_public !== false,
+        // (status, visibility) plus the transitional legacy mirror
+        // (is_public / is_published / is_cancelled).
+        ...eventStateWrite({ status, visibility }),
         requires_approval: eventData.requires_approval || false,
         allow_guests: eventData.allow_guests !== false,
         cover_image_url: eventData.cover_image_url || null,
-        is_cancelled: false,
         // SEO slug
         slug: eventSlug,
         // New structured fields

@@ -42,7 +42,7 @@ export function EventOrganizerCard({ organizer, groupHost }: EventOrganizerCardP
         .from('events')
         .select('id', { count: 'exact', head: true })
         .eq('organizer_id', organizer.id)
-        .eq('is_cancelled', false);
+        .eq('status', 'published');
       return count || 0;
     },
     staleTime: 300_000,

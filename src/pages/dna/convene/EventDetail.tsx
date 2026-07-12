@@ -53,6 +53,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
+import { eventStateWrite } from '@/lib/events/state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
@@ -276,7 +277,11 @@ const EventDetail = () => {
       if (!user || !id) throw new Error('Not authenticated');
       const { error } = await supabase
         .from('events')
-        .update({ is_cancelled: true, cancellation_reason: 'Cancelled by organizer' })
+        .update({
+          // status: 'cancelled' plus the transitional legacy mirror
+          ...eventStateWrite({ status: 'cancelled' }),
+          cancellation_reason: 'Cancelled by organizer',
+        })
         .eq('id', id)
         .eq('organizer_id', user.id);
       if (error) throw error;
