@@ -77,6 +77,7 @@ interface DraftV2 {
   mediaUrl?: string;
   roles?: string[];
   galleryUrls?: string[];
+  resolvedWhen?: ResolvedDate | null;
   savedAt: number;
 }
 
