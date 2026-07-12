@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import LayoutController from '@/components/LayoutController';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter } from 'lucide-react';
+import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter, Compass, Users, Mic, Bookmark } from 'lucide-react';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { Mpatapo } from '@/components/icons/adinkra';
