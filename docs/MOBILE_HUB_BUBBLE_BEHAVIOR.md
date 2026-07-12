@@ -36,3 +36,26 @@ never slips under the header on any device. Hardcoded `pt-14` values are
 forbidden in hub roots.
 
 See `src/test/mobileHeaderOverlap.test.tsx` for the regression check.
+
+## Menu-nav row contract
+
+Every `/dna/*` hub landing page MUST render through `DnaMobileHubShell`
+and MUST pass a `tabs` node in addition to its `bubble`. The tabs row is
+the second row directly beneath the top bar (icon-first, with the active
+tab expanding to show its label) and is the DNA hub's "menu nav".
+
+Conforming hubs today:
+
+- Feed          -> `MobileFeedTabs`
+- Connect       -> `ConnectMobileTabs`
+- Convene       -> `ConveneMobileTabs`
+- Contribute    -> `ContributeMobileTabs`
+- Collaborate   -> `CollaborateMobileTabs`
+- Convey        -> tab bar rendered by `ConveyStoryHub`
+
+Sub-pages of a hub (e.g. `/dna/collaborate/spaces/:slug`) may opt out by
+passing `tabs={null}` so the second row is reserved for the parent hub
+landing.
+
+New /dna pages that skip either the shared header OR the tabs row fail
+review.
