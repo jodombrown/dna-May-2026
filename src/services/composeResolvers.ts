@@ -13,6 +13,8 @@
  * immediately, not after they hit Post.
  */
 
+import { supabase } from '@/integrations/supabase/client';
+
 // ---------------------------------------------------------------------------
 // Date — natural language → a real instant the member can see and correct
 // ---------------------------------------------------------------------------
@@ -151,16 +153,18 @@ export interface ResolvedPlace {
 }
 
 /**
- * Geocodes a city via OpenStreetMap Nominatim.
+ * Geocodes a city via OpenStreetMap Nominatim — server-side (BD089).
  *
- * Chosen deliberately (BD089): free, no API key, no vendor lock, and adequate at
- * our volume. The alternative was leaving `location_lat`/`location_lng` NULL at
- * v0.0 — which would mean every event created before v0.5 is invisible to
- * "happening near you" and needs a manual backfill later. A data gap is more
- * expensive than a geocode.
+ * Nominatim (free, no API key, no vendor lock) is called from the `geocode-city`
+ * edge function, NOT the browser: Nominatim's usage policy discourages direct
+ * application traffic from the client and rate-limits by IP, so a client-side
+ * call is fragile even where CORS allows it. The function adds a descriptive
+ * User-Agent identifying DNA and a small cache so a repeat city skips a second
+ * request. The alternative was leaving `location_lat`/`location_lng` NULL — a
+ * data gap that is more expensive than a geocode.
  *
- * Nominatim asks for a descriptive User-Agent and ~1 req/sec. The composer
- * geocodes on confirm, not per keystroke, so we stay well inside fair use.
+ * The function returns the same shape this used to build directly, so nothing
+ * downstream (ComposerPlaceField, the map, the submit mapping) changes.
  *
  * Returns null on failure — the composer keeps the typed city and writes NULL
  * coordinates rather than blocking the post.
@@ -173,29 +177,21 @@ export async function geocodeCity(
   if (!q.trim()) return null;
 
   try {
-    const url = new URL('https://nominatim.openstreetmap.org/search');
-    url.searchParams.set('q', q);
-    url.searchParams.set('format', 'jsonv2');
-    url.searchParams.set('limit', '1');
-    url.searchParams.set('addressdetails', '1');
-
-    const res = await fetch(url.toString(), {
-      headers: { Accept: 'application/json' },
+    const { data, error } = await supabase.functions.invoke('geocode-city', {
+      body: { city, country },
     });
-    if (!res.ok) return null;
+    if (error || !data) return null;
 
-    const results = await res.json();
-    const hit = Array.isArray(results) ? results[0] : null;
-    if (!hit) return null;
+    const hit = data as Partial<ResolvedPlace>;
+    if (typeof hit.lat !== 'number' || typeof hit.lng !== 'number') return null;
 
-    const addr = hit.address ?? {};
     return {
-      city: addr.city || addr.town || addr.village || addr.state || city,
-      country: addr.country ?? country ?? '',
-      countryCode: addr.country_code ? String(addr.country_code).toUpperCase() : null,
-      lat: parseFloat(hit.lat),
-      lng: parseFloat(hit.lon),
-      displayName: hit.display_name ?? q,
+      city: hit.city || city,
+      country: hit.country ?? country ?? '',
+      countryCode: hit.countryCode ?? null,
+      lat: hit.lat,
+      lng: hit.lng,
+      displayName: hit.displayName ?? q,
     };
   } catch {
     return null; // never block a post on a geocode
