@@ -73,7 +73,7 @@ const DiaSheet: React.FC = () => {
         <div className="absolute inset-0 bg-background/[0.94] pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full min-h-0">
-          <SheetHeader className="px-4 py-3 border-b border-border/60 space-y-0 bg-background/40 backdrop-blur-sm">
+          <SheetHeader className="px-4 py-3 border-b border-border/60 space-y-0 bg-background" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.75rem)' }}>
             <SheetTitle asChild>
               <div className="flex items-center gap-2.5">
                 <div className="relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-emerald-500/12 ring-1 ring-emerald-600/20">
