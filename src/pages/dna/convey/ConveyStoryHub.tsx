@@ -27,14 +27,15 @@ interface TabConfig {
   id: ConveyTab;
   label: string;
   descriptor: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const CONVEY_TABS: TabConfig[] = [
-  { id: 'pulse', label: 'Pulse', descriptor: 'Everything happening across the diaspora right now' },
-  { id: 'curated', label: 'Curated', descriptor: "DIA's picks based on your interests and connections" },
-  { id: 'my_circle', label: 'My Circle', descriptor: 'Dispatches from the people in your world' },
-  { id: 'my_voice', label: 'My Voice', descriptor: 'Your contribution to the diaspora\'s story' },
-  { id: 'saved', label: 'Saved', descriptor: 'Posts you\'ve bookmarked to read later or reference again' },
+  { id: 'pulse', label: 'Pulse', descriptor: 'Everything happening across the diaspora right now', icon: Flame },
+  { id: 'curated', label: 'Curated', descriptor: "DIA's picks based on your interests and connections", icon: Compass },
+  { id: 'my_circle', label: 'My Circle', descriptor: 'Dispatches from the people in your world', icon: Users },
+  { id: 'my_voice', label: 'My Voice', descriptor: "Your contribution to the diaspora's story", icon: Mic },
+  { id: 'saved', label: 'Saved', descriptor: "Posts you've bookmarked to read later or reference again", icon: Bookmark },
 ];
 
 // Map editorial tabs to feed query params
@@ -58,6 +59,10 @@ const categoryPills = [
 ];
 
 // ─── Editorial Tab Bar Component ─────────────────────────────────────
+// Mobile: segmented pill row (icon + active-label) matching the shared
+// DNA hub menu-nav pattern (Feed/Connect/Convene/Collaborate/Contribute).
+// Desktop: underline tab bar.
+// Descriptor line under both acts as the tab explainer.
 function ConveyEditorialTabs({
   activeTab,
   onTabChange,
@@ -71,9 +76,9 @@ function ConveyEditorialTabs({
   const activeTabRef = useRef<HTMLButtonElement>(null);
   const [descriptorKey, setDescriptorKey] = useState(0);
 
-  // Scroll active tab into view on mobile
+  // Scroll active tab into view on mobile (desktop overflow rare)
   useEffect(() => {
-    if (isMobile && activeTabRef.current && tabBarRef.current) {
+    if (!isMobile && activeTabRef.current && tabBarRef.current) {
       const container = tabBarRef.current;
       const tab = activeTabRef.current;
       const scrollLeft = tab.offsetLeft - container.offsetWidth / 2 + tab.offsetWidth / 2;
@@ -88,16 +93,56 @@ function ConveyEditorialTabs({
 
   const activeConfig = CONVEY_TABS.find((t) => t.id === activeTab)!;
 
+  if (isMobile) {
+    return (
+      <div className="border-b border-border -mx-4">
+        <div className="px-3 py-1.5 bg-background">
+          <div
+            className="flex items-center justify-between gap-1 p-1 bg-muted/50 rounded-lg"
+            role="tablist"
+            aria-label="Convey tabs"
+          >
+            {CONVEY_TABS.map(({ id, label, icon: Icon }) => {
+              const isActive = activeTab === id;
+              return (
+                <button
+                  key={id}
+                  onClick={() => handleTabChange(id)}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`${label} tab`}
+                  title={label}
+                  className={cn(
+                    'flex items-center justify-center gap-1.5 py-2 rounded-md transition-all duration-200',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                    isActive
+                      ? 'bg-background shadow-sm flex-1 px-2'
+                      : 'px-2 text-muted-foreground hover:text-foreground hover:bg-background/50',
+                  )}
+                >
+                  <Icon className={cn('h-4 w-4 shrink-0', isActive && 'text-primary')} aria-hidden="true" />
+                  {isActive && (
+                    <span className="text-xs font-medium truncate">{label}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <p
+          key={descriptorKey}
+          className="text-xs text-muted-foreground italic px-4 pb-2 animate-in fade-in duration-300"
+        >
+          {activeConfig.descriptor}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="border-b border-border">
-      {/* Tab bar */}
-      <div
-        ref={tabBarRef}
-        className={cn(
-          "flex gap-6 overflow-x-auto scrollbar-hide",
-          isMobile ? "px-4" : "px-0"
-        )}
-      >
+      {/* Desktop underline tab bar */}
+      <div ref={tabBarRef} className="flex gap-6 overflow-x-auto scrollbar-hide px-0">
         {CONVEY_TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -106,15 +151,12 @@ function ConveyEditorialTabs({
               ref={isActive ? activeTabRef : undefined}
               onClick={() => handleTabChange(tab.id)}
               className={cn(
-                "relative whitespace-nowrap pb-3 pt-1 text-sm font-medium transition-colors shrink-0",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                isActive
-                  ? "text-dna-forest font-semibold"
-                  : "text-muted-foreground hover:text-foreground"
+                'relative whitespace-nowrap pb-3 pt-1 text-sm font-medium transition-colors shrink-0',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                isActive ? 'text-dna-forest font-semibold' : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {tab.label}
-              {/* Active underline */}
               {isActive && (
                 <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-dna-forest rounded-full" />
               )}
@@ -122,12 +164,9 @@ function ConveyEditorialTabs({
           );
         })}
       </div>
-
-      {/* Descriptor text */}
       <p
         key={descriptorKey}
         className="text-xs text-muted-foreground italic px-0 pt-2 pb-3 animate-in fade-in duration-300"
-        style={{ paddingLeft: isMobile ? '1rem' : undefined }}
       >
         {activeConfig.descriptor}
       </p>
