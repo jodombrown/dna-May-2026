@@ -108,7 +108,7 @@ export default function SpaceBoard() {
 
   if (spaceLoading) {
     return (
-      <SpacesShell>
+      <SpacesShell tabs={null}>
         <Skeleton className="h-8 w-1/2" />
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           {TASK_STATUSES.map((s) => (
@@ -121,7 +121,7 @@ export default function SpaceBoard() {
 
   if (isError || !space) {
     return (
-      <SpacesShell maxWidthClassName="max-w-3xl">
+      <SpacesShell maxWidthClassName="max-w-3xl" tabs={null}>
         <Card className="p-8 text-center">
           <h1 className="text-lg font-semibold text-foreground">Space not found</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -137,7 +137,7 @@ export default function SpaceBoard() {
 
   if (!rosterLoading && !isMember) {
     return (
-      <SpacesShell maxWidthClassName="max-w-3xl">
+      <SpacesShell maxWidthClassName="max-w-3xl" tabs={null}>
         <Card className="p-8 text-center">
           <h1 className="text-lg font-semibold text-foreground">Members only</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -155,7 +155,7 @@ export default function SpaceBoard() {
   const boardEmpty = !tasksLoading && tasks.length === 0;
 
   return (
-    <SpacesShell maxWidthClassName="max-w-5xl">
+    <SpacesShell maxWidthClassName="max-w-5xl" tabs={null}>
       <Link
         to={`/dna/collaborate/spaces/${space.slug}`}
         className="mb-4 inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
