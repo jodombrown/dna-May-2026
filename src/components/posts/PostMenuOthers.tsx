@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePostActions } from '@/hooks/usePostActions';
 import { ReportDialog } from './ReportDialog';
+import { toast } from 'sonner';
 
 interface PostMenuOthersProps {
   postId: string;
@@ -17,6 +18,11 @@ interface PostMenuOthersProps {
   authorName: string;
   currentUserId: string;
   onUpdate?: () => void;
+  /**
+   * Override URL for the "Copy link" action. Use for announcement posts
+   * that should share the linked entity's public page instead of /post/{id}.
+   */
+  copyLinkHref?: string;
 }
 
 export function PostMenuOthers({
@@ -25,6 +31,7 @@ export function PostMenuOthers({
   authorName,
   currentUserId,
   onUpdate,
+  copyLinkHref,
 }: PostMenuOthersProps) {
   const [showReportDialog, setShowReportDialog] = useState(false);
 
