@@ -19,7 +19,7 @@ import { Calendar, MapPin, Share2, ExternalLink, Copy, Check, Video, Globe, Hand
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
