@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom"
 import { useToast } from "@/hooks/use-toast"
 import {
   Toast,
@@ -11,7 +12,13 @@ import {
 export function Toaster() {
   const { toasts } = useToast()
 
-  return (
+  // Portaled to document.body: <Toaster /> sits nested in the app tree, and a
+  // fixed element inside an ancestor stacking context can never paint over a
+  // body-level portal (Sheet/Dialog), no matter its z-index. As a body-level
+  // sibling of those portals, the viewport's z-[99999] actually competes.
+  if (typeof document === "undefined") return null
+
+  return createPortal(
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
@@ -28,6 +35,7 @@ export function Toaster() {
         )
       })}
       <ToastViewport />
-    </ToastProvider>
+    </ToastProvider>,
+    document.body
   )
 }

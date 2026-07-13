@@ -180,7 +180,11 @@ export async function geocodeCity(
     const { data, error } = await supabase.functions.invoke('geocode-city', {
       body: { city, country },
     });
-    if (error || !data) return null;
+    if (error) {
+      console.error('[composeResolvers] geocode-city failed:', error);
+      return null;
+    }
+    if (!data) return null;
 
     const hit = data as Partial<ResolvedPlace>;
     if (typeof hit.lat !== 'number' || typeof hit.lng !== 'number') return null;
@@ -193,7 +197,8 @@ export async function geocodeCity(
       lng: hit.lng,
       displayName: hit.displayName ?? q,
     };
-  } catch {
+  } catch (error) {
+    console.error('[composeResolvers] geocode-city threw:', error);
     return null; // never block a post on a geocode
   }
 }
