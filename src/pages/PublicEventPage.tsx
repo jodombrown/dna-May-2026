@@ -198,8 +198,8 @@ const PublicEventPage = () => {
   }
 
   const eventTitle = event.title || 'Event';
-  const hostName = event.group?.name || event.organizer?.full_name || 'DNA Host';
-  const hostAvatar = event.group?.avatar_url || event.organizer?.avatar_url;
+  const hostName = event.organizer_name || 'DNA Host';
+  const hostAvatar = event.organizer_avatar_url;
   const isPastEvent = new Date(event.end_time) < new Date();
   const isCancelled = event.is_cancelled;
   const currentRsvp = userRsvp?.status;
