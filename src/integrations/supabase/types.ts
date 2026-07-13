@@ -3374,9 +3374,12 @@ export type Database = {
           location_address: string | null
           location_city: string | null
           location_country: string | null
+          location_country_code: string | null
           location_lat: number | null
           location_lng: number | null
           location_name: string | null
+          location_place_id: string | null
+          location_state: string | null
           max_attendees: number | null
           meeting_platform: string | null
           meeting_url: string | null
@@ -3418,9 +3421,12 @@ export type Database = {
           location_address?: string | null
           location_city?: string | null
           location_country?: string | null
+          location_country_code?: string | null
           location_lat?: number | null
           location_lng?: number | null
           location_name?: string | null
+          location_place_id?: string | null
+          location_state?: string | null
           max_attendees?: number | null
           meeting_platform?: string | null
           meeting_url?: string | null
@@ -3462,9 +3468,12 @@ export type Database = {
           location_address?: string | null
           location_city?: string | null
           location_country?: string | null
+          location_country_code?: string | null
           location_lat?: number | null
           location_lng?: number | null
           location_name?: string | null
+          location_place_id?: string | null
+          location_state?: string | null
           max_attendees?: number | null
           meeting_platform?: string | null
           meeting_url?: string | null

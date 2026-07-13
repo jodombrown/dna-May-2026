@@ -48,6 +48,7 @@ import {
   type Speaker,
 } from '@/lib/events/eventFormSchema';
 import { EventCoverUpload } from '@/components/composer/fields/EventCoverUpload';
+import { PlaceSearchField } from '@/components/composer/fields/PlaceSearchField';
 
 export interface EventFormProps {
   level: 'compact' | 'full';
@@ -113,7 +114,10 @@ const FIELD_LABELS: Record<string, string> = {
   location_name: 'Venue',
   location_address: 'Street address',
   location_city: 'City',
+  location_state: 'State / region',
   location_country: 'Country',
+  location_country_code: 'Country code',
+  location_place_id: 'Place',
   meeting_url: 'Meeting link',
   meeting_platform: 'Platform',
   max_attendees: 'Seats',
@@ -379,8 +383,18 @@ export function EventForm({
     'endDate',
     'endTime',
     'cover_image_url',
-    ...(showLocation ? ['location_name', 'location_city', 'location_country'] : []),
-    ...(showLocation && effectiveLevel === 'full' ? ['location_address'] : []),
+    // PlaceSearchField renders every location error itself — inline on the
+    // manual fields, or collected below the search box when they're hidden.
+    ...(showLocation
+      ? [
+          'location_name',
+          'location_address',
+          'location_city',
+          'location_state',
+          'location_country',
+          'location_country_code',
+        ]
+      : []),
     ...(showMeeting ? ['meeting_url'] : []),
     ...(showMeeting && effectiveLevel === 'full' ? ['meeting_platform'] : []),
     ...(effectiveLevel === 'full'
@@ -606,50 +620,21 @@ export function EventForm({
         )}
       </div>
 
-      {/* Where — absent, not disabled, when it doesn't apply. */}
+      {/* Where — absent, not disabled, when it doesn't apply. ONE search box:
+          a place is RESOLVED, never typed (manual entry is the fallback). */}
       {showLocation && (
         <div className="space-y-3">
           <div>
             <Label className="text-sm font-medium">Where</Label>
-            <Input
-              placeholder="Venue — Lagos Continental Hotel"
-              value={values.location_name}
-              onChange={(e) => setValues({ location_name: e.target.value })}
-              onBlur={refreshPlace}
-              className="mt-1.5"
-            />
-            <FieldError message={errors.location_name} />
-          </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <Input
-                placeholder="City — Lagos"
-                value={values.location_city}
-                onChange={(e) => setValues({ location_city: e.target.value })}
-                onBlur={refreshPlace}
+            <div className="mt-1.5">
+              <PlaceSearchField
+                values={values}
+                setValues={setValues}
+                errors={errors}
+                onManualBlur={refreshPlace}
               />
-              <FieldError message={errors.location_city} />
-            </div>
-            <div>
-              <Input
-                placeholder="Country — Nigeria"
-                value={values.location_country}
-                onChange={(e) => setValues({ location_country: e.target.value })}
-                onBlur={refreshPlace}
-              />
-              <FieldError message={errors.location_country} />
             </div>
           </div>
-          {effectiveLevel === 'full' && (
-            <div>
-              <Input
-                placeholder="Street address (shown to registered attendees)"
-                value={values.location_address}
-                onChange={(e) => setValues({ location_address: e.target.value })}
-              />
-              <FieldError message={errors.location_address} />
-            </div>
-          )}
           {geocodeFailed && (
             <p className="text-xs text-muted-foreground">
               We couldn’t pin this spot on the map — the event still saves fine.
