@@ -46,68 +46,18 @@ const PublicEventPage = () => {
     }
   }, [isLoggedIn]);
 
-  // Check if param is UUID or slug
-  const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-
-  // Fetch event data - public access, no auth required
+  // Fetch event data via public RPC - resolves slug OR uuid, no auth required
   const { data: event, isLoading, error } = useQuery({
     queryKey: ['public-event', slugOrId],
     queryFn: async () => {
-      let eventData = null;
-      
-      // Try by UUID first if it looks like one
-      if (slugOrId && isUUID(slugOrId)) {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .eq('id', slugOrId)
-          .maybeSingle();
-        if (!error) eventData = data;
-      }
-      
-      // If not found or not UUID, try by slug
-      if (!eventData && slugOrId) {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .eq('slug', slugOrId)
-          .maybeSingle();
-        if (!error) eventData = data;
-      }
-
-      if (!eventData) throw new Error('Event not found');
-
-      // Fetch organizer profile
-      const { data: organizer } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, avatar_url, headline')
-        .eq('id', eventData.organizer_id)
-        .maybeSingle();
-
-      // Fetch attendee count
-      const { count: attendeeCount } = await supabase
-        .from('event_attendees')
-        .select('id', { count: 'exact' })
-        .eq('event_id', eventData.id)
-        .eq('status', 'going');
-
-      // Fetch group info if event is group-hosted
-      let group = null;
-      if (eventData.group_id) {
-        const { data: groupData } = await supabase
-          .from('groups')
-          .select('id, name, slug, avatar_url')
-          .eq('id', eventData.group_id)
-          .maybeSingle();
-        group = groupData;
-      }
-
-      return {
-        ...eventData,
-        organizer,
-        group,
-        attendee_count: attendeeCount || 0,
-      };
+      if (!slugOrId) throw new Error('Event not found');
+      const { data, error } = await supabase.rpc('get_public_event', {
+        p_slug_or_id: slugOrId,
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) throw new Error('Event not found');
+      return row;
     },
     enabled: !!slugOrId,
   });
