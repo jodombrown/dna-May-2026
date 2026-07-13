@@ -5,6 +5,33 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { uploadMedia } from '@/lib/uploadMedia';
 
+/**
+ * Supabase storage errors are often plain objects, not Error instances.
+ * Surface the real message; fall back only when there is genuinely nothing.
+ */
+function describeUploadError(error: unknown): string {
+  if (error !== null && typeof error === 'object') {
+    const e = error as { message?: unknown; error?: unknown; statusCode?: unknown };
+    if (typeof e.message === 'string' && e.message.trim()) return e.message;
+    const errPart = typeof e.error === 'string' && e.error.trim() ? e.error : undefined;
+    const statusPart =
+      typeof e.statusCode === 'string' || typeof e.statusCode === 'number'
+        ? String(e.statusCode)
+        : undefined;
+    if (errPart && statusPart) return `${errPart} (status ${statusPart})`;
+    if (errPart) return errPart;
+    if (statusPart) return `Upload failed with status ${statusPart}`;
+    try {
+      const json = JSON.stringify(error);
+      if (json && json !== '{}') return json;
+    } catch {
+      // fall through to generic fallback
+    }
+  }
+  if (typeof error === 'string' && error.trim()) return error;
+  return 'Please try again';
+}
+
 interface EventCoverUploadProps {
   currentImageUrl?: string;
   onUpload: (url: string) => void;
@@ -45,7 +72,7 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
       onUpload(url);
       toast({ description: 'Cover image uploaded!' });
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Please try again';
+      const msg = describeUploadError(error);
       console.error('[EventCoverUpload] upload failed:', error);
       toast({ title: 'Upload failed', description: msg, variant: 'destructive' });
     } finally {

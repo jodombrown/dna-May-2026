@@ -22,13 +22,27 @@ export const uploadMedia = async (
   const safeName = `${base}.${safeExt}`;
 
   const filePath = `${userId}/${Date.now()}-${safeName}`;
+
+  // Diagnostics: is there a session at the moment of upload, and is the
+  // storage request carrying it? (RLS rejections are indistinguishable
+  // from auth loss without this.)
+  const { data: s } = await supabase.auth.getSession();
+  console.log('[uploadMedia] bucket=%s path=%s hasSession=%s tokenLen=%s sub=%s',
+    bucket, filePath, !!s.session, s.session?.access_token?.length ?? 0,
+    s.session?.user?.id ?? 'NONE');
+
   const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
     cacheControl: '3600',
     upsert: true,
     contentType: file.type || undefined,
   });
-  
-  if (error) throw error;
+
+  if (error) {
+    console.error('[uploadMedia] upload FAILED bucket=%s path=%s hasSession=%s tokenLen=%s sub=%s error=%o',
+      bucket, filePath, !!s.session, s.session?.access_token?.length ?? 0,
+      s.session?.user?.id ?? 'NONE', error);
+    throw error;
+  }
 
   const { data: publicUrl } = supabase.storage.from(bucket).getPublicUrl(filePath);
   return publicUrl.publicUrl;
