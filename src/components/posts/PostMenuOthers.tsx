@@ -64,6 +64,19 @@ export function PostMenuOthers({
     }
   };
 
+  const handleCopyLink = async () => {
+    if (!copyLinkHref) {
+      copyLink();
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(copyLinkHref);
+      toast.success('Link copied');
+    } catch {
+      toast.error('Failed to copy link');
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -73,7 +86,7 @@ export function PostMenuOthers({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={copyLink}>
+          <DropdownMenuItem onClick={handleCopyLink}>
             <Link className="h-4 w-4 mr-2" />
             Copy link
           </DropdownMenuItem>
