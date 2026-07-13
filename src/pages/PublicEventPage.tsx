@@ -15,11 +15,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Video, Globe, Ticket, Handshake, CalendarDays, UsersRound, Heart, MessageSquare } from 'lucide-react';
+import { Calendar, MapPin, Share2, ExternalLink, Copy, Check, Video, Globe, Handshake, CalendarDays, UsersRound, Heart, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
@@ -46,68 +46,18 @@ const PublicEventPage = () => {
     }
   }, [isLoggedIn]);
 
-  // Check if param is UUID or slug
-  const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-
-  // Fetch event data - public access, no auth required
+  // Fetch event data via public RPC - resolves slug OR uuid, no auth required
   const { data: event, isLoading, error } = useQuery({
     queryKey: ['public-event', slugOrId],
     queryFn: async () => {
-      let eventData = null;
-      
-      // Try by UUID first if it looks like one
-      if (slugOrId && isUUID(slugOrId)) {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .eq('id', slugOrId)
-          .maybeSingle();
-        if (!error) eventData = data;
-      }
-      
-      // If not found or not UUID, try by slug
-      if (!eventData && slugOrId) {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .eq('slug', slugOrId)
-          .maybeSingle();
-        if (!error) eventData = data;
-      }
-
-      if (!eventData) throw new Error('Event not found');
-
-      // Fetch organizer profile
-      const { data: organizer } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, avatar_url, headline')
-        .eq('id', eventData.organizer_id)
-        .maybeSingle();
-
-      // Fetch attendee count
-      const { count: attendeeCount } = await supabase
-        .from('event_attendees')
-        .select('id', { count: 'exact' })
-        .eq('event_id', eventData.id)
-        .eq('status', 'going');
-
-      // Fetch group info if event is group-hosted
-      let group = null;
-      if (eventData.group_id) {
-        const { data: groupData } = await supabase
-          .from('groups')
-          .select('id, name, slug, avatar_url')
-          .eq('id', eventData.group_id)
-          .maybeSingle();
-        group = groupData;
-      }
-
-      return {
-        ...eventData,
-        organizer,
-        group,
-        attendee_count: attendeeCount || 0,
-      };
+      if (!slugOrId) throw new Error('Event not found');
+      const { data, error } = await supabase.rpc('get_public_event', {
+        p_slug_or_id: slugOrId,
+      });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) throw new Error('Event not found');
+      return row;
     },
     enabled: !!slugOrId,
   });
@@ -248,8 +198,8 @@ const PublicEventPage = () => {
   }
 
   const eventTitle = event.title || 'Event';
-  const hostName = event.group?.name || event.organizer?.full_name || 'DNA Host';
-  const hostAvatar = event.group?.avatar_url || event.organizer?.avatar_url;
+  const hostName = event.organizer_name || 'DNA Host';
+  const hostAvatar = event.organizer_avatar_url;
   const isPastEvent = new Date(event.end_time) < new Date();
   const isCancelled = event.is_cancelled;
   const currentRsvp = userRsvp?.status;
@@ -388,14 +338,6 @@ const PublicEventPage = () => {
                   {getFormatIcon(event.format)}
                   {event.format?.replace('_', ' ') || 'In Person'}
                 </Badge>
-                {event.is_free ? (
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Free</Badge>
-                ) : event.ticket_price_cents ? (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Ticket className="w-3 h-3" />
-                    ${(event.ticket_price_cents / 100).toFixed(0)}
-                  </Badge>
-                ) : null}
                 {isPastEvent && <Badge variant="secondary">Past Event</Badge>}
                 {isCancelled && <Badge variant="destructive">Cancelled</Badge>}
               </div>
@@ -421,21 +363,10 @@ const PublicEventPage = () => {
                   {getFormatIcon(event.format)}
                   <div>
                     <p className="font-medium">{locationDisplay}</p>
-                    {event.format === 'virtual' && event.meeting_platform && (
-                      <p className="text-sm text-muted-foreground">{event.meeting_platform}</p>
-                    )}
                   </div>
                 </div>
               )}
 
-              {/* Attendee Count */}
-              <div className="flex items-center gap-3 mb-4">
-                <Users className="w-5 h-5 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  {event.attendee_count} {event.attendee_count === 1 ? 'person' : 'people'} going
-                  {event.max_attendees && ` · ${event.max_attendees - event.attendee_count} spots left`}
-                </p>
-              </div>
 
               {/* Host Info */}
               <div className="flex items-center gap-3 py-3 border-t border-b mb-4">
@@ -529,24 +460,7 @@ const PublicEventPage = () => {
             </motion.div>
           )}
 
-          {/* Virtual Event Join Link - only for logged-in attendees */}
-          {event.format === 'virtual' && event.meeting_url && isLoggedIn && currentRsvp === 'going' && (
-            <Card className="mb-4 border-primary/20 bg-primary/5">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Video className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Join the event</span>
-                  </div>
-                  <Button asChild size="sm">
-                    <a href={event.meeting_url} target="_blank" rel="noopener noreferrer">
-                      Join Now <ExternalLink className="w-3 h-3 ml-1" />
-                    </a>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Virtual meeting_url is intentionally not exposed via the public projection */}
 
           {/* What is DNA? Section - for non-logged-in users */}
           {!isLoggedIn && (
