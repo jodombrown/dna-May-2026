@@ -26,7 +26,11 @@ interface CreateEventRequest {
   location_name?: string;
   location_address?: string;
   location_city?: string;
+  location_state?: string;
   location_country?: string;
+  /** ISO 3166-1 alpha-3 — resolved by place-search or the manual country select. */
+  location_country_code?: string;
+  location_place_id?: string;
   location_lat?: number;
   location_lng?: number;
   meeting_url?: string;
@@ -231,7 +235,10 @@ Deno.serve(async (req) => {
         location_name: eventData.location_name || null,
         location_address: eventData.location_address || null,
         location_city: eventData.location_city || null,
+        location_state: eventData.location_state || null,
         location_country: eventData.location_country || null,
+        location_country_code: eventData.location_country_code || null,
+        location_place_id: eventData.location_place_id || null,
         location_lat: eventData.location_lat ?? null,
         location_lng: eventData.location_lng ?? null,
         meeting_url: eventData.meeting_url || null,

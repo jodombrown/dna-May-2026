@@ -2,7 +2,7 @@
 //
 // Four surfaces used to each write their own subset of events columns
 // (EventFormFields, EventModeFields, EditEventPage, EventSettingsPage) and
-// drifted. This schema replaces all of their validation: 24 authorable
+// drifted. This schema replaces all of their validation: 27 authorable
 // fields, the DB CHECK constraints enforced client-side BEFORE submit
 // (valid_times, valid_location, title 1..200, description 1..5000,
 // max_attendees NULL or > 0), and nothing else. The remaining events columns
@@ -72,7 +72,18 @@ export const eventFormSchema = z
     location_name: trimmed(300),
     location_address: trimmed(300),
     location_city: trimmed(120),
+    location_state: trimmed(120),
     location_country: trimmed(120),
+    // ISO 3166-1 alpha-3 (BD039), or empty — mirrors the DB CHECK
+    // events_location_country_code_alpha3 (^[A-Z]{3}$ or NULL).
+    location_country_code: z
+      .string()
+      .trim()
+      .refine((v) => v === '' || /^[A-Z]{3}$/.test(v), {
+        message: 'Country code must be a 3-letter ISO code',
+      }),
+    /** Google place id when the place was resolved via search; empty for manual entry. */
+    location_place_id: z.string(),
     location_lat: z.number().nullable(),
     location_lng: z.number().nullable(),
     meeting_url: trimmed(500),
@@ -163,7 +174,10 @@ export function emptyEventFormValues(
     location_name: '',
     location_address: '',
     location_city: '',
+    location_state: '',
     location_country: '',
+    location_country_code: '',
+    location_place_id: '',
     location_lat: null,
     location_lng: null,
     meeting_url: '',
@@ -199,7 +213,10 @@ export interface AuthorableEventRow {
   location_name: string | null;
   location_address: string | null;
   location_city: string | null;
+  location_state: string | null;
   location_country: string | null;
+  location_country_code: string | null;
+  location_place_id: string | null;
   location_lat: number | null;
   location_lng: number | null;
   meeting_url: string | null;
@@ -285,7 +302,10 @@ export function eventRowToFormValues(row: AuthorableEventRow): EventFormValues {
     location_name: row.location_name ?? '',
     location_address: row.location_address ?? '',
     location_city: row.location_city ?? '',
+    location_state: row.location_state ?? '',
     location_country: row.location_country ?? '',
+    location_country_code: row.location_country_code ?? '',
+    location_place_id: row.location_place_id ?? '',
     location_lat: row.location_lat,
     location_lng: row.location_lng,
     meeting_url: row.meeting_url ?? '',

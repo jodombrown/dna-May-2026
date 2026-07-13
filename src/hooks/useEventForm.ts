@@ -196,6 +196,10 @@ export function useEventForm({
       setIsSubmitting(true);
       try {
         // 1. Geocode, awaited, inside the submit path. Never blocks the save.
+        //    A place RESOLVED via search already carries lat/lng — the
+        //    (lat === null || lng === null) guard below means we never
+        //    re-geocode over it. geocode-city is ONLY the fallback for manual
+        //    entry with no coordinates.
         let lat = current.location_lat;
         let lng = current.location_lng;
         let countryCode = resolvedPlace?.countryCode ?? null;
@@ -258,7 +262,14 @@ export function useEventForm({
           location_name: wantsLocation ? current.location_name.trim() || null : null,
           location_address: wantsLocation ? current.location_address.trim() || null : null,
           location_city: wantsLocation ? city || null : null,
+          location_state: wantsLocation ? current.location_state.trim() || null : null,
           location_country: wantsLocation ? country || null : null,
+          // alpha-3 from the resolved place or the manual country select —
+          // NEVER from geocode-city, whose dialect is not alpha-3.
+          location_country_code: wantsLocation
+            ? current.location_country_code.trim() || null
+            : null,
+          location_place_id: wantsLocation ? current.location_place_id || null : null,
           location_lat: wantsLocation ? lat : null,
           location_lng: wantsLocation ? lng : null,
           meeting_url: current.format !== 'in_person' ? current.meeting_url.trim() || null : null,
