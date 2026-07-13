@@ -67,6 +67,19 @@ export function PostMenuOwn({
     }
   };
 
+  const handleCopyLink = async () => {
+    if (!copyLinkHref) {
+      copyLink();
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(copyLinkHref);
+      toast.success('Link copied');
+    } catch {
+      toast.error('Failed to copy link');
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
