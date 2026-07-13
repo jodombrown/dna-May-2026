@@ -13262,6 +13262,7 @@ export type Database = {
           title: string
         }[]
       }
+      get_public_profile: { Args: { p_username: string }; Returns: Json }
       get_public_profiles: {
         Args: { p_limit?: number; p_user_id?: string }
         Returns: {
