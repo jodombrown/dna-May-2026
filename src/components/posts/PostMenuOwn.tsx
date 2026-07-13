@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePostActions } from '@/hooks/usePostActions';
 import { EditPostDialog } from './EditPostDialog';
+import { toast } from 'sonner';
 
 interface PostMenuOwnProps {
   postId: string;
