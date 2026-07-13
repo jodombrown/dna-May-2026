@@ -80,6 +80,9 @@ export function useEventForm({
     emptyEventFormValues(initialValues)
   );
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({});
+  // Bumped on every failed submit — lets the form react (scroll to the first
+  // error) exactly when validation fails, not on keystrokes that shed errors.
+  const [errorNonce, setErrorNonce] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [geocodeFailed, setGeocodeFailed] = useState(false);
   // Country code from the last geocode — sharpens timezone derivation.
@@ -151,7 +154,10 @@ export function useEventForm({
   /** Debounce-friendly: call from onBlur of the location fields. */
   const refreshPlace = useCallback(() => {
     if (values.format === 'virtual') return;
-    void geocodeNow(values).catch(() => null);
+    void geocodeNow(values).catch((error) => {
+      console.error('[useEventForm] live geocode failed:', error);
+      return null;
+    });
   }, [values, geocodeNow]);
 
   // ---- Validation -----------------------------------------------------------
@@ -168,6 +174,7 @@ export function useEventForm({
         if (!next[key]) next[key] = issue.message;
       }
       setErrors(next);
+      setErrorNonce((n) => n + 1);
       return false;
     },
     []
@@ -196,7 +203,10 @@ export function useEventForm({
         let city = current.location_city.trim();
         const wantsLocation = current.format !== 'virtual';
         if (wantsLocation && (lat === null || lng === null)) {
-          const place = await geocodeNow(current).catch(() => null);
+          const place = await geocodeNow(current).catch((error) => {
+            console.error('[useEventForm] submit geocode failed:', error);
+            return null;
+          });
           if (place) {
             lat = place.lat;
             lng = place.lng;
@@ -225,6 +235,7 @@ export function useEventForm({
 
         if (mode === 'create' && startUtc.getTime() <= Date.now()) {
           setErrors({ startDate: 'The event has to start in the future' });
+          setErrorNonce((n) => n + 1);
           toast({ variant: 'destructive', description: 'Pick a start time in the future.' });
           return;
         }
@@ -287,8 +298,9 @@ export function useEventForm({
                 const body = await ctx.json();
                 if (body?.error) message = body.error;
               }
-            } catch {
-              // keep default message
+            } catch (parseError) {
+              // keep default message — the create failure itself still surfaces
+              console.error('[useEventForm] could not read create-event error body:', parseError);
             }
             throw new Error(message);
           }
@@ -413,6 +425,7 @@ export function useEventForm({
     values,
     setValues,
     errors,
+    errorNonce,
     isSubmitting,
     geocodeFailed,
     tzInfo,

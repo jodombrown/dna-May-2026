@@ -14,7 +14,7 @@
  * The organizer never types a timezone or coordinates — both are derived.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { X, Loader2, ChevronDown, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -93,7 +93,44 @@ const VISIBILITY_OPTIONS = [
 ] as const;
 
 const FieldError: React.FC<{ message?: string }> = ({ message }) =>
-  message ? <p className="mt-1 text-xs text-destructive">{message}</p> : null;
+  message ? (
+    <p data-field-error className="mt-1 text-xs text-destructive">
+      {message}
+    </p>
+  ) : null;
+
+/** Human names for the error summary — falls back to the raw key for fields added later. */
+const FIELD_LABELS: Record<string, string> = {
+  title: 'Event name',
+  description: 'What to expect',
+  event_type: 'Kind of gathering',
+  format: 'Format',
+  startDate: 'Start date',
+  startTime: 'Start time',
+  endDate: 'End date',
+  endTime: 'End time',
+  visibility: 'Who can see this event',
+  location_name: 'Venue',
+  location_address: 'Street address',
+  location_city: 'City',
+  location_country: 'Country',
+  meeting_url: 'Meeting link',
+  meeting_platform: 'Platform',
+  max_attendees: 'Seats',
+  requires_approval: 'Who gets in',
+  allow_guests: 'Plus-ones',
+  subtitle: 'Subtitle',
+  short_description: 'One-line summary',
+  cover_image_url: 'Cover image',
+  tags: 'Tags',
+  agenda: 'Agenda',
+  speakers: 'Speakers',
+  dress_code: 'Dress code',
+  group_id: 'Community',
+  timezone: 'Timezone',
+  cancellation_reason: 'Cancellation reason',
+  is_flagship: 'DNA flagship',
+};
 
 /** Two/three exclusive choices rendered as consequences, not booleans. */
 function ConsequenceChoice<T extends string | boolean>({
@@ -310,6 +347,7 @@ export function EventForm({
     values,
     setValues,
     errors,
+    errorNonce,
     isSubmitting,
     geocodeFailed,
     tzInfo,
@@ -327,6 +365,41 @@ export function EventForm({
   const showMeeting = values.format !== 'in_person';
   const isCancelled = currentStatus === 'cancelled';
   const isTerminal = currentStatus === 'cancelled' || currentStatus === 'completed';
+
+  // Every error key with a <FieldError> actually rendered below its field
+  // RIGHT NOW (some fields are absent by format or disclosure level). Any key
+  // in `errors` that is not in this list — a hidden field, or a field added to
+  // the schema later with no inline error — surfaces in the summary banner
+  // instead. By construction, no field can fail invisibly.
+  const inlineErrorKeys: string[] = [
+    'title',
+    'description',
+    'startDate',
+    'startTime',
+    'endDate',
+    'endTime',
+    'cover_image_url',
+    ...(showLocation ? ['location_name', 'location_city', 'location_country'] : []),
+    ...(showLocation && effectiveLevel === 'full' ? ['location_address'] : []),
+    ...(showMeeting ? ['meeting_url'] : []),
+    ...(showMeeting && effectiveLevel === 'full' ? ['meeting_platform'] : []),
+    ...(effectiveLevel === 'full'
+      ? ['max_attendees', 'subtitle', 'short_description', 'dress_code']
+      : []),
+  ];
+  const summaryErrors = Object.entries(errors).filter(
+    ([key, message]) => message && !inlineErrorKeys.includes(key)
+  );
+
+  // On a failed submit, bring the first visible error into view — the composer
+  // is a long scroller and an error above the fold is otherwise invisible.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (errorNonce === 0) return;
+    rootRef.current
+      ?.querySelector('[data-field-error]')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [errorNonce]);
 
   const submitButton = (intent: SubmitIntent, label: string, primary = true) => (
     <Button
@@ -362,7 +435,26 @@ export function EventForm({
         : [submitButton('save', isSubmitting ? 'Saving…' : 'Save changes')];
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div ref={rootRef} className={cn('space-y-4', className)}>
+      {summaryErrors.length > 0 && (
+        <div
+          data-field-error
+          role="alert"
+          className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm"
+        >
+          <p className="font-medium text-destructive">
+            A few fields need attention before this can go out:
+          </p>
+          <ul className="mt-1 list-disc space-y-0.5 pl-5 text-destructive">
+            {summaryErrors.map(([key, message]) => (
+              <li key={key}>
+                <span className="font-medium">{FIELD_LABELS[key] ?? key}</span> — {message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {isCancelled && (
         <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-800 dark:bg-amber-950/20">
           <p className="font-medium">This event is cancelled.</p>
@@ -397,6 +489,7 @@ export function EventForm({
           onUpload={(url) => setValues({ cover_image_url: url })}
           onRemove={() => setValues({ cover_image_url: '' })}
         />
+        <FieldError message={errors.cover_image_url} />
       </div>
 
       <div>
@@ -528,25 +621,34 @@ export function EventForm({
             <FieldError message={errors.location_name} />
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Input
-              placeholder="City — Lagos"
-              value={values.location_city}
-              onChange={(e) => setValues({ location_city: e.target.value })}
-              onBlur={refreshPlace}
-            />
-            <Input
-              placeholder="Country — Nigeria"
-              value={values.location_country}
-              onChange={(e) => setValues({ location_country: e.target.value })}
-              onBlur={refreshPlace}
-            />
+            <div>
+              <Input
+                placeholder="City — Lagos"
+                value={values.location_city}
+                onChange={(e) => setValues({ location_city: e.target.value })}
+                onBlur={refreshPlace}
+              />
+              <FieldError message={errors.location_city} />
+            </div>
+            <div>
+              <Input
+                placeholder="Country — Nigeria"
+                value={values.location_country}
+                onChange={(e) => setValues({ location_country: e.target.value })}
+                onBlur={refreshPlace}
+              />
+              <FieldError message={errors.location_country} />
+            </div>
           </div>
           {effectiveLevel === 'full' && (
-            <Input
-              placeholder="Street address (shown to registered attendees)"
-              value={values.location_address}
-              onChange={(e) => setValues({ location_address: e.target.value })}
-            />
+            <div>
+              <Input
+                placeholder="Street address (shown to registered attendees)"
+                value={values.location_address}
+                onChange={(e) => setValues({ location_address: e.target.value })}
+              />
+              <FieldError message={errors.location_address} />
+            </div>
           )}
           {geocodeFailed && (
             <p className="text-xs text-muted-foreground">
@@ -577,6 +679,7 @@ export function EventForm({
                 onChange={(e) => setValues({ meeting_platform: e.target.value })}
                 className="mt-1.5"
               />
+              <FieldError message={errors.meeting_platform} />
             </div>
           )}
         </div>
@@ -660,6 +763,7 @@ export function EventForm({
               maxLength={200}
               className="mt-1.5"
             />
+            <FieldError message={errors.subtitle} />
           </div>
 
           <div>
@@ -671,6 +775,7 @@ export function EventForm({
               maxLength={300}
               className="mt-1.5"
             />
+            <FieldError message={errors.short_description} />
           </div>
 
           <AgendaBuilder agenda={values.agenda} onChange={(agenda) => setValues({ agenda })} />
@@ -696,6 +801,7 @@ export function EventForm({
                 ))}
               </SelectContent>
             </Select>
+            <FieldError message={errors.dress_code} />
           </div>
 
           {/* Admin-only — DNA-internal flagship flag (ROADMAP). */}
