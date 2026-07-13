@@ -139,27 +139,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Check if user is banned
-    const { data: banCheck } = await supabase
-      .from('banned_users')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .maybeSingle();
-
-    if (banCheck) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Your account has been restricted from creating events.',
-        }),
-        {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
     // Parse request body
     const eventData: CreateEventRequest = await req.json();
 
@@ -228,10 +207,13 @@ Deno.serve(async (req) => {
 
     // Generate SEO-friendly slug from title
     const eventYear = new Date(eventData.start_time).getFullYear();
-    const { data: slugResult } = await supabase.rpc('generate_event_slug', {
+    const { data: slugResult, error: slugError } = await supabase.rpc('generate_event_slug', {
       title: eventData.title,
       event_year: eventYear
     });
+    if (slugError) {
+      console.error('Slug generation error:', slugError);
+    }
     const eventSlug = slugResult || null;
     console.log('Generated slug:', eventSlug);
 
@@ -289,8 +271,8 @@ Deno.serve(async (req) => {
     // Note: Feed post is automatically created by database trigger (trg_create_event_feed_post)
     // No need to manually insert here - the trigger ensures consistency across all event creation paths
 
-    // Track event creation in analytics
-    await supabase.from('analytics_events').insert({
+    // Track event creation in analytics — a failure here must never fail the request
+    const { error: analyticsError } = await supabase.from('analytics_events').insert({
       user_id: user.id,
       event_name: 'event_created',
       event_metadata: {
@@ -299,6 +281,9 @@ Deno.serve(async (req) => {
         format: eventData.format,
       },
     });
+    if (analyticsError) {
+      console.error('Analytics insert error:', analyticsError);
+    }
 
     return new Response(
       JSON.stringify({
