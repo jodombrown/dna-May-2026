@@ -460,24 +460,7 @@ const PublicEventPage = () => {
             </motion.div>
           )}
 
-          {/* Virtual Event Join Link - only for logged-in attendees */}
-          {event.format === 'virtual' && event.meeting_url && isLoggedIn && currentRsvp === 'going' && (
-            <Card className="mb-4 border-primary/20 bg-primary/5">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Video className="w-5 h-5 text-primary" />
-                    <span className="font-medium">Join the event</span>
-                  </div>
-                  <Button asChild size="sm">
-                    <a href={event.meeting_url} target="_blank" rel="noopener noreferrer">
-                      Join Now <ExternalLink className="w-3 h-3 ml-1" />
-                    </a>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Virtual meeting_url is intentionally not exposed via the public projection */}
 
           {/* What is DNA? Section - for non-logged-in users */}
           {!isLoggedIn && (
