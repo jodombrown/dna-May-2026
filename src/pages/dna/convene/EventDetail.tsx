@@ -145,12 +145,48 @@ const EventDetail = () => {
   // Check if param is UUID or slug
   const isUUID = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
-  // Fetch event details - support both UUID and slug lookups
+  // Fetch event details.
+  //  • signed OUT → the public projection (SECURITY DEFINER, granted to anon):
+  //    organizer name/avatar, going_count, place with state — and DELIBERATELY
+  //    no meeting_url, agenda, or organizer_id.
+  //  • signed IN  → the table read; RLS returns the viewer's full entitlement
+  //    (meeting_url, agenda and manage controls follow from it).
   const { data: eventData, isLoading } = useQuery({
-    queryKey: ['event-detail', slugOrId],
+    queryKey: ['event-detail', slugOrId, isLoggedIn],
     queryFn: async () => {
+      if (!isLoggedIn) {
+        const { data, error } = await supabase.rpc('get_public_event', {
+          p_slug_or_id: slugOrId!,
+        });
+        if (error) throw error;
+        const row = data?.[0];
+        if (!row) return null;
+
+        setResolvedEventId(row.id);
+
+        if (slugOrId && isUUID(slugOrId) && row.slug) {
+          navigate(`/dna/convene/events/${row.slug}`, { replace: true });
+        }
+
+        return {
+          ...row,
+          // The projection hands back flat organizer_* fields; the organizer
+          // card wants an object. No organizer_id is exposed to strangers.
+          organizer: row.organizer_name
+            ? {
+                id: '',
+                username: row.organizer_username,
+                full_name: row.organizer_name,
+                avatar_url: row.organizer_avatar_url,
+                headline: null,
+              }
+            : null,
+          group: null,
+        };
+      }
+
       let event = null;
-      
+
       if (slugOrId && isUUID(slugOrId)) {
         const { data, error } = await supabase
           .from('events')
@@ -159,7 +195,7 @@ const EventDetail = () => {
           .maybeSingle();
         if (!error) event = data;
       }
-      
+
       if (!event && slugOrId) {
         const { data, error } = await supabase
           .from('events')
@@ -170,22 +206,22 @@ const EventDetail = () => {
       }
 
       if (!event) return null;
-      
+
       setResolvedEventId(event.id);
-      
+
       if (slugOrId && isUUID(slugOrId) && event.slug) {
         navigate(`/dna/convene/events/${event.slug}`, { replace: true });
       }
-      
+
       const eventRow: Record<string, unknown> = event;
-      
+
       // Fetch organizer profile
       const { data: organizer } = await supabase
         .from('profiles')
         .select('id, username, full_name, avatar_url, headline')
         .eq('id', event.organizer_id)
         .maybeSingle();
-      
+
       // Fetch group info if event is group-hosted
       let group = null;
       if (event.group_id) {
@@ -196,7 +232,7 @@ const EventDetail = () => {
           .maybeSingle();
         group = groupData;
       }
-      
+
       return {
         ...eventRow,
         organizer,
@@ -247,13 +283,15 @@ const EventDetail = () => {
         .in('id', userIds);
       
       const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
-      
+
       return attendeeData.map(a => ({
         ...a,
         profile: profileMap.get(a.user_id) || null,
       }));
     },
-    enabled: !!id,
+    // Attendee rows join profiles, which anon cannot read; signed-out visitors
+    // get their headcount from the projection's going_count instead.
+    enabled: !!id && isLoggedIn,
   });
 
   // Fetch total registration count
@@ -269,7 +307,7 @@ const EventDetail = () => {
       if (error) throw error;
       return count || 0;
     },
-    enabled: !!id,
+    enabled: !!id && isLoggedIn,
   });
 
   // Cancel event mutation
@@ -444,10 +482,16 @@ const EventDetail = () => {
     );
   }
 
-  const isOrganizer = user?.id === event.organizer_id;
+  // Guard against undefined === undefined: a signed-out visitor has no user
+  // and the projection carries no organizer_id, so both sides would be
+  // undefined and wrongly read as "organizer".
+  const isOrganizer = !!user && user.id === event.organizer_id;
   const isPastEvent = event.end_time ? new Date(event.end_time as string) < new Date() : false;
   const place = formatEventPlace(pickEventPlace(event), 'full');
   const currentRsvp = userRsvp?.status || null;
+  // Signed-in headcount comes from the live count query; signed-out from the
+  // projection's going_count (attendee/registration queries are auth-gated).
+  const goingCount = isLoggedIn ? registrationCount : Number((event.going_count as number | null) ?? 0);
   const organizer = event.organizer as { id: string; username: string | null; full_name: string; avatar_url: string | null; headline?: string | null } | null;
   const group = event.group as { id: string; name: string; slug: string; avatar_url: string | null; member_count: number } | null;
   const attendeeProfiles = attendees
@@ -619,7 +663,7 @@ const EventDetail = () => {
               <EventSocialProof
                 eventId={id}
                 attendees={attendeeProfiles}
-                totalCount={registrationCount}
+                totalCount={goingCount}
               />
             )}
 
@@ -664,7 +708,7 @@ const EventDetail = () => {
                   <div className="flex items-start gap-3">
                     <Users className="h-5 w-5 mt-0.5 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      {registrationCount} / {event.max_attendees as number} registered
+                      {goingCount} / {event.max_attendees as number} registered
                     </p>
                   </div>
                 )}
@@ -775,7 +819,7 @@ const EventDetail = () => {
           isOrganizer={isOrganizer}
           currentRsvp={currentRsvp}
           maxAttendees={event.max_attendees as number | null}
-          attendeeCount={registrationCount}
+          attendeeCount={goingCount}
           isSubmitting={rsvpMutation.isPending}
           onRsvp={handleRsvp}
         />
