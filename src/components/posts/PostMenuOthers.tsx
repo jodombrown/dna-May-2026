@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePostActions } from '@/hooks/usePostActions';
 import { ReportDialog } from './ReportDialog';
+import { toast } from 'sonner';
 
 interface PostMenuOthersProps {
   postId: string;
@@ -17,6 +18,11 @@ interface PostMenuOthersProps {
   authorName: string;
   currentUserId: string;
   onUpdate?: () => void;
+  /**
+   * Override URL for the "Copy link" action. Use for announcement posts
+   * that should share the linked entity's public page instead of /post/{id}.
+   */
+  copyLinkHref?: string;
 }
 
 export function PostMenuOthers({
@@ -25,6 +31,7 @@ export function PostMenuOthers({
   authorName,
   currentUserId,
   onUpdate,
+  copyLinkHref,
 }: PostMenuOthersProps) {
   const [showReportDialog, setShowReportDialog] = useState(false);
 
@@ -57,6 +64,19 @@ export function PostMenuOthers({
     }
   };
 
+  const handleCopyLink = async () => {
+    if (!copyLinkHref) {
+      copyLink();
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(copyLinkHref);
+      toast.success('Link copied');
+    } catch {
+      toast.error('Failed to copy link');
+    }
+  };
+
   return (
     <>
       <DropdownMenu>
@@ -66,7 +86,7 @@ export function PostMenuOthers({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={copyLink}>
+          <DropdownMenuItem onClick={handleCopyLink}>
             <Link className="h-4 w-4 mr-2" />
             Copy link
           </DropdownMenuItem>

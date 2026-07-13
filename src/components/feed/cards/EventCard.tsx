@@ -163,6 +163,11 @@ export const EventCard: React.FC<EventCardProps> = ({
                 ? `/dna/convene/events/${eventDetails?.slug || item.event_id}/edit`
                 : undefined
             }
+            copyLinkHref={
+              item.event_id
+                ? `${window.location.origin}/dna/convene/events/${eventDetails?.slug || item.event_id}`
+                : undefined
+            }
           />
         ) : (
           <PostMenuOthers
@@ -171,6 +176,11 @@ export const EventCard: React.FC<EventCardProps> = ({
             authorName={authorName}
             currentUserId={currentUserId}
             onUpdate={onUpdate}
+            copyLinkHref={
+              item.event_id
+                ? `${window.location.origin}/dna/convene/events/${eventDetails?.slug || item.event_id}`
+                : undefined
+            }
           />
         )}
       </div>

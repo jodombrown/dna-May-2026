@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { usePostActions } from '@/hooks/usePostActions';
 import { EditPostDialog } from './EditPostDialog';
+import { toast } from 'sonner';
 
 interface PostMenuOwnProps {
   postId: string;
@@ -28,6 +29,13 @@ interface PostMenuOwnProps {
    * and never fix the underlying event details.
    */
   editHref?: string;
+  /**
+   * Override URL used by the "Copy link" action. When the post is a
+   * canonical announcement for a linked entity (event, space, opportunity,
+   * story...), sharing should point at that entity's public page rather
+   * than the generic /post/{id} route.
+   */
+  copyLinkHref?: string;
 }
 
 export function PostMenuOwn({
@@ -39,6 +47,7 @@ export function PostMenuOwn({
   commentsDisabled = false,
   onUpdate,
   editHref,
+  copyLinkHref,
 }: PostMenuOwnProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const navigate = useNavigate();
@@ -55,6 +64,19 @@ export function PostMenuOwn({
       deletePost.mutate(undefined, {
         onSuccess: () => onUpdate?.(),
       });
+    }
+  };
+
+  const handleCopyLink = async () => {
+    if (!copyLinkHref) {
+      copyLink();
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(copyLinkHref);
+      toast.success('Link copied');
+    } catch {
+      toast.error('Failed to copy link');
     }
   };
 
@@ -99,10 +121,11 @@ export function PostMenuOwn({
             )}
           </DropdownMenuItem>
           
-          <DropdownMenuItem onClick={copyLink}>
+          <DropdownMenuItem onClick={handleCopyLink}>
             <Link className="h-4 w-4 mr-2" />
             Copy link
           </DropdownMenuItem>
+          
           
           <DropdownMenuSeparator />
           
