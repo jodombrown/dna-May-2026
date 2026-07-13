@@ -2,7 +2,7 @@
  * EventForm disclosure architecture.
  *
  * Locks the unified-form contract:
- * 1. level="compact" shows THE INVITATION only — no Door, no Programme —
+ * 1. level="compact" shows THE INVITATION only — no Door, no Program —
  *    with a "More options" control that expands IN PLACE (no navigation).
  * 2. Expanding reveals THE DOOR written as consequences ("Anyone can join" /
  *    "You approve each person"), not raw booleans.
@@ -44,14 +44,14 @@ const renderForm = (props: Partial<React.ComponentProps<typeof EventForm>> = {})
 };
 
 describe('EventForm level="compact" — the invitation only', () => {
-  it('shows invitation fields and hides the Door and Programme', () => {
+  it('shows invitation fields and hides the Door and Program', () => {
     renderForm();
     // Invitation
     expect(screen.getByText('Event name')).toBeTruthy();
     expect(screen.getByText('What to expect')).toBeTruthy();
     expect(screen.getByText('When')).toBeTruthy();
     expect(screen.getByText('Tags')).toBeTruthy();
-    // The Door / Programme are absent until expanded
+    // The Door / Program are absent until expanded
     expect(screen.queryByText('Anyone can join')).toBeNull();
     expect(screen.queryByText('Subtitle')).toBeNull();
     expect(screen.queryByText('Speakers')).toBeNull();
@@ -71,7 +71,7 @@ describe('EventForm level="compact" — the invitation only', () => {
     expect(screen.getByText('Anyone on the web can see this')).toBeTruthy();
     expect(screen.getByText('Only signed-in Members')).toBeTruthy();
     expect(screen.getByText('Only people you invite')).toBeTruthy();
-    // THE PROGRAMME
+    // THE PROGRAM
     expect(screen.getByText('Subtitle')).toBeTruthy();
     expect(screen.getByText('Speakers')).toBeTruthy();
     expect(screen.getByText('Agenda')).toBeTruthy();
