@@ -5,6 +5,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { EVENT_PLACE_SELECT } from '@/lib/events/formatPlace';
 import { useDebounce } from '@/hooks/useDebounce';
 
 export interface EventSearchFilters {
@@ -20,7 +21,10 @@ export interface SearchEventResult {
   start_time: string;
   end_time: string;
   location_name: string | null;
+  location_address: string | null;
   location_city: string | null;
+  location_state: string | null;
+  location_country: string | null;
   cover_image_url: string | null;
   event_type: string;
   format: string;
@@ -44,7 +48,7 @@ export function useEventSearch(searchTerm: string, filters: EventSearchFilters =
       let query = supabase
         .from('events')
         .select(`
-          id, title, slug, start_time, end_time, location_name, location_city,
+          id, title, slug, start_time, end_time, ${EVENT_PLACE_SELECT},
           cover_image_url, event_type, format, max_attendees, organizer_id,
           event_attendees(count)
         `)
@@ -136,7 +140,7 @@ export function useTrendingEvents() {
       const { data, error } = await supabase
         .from('events')
         .select(`
-          id, title, slug, start_time, end_time, location_name, location_city,
+          id, title, slug, start_time, end_time, ${EVENT_PLACE_SELECT},
           cover_image_url, event_type, format, max_attendees, organizer_id,
           event_attendees(count)
         `)

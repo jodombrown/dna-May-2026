@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { EVENT_PLACE_COLUMNS } from '@/lib/events/formatPlace';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
@@ -82,7 +83,7 @@ const EventsIndex = () => {
 
       // Country filter
       if (countryFilter) {
-        query = query.eq('location_country', countryFilter);
+        query = query.eq(EVENT_PLACE_COLUMNS.country, countryFilter);
       }
 
       // Category filter

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, CalendarPlus, Compass, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { EVENT_PLACE_SELECT, pickEventPlace } from '@/lib/events/formatPlace';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
@@ -45,9 +46,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
           description,
           event_type,
           format,
-          location_name,
-          location_city,
-          location_country,
+          ${EVENT_PLACE_SELECT},
           meeting_url,
           start_time,
           end_time,
@@ -78,30 +77,6 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
       if (error) throw error;
 
       // Transform to EventListItem format
-      type EventQueryResult = {
-        id: string;
-        organizer_id: string;
-        title: string;
-        description: string | null;
-        event_type: string;
-        format: string;
-        location_name: string | null;
-        location_city: string | null;
-        location_country: string | null;
-        meeting_url: string | null;
-        start_time: string;
-        end_time: string;
-        timezone: string;
-        max_attendees: number | null;
-        cover_image_url: string | null;
-        is_public: boolean;
-        requires_approval: boolean;
-        is_cancelled: boolean;
-        created_at: string;
-        profiles: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
-        event_attendees: { count: number }[];
-      };
-
       return (data || []).map((event: any): EventListItem => ({
         event_id: event.id,
         organizer_id: event.organizer_id,
@@ -112,9 +87,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         description: event.description || '',
         event_type: event.event_type as EventType,
         format: event.format as EventFormat,
-        location_name: event.location_name,
-        location_city: event.location_city,
-        location_country: event.location_country,
+        ...pickEventPlace(event),
         meeting_url: event.meeting_url,
         start_time: event.start_time,
         end_time: event.end_time,
@@ -157,9 +130,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
           description,
           event_type,
           format,
-          location_name,
-          location_city,
-          location_country,
+          ${EVENT_PLACE_SELECT},
           meeting_url,
           start_time,
           end_time,
@@ -190,30 +161,6 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
 
       if (eventsError) throw eventsError;
 
-      type EventQueryResult = {
-        id: string;
-        organizer_id: string;
-        title: string;
-        description: string | null;
-        event_type: string;
-        format: string;
-        location_name: string | null;
-        location_city: string | null;
-        location_country: string | null;
-        meeting_url: string | null;
-        start_time: string;
-        end_time: string;
-        timezone: string;
-        max_attendees: number | null;
-        cover_image_url: string | null;
-        is_public: boolean;
-        requires_approval: boolean;
-        is_cancelled: boolean;
-        created_at: string;
-        profiles: { username: string | null; full_name: string | null; avatar_url: string | null } | null;
-        event_attendees: { count: number }[];
-      };
-
       // Transform to EventListItem format
       return (events || []).map((event: any): EventListItem => ({
         event_id: event.id,
@@ -225,9 +172,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         description: event.description || '',
         event_type: event.event_type as EventType,
         format: event.format as EventFormat,
-        location_name: event.location_name,
-        location_city: event.location_city,
-        location_country: event.location_country,
+        ...pickEventPlace(event),
         meeting_url: event.meeting_url,
         start_time: event.start_time,
         end_time: event.end_time,

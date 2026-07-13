@@ -17,6 +17,7 @@ export interface FeedEventDetails {
   format: 'in_person' | 'virtual' | 'hybrid' | null;
   location_name: string | null;
   location_city: string | null;
+  location_state: string | null;
   location_country: string | null;
   meeting_url: string | null;
   meeting_platform: string | null;
@@ -57,6 +58,7 @@ export function useEventDetailsForFeed(eventId: string | null) {
           format,
           location_name,
           location_city,
+          location_state,
           location_country,
           meeting_url,
           meeting_platform,

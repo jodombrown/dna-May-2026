@@ -10,16 +10,15 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/lib/logger';
+import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
-interface RecommendedEvent {
+interface RecommendedEvent extends EventPlaceInput {
   id: string;
   title: string;
   description: string;
   event_type: string;
   format: string;
-  location_city?: string;
-  location_country?: string;
   start_time: string;
   recommendation_score: number;
   recommendation_reason: string;
@@ -177,10 +176,7 @@ export const EventRecommendations = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
-                  {event.format === 'virtual' 
-                    ? 'Virtual' 
-                    : `${event.location_city || 'TBA'}${event.location_country ? ', ' + event.location_country : ''}`
-                  }
+                  {formatEventPlace(event, 'compact') || 'TBA'}
                 </div>
                 {event.friends_attending_count > 0 && (
                   <div className="flex items-center gap-1 text-primary font-medium">

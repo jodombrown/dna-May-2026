@@ -7,15 +7,14 @@ import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { formatEventTime } from '@/utils/convene/formatEventTime';
+import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
-export interface MapEventData {
+export interface MapEventData extends EventPlaceInput {
   id: string;
   title: string;
   slug: string | null;
   start_time: string;
   end_time: string | null;
-  location_name: string | null;
-  location_city: string | null;
   location_lat: number;
   location_lng: number;
   cover_image_url: string | null;
@@ -65,6 +64,7 @@ function createEventIcon(eventType: string | null): L.DivIcon {
 
 export function ConveneEventPin({ event, onClick }: ConveneEventPinProps) {
   const icon = createEventIcon(event.event_type);
+  const placeText = formatEventPlace(event, 'compact');
 
   return (
     <Marker
@@ -88,9 +88,9 @@ export function ConveneEventPin({ event, onClick }: ConveneEventPinProps) {
           <p className="text-xs text-muted-foreground">
             {formatEventTime(event.start_time, event.end_time)}
           </p>
-          {event.location_name && (
+          {(event.location_name || placeText) && (
             <p className="text-xs text-muted-foreground mt-0.5">
-              {event.location_name}
+              {[event.location_name, placeText].filter(Boolean).join(' · ')}
             </p>
           )}
           {event.attendee_count > 0 && (

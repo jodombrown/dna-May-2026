@@ -9,17 +9,15 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { CuratedEventCard } from '@/components/convene/CuratedEventCard';
+import { pickEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { cn } from '@/lib/utils';
 
-interface DiscoveryEvent {
+interface DiscoveryEvent extends EventPlaceInput {
   id: string;
   title: string;
   slug?: string | null;
   start_time?: string;
   end_time?: string | null;
-  location_name?: string | null;
-  location_city?: string | null;
-  location_country?: string | null;
   cover_image_url?: string | null;
   event_type?: string | null;
   format?: string | null;
@@ -97,7 +95,7 @@ export function DiscoveryLane({
                     short_description: event.short_description,
                     start_time: event.start_time || '',
                     end_time: event.end_time,
-                    location_city: event.location_city,
+                    ...pickEventPlace(event),
                     cover_image_url: event.cover_image_url,
                     format: event.format,
                     slug: event.slug,
@@ -113,8 +111,7 @@ export function DiscoveryLane({
                     title: event.title,
                     start_time: event.start_time,
                     end_time: event.end_time,
-                    location_name: event.location_name,
-                    location_city: event.location_city,
+                    ...pickEventPlace(event),
                     cover_image_url: event.cover_image_url,
                     event_type: event.event_type || undefined,
                     format: event.format || undefined,

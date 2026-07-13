@@ -11,6 +11,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { formatEventPlace } from '@/lib/events/formatPlace';
 import type { DIACard } from '@/services/diaCardService';
 import { MateMasie } from '@/components/icons/adinkra';
 const ACCENT = '#C4942A';
@@ -285,7 +286,7 @@ async function generateCuratedEventCard(_userId: string): Promise<DIACard | null
 
     const { data: curatedEvents } = await supabase
       .from('events')
-      .select('id, title, description, location_city, location_country, start_time, event_type, tags')
+      .select('id, title, description, location_city, location_state, location_country, start_time, event_type, tags')
       .eq('is_curated', true)
       .eq('is_public', true)
       .gte('start_time', now)
@@ -296,7 +297,7 @@ async function generateCuratedEventCard(_userId: string): Promise<DIACard | null
 
     // Pick the soonest curated event
     const event = curatedEvents[0];
-    const location = [event.location_city, event.location_country].filter(Boolean).join(', ');
+    const location = formatEventPlace(event, 'compact');
     const tags = (event.tags as string[]) || [];
 
     return {

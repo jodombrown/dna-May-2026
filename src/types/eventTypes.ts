@@ -11,6 +11,7 @@ export interface Event {
   location_name?: string | null;
   location_address?: string | null;
   location_city?: string | null;
+  location_state?: string | null;
   location_country?: string | null;
   location_lat?: number | null;
   location_lng?: number | null;

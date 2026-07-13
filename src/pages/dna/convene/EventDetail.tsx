@@ -53,6 +53,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
+import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { eventStateWrite } from '@/lib/events/state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -445,6 +446,7 @@ const EventDetail = () => {
 
   const isOrganizer = user?.id === event.organizer_id;
   const isPastEvent = event.end_time ? new Date(event.end_time as string) < new Date() : false;
+  const place = formatEventPlace(pickEventPlace(event), 'full');
   const currentRsvp = userRsvp?.status || null;
   const organizer = event.organizer as { id: string; username: string | null; full_name: string; avatar_url: string | null; headline?: string | null } | null;
   const group = event.group as { id: string; name: string; slug: string; avatar_url: string | null; member_count: number } | null;
@@ -541,7 +543,7 @@ const EventDetail = () => {
 
             {/* Action buttons — condensed */}
             <div className="flex gap-2 flex-wrap items-center">
-              <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, location_name: event.location_name as string | undefined, location_address: event.location_address as string | undefined, location_city: event.location_city as string | undefined, location_country: event.location_country as string | undefined, meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" />
+              <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, ...pickEventPlace(event), meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" />
               <Button variant="outline" size="icon" onClick={handleShareEvent}>
                 <Share2 className="h-4 w-4" />
               </Button>
@@ -650,9 +652,9 @@ const EventDetail = () => {
                       </>
                     ) : (
                       <>
-                        <p className="font-medium">{event.location_name as string}</p>
-                        {event.location_address && <p className="text-sm text-muted-foreground">{event.location_address as string}</p>}
-                        <p className="text-sm text-muted-foreground">{event.location_city as string}, {event.location_country as string}</p>
+                        {place.venue && <p className="font-medium">{place.venue}</p>}
+                        {place.street && <p className="text-sm text-muted-foreground">{place.street}</p>}
+                        {place.locality && <p className="text-sm text-muted-foreground">{place.locality}</p>}
                       </>
                     )}
                   </div>
@@ -733,10 +735,9 @@ const EventDetail = () => {
 
               {(event.format === 'in_person' || event.format === 'hybrid') && (
                 <EventLocationMap
-                  locationName={event.location_name as string}
-                  locationAddress={event.location_address as string}
-                  city={event.location_city as string}
-                  country={event.location_country as string}
+                  locationName={place.venue}
+                  locationAddress={place.street}
+                  locality={place.locality}
                   lat={event.location_lat as number}
                   lng={event.location_lng as number}
                 />
@@ -757,7 +758,7 @@ const EventDetail = () => {
 
               <Card>
                 <CardContent className="pt-6">
-                  <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, location_name: event.location_name as string | undefined, location_address: event.location_address as string | undefined, location_city: event.location_city as string | undefined, location_country: event.location_country as string | undefined, meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" size="default" />
+                  <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, ...pickEventPlace(event), meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" size="default" />
                 </CardContent>
               </Card>
             </div>

@@ -294,7 +294,11 @@ export const UniversalComposer = ({
       seed.endTime = end.time;
     }
     if (fields.where?.trim()) {
-      seed.location_city = fields.where.trim();
+      // DIA's "where" is unresolved free text ("Los Angeles, California").
+      // location_city is published verbatim to strangers via get_public_event,
+      // so only the place picker may write it — seed the venue name instead,
+      // where a free-text guess is survivable.
+      seed.location_name = fields.where.trim();
     }
     return seed;
     // Snapshot on entering event mode — the form owns its state from there.

@@ -9,15 +9,14 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { logger } from '@/lib/logger';
+import { EVENT_PLACE_SELECT, formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
-interface EventItem {
+interface EventItem extends EventPlaceInput {
   id: string;
   title: string;
   start_time: string;
   format: string;
   event_type: string;
-  location_city: string | null;
-  location_country: string | null;
   organizer_id: string;
   rsvp_status?: string;
 }
@@ -49,9 +48,8 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
             start_time,
             format,
             event_type,
-            location_city,
-            location_country,
-            organizer_id
+            organizer_id,
+            ${EVENT_PLACE_SELECT}
           `)
           .eq('organizer_id', user.id)
           .neq('status', 'cancelled')
@@ -85,9 +83,8 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
               start_time,
               format,
               event_type,
-              location_city,
-              location_country,
-              organizer_id
+              organizer_id,
+              ${EVENT_PLACE_SELECT}
             `)
             .in('id', eventIds)
             .neq('status', 'cancelled')
@@ -204,10 +201,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin className="h-3 w-3" />
-                      {event.format === 'virtual' 
-                        ? 'Virtual' 
-                        : `${event.location_city || ''}${event.location_city && event.location_country ? ', ' : ''}${event.location_country || ''}`
-                      }
+                      {formatEventPlace(event, 'compact')}
                     </div>
                   </div>
                 </div>

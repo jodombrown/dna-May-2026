@@ -10,8 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, ArrowRight } from 'lucide-react';
+import { Users, ArrowRight, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
+import { EVENT_PLACE_SELECT, formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 
 export function HappeningNowSection() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export function HappeningNowSection() {
       const { data, error } = await supabase
         .from('events')
         .select(`
-          id, title, slug, start_time, end_time, location_name, location_city,
+          id, title, slug, start_time, end_time, ${EVENT_PLACE_SELECT},
           event_type, format, organizer_id,
           event_attendees(count)
         `)
@@ -58,6 +59,10 @@ export function HappeningNowSection() {
         {liveEvents.map((event: Record<string, unknown>) => {
           const attendeeCount = (event.event_attendees as Array<{ count: number }>)?.[0]?.count || 0;
           const startDate = event.start_time ? new Date(event.start_time as string) : null;
+          const placeText = formatEventPlace(
+            { ...pickEventPlace(event), format: event.format as string | null },
+            'compact'
+          );
 
           return (
             <Card
@@ -84,6 +89,13 @@ export function HappeningNowSection() {
                 <h3 className="font-semibold text-base leading-tight line-clamp-2 mb-2 group-hover:text-[hsl(var(--module-convene))] transition-colors">
                   {event.title as string}
                 </h3>
+
+                {placeText && (
+                  <p className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                    <MapPin className="h-3 w-3" />
+                    {placeText}
+                  </p>
+                )}
 
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">

@@ -11,16 +11,15 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Video, Globe, Clock, Users } from 'lucide-react';
 import { format, isToday, isTomorrow, differenceInDays } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
 interface HeroEventProps {
-  event: {
+  event: EventPlaceInput & {
     id: string;
     title: string;
     slug?: string | null;
     start_time?: string;
     end_time?: string | null;
-    location_name?: string | null;
-    location_city?: string | null;
     cover_image_url?: string | null;
     event_type?: string | null;
     format?: string | null;
@@ -38,12 +37,13 @@ interface HeroEventProps {
 
 export function ConveneHeroEvent({ event }: HeroEventProps) {
   const navigate = useNavigate();
-  const imageUrl = (event as Record<string, unknown>).cover_image_url as string | null;
+  const imageUrl = event.cover_image_url ?? null;
   const startDate = event.start_time ? new Date(event.start_time) : null;
   const attendeeCount = event.event_attendees?.[0]?.count ?? 0;
 
   const isVirtual = event.format === 'virtual';
   const isHybrid = event.format === 'hybrid';
+  const placeText = formatEventPlace(event, 'compact');
 
   // Urgency
   const getUrgencyLabel = () => {
@@ -122,20 +122,18 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
                 {format(startDate, 'EEE, MMM d · h:mm a')}
               </span>
             )}
-            {isVirtual ? (
+            {placeText && (
               <span className="flex items-center gap-1">
-                <Video className="h-3.5 w-3.5" /> Online
+                {isVirtual ? (
+                  <Video className="h-3.5 w-3.5" />
+                ) : isHybrid ? (
+                  <Globe className="h-3.5 w-3.5" />
+                ) : (
+                  <MapPin className="h-3.5 w-3.5" />
+                )}
+                {placeText}
               </span>
-            ) : isHybrid ? (
-              <span className="flex items-center gap-1">
-                <Globe className="h-3.5 w-3.5" /> Hybrid
-                {event.location_city && ` · ${event.location_city}`}
-              </span>
-            ) : event.location_city ? (
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" /> {event.location_city}
-              </span>
-            ) : null}
+            )}
             {attendeeCount > 0 && (
               <span className="flex items-center gap-1">
                 <Users className="h-3.5 w-3.5" /> {attendeeCount} going

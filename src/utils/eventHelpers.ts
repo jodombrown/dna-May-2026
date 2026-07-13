@@ -1,5 +1,6 @@
 import { Event } from '@/types/eventTypes';
 import { Database } from '@/integrations/supabase/types';
+import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 
 type DbEvent = Database['public']['Tables']['events']['Row'];
 
@@ -9,10 +10,8 @@ type DbEvent = Database['public']['Tables']['events']['Row'];
  */
 export const transformDbEvent = (dbEvent: DbEvent): Event => {
   const isVirtual = dbEvent.format === 'virtual' || dbEvent.format === 'hybrid';
-  const location = dbEvent.location_name || 
-                   (dbEvent.location_city && dbEvent.location_country 
-                     ? `${dbEvent.location_city}, ${dbEvent.location_country}`
-                     : dbEvent.location_city || dbEvent.location_country || '');
+  const location =
+    dbEvent.location_name || formatEventPlace(pickEventPlace(dbEvent), 'compact');
 
   return {
     id: dbEvent.id,
@@ -26,6 +25,7 @@ export const transformDbEvent = (dbEvent: DbEvent): Event => {
     location_name: dbEvent.location_name,
     location_address: dbEvent.location_address,
     location_city: dbEvent.location_city,
+    location_state: dbEvent.location_state,
     location_country: dbEvent.location_country,
     location_lat: dbEvent.location_lat ? Number(dbEvent.location_lat) : null,
     location_lng: dbEvent.location_lng ? Number(dbEvent.location_lng) : null,

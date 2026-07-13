@@ -10,18 +10,15 @@ import {
 import { Calendar, Download, ExternalLink } from 'lucide-react';
 import { downloadICSFile, getGoogleCalendarUrl, getOutlookCalendarUrl, getOffice365CalendarUrl } from '@/utils/calendarExport';
 import { toast } from 'sonner';
+import type { EventPlaceInput } from '@/lib/events/formatPlace';
 
 interface AddToCalendarButtonProps {
-  event: {
+  event: EventPlaceInput & {
     id: string;
     title: string;
     description?: string;
     start_time: string;
     end_time: string;
-    location_name?: string;
-    location_address?: string;
-    location_city?: string;
-    location_country?: string;
     meeting_url?: string;
     format: 'in_person' | 'virtual' | 'hybrid';
   };

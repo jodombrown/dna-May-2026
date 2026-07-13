@@ -37,6 +37,7 @@ import { format } from 'date-fns';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { formatEventPlace } from '@/lib/events/formatPlace';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { useEventDetailsForFeed } from '@/hooks/useEventDetailsForFeed';
@@ -108,9 +109,9 @@ export const EventCard: React.FC<EventCardProps> = ({
     : null;
 
   const locationLine =
-    [eventDetails?.location_city, eventDetails?.location_country].filter(Boolean).join(', ') ||
+    (eventDetails ? formatEventPlace(eventDetails, 'compact') : '') ||
     eventDetails?.location_name ||
-    (eventDetails?.event_type === 'virtual' ? 'Online' : null);
+    null;
 
   const whenLine = eventDetails?.start_time
     ? `${format(new Date(eventDetails.start_time), 'EEE, MMM d · h:mm a')}${

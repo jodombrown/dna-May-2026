@@ -23,6 +23,7 @@ export interface Event {
   location_name?: string;
   location_address?: string;
   location_city?: string;
+  location_state?: string;
   location_country?: string;
   location_lat?: number;
   location_lng?: number;
@@ -72,7 +73,9 @@ export interface EventListItem {
   event_type: EventType;
   format: EventFormat;
   location_name?: string;
+  location_address?: string;
   location_city?: string;
+  location_state?: string;
   location_country?: string;
   meeting_url?: string;
   start_time: string;
