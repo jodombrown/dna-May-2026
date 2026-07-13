@@ -15,6 +15,8 @@ interface StickyRSVPBarProps {
   isPastEvent: boolean;
   isCancelled: boolean;
   isOrganizer: boolean;
+  /** Signed-out visitor — softens the empty-room copy to a sign-in prompt. */
+  isAnonymous: boolean;
   currentRsvp: string | null;
   maxAttendees: number | null;
   attendeeCount: number;
@@ -22,11 +24,44 @@ interface StickyRSVPBarProps {
   onRsvp: (status: 'going' | 'maybe' | 'not_going') => void;
 }
 
+/**
+ * Tiered headcount copy for the non-organizer / public view. A room that
+ * reads "0 / 50" looks empty, so small numbers become an invitation instead
+ * of a count. Organizers never see this — they get the true count/capacity.
+ */
+export function tieredAttendeeText({
+  goingCount,
+  maxAttendees,
+  isAnonymous,
+}: {
+  goingCount: number;
+  maxAttendees: number | null;
+  isAnonymous: boolean;
+}): string {
+  const spotsLeft = maxAttendees ? Math.max(maxAttendees - goingCount, 0) : null;
+  const isNearCapacity = maxAttendees ? goingCount >= maxAttendees * 0.9 : false;
+
+  let text: string;
+  if (goingCount === 0) {
+    text = isAnonymous ? 'Register to reserve your spot' : 'Be the first to RSVP';
+  } else if (goingCount < 10) {
+    text = 'A few people are going — join them';
+  } else {
+    text = `${goingCount} going`;
+  }
+
+  if (isNearCapacity && spotsLeft !== null && spotsLeft > 0) {
+    text += ` · ${spotsLeft} spots left`;
+  }
+  return text;
+}
+
 export function StickyRSVPBar({
   eventId,
   isPastEvent,
   isCancelled,
   isOrganizer,
+  isAnonymous,
   currentRsvp,
   maxAttendees,
   attendeeCount,
@@ -35,17 +70,18 @@ export function StickyRSVPBar({
 }: StickyRSVPBarProps) {
   const navigate = useNavigate();
 
-  const spotsLeft = maxAttendees ? maxAttendees - attendeeCount : null;
   const isNearCapacity = maxAttendees ? attendeeCount >= maxAttendees * 0.9 : false;
   const isFull = maxAttendees ? attendeeCount >= maxAttendees : false;
 
   const getAvailabilityText = () => {
     if (isCancelled) return 'Cancelled';
     if (isPastEvent) return 'Event Ended';
+    // Organizers always see the true numbers.
+    if (isOrganizer) {
+      return maxAttendees ? `${attendeeCount} / ${maxAttendees} registered` : `${attendeeCount} registered`;
+    }
     if (isFull) return 'Waitlist';
-    if (isNearCapacity && spotsLeft !== null) return `${spotsLeft} spots left`;
-    if (spotsLeft !== null) return `${spotsLeft} spots left`;
-    return 'Open';
+    return tieredAttendeeText({ goingCount: attendeeCount, maxAttendees, isAnonymous });
   };
 
   const renderCTA = () => {
@@ -124,7 +160,10 @@ export function StickyRSVPBar({
       transition={{ type: 'spring', damping: 25, stiffness: 300, delay: 0.2 }}
       className="fixed bottom-0 inset-x-0 z-50 lg:hidden"
     >
-      <div className="bg-background/95 backdrop-blur-md border-t border-border px-4 py-3 flex items-center justify-between gap-3">
+      <div
+        className="bg-background/95 backdrop-blur-md border-t border-border px-4 pt-3 flex items-center justify-between gap-3"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.75rem)' }}
+      >
         <div className="min-w-0">
           <p className="text-sm font-semibold">Free</p>
           <p className={cn(
