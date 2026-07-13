@@ -13216,6 +13216,38 @@ export type Database = {
           viewer_username: string
         }[]
       }
+      get_public_event: {
+        Args: { p_slug_or_id: string }
+        Returns: {
+          cancellation_reason: string
+          cover_image_url: string
+          curated_source: string
+          curated_source_url: string
+          description: string
+          end_time: string
+          event_type: string
+          format: string
+          id: string
+          is_cancelled: boolean
+          is_curated: boolean
+          location_city: string
+          location_country: string
+          location_lat: number
+          location_lng: number
+          location_name: string
+          organizer_avatar_url: string
+          organizer_name: string
+          organizer_username: string
+          requires_approval: boolean
+          short_description: string
+          slug: string
+          start_time: string
+          subtitle: string
+          tags: string[]
+          timezone: string
+          title: string
+        }[]
+      }
       get_public_profiles: {
         Args: { p_limit?: number; p_user_id?: string }
         Returns: {
