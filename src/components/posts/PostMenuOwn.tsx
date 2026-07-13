@@ -29,6 +29,13 @@ interface PostMenuOwnProps {
    * and never fix the underlying event details.
    */
   editHref?: string;
+  /**
+   * Override URL used by the "Copy link" action. When the post is a
+   * canonical announcement for a linked entity (event, space, opportunity,
+   * story...), sharing should point at that entity's public page rather
+   * than the generic /post/{id} route.
+   */
+  copyLinkHref?: string;
 }
 
 export function PostMenuOwn({
@@ -40,6 +47,7 @@ export function PostMenuOwn({
   commentsDisabled = false,
   onUpdate,
   editHref,
+  copyLinkHref,
 }: PostMenuOwnProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const navigate = useNavigate();
