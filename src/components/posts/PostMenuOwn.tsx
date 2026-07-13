@@ -121,10 +121,11 @@ export function PostMenuOwn({
             )}
           </DropdownMenuItem>
           
-          <DropdownMenuItem onClick={copyLink}>
+          <DropdownMenuItem onClick={handleCopyLink}>
             <Link className="h-4 w-4 mr-2" />
             Copy link
           </DropdownMenuItem>
+          
           
           <DropdownMenuSeparator />
           
