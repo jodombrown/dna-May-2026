@@ -13230,26 +13230,31 @@ export type Database = {
         Returns: {
           cancellation_reason: string
           cover_image_url: string
-          curated_source: string
           curated_source_url: string
           description: string
           end_time: string
           event_type: string
           format: string
+          going_count: number
           id: string
           is_cancelled: boolean
           is_curated: boolean
+          location_address: string
           location_city: string
           location_country: string
+          location_country_code: string
           location_lat: number
           location_lng: number
           location_name: string
+          location_state: string
+          max_attendees: number
           organizer_avatar_url: string
           organizer_name: string
           organizer_username: string
           requires_approval: boolean
           short_description: string
           slug: string
+          speakers: Json
           start_time: string
           subtitle: string
           tags: string[]
