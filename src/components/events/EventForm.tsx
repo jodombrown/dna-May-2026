@@ -1,12 +1,16 @@
 /**
  * EventForm — the ONE event form.
  *
- * Renders eventFormSchema at two levels of disclosure:
- *   level="compact" — THE INVITATION: title, cover, description, type,
- *     format, when, where, tags. "More options" expands IN PLACE to full.
- *   level="full" — adds THE DOOR (visibility, seats, approval, guests) and
- *     THE PROGRAMME (subtitle, short description, agenda, speakers, dress
- *     code), written as consequences, not booleans.
+ * Renders eventFormSchema at two levels of disclosure, in five sections:
+ *   THE INVITATION — title, (URL slot, reserved), cover, description, type,
+ *     format. THE MOMENT — when, timezone note, the place. THE DOOR —
+ *     visibility, approval, plus-ones, seats. THE PROGRAM — subtitle, short
+ *     description, agenda, speakers, dress code. THE SEND-OFF — tags,
+ *     flagship (admin), and the submit actions.
+ *   level="compact" shows The Invitation, The Moment, and The Send-off;
+ *     "More options" expands The Door and The Program IN PLACE.
+ *   level="full" shows all five. Choices are written as consequences, not
+ *     booleans.
  *
  * Replaces EventFormFields, EventModeFields, EventSettingsPage, and the form
  * body of EditEventPage. Fields that don't apply are ABSENT, not disabled:
@@ -15,7 +19,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Loader2, ChevronDown, Plus } from 'lucide-react';
+import { X, Loader2, ChevronDown, Plus, Minus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -233,10 +237,10 @@ function AgendaBuilder({
         {agenda.map((item, i) => (
           <div key={i} className="flex items-start gap-2">
             <Input
-              placeholder="6:00 PM"
+              type="time"
               value={item.time}
               onChange={(e) => update(i, { time: e.target.value })}
-              className="w-24 flex-shrink-0"
+              className="w-28 flex-shrink-0"
             />
             <Input
               placeholder="Registration & networking"
@@ -319,6 +323,83 @@ function SpeakersBuilder({
           <Plus className="mr-1 h-3.5 w-3.5" /> Add speaker
         </Button>
       </div>
+    </div>
+  );
+}
+
+const SEAT_QUICK_PICKS = [25, 50, 100, 250];
+
+/** Free typing stays; steppers and quick-picks are additive. No wheel —
+ *  capacity is unbounded and arbitrary. Empty means Unlimited (null), and
+ *  stepping down from 1 lands back on Unlimited. */
+function SeatsField({
+  value,
+  onChange,
+  error,
+}: {
+  value: number | null;
+  onChange: (v: number | null) => void;
+  error?: string;
+}) {
+  const step = (delta: number) => {
+    const next = (value ?? 0) + delta;
+    onChange(next >= 1 ? next : null);
+  };
+  return (
+    <div>
+      <Label className="text-sm font-medium">Seats</Label>
+      <div className="mt-1.5 flex items-center gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          aria-label="Fewer seats"
+          disabled={value === null}
+          onClick={() => step(-1)}
+          className="h-10 w-10 flex-shrink-0"
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+        <Input
+          type="number"
+          min={1}
+          placeholder="Unlimited"
+          value={value ?? ''}
+          onChange={(e) => onChange(e.target.value ? parseInt(e.target.value, 10) : null)}
+          className="w-28 text-center"
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          aria-label="More seats"
+          onClick={() => step(1)}
+          className="h-10 w-10 flex-shrink-0"
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {SEAT_QUICK_PICKS.map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onChange(n)}
+            className={cn(
+              'rounded-full border px-3 py-1 text-sm transition-colors',
+              value === n
+                ? 'border-amber-500 bg-amber-50 font-medium text-foreground dark:bg-amber-500/10'
+                : 'border-border text-muted-foreground hover:border-muted-foreground/50'
+            )}
+          >
+            {n}
+          </button>
+        ))}
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Leave empty and anyone can grab a seat.
+      </p>
+      <FieldError message={error} />
     </div>
   );
 }
@@ -484,6 +565,8 @@ export function EventForm({
       )}
 
       {/* ============ THE INVITATION ============ */}
+      <SectionDivider label="The Invitation" />
+
       <div>
         <Label className="text-sm font-medium">Event name</Label>
         <Input
@@ -495,6 +578,9 @@ export function EventForm({
         />
         <FieldError message={errors.title} />
       </div>
+
+      {/* URL slot — reserved. The event's public address (slug) will live
+          here, right under the name it's derived from. */}
 
       <div>
         <Label className="text-sm font-medium">Cover image</Label>
@@ -558,7 +644,9 @@ export function EventForm({
         </div>
       </div>
 
-      {/* When */}
+      {/* ============ THE MOMENT ============ */}
+      <SectionDivider label="The Moment" />
+
       <div>
         <Label className="text-sm font-medium">When</Label>
         <div className="mt-1.5 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -670,8 +758,6 @@ export function EventForm({
         </div>
       )}
 
-      <TagInput tags={values.tags} onChange={(tags) => setValues({ tags })} />
-
       {/* ============ MORE OPTIONS — expands IN PLACE ============ */}
       {effectiveLevel === 'compact' && (
         <button
@@ -679,7 +765,7 @@ export function EventForm({
           onClick={() => setExpanded(true)}
           className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed py-2 text-sm text-muted-foreground transition-colors hover:border-amber-400 hover:text-foreground"
         >
-          More options — who gets in, the programme
+          More options — who gets in, the program
           <ChevronDown className="h-4 w-4" />
         </button>
       )}
@@ -687,7 +773,7 @@ export function EventForm({
       {effectiveLevel === 'full' && (
         <>
           {/* ============ THE DOOR ============ */}
-          <SectionDivider label="The door" />
+          <SectionDivider label="The Door" />
 
           <ConsequenceChoice
             label="Who can see this event?"
@@ -716,28 +802,15 @@ export function EventForm({
             onChange={(v) => setValues({ allow_guests: v })}
           />
 
-          <div>
-            <Label className="text-sm font-medium">Seats</Label>
-            <Input
-              type="number"
-              min={1}
-              placeholder="Unlimited"
-              value={values.max_attendees ?? ''}
-              onChange={(e) =>
-                setValues({
-                  max_attendees: e.target.value ? parseInt(e.target.value, 10) : null,
-                })
-              }
-              className="mt-1.5 w-40"
-            />
-            <p className="mt-1 text-xs text-muted-foreground">
-              Leave empty and anyone can grab a seat.
-            </p>
-            <FieldError message={errors.max_attendees} />
-          </div>
+          {/* A seat cap is a door policy — it lives with the other door rules. */}
+          <SeatsField
+            value={values.max_attendees}
+            onChange={(max_attendees) => setValues({ max_attendees })}
+            error={errors.max_attendees}
+          />
 
-          {/* ============ THE PROGRAMME ============ */}
-          <SectionDivider label="The programme" />
+          {/* ============ THE PROGRAM ============ */}
+          <SectionDivider label="The Program" />
 
           <div>
             <Label className="text-sm font-medium">Subtitle</Label>
@@ -788,23 +861,28 @@ export function EventForm({
             </Select>
             <FieldError message={errors.dress_code} />
           </div>
-
-          {/* Admin-only — DNA-internal flagship flag (ROADMAP). */}
-          {isAdmin && (
-            <ConsequenceChoice
-              label="DNA flagship (admins only)"
-              options={[
-                { value: false, label: 'Regular community event' },
-                { value: true, label: 'Flagship — featured across DNA' },
-              ]}
-              value={values.is_flagship}
-              onChange={(v) => setValues({ is_flagship: v })}
-            />
-          )}
         </>
       )}
 
-      {/* ============ ACTIONS ============ */}
+      {/* ============ THE SEND-OFF ============ */}
+      <SectionDivider label="The Send-off" />
+
+      {/* Tags are how an event is found — a publishing decision. */}
+      <TagInput tags={values.tags} onChange={(tags) => setValues({ tags })} />
+
+      {/* Admin-only — DNA-internal flagship flag (ROADMAP). */}
+      {effectiveLevel === 'full' && isAdmin && (
+        <ConsequenceChoice
+          label="DNA flagship (admins only)"
+          options={[
+            { value: false, label: 'Regular community event' },
+            { value: true, label: 'Flagship — featured across DNA' },
+          ]}
+          value={values.is_flagship}
+          onChange={(v) => setValues({ is_flagship: v })}
+        />
+      )}
+
       <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
         {mode === 'edit' && !isTerminal && (
           <Button
