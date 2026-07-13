@@ -363,21 +363,10 @@ const PublicEventPage = () => {
                   {getFormatIcon(event.format)}
                   <div>
                     <p className="font-medium">{locationDisplay}</p>
-                    {event.format === 'virtual' && event.meeting_platform && (
-                      <p className="text-sm text-muted-foreground">{event.meeting_platform}</p>
-                    )}
                   </div>
                 </div>
               )}
 
-              {/* Attendee Count */}
-              <div className="flex items-center gap-3 mb-4">
-                <Users className="w-5 h-5 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  {event.attendee_count} {event.attendee_count === 1 ? 'person' : 'people'} going
-                  {event.max_attendees && ` · ${event.max_attendees - event.attendee_count} spots left`}
-                </p>
-              </div>
 
               {/* Host Info */}
               <div className="flex items-center gap-3 py-3 border-t border-b mb-4">
