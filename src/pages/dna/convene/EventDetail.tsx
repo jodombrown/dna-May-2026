@@ -72,7 +72,8 @@ import { platformNotifications } from '@/services/platformNotificationGenerator'
 import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { ConversationPicker } from '@/components/messaging/ConversationPicker';
 import type { EntityReferenceData } from '@/services/messageTypes';
-import { StickyRSVPBar } from '@/components/convene/StickyRSVPBar';
+import { StickyRSVPBar, tieredAttendeeText } from '@/components/convene/StickyRSVPBar';
+import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
 import { EventSocialProof } from '@/components/convene/EventSocialProof';
 import { EventOrganizerCard } from '@/components/convene/EventOrganizerCard';
 import { cn } from '@/lib/utils';
@@ -106,13 +107,17 @@ const EventDetail = () => {
     if (isLoggedIn) markStepComplete('first_event');
   }, [isLoggedIn, markStepComplete]);
   
-  // Animate banner in after a short delay for non-logged-in users
+  // Animate the join banner in after a short delay for signed-out visitors.
+  // Derived from `user` directly and reset the moment a user exists, so the
+  // banner can never disagree with auth state or coexist with organizer CTAs.
   useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => setShowBanner(true), 500);
-      return () => clearTimeout(timer);
+    if (user) {
+      setShowBanner(false);
+      return;
     }
-  }, [isLoggedIn]);
+    const timer = setTimeout(() => setShowBanner(true), 500);
+    return () => clearTimeout(timer);
+  }, [user]);
 
   // Sticky header on scroll past hero
   useEffect(() => {
@@ -502,15 +507,28 @@ const EventDetail = () => {
     });
 
   return (
-    <div className="min-h-screen bg-background pb-20 lg:pb-0">
-      <UnifiedHeader />
+    // Sub-page of the Convene hub: on mobile, render through DnaMobileHubShell
+    // (DNA header, tabs row reserved for the hub landing via tabs={null}).
+    // The MobileBottomNav is omitted because the StickyRSVPBar is this page's
+    // fixed bottom bar — never two fixed bars. On md+ the shell is a no-op and
+    // UnifiedHeader provides the desktop chrome.
+    <DnaMobileHubShell
+      bubble={{ kind: 'static', placeholder: (event.title as string) || 'Event' }}
+      tabs={null}
+      showBottomNav={false}
+    >
+    <div className="min-h-screen bg-background pb-28 lg:pb-0">
+      <div className="hidden md:block">
+        <UnifiedHeader />
+      </div>
 
-      {/* ── Sticky Scroll Header ─────────────────────── */}
+      {/* ── Sticky Scroll Header (md+ — the mobile top row is the locked
+             DnaMobileHeader rendered by the shell) ─────── */}
       <motion.div
         initial={false}
         animate={{ y: showStickyHeader ? 0 : -60, opacity: showStickyHeader ? 1 : 0 }}
         transition={{ duration: 0.2 }}
-        className="fixed top-0 inset-x-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
+        className="hidden md:block fixed top-0 inset-x-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
       >
         <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
@@ -526,7 +544,7 @@ const EventDetail = () => {
       </motion.div>
       
       {/* Sticky CTA Banner for non-logged-in users */}
-      {!isLoggedIn && showBanner && (
+      {!user && showBanner && (
         <div className="sticky top-0 z-40 px-4 sm:px-0 pt-2">
           <motion.div
             initial={{ y: -30, opacity: 0 }}
@@ -708,7 +726,16 @@ const EventDetail = () => {
                   <div className="flex items-start gap-3">
                     <Users className="h-5 w-5 mt-0.5 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      {goingCount} / {event.max_attendees as number} registered
+                      {/* Organizers see the true count/capacity; everyone else
+                          gets the tiered copy so a young event doesn't read
+                          as an empty room. */}
+                      {isOrganizer
+                        ? `${goingCount} / ${event.max_attendees as number} registered`
+                        : tieredAttendeeText({
+                            goingCount,
+                            maxAttendees: event.max_attendees as number,
+                            isAnonymous: !user,
+                          })}
                     </p>
                   </div>
                 )}
@@ -817,6 +844,7 @@ const EventDetail = () => {
           isPastEvent={isPastEvent}
           isCancelled={!!event.is_cancelled}
           isOrganizer={isOrganizer}
+          isAnonymous={!user}
           currentRsvp={currentRsvp}
           maxAttendees={event.max_attendees as number | null}
           attendeeCount={goingCount}
@@ -908,6 +936,7 @@ const EventDetail = () => {
         />
       )}
     </div>
+    </DnaMobileHubShell>
   );
 };
 export default EventDetail;

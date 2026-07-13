@@ -3,7 +3,7 @@
 exports[`DnaMobileHubShell > renders the canonical fixed top bar, tabs slot, content, and bottom nav 1`] = `
 <div>
   <div
-    class="min-h-screen bg-background pb-bottom-nav overflow-x-hidden"
+    class="min-h-screen bg-background overflow-x-hidden pb-bottom-nav"
   >
     <div
       class="fixed top-0 left-0 right-0 z-50 bg-background"

@@ -46,7 +46,14 @@ export function DnaMobileHubShell({
   }
 
   return (
-    <div className="min-h-screen bg-background pb-bottom-nav overflow-x-hidden">
+    <div
+      className={cn(
+        'min-h-screen bg-background overflow-x-hidden',
+        // Pages that opt out of the bottom nav own their bottom spacing
+        // (e.g. a page whose primary action is its own fixed bottom bar).
+        showBottomNav && 'pb-bottom-nav',
+      )}
+    >
       <div
         ref={headerRef}
         className="fixed top-0 left-0 right-0 z-50 bg-background"
