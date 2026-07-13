@@ -5,17 +5,17 @@ import { useState, useCallback, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import type { EventPlaceInput } from '@/lib/events/formatPlace';
 import './EventCalendarView.css';
 
 const localizer = momentLocalizer(moment);
 
-interface Event {
+interface Event extends EventPlaceInput {
   id: string;
   title: string;
   start_time: string;
   end_time: string;
   format: 'in_person' | 'virtual' | 'hybrid';
-  location_city?: string;
   event_type?: string;
 }
 

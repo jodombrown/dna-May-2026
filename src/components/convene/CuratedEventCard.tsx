@@ -19,19 +19,17 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { formatEventTime } from '@/utils/convene/formatEventTime';
+import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 export interface CuratedEventCardProps {
-  event: {
+  event: EventPlaceInput & {
     id: string;
     title: string;
     description?: string | null;
     short_description?: string | null;
     start_time?: string;
     end_time?: string;
-    location_name?: string | null;
-    location_city?: string | null;
-    location_country?: string | null;
     cover_image_url?: string | null;
     banner_url?: string | null;
     image_url?: string | null;
@@ -74,12 +72,7 @@ export function CuratedEventCard({
   const sourceDomain = event.curated_source_url ? extractDomain(event.curated_source_url) : event.curated_source;
   const timeDisplay = formatEventTime(event.start_time, event.end_time);
 
-  const locationText = (() => {
-    if (event.is_virtual || event.format === 'virtual') return 'Virtual';
-    if (event.format === 'hybrid') return event.location_city ? `Hybrid · ${event.location_city}` : 'Hybrid';
-    const parts = [event.location_city, event.location_country].filter(Boolean);
-    return parts.join(', ') || event.location_name || null;
-  })();
+  const locationText = formatEventPlace(event, 'compact') || event.location_name || null;
 
   const handleCardClick = () => {
     navigate(`/dna/convene/events/${event.slug || event.id}`);

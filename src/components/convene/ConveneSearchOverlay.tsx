@@ -8,6 +8,7 @@ import { useEventSearch, useTrendingEvents, type EventSearchFilters } from '@/ho
 import { formatEventTime } from '@/utils/convene/formatEventTime';
 import { getEventStatus } from '@/utils/convene/getEventStatus';
 import { ConveneEventBadge } from '@/components/convene/ConveneEventBadge';
+import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { cn } from '@/lib/utils';
 
 const RECENT_SEARCHES_KEY = 'dna-convene-recent-searches';
@@ -240,14 +241,12 @@ export function ConveneSearchOverlay({ isOpen, onClose }: ConveneSearchOverlayPr
 /* ── Compact search result card ─────────────────────── */
 
 interface SearchResultCardProps {
-  event: {
+  event: EventPlaceInput & {
     id: string;
     title: string;
     slug: string | null;
     start_time: string;
     end_time: string;
-    location_name: string | null;
-    location_city: string | null;
     cover_image_url: string | null;
     event_type: string;
     format: string;
@@ -294,7 +293,8 @@ function SearchResultCard({ event, onClick }: SearchResultCardProps) {
           {formatEventTime(event.start_time, event.end_time)}
         </p>
         <p className="text-xs text-muted-foreground">
-          {event.format === 'virtual' ? '🌐 Virtual' : `📍 ${event.location_city || event.location_name || 'TBA'}`}
+          {event.format === 'virtual' ? '🌐' : '📍'}{' '}
+          {formatEventPlace(event, 'compact') || event.location_name || 'TBA'}
         </p>
       </div>
 

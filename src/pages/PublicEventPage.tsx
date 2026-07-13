@@ -23,6 +23,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
+import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { getEventSchema } from '@/components/seo/PageSEO';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
@@ -264,8 +265,8 @@ const PublicEventPage = () => {
     if (event.format === 'virtual') {
       return 'Online Event';
     }
-    const parts = [event.location_name, event.location_city, event.location_country].filter(Boolean);
-    return parts.length > 0 ? parts.join(', ') : null;
+    const place = formatEventPlace(pickEventPlace(event), 'full');
+    return [place.venue, place.locality].filter(Boolean).join(', ') || null;
   };
 
   const locationDisplay = getLocationDisplay();

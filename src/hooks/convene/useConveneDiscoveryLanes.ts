@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { startOfDay, endOfDay, nextSunday, isFriday, isSaturday, isSunday, addDays } from 'date-fns';
+import { EVENT_PLACE_SELECT } from '@/lib/events/formatPlace';
 import { logger } from '@/lib/logger';
 
 interface EventRow {
@@ -20,7 +21,9 @@ interface EventRow {
   start_time: string;
   end_time: string | null;
   location_name: string | null;
+  location_address: string | null;
   location_city: string | null;
+  location_state: string | null;
   location_country: string | null;
   cover_image_url: string | null;
   event_type: string | null;
@@ -43,12 +46,12 @@ interface EventRow {
 }
 
 const BASE_SELECT = `
-  id, title, slug, start_time, end_time, location_name, location_city,
-  location_country, description, short_description,
+  id, title, slug, start_time, end_time, ${EVENT_PLACE_SELECT},
+  description, short_description,
   cover_image_url, event_type, format, is_cancelled, max_attendees,
   organizer_id, is_curated, curated_source, curated_source_url,
   event_attendees(count)
-`;
+` as const;
 
 async function attachOrganizers(events: Record<string, unknown>[]): Promise<EventRow[]> {
   const organizerIds = [...new Set(events.map(e => e.organizer_id).filter(Boolean))] as string[];

@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 interface EventLocationMapProps {
   locationName?: string;
   locationAddress?: string;
-  city?: string;
-  country?: string;
+  /** Pre-formatted "city, state, country" line from formatEventPlace(e, 'full'). */
+  locality?: string;
   lat?: number;
   lng?: number;
   className?: string;
@@ -19,17 +19,14 @@ interface EventLocationMapProps {
 export function EventLocationMap({
   locationName,
   locationAddress,
-  city,
-  country,
+  locality,
   lat,
   lng,
   className,
 }: EventLocationMapProps) {
   const hasCoordinates = lat !== undefined && lng !== undefined && lat !== null && lng !== null;
-  
-  // Build display location string
-  const locationParts = [city, country].filter(Boolean);
-  const displayLocation = locationParts.join(', ');
+
+  const displayLocation = locality || '';
 
   // Generate OpenStreetMap static image URL
   const getStaticMapUrl = () => {
@@ -51,20 +48,20 @@ export function EventLocationMap({
       return `https://www.google.com/maps/@${lat},${lng},17z`;
     }
     // Fallback to searching by name
-    const searchQuery = [locationName, locationAddress, city, country].filter(Boolean).join(', ');
+    const searchQuery = [locationName, locationAddress, locality].filter(Boolean).join(', ');
     return `https://www.google.com/maps/place/${encodeURIComponent(searchQuery)}`;
   };
 
   const getAppleMapsUrl = () => {
     if (hasCoordinates) {
       // Use sll (start latitude/longitude) parameter with daddr for directions-compatible link
-      return `https://maps.apple.com/?sll=${lat},${lng}&z=17&q=${encodeURIComponent(locationName || city || 'Event Location')}`;
+      return `https://maps.apple.com/?sll=${lat},${lng}&z=17&q=${encodeURIComponent(locationName || locality || 'Event Location')}`;
     }
-    const searchQuery = [locationName, locationAddress, city, country].filter(Boolean).join(', ');
+    const searchQuery = [locationName, locationAddress, locality].filter(Boolean).join(', ');
     return `https://maps.apple.com/?address=${encodeURIComponent(searchQuery)}`;
   };
 
-  if (!locationName && !city && !hasCoordinates) {
+  if (!locationName && !locality && !hasCoordinates) {
     return null;
   }
 

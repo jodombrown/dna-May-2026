@@ -19,6 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 interface CuratedEventPreviewProps {
@@ -46,8 +47,6 @@ export function CuratedEventPreview({ event }: CuratedEventPreviewProps) {
   const startTime = event.start_time as string | null;
   const endTime = event.end_time as string | null;
   const locationName = event.location_name as string | null;
-  const locationCity = event.location_city as string | null;
-  const locationCountry = event.location_country as string | null;
   const eventFormat = event.format as string | null;
   const curatedSource = event.curated_source as string | null;
   const curatedSourceUrl = event.curated_source_url as string | null;
@@ -58,7 +57,10 @@ export function CuratedEventPreview({ event }: CuratedEventPreviewProps) {
 
   const isVirtual = eventFormat === 'virtual';
   const isHybrid = eventFormat === 'hybrid';
-  const locationParts = [locationName, locationCity, locationCountry].filter(Boolean);
+  // Place-only line ("Lagos, Nigeria") — the Virtual/Hybrid label is rendered
+  // by the format branch below, so don't let the formatter repeat it.
+  const locality = formatEventPlace(pickEventPlace(event), 'compact');
+  const locationParts = [locationName, locality].filter(Boolean);
 
   // Fetch user RSVP
   const { data: userRsvp } = useQuery({

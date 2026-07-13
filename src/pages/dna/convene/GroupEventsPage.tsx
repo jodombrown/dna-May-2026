@@ -11,6 +11,7 @@ import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
 import { format } from 'date-fns';
+import { formatEventPlace } from '@/lib/events/formatPlace';
 import { Event } from '@/types/events';
 
 export default function GroupEventsPage() {
@@ -102,10 +103,10 @@ export default function GroupEventsPage() {
               <Clock className="h-4 w-4" />
               <span>{format(new Date(event.start_time), 'p')} - {format(new Date(event.end_time), 'p')}</span>
             </div>
-            {event.format !== 'virtual' && event.location_city && (
+            {event.format !== 'virtual' && formatEventPlace(event, 'compact') && (
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                <span>{event.location_city}, {event.location_country}</span>
+                <span>{formatEventPlace(event, 'compact')}</span>
               </div>
             )}
             <div className="flex items-center gap-2">

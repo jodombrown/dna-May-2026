@@ -8,18 +8,16 @@ import { format, differenceInHours, differenceInDays, isToday, isTomorrow } from
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { MutualAttendeesLine } from './MutualAttendeesLine';
+import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 export interface ConveneEventCardProps {
-  event: {
+  event: EventPlaceInput & {
     id: string;
     title: string;
     start_time?: string;
     date_time?: string;
     end_time?: string;
-    location_name?: string | null;
-    location_city?: string | null;
-    location_country?: string | null;
     location?: string | null;
     cover_image_url?: string | null;
     banner_url?: string | null;
@@ -142,16 +140,13 @@ export function ConveneEventCard({
   const getLocationInfo = () => {
     const isVirtual = event.is_virtual || event.format === 'virtual';
     const isHybrid = event.format === 'hybrid';
-    if (isVirtual) return { icon: Video, text: 'Online · Global', pill: true };
-    if (isHybrid) {
-      const loc = event.location_city || event.location_name;
-      return { icon: Globe, text: `Hybrid${loc ? ` · ${loc}` : ''}`, pill: true };
-    }
-    const city = event.location_city;
-    const name = event.location_name;
-    if (city) return { icon: MapPin, text: city, pill: false };
-    if (name) return { icon: MapPin, text: name, pill: false };
-    return null;
+    const text = formatEventPlace(event, 'compact') || event.location_name;
+    if (!text) return null;
+    return {
+      icon: isVirtual ? Video : isHybrid ? Globe : MapPin,
+      text,
+      pill: isVirtual || isHybrid,
+    };
   };
   const locationInfo = getLocationInfo();
 

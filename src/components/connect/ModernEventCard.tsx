@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Video, Globe } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Event } from '@/types/search';
+import { formatEventPlace } from '@/lib/events/formatPlace';
 import { format } from 'date-fns';
 import { Sankofa } from '@/components/icons/adinkra';
 
@@ -45,11 +46,12 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
       return { icon: Globe, text: 'Hybrid Event', subtext: location || null };
     }
     // Build location from available fields
-    const locationParts = [event.location, event.location_name, event.location_city, event.location_country].filter(Boolean);
-    if (locationParts.length === 0) {
+    const locality = formatEventPlace(event, 'compact');
+    const text = event.location || event.location_name || locality;
+    if (!text) {
       return null; // Hide section entirely
     }
-    return { icon: MapPin, text: locationParts[0], subtext: locationParts.slice(1).join(', ') || null };
+    return { icon: MapPin, text, subtext: text !== locality ? locality || null : null };
   };
 
   const locationInfo = getLocationInfo();

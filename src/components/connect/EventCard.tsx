@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users as UsersIcon, Image as ImageIcon, Video, Globe } from 'lucide-react';
 import { format } from 'date-fns';
 import { Event } from '@/types/search';
+import { formatEventPlace } from '@/lib/events/formatPlace';
 import ConnectDialogs from './ConnectDialogs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNavigate } from "react-router-dom";
@@ -140,11 +141,11 @@ const EventCard: React.FC<EventCardProps> = ({
       return { icon: Globe, text: 'Hybrid Event', subtext: location || null };
     }
     // Build location from available fields
-    const locationParts = [event.location, event.location_name, event.location_city, event.location_country].filter(Boolean);
-    if (locationParts.length === 0) {
+    const text = event.location || event.location_name || formatEventPlace(event, 'compact');
+    if (!text) {
       return null; // Hide section entirely
     }
-    return { icon: MapPin, text: locationParts[0], subtext: null };
+    return { icon: MapPin, text, subtext: null };
   };
 
   const locationInfo = getLocationInfo();

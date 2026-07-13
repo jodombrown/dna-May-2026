@@ -1,23 +1,28 @@
 import { createEvent, EventAttributes, DateArray } from 'ics';
 import { config } from '@/lib/config';
+import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
-interface EventData {
+interface EventData extends EventPlaceInput {
   id: string;
   slug?: string;
   title: string;
   description?: string;
   start_time: string;
   end_time: string;
-  location_name?: string;
-  location_address?: string;
-  location_city?: string;
-  location_country?: string;
   meeting_url?: string;
   format: 'in_person' | 'virtual' | 'hybrid';
   organizer?: {
     full_name: string;
     email?: string;
   };
+}
+
+/** "Venue, street, locality" for calendar location fields. */
+function physicalLocation(event: EventData, withStreet: boolean): string {
+  const place = formatEventPlace(event, 'full');
+  return [place.venue, withStreet ? place.street : null, place.locality]
+    .filter(Boolean)
+    .join(', ');
 }
 
 /**
@@ -38,11 +43,9 @@ function dateToICSFormat(isoString: string): DateArray {
  * Generate a .ics file for an event
  */
 export function generateICSFile(event: EventData): { error?: Error; value?: string } {
-  const location = event.format === 'virtual' 
+  const location = event.format === 'virtual'
     ? event.meeting_url || 'Online Event'
-    : [event.location_name, event.location_address, event.location_city, event.location_country]
-        .filter(Boolean)
-        .join(', ') || 'Location TBA';
+    : physicalLocation(event, true) || 'Location TBA';
 
   const eventUrl = `${window.location.origin}/dna/convene/events/${event.slug || event.id}`;
   
@@ -109,9 +112,7 @@ export function getGoogleCalendarUrl(event: EventData): string {
 
   const location = event.format === 'virtual'
     ? event.meeting_url || 'Online'
-    : [event.location_name, event.location_city, event.location_country]
-        .filter(Boolean)
-        .join(', ');
+    : physicalLocation(event, false);
 
   const details = [
     event.description || '',
@@ -141,9 +142,7 @@ export function getOutlookCalendarUrl(event: EventData): string {
 
   const location = event.format === 'virtual'
     ? event.meeting_url || 'Online'
-    : [event.location_name, event.location_city, event.location_country]
-        .filter(Boolean)
-        .join(', ');
+    : physicalLocation(event, false);
 
   const body = [
     event.description || '',
@@ -175,9 +174,7 @@ export function getOffice365CalendarUrl(event: EventData): string {
 
   const location = event.format === 'virtual'
     ? event.meeting_url || 'Online'
-    : [event.location_name, event.location_city, event.location_country]
-        .filter(Boolean)
-        .join(', ');
+    : physicalLocation(event, false);
 
   const body = [
     event.description || '',
