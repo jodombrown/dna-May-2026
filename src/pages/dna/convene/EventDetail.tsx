@@ -149,59 +149,91 @@ const EventDetail = () => {
   const { data: eventData, isLoading } = useQuery({
     queryKey: ['event-detail', slugOrId],
     queryFn: async () => {
-      let event = null;
-      
+      let event: Record<string, unknown> | null = null;
+
       if (slugOrId && isUUID(slugOrId)) {
         const { data, error } = await supabase
           .from('events')
           .select('*')
           .eq('id', slugOrId)
           .maybeSingle();
-        if (!error) event = data;
+        if (!error && data) event = data as Record<string, unknown>;
       }
-      
+
       if (!event && slugOrId) {
         const { data, error } = await supabase
           .from('events')
           .select('*')
           .eq('slug', slugOrId)
           .maybeSingle();
-        if (!error) event = data;
+        if (!error && data) event = data as Record<string, unknown>;
+      }
+
+      // Public projection fallback: RLS may block anonymous / non-member
+      // viewers from the base events table. get_public_event exposes
+      // published + public events safely to anon.
+      if (!event && slugOrId) {
+        const { data: pub, error: pubError } = await supabase
+          .rpc('get_public_event', { p_slug_or_id: slugOrId });
+        if (!pubError && pub && pub.length > 0) {
+          const p = pub[0] as Record<string, unknown>;
+          event = {
+            ...p,
+            // Shape the public row so the rest of this page can read it
+            // like a normal events row. organizer_id is intentionally
+            // absent so isOrganizer stays false and manage/edit UI hides.
+            status: 'published',
+            visibility: 'public',
+            organizer: p.organizer_username || p.organizer_name
+              ? {
+                  id: null,
+                  username: (p.organizer_username as string | null) ?? null,
+                  full_name: (p.organizer_name as string | null) ?? '',
+                  avatar_url: (p.organizer_avatar_url as string | null) ?? null,
+                  headline: null,
+                }
+              : null,
+            group: null,
+            __publicProjection: true,
+          };
+        }
       }
 
       if (!event) return null;
-      
-      setResolvedEventId(event.id);
-      
+
+      setResolvedEventId(event.id as string);
+
       if (slugOrId && isUUID(slugOrId) && event.slug) {
-        navigate(`/dna/convene/events/${event.slug}`, { replace: true });
+        navigate(`/dna/convene/events/${event.slug as string}`, { replace: true });
       }
-      
-      const eventRow: Record<string, unknown> = event;
-      
-      // Fetch organizer profile
-      const { data: organizer } = await supabase
-        .from('profiles')
-        .select('id, username, full_name, avatar_url, headline')
-        .eq('id', event.organizer_id)
-        .maybeSingle();
-      
-      // Fetch group info if event is group-hosted
-      let group = null;
-      if (event.group_id) {
-        const { data: groupData } = await supabase
-          .from('groups')
-          .select('id, name, slug, description, avatar_url, member_count')
-          .eq('id', event.group_id)
+
+      // If we already loaded the full row from the events table, still
+      // enrich organizer + group like before.
+      if (!event.__publicProjection) {
+        const { data: organizer } = await supabase
+          .from('profiles')
+          .select('id, username, full_name, avatar_url, headline')
+          .eq('id', event.organizer_id as string)
           .maybeSingle();
-        group = groupData;
+
+        let group = null;
+        if (event.group_id) {
+          const { data: groupData } = await supabase
+            .from('groups')
+            .select('id, name, slug, description, avatar_url, member_count')
+            .eq('id', event.group_id as string)
+            .maybeSingle();
+          group = groupData;
+        }
+
+        return {
+          ...event,
+          organizer,
+          group,
+        };
       }
-      
-      return {
-        ...eventRow,
-        organizer,
-        group
-      };
+
+      return event;
     },
     enabled: !!slugOrId,
   });
