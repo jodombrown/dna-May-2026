@@ -338,14 +338,6 @@ const PublicEventPage = () => {
                   {getFormatIcon(event.format)}
                   {event.format?.replace('_', ' ') || 'In Person'}
                 </Badge>
-                {event.is_free ? (
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Free</Badge>
-                ) : event.ticket_price_cents ? (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <Ticket className="w-3 h-3" />
-                    ${(event.ticket_price_cents / 100).toFixed(0)}
-                  </Badge>
-                ) : null}
                 {isPastEvent && <Badge variant="secondary">Past Event</Badge>}
                 {isCancelled && <Badge variant="destructive">Cancelled</Badge>}
               </div>
