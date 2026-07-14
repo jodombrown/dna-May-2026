@@ -7,16 +7,13 @@
  * Desktop: max-w-6xl centered, grid lanes.
  */
 
-import React, { useState, useMemo, useRef, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useMemo, Suspense, lazy } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Calendar, CalendarCheck, Plus, Search, Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMobile';
-import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
-import { useScrollDirection } from '@/hooks/useScrollDirection';
-import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
 
 import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSelector';
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
@@ -26,7 +23,7 @@ import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscoveryCard';
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 import { UpcomingEventsSection } from '@/components/convene/UpcomingEventsSection';
-import { ConveneMobileHeader } from '@/components/convene/ConveneMobileHeader';
+import { ConveneShell } from '@/components/convene/ConveneShell';
 // ConveneTabExplainer removed on mobile - segmented tab labels are self-explanatory
 import { useConveneCities, useUserCity } from '@/hooks/convene/useConveneCities';
 import {
@@ -104,22 +101,6 @@ export function ConveneDiscovery() {
   const composer = useUniversalComposer();
   const [searchParams, setSearchParams] = useSearchParams();
   const isMobile = useIsMobile();
-
-  // Mobile header measurement & scroll behavior
-  const mobileHeaderRef = useRef<HTMLDivElement>(null);
-  const headerHeight = useMobileHeaderHeight(mobileHeaderRef, 0);
-  const { isScrollingDown, isAtTop } = useScrollDirection();
-  const { hideHeader, showHeader } = useHeaderVisibility();
-
-  // Hide global UnifiedHeader on mobile for this page
-  useEffect(() => {
-    if (isMobile) {
-      hideHeader();
-      return () => showHeader();
-    }
-  }, [isMobile, hideHeader, showHeader]);
-
-  const isRow1Visible = isMobile ? (isAtTop || !isScrollingDown) : true;
 
   const selectedCity = searchParams.get('city');
   const activePill = searchParams.get('pill') || 'all';
@@ -280,25 +261,11 @@ export function ConveneDiscovery() {
     : filteredEvents.length;
 
   return (
-    <div className="w-full min-h-dvh bg-background pb-36 md:pb-0">
-      {/* ═══════════════════════════════════════
-          MOBILE FIXED HEADER
-          ═══════════════════════════════════════ */}
-      {isMobile && (
-        <div ref={mobileHeaderRef} className="fixed top-0 left-0 right-0 z-50">
-          <ConveneMobileHeader
-            activePill={activePill}
-            onPillChange={handlePillChange}
-            onComposerClick={() => composer.open('event')}
-            isRow1Visible={isRow1Visible}
-          />
-        </div>
-      )}
-
-      <div
-        className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-3 md:space-y-4 lg:space-y-5"
-        style={isMobile ? { paddingTop: headerHeight } : undefined}
-      >
+    // Mobile chrome (DNA header, composer bubble, bell, avatar, tab strip)
+    // comes from the shared ConveneShell — this page renders body only.
+    <ConveneShell>
+    <div className="w-full min-h-dvh bg-background">
+      <div className="container max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-0 pb-0 lg:py-6 space-y-3 md:space-y-4 lg:space-y-5">
         {/* ═══════════════════════════════════════
             MOBILE: MY EVENTS DOOR
             The fixed mobile header has no room for it, and without this
@@ -600,6 +567,7 @@ export function ConveneDiscovery() {
         onDismissSuccess={composer.dismissSuccess}
       />
     </div>
+    </ConveneShell>
   );
 }
 

@@ -73,7 +73,7 @@ import { DIADetailInsight } from '@/components/dia/DIADetailInsight';
 import { ConversationPicker } from '@/components/messaging/ConversationPicker';
 import type { EntityReferenceData } from '@/services/messageTypes';
 import { StickyRSVPBar, tieredAttendeeText } from '@/components/convene/StickyRSVPBar';
-import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
+import { ConveneShell } from '@/components/convene/ConveneShell';
 import { EventSocialProof } from '@/components/convene/EventSocialProof';
 import { EventOrganizerCard } from '@/components/convene/EventOrganizerCard';
 import { cn } from '@/lib/utils';
@@ -94,7 +94,6 @@ const EventDetail = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
-  const [resolvedEventId, setResolvedEventId] = useState<string | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -131,10 +130,6 @@ const EventDetail = () => {
     return () => observer.disconnect();
   }, []);
   
-  // Use resolved event ID for composer (once we know it)
-  const id = resolvedEventId || slugOrId;
-  const composer = useUniversalComposer({ eventId: id });
-
   // Cancel/Delete dialog states
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -166,8 +161,6 @@ const EventDetail = () => {
         if (error) throw error;
         const row = data?.[0];
         if (!row) return null;
-
-        setResolvedEventId(row.id);
 
         if (slugOrId && isUUID(slugOrId) && row.slug) {
           navigate(`/dna/convene/events/${row.slug}`, { replace: true });
@@ -212,8 +205,6 @@ const EventDetail = () => {
 
       if (!event) return null;
 
-      setResolvedEventId(event.id);
-
       if (slugOrId && isUUID(slugOrId) && event.slug) {
         navigate(`/dna/convene/events/${event.slug}`, { replace: true });
       }
@@ -249,32 +240,39 @@ const EventDetail = () => {
 
   const event = eventData as Record<string, unknown> | null;
 
+  // The event's UUID, derived straight from the fetched row — never guessed
+  // from the URL param (which may be a slug) and never staged through state,
+  // so a cached load can't race ahead of it.
+  const eventId = (event?.id as string | undefined) ?? null;
+
+  const composer = useUniversalComposer({ eventId: eventId ?? undefined });
+
   // Fetch user's RSVP status
-  const { data: userRsvp } = useQuery({
-    queryKey: ['user-rsvp', id, user?.id],
+  const { data: userRsvp, error: rsvpError } = useQuery({
+    queryKey: ['user-rsvp', eventId, user?.id],
     queryFn: async () => {
-      if (!user || !id) return null;
+      if (!user || !eventId) return null;
       const { data, error } = await supabase
         .from('event_attendees')
         .select('status')
-        .eq('event_id', id)
+        .eq('event_id', eventId)
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
       return data;
     },
-    enabled: !!user && !!id,
+    enabled: !!user && !!eventId,
   });
 
   // Fetch attendees
-  const { data: attendees = [] } = useQuery({
-    queryKey: ['event-attendees', id],
+  const { data: attendees = [], error: attendeesError } = useQuery({
+    queryKey: ['event-attendees', eventId],
     queryFn: async () => {
       const { data: attendeeData, error } = await supabase
         .from('event_attendees')
         .select('status, created_at, user_id')
-        .eq('event_id', id!)
+        .eq('event_id', eventId!)
         .eq('status', 'going')
         .limit(10);
 
@@ -296,29 +294,38 @@ const EventDetail = () => {
     },
     // Attendee rows join profiles, which anon cannot read; signed-out visitors
     // get their headcount from the projection's going_count instead.
-    enabled: !!id && isLoggedIn,
+    enabled: !!eventId && isLoggedIn,
   });
 
   // Fetch total registration count
-  const { data: registrationCount = 0 } = useQuery({
-    queryKey: ['event-registration-count', id],
+  const { data: registrationCount = 0, error: registrationCountError } = useQuery({
+    queryKey: ['event-registration-count', eventId],
     queryFn: async () => {
       const { count, error } = await supabase
         .from('event_attendees')
         .select('id', { count: 'exact' })
-        .eq('event_id', id!)
+        .eq('event_id', eventId!)
         .in('status', ['going', 'maybe', 'pending', 'waitlist']);
 
       if (error) throw error;
       return count || 0;
     },
-    enabled: !!id && isLoggedIn,
+    enabled: !!eventId && isLoggedIn,
   });
+
+  // These three reads fail silently in the UI (their defaults — no RSVP,
+  // empty attendees, count 0 — are plausible values), so never swallow
+  // their errors: log loudly so a wrong headcount is diagnosable.
+  useEffect(() => {
+    if (rsvpError) console.error('[EventDetail] RSVP status query failed:', rsvpError);
+    if (attendeesError) console.error('[EventDetail] Attendees query failed:', attendeesError);
+    if (registrationCountError) console.error('[EventDetail] Registration count query failed:', registrationCountError);
+  }, [rsvpError, attendeesError, registrationCountError]);
 
   // Cancel event mutation
   const cancelEventMutation = useMutation({
     mutationFn: async () => {
-      if (!user || !id) throw new Error('Not authenticated');
+      if (!user || !eventId) throw new Error('Not authenticated');
       const { error } = await supabase
         .from('events')
         .update({
@@ -326,12 +333,12 @@ const EventDetail = () => {
           ...eventStateWrite({ status: 'cancelled' }),
           cancellation_reason: 'Cancelled by organizer',
         })
-        .eq('id', id)
+        .eq('id', eventId)
         .eq('organizer_id', user.id);
       if (error) throw error;
     },
     onSuccess: () => {
-      invalidateAllEventCaches(queryClient, id);
+      invalidateAllEventCaches(queryClient, eventId ?? undefined);
       toast({ title: 'Event Cancelled', description: 'Your event has been cancelled. Attendees will be notified.' });
       setShowCancelDialog(false);
     },
@@ -343,19 +350,19 @@ const EventDetail = () => {
   // Publish event mutation (draft → published)
   const publishEventMutation = useMutation({
     mutationFn: async () => {
-      if (!user || !id) throw new Error('Not authenticated');
+      if (!user || !eventId) throw new Error('Not authenticated');
       const { error } = await supabase
         .from('events')
         .update({
           // status: 'published' plus the transitional legacy mirror
           ...eventStateWrite({ status: 'published' }),
         })
-        .eq('id', id)
+        .eq('id', eventId)
         .eq('organizer_id', user.id);
       if (error) throw error;
     },
     onSuccess: () => {
-      invalidateAllEventCaches(queryClient, id);
+      invalidateAllEventCaches(queryClient, eventId ?? undefined);
       toast({ title: 'Event Published', description: 'Your event is now live and visible to attendees.' });
     },
     onError: (error: Error) => {
@@ -366,12 +373,12 @@ const EventDetail = () => {
   // Delete event mutation
   const deleteEventMutation = useMutation({
     mutationFn: async () => {
-      if (!user || !id) throw new Error('Not authenticated');
-      const { error } = await supabase.from('events').delete().eq('id', id).eq('organizer_id', user.id);
+      if (!user || !eventId) throw new Error('Not authenticated');
+      const { error } = await supabase.from('events').delete().eq('id', eventId).eq('organizer_id', user.id);
       if (error) throw error;
     },
     onSuccess: () => {
-      invalidateAllEventCaches(queryClient, id);
+      invalidateAllEventCaches(queryClient, eventId ?? undefined);
       toast({ title: 'Event Deleted', description: 'Your event has been permanently deleted.' });
       navigate('/dna/convene/events');
     },
@@ -383,9 +390,9 @@ const EventDetail = () => {
   // Report event mutation
   const reportEventMutation = useMutation({
     mutationFn: async ({ reason, details }: { reason: string; details: string }) => {
-      if (!user || !id) throw new Error('Not authenticated');
+      if (!user || !eventId) throw new Error('Not authenticated');
       const { error } = await supabase.from('event_reports').insert({
-        event_id: id, reported_by: user.id, reason, description: details || null, status: 'pending',
+        event_id: eventId, reported_by: user.id, reason, description: details || null, status: 'pending',
       });
       if (error) throw error;
     },
@@ -413,29 +420,29 @@ const EventDetail = () => {
   // RSVP mutation
   const rsvpMutation = useMutation({
     mutationFn: async (status: 'going' | 'maybe' | 'not_going') => {
-      if (!user || !id) throw new Error('Not authenticated');
+      if (!user || !eventId) throw new Error('Not authenticated');
       const { error } = await supabase
         .from('event_attendees')
-        .upsert({ event_id: id, user_id: user.id, status }, { onConflict: 'event_id,user_id' });
+        .upsert({ event_id: eventId, user_id: user.id, status }, { onConflict: 'event_id,user_id' });
       if (error) throw error;
 
-      if ((status === 'going' || status === 'maybe') && user?.id && id && event?.organizer_id) {
+      if ((status === 'going' || status === 'maybe') && user?.id && eventId && event?.organizer_id) {
         diaEventBus.emit({
           type: 'event_rsvp',
-          eventId: id,
+          eventId,
           attendeeId: user.id,
           hostId: event.organizer_id as string,
         });
         platformNotifications.eventRsvp(
-          event.organizer_id as string, user.id, id, (event?.title as string) || '', status
+          event.organizer_id as string, user.id, eventId, (event?.title as string) || '', status
         ).catch(() => { /* non-critical */ });
       }
       return status;
     },
     onSuccess: (status) => {
-      queryClient.invalidateQueries({ queryKey: ['user-rsvp', id, user?.id] });
-      queryClient.invalidateQueries({ queryKey: ['event-attendees', id] });
-      queryClient.invalidateQueries({ queryKey: ['event-registration-count', id] });
+      queryClient.invalidateQueries({ queryKey: ['user-rsvp', eventId, user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['event-attendees', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['event-registration-count', eventId] });
       toast({
         title: 'RSVP Updated',
         description: `You've marked yourself as ${status === 'going' ? 'going' : status === 'maybe' ? 'maybe' : 'not going'}`,
@@ -470,43 +477,49 @@ const EventDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </button>
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <ConveneShell>
+        <div className="min-h-screen bg-background">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
+              <ArrowLeft className="w-4 h-4 mr-1" /> Back
+            </button>
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
           </div>
         </div>
-      </div>
+      </ConveneShell>
     );
   }
 
   if (!event) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </button>
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p className="text-muted-foreground">Event not found</p>
-              <Button variant="link" onClick={() => navigate('/dna/convene/events')} className="mt-4">Back to events</Button>
-            </CardContent>
-          </Card>
+      <ConveneShell>
+        <div className="min-h-screen bg-background">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <button onClick={() => navigate(-1)} className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6">
+              <ArrowLeft className="w-4 h-4 mr-1" /> Back
+            </button>
+            <Card>
+              <CardContent className="py-12 text-center">
+                <p className="text-muted-foreground">Event not found</p>
+                <Button variant="link" onClick={() => navigate('/dna/convene/events')} className="mt-4">Back to events</Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      </ConveneShell>
     );
   }
 
   // ── Curated event → render lightweight preview ──
   if (event.is_curated) {
     return (
-      <div className="min-h-screen bg-background">
-        <CuratedEventPreview event={event} />
-      </div>
+      <ConveneShell>
+        <div className="min-h-screen bg-background">
+          <CuratedEventPreview event={event} />
+        </div>
+      </ConveneShell>
     );
   }
 
@@ -538,16 +551,11 @@ const EventDetail = () => {
     });
 
   return (
-    // Sub-page of the Convene hub: on mobile, render through DnaMobileHubShell
-    // (DNA header, tabs row reserved for the hub landing via tabs={null}).
-    // The MobileBottomNav is omitted because the StickyRSVPBar is this page's
-    // fixed bottom bar — never two fixed bars. On md+ the shell is a no-op and
-    // UnifiedHeader provides the desktop chrome.
-    <DnaMobileHubShell
-      bubble={{ kind: 'static', placeholder: (event.title as string) || 'Event' }}
-      tabs={null}
-      showBottomNav={false}
-    >
+    // Sub-page of the Convene hub: mobile chrome comes from the shared
+    // ConveneShell. The MobileBottomNav is omitted because the StickyRSVPBar
+    // is this page's fixed bottom bar — never two fixed bars. On md+ the
+    // shell is a no-op and UnifiedHeader provides the desktop chrome.
+    <ConveneShell showBottomNav={false}>
     <div className="min-h-screen bg-background pb-28 lg:pb-0">
       <div className="hidden md:block">
         <UnifiedHeader />
@@ -671,7 +679,7 @@ const EventDetail = () => {
               )}
               {isOrganizer ? (
                 <>
-                  <Button onClick={() => navigate(`/dna/convene/events/${id}/manage`)}>
+                  <Button onClick={() => navigate(`/dna/convene/events/${slugOrId}/manage`)}>
                     <Settings className="h-4 w-4 mr-2" /> Manage
                   </Button>
                   <DropdownMenu>
@@ -679,8 +687,8 @@ const EventDetail = () => {
                       <Button variant="outline" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem onClick={() => navigate(`/dna/convene/events/${id}/edit`)}>Edit Event</DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate(`/dna/convene/events/${id}/check-in`)}>
+                      <DropdownMenuItem onClick={() => navigate(`/dna/convene/events/${slugOrId}/edit`)}>Edit Event</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate(`/dna/convene/events/${slugOrId}/check-in`)}>
                         <QrCode className="mr-2 h-4 w-4" /> Check-in
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -731,9 +739,9 @@ const EventDetail = () => {
             )}
 
             {/* Social Proof */}
-            {id && (
+            {eventId && (
               <EventSocialProof
-                eventId={id}
+                eventId={eventId}
                 attendees={attendeeProfiles}
                 totalCount={goingCount}
               />
@@ -892,9 +900,9 @@ const EventDetail = () => {
       </div>
 
       {/* ── Sticky RSVP Bar (Mobile) ───────────────── */}
-      {id && (
+      {eventId && (
         <StickyRSVPBar
-          eventId={id}
+          eventId={eventId}
           isPastEvent={isPastEvent}
           isCancelled={isCancelled}
           isOrganizer={isOrganizer}
@@ -990,7 +998,7 @@ const EventDetail = () => {
         />
       )}
     </div>
-    </DnaMobileHubShell>
+    </ConveneShell>
   );
 };
 export default EventDetail;
