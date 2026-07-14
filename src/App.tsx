@@ -79,6 +79,7 @@ const AdminDashboardLayout = lazy(() => import("./components/admin/AdminDashboar
 const AdminDashboardOverview = lazy(() => import("./pages/admin/AdminDashboardOverview"));
 const AdminRouteGuard = lazy(() => import("./components/admin/AdminRouteGuard").then(m => ({ default: m.AdminRouteGuard })));
 const StatCitationsAdmin = lazy(() => import("./pages/admin/StatCitationsAdmin"));
+const CuratedSourceReviews = lazy(() => import("./pages/admin/CuratedSourceReviews"));
 
 // Static pages  
 const About = lazy(() => import("./pages/About"));
@@ -859,6 +860,8 @@ function App() {
                 <Route path="errors" element={<ErrorDashboard />} />
                 {/* Homepage citation editor */}
                 <Route path="citations" element={<StatCitationsAdmin />} />
+                {/* Curated source review queue (Convene C2.4) */}
+                <Route path="curated-source-reviews" element={<CuratedSourceReviews />} />
               </Route>
 
               {/* Legacy Admin routes */}
