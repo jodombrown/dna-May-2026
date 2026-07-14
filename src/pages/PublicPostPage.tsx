@@ -20,7 +20,7 @@ import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
-import UnifiedHeader from '@/components/UnifiedHeader';
+import PublicSiteHeader from '@/components/PublicSiteHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mpatapo } from '@/components/icons/adinkra';
 
