@@ -3390,6 +3390,8 @@ export type Database = {
           dress_code: string | null
           end_time: string | null
           event_type: Database["public"]["Enums"]["event_type"]
+          expected_window_end: string | null
+          expected_window_start: string | null
           format: Database["public"]["Enums"]["event_format"]
           group_id: string | null
           id: string
@@ -3424,6 +3426,7 @@ export type Database = {
           title: string
           updated_at: string
           visibility: string
+          window_basis: string | null
         }
         Insert: {
           agenda?: Json | null
@@ -3439,6 +3442,8 @@ export type Database = {
           dress_code?: string | null
           end_time?: string | null
           event_type: Database["public"]["Enums"]["event_type"]
+          expected_window_end?: string | null
+          expected_window_start?: string | null
           format: Database["public"]["Enums"]["event_format"]
           group_id?: string | null
           id?: string
@@ -3473,6 +3478,7 @@ export type Database = {
           title: string
           updated_at?: string
           visibility?: string
+          window_basis?: string | null
         }
         Update: {
           agenda?: Json | null
@@ -3488,6 +3494,8 @@ export type Database = {
           dress_code?: string | null
           end_time?: string | null
           event_type?: Database["public"]["Enums"]["event_type"]
+          expected_window_end?: string | null
+          expected_window_start?: string | null
           format?: Database["public"]["Enums"]["event_format"]
           group_id?: string | null
           id?: string
@@ -3522,6 +3530,7 @@ export type Database = {
           title?: string
           updated_at?: string
           visibility?: string
+          window_basis?: string | null
         }
         Relationships: [
           {
