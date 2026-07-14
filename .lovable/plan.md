@@ -1,55 +1,28 @@
-## What we already have (the "DNA hub" pattern)
+Regenerate `src/integrations/supabase/types.ts` from the live Supabase schema so the `get_public_event` RPC signature reflects the current database.
 
-Two shared components — this IS the DNA mobile chrome:
+## What changes
 
-- `src/components/mobile/DnaMobileHeader.tsx` — the locked top row: DNA logo (left), one bubble in the center (composer / search / static), notification bell + avatar (right). Every /dna/* page must render this and nothing else in that row.
-- `src/components/mobile/DnaMobileHubShell.tsx` — the wrapper that mounts `DnaMobileHeader` fixed at top, an optional always-visible `tabs` row directly below it (the "menu nav"), the scrolling content, and `MobileBottomNav` at the bottom.
+Only one file changes: `src/integrations/supabase/types.ts`.
 
-Hub-by-hub status of the header + menu-nav pattern:
+The `get_public_event` RPC's `Returns` type will be updated to match the live DB:
 
-```text
-Hub          Header row                Menu-nav row
----------    -----------------------   ----------------------------------
-Feed         DnaMobileHeader           MobileFeedTabs ("All" + icons)      ✓
-Connect      DnaMobileHeader           ConnectMobileTabs                    ✓
-Convene      DnaMobileHeader           ConveneMobileTabs                    ✓
-Contribute   DnaMobileHeader           ContributeMobileTabs                 ✓
-Collaborate  DnaMobileHeader           (missing)                            ✗
-Convey       (missing entirely)        (missing)                            ✗
-```
+- Add: `status: string`
+- Add: `visibility: string`
+- Remove: `is_cancelled: boolean`
 
-`/dna/convey` is currently routed to `ConveyHub -> ConveyDiscovery`, which renders a standalone `HubHero` megaphone card and never mounts `DnaMobileHubShell`. The canonical Convey hub `pages/dna/Convey.tsx -> ConveyStoryHub` (which does render `DnaMobileHeader` and a 5-tab bar) is defined but not wired to the route.
+All other tables, enums, functions, and RPC signatures in the file remain unchanged — this is a targeted regeneration for the one function whose signature drifted.
 
-## Fixes
+## How
 
-### 1. Collaborate — add the menu-nav row
+Since Lovable regenerates `types.ts` automatically from the connected Supabase project after schema/migration changes (and direct edits to that file are disallowed by project rules), the mechanism is:
 
-- New `src/components/collaborate/CollaborateMobileTabs.tsx`, mirroring `ConnectMobileTabs`. Tabs (icon-first, active tab shows its label):
-  - Spaces (Users icon) → `/dna/collaborate`
-  - My Spaces (Bookmark icon) → `/dna/collaborate/my-spaces`
-  - Discover (Compass icon) → `/dna/collaborate/spaces`
-  Active tab derived from `useLocation().pathname`.
-- Update `src/components/collaborate/SpacesShell.tsx` to accept an optional `tabs?: ReactNode` and pass it straight through to `DnaMobileHubShell`.
-- `CollaborateHub`, `MySpaces`, and `SpacesIndex` all render `<SpacesShell tabs={<CollaborateMobileTabs />} ... />` so every Collaborate surface shows the same second row.
+1. Trigger a types regeneration against project `ybhssuehmfnxrzneobok` so the generated `Returns` block for `get_public_event` picks up `status` / `visibility` and drops `is_cancelled`.
+2. Verify the diff on `types.ts` shows exactly those three field changes under `Functions.get_public_event.Returns` and nothing else.
 
-### 2. Convey — put the canonical hub back on the route
+## Follow-up (not in this task)
 
-- Change `App.tsx` `/dna/convey` to render `pages/dna/Convey.tsx` (which returns `ConveyStoryHub`) instead of `pages/dna/convey/ConveyHub.tsx`. `ConveyStoryHub` already mounts `DnaMobileHeader` and already has its 5-section tab bar (Pulse / Curated / My Circle / My Voice / Saved) — the only visible change on mobile is that both surfaces now appear.
-- Wrap the mobile branch of `ConveyStoryHub` in `DnaMobileHubShell` so its tab bar is passed via the `tabs` prop, matching the way every other hub renders. Removes the current bespoke `fixed` header handling in that file.
-- `pages/dna/convey/ConveyHub.tsx` + `ConveyDiscovery.tsx` stay in the tree for now (referenced from a couple of DIA discovery cards), but are no longer the /dna/convey landing.
+Callers of `get_public_event` that still read `is_cancelled` (e.g. `PublicEventPage`, any event-state helpers) will need to switch to `status === 'cancelled'` / `visibility === 'public'`. Flag after regeneration; do not change in this task unless you want it bundled.
 
-### 3. Guardrail so this doesn't regress on the next new page
+## Confirm before I proceed
 
-- Extend `docs/MOBILE_HUB_BUBBLE_BEHAVIOR.md` with a "Menu-nav contract" section: every `/dna/*` hub MUST render through `DnaMobileHubShell` and MUST pass a `tabs` node (even single-tab hubs render a one-item bar for visual parity). New pages that skip either fail review.
-- Extend `src/test/dnaMobileHubShell.test.tsx` with two new cases that mount Collaborate and Convey at mobile viewport and assert (a) `DnaMobileHeader` is present and (b) at least one `role="tablist"` sits directly beneath it.
-
-## What to tell reviewers going forward
-
-Point them at `MOBILE_HUB_BUBBLE_BEHAVIOR.md`. The single-line rule: any new `/dna/*` page must render through `DnaMobileHubShell`, pass one `bubble` (composer / search / static) and one `tabs` node — same top row, same second row, only the bubble content and tab labels change per hub.
-
-## Out of scope
-
-- No visual redesign of the header, bubble, tabs, or bottom nav.
-- No changes to Feed / Connect / Convene / Contribute (they already conform).
-- No changes to desktop layouts — this is the mobile shell only.
-- Not deleting `ConveyDiscovery` in this pass; that's a separate cleanup once we confirm nothing links to it.
+Do you want this task limited strictly to regenerating `types.ts`, or should I also update the call sites that read `is_cancelled` so the app keeps compiling?
