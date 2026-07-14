@@ -18,6 +18,8 @@ export interface ProfileV2Bundle {
   completion: ProfileV2Completion;
   verification_meta: ProfileV2VerificationMeta;
   connection_status?: ConnectionStatus;
+  /** Set when the bundle was built from get_public_profile for an anonymous viewer. */
+  should_show_public_landing?: boolean;
 }
 
 export interface ProfileV2Data {
@@ -25,8 +27,11 @@ export interface ProfileV2Data {
   user_id?: string; // legacy alias
   username: string;
   full_name: string;
+  display_name?: string | null;
   first_name?: string;
   last_name?: string;
+  pronouns?: string | null;
+  website_url?: string | null;
   headline: string | null;
   professional_role: string | null;
   company: string | null;
