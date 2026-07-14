@@ -47,6 +47,7 @@ const normalizePublicProfileBundle = (raw: PublicProfileRow): ProfileV2Bundle =>
     company: null,
     avatar_url: raw.avatar_url ?? null,
     banner_url: raw.banner_url ?? null,
+    banner_type: raw.banner_url ? ('image' as const) : undefined,
     current_country: country,
     current_city: city,
     location: city && country ? `${city}, ${country}` : city ?? country,
