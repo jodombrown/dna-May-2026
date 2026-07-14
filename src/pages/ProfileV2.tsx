@@ -154,7 +154,7 @@ const ProfileV2: React.FC = () => {
 
   // Show beautiful public landing view for non-logged-in visitors
   // This provides a focused, inviting experience that drives sign-ups
-  if (!user) {
+  if (!user || bundle.should_show_public_landing) {
     return <PublicProfileLandingView bundle={bundle} />;
   }
 
