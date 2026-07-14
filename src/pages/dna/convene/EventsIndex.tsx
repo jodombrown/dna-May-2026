@@ -49,12 +49,15 @@ const EventsIndex = () => {
         .select('*')
         .eq('status', 'published');
 
-      // Time filter. Undated events (date_confirmed false / NULL start_time)
-      // fail every start_time comparison, so they only surface under 'all'
-      // and 'watching' — the timeline scopes are dated events by definition.
+      // Time filter. 'upcoming' shares its predicate with useConveneCities:
+      // an undated event (date_confirmed false / NULL start_time) is still
+      // ahead of us, so it belongs here — a bare .gte drops it because NULL
+      // fails every comparison. The bounded windows (today/this_week/
+      // this_month) stay strict: they are timelines, and an undated event
+      // has no place in one.
       const now = new Date().toISOString();
       if (timeFilter === 'upcoming') {
-        query = query.gte('start_time', now);
+        query = query.or(`start_time.gte.${now},start_time.is.null,date_confirmed.eq.false`);
       } else if (timeFilter === 'past') {
         query = query.lt('end_time', now);
       } else if (timeFilter === 'watching') {
