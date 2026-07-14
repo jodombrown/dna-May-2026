@@ -1,7 +1,7 @@
 /**
  * Publicly Accessible Post Page
- * Route: /post/:postId
- * 
+ * Route: /post/:postId  (accepts a post UUID or slug)
+ *
  * This page is accessible to ANYONE - no authentication required.
  * Shows post content and CTAs to sign up or engage.
  */
@@ -42,15 +42,19 @@ const PublicPostPage = () => {
     }
   }, [isLoggedIn]);
 
-  // Fetch post data
+  // Fetch post data. The :postId param accepts a UUID or a slug — internal
+  // in-app URLs carry `slug || id`, and signed-out visitors are redirected
+  // here on that raw param (mirrors get_public_event's slug-or-UUID contract).
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['public-post', postId],
     queryFn: async () => {
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(postId!);
+
       // First get the post
       const { data: postData, error: postError } = await supabase
         .from('posts')
         .select('*')
-        .eq('id', postId)
+        .eq(isUUID ? 'id' : 'slug', postId!)
         .eq('is_deleted', false)
         .maybeSingle();
 
@@ -71,16 +75,17 @@ const PublicPostPage = () => {
 
       if (authorError) throw authorError;
 
-      // Get engagement counts
+      // Get engagement counts — keyed on the resolved row's UUID, since the
+      // route param may be a slug.
       const [likesResult, commentsResult] = await Promise.all([
         supabase
           .from('post_likes')
           .select('id', { count: 'exact' })
-          .eq('post_id', postId),
+          .eq('post_id', postData.id),
         supabase
           .from('post_comments')
           .select('id', { count: 'exact' })
-          .eq('post_id', postId)
+          .eq('post_id', postData.id)
           .eq('is_deleted', false),
       ]);
 
