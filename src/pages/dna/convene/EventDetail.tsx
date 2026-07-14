@@ -567,27 +567,25 @@ const EventDetail = () => {
         </div>
       )}
       
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-6 sm:pt-6">
         {/* Back Navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-3 sm:mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back to Events
         </button>
 
-        {/* Hero Image */}
-        <div ref={heroRef} className="relative overflow-hidden rounded-lg mb-8">
-          <CulturalPattern pattern="kente" opacity={0.05} />
-          {(event.cover_image_url as string) ? (
+        {/* Hero Image — only render when there's a real cover to avoid an empty banner that reads as a duplicate header */}
+        {(event.cover_image_url as string) && (
+          <div ref={heroRef} className="relative overflow-hidden rounded-lg mb-6 sm:mb-8">
+            <CulturalPattern pattern="kente" opacity={0.05} />
             <div className="aspect-[2.5/1] w-full overflow-hidden">
               <img src={event.cover_image_url as string} alt={event.title as string} className="w-full h-full object-cover" />
             </div>
-          ) : (
-            <div className="aspect-[3/1] w-full bg-[hsl(var(--module-convene-light))]" />
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Title + Badges + Actions */}
         <div className="mb-6">
