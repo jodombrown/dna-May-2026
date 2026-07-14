@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, Search, X } from 'lucide-react';
+import { Calendar, CalendarCheck, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -129,17 +129,23 @@ const EventsIndex = () => {
     <div className="w-full h-full overflow-auto p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-h1 font-serif text-foreground">All Events</h1>
             <p className="text-muted-foreground">
               Discover and join convenings across the diaspora network
             </p>
           </div>
-          <Button onClick={() => composer.open('event')}>
-            <Calendar className="w-4 h-4 mr-2" />
-            Host an Event
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => navigate('/dna/convene/my-events')}>
+              <CalendarCheck className="w-4 h-4 mr-2" />
+              My Events
+            </Button>
+            <Button onClick={() => composer.open('event')}>
+              <Calendar className="w-4 h-4 mr-2" />
+              Host an Event
+            </Button>
+          </div>
         </div>
 
         {/* Filters */}

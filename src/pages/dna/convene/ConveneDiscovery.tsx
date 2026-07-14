@@ -10,7 +10,7 @@
 import React, { useState, useMemo, useRef, useEffect, Suspense, lazy } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Calendar, Plus, Search, Map, List } from 'lucide-react';
+import { Calendar, CalendarCheck, Plus, Search, Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/useMobile';
@@ -300,6 +300,26 @@ export function ConveneDiscovery() {
         style={isMobile ? { paddingTop: headerHeight } : undefined}
       >
         {/* ═══════════════════════════════════════
+            MOBILE: MY EVENTS DOOR
+            The fixed mobile header has no room for it, and without this
+            the organizer's own events are unreachable from Convene on a
+            phone.
+            ═══════════════════════════════════════ */}
+        {isMobile && (
+          <div className="pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full rounded-full"
+              onClick={() => navigate('/dna/convene/my-events')}
+            >
+              <CalendarCheck className="w-4 h-4 mr-1.5" />
+              My Events
+            </Button>
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════
             DESKTOP HEADER: Location + Actions
             ═══════════════════════════════════════ */}
         {!isMobile && (
@@ -339,6 +359,15 @@ export function ConveneDiscovery() {
                   ) : (
                     <List className="w-4.5 h-4.5" />
                   )}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full h-9 px-4"
+                  onClick={() => navigate('/dna/convene/my-events')}
+                >
+                  <CalendarCheck className="w-4 h-4 mr-1" />
+                  My Events
                 </Button>
                 <Button
                   size="sm"

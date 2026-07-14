@@ -6,6 +6,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Share2, Copy, BarChart3, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
@@ -21,7 +22,7 @@ interface MyEventCardEvent {
   slug?: string | null;
   start_time: string;
   end_time?: string | null;
-  is_cancelled?: boolean;
+  status?: string | null;
   max_attendees?: number | null;
   cover_image_url?: string | null;
   event_type?: string;
@@ -38,7 +39,14 @@ interface MyEventCardProps {
 export function MyEventCard({ event, isPast = false, className }: MyEventCardProps) {
   const navigate = useNavigate();
   const attendeeCount = event.event_attendees?.[0]?.count ?? 0;
-  const status = getEventStatus(event, attendeeCount);
+  // Canonical event state: `status` is the source of truth; the legacy
+  // boolean mirror columns are trigger-derived and must not be read here.
+  const eventStatus = event.status ?? 'published';
+  const isCancelled = eventStatus === 'cancelled';
+  const isDraft = eventStatus === 'draft';
+  const isCompleted = eventStatus === 'completed';
+  const liveStatus =
+    isCancelled || isDraft || isCompleted ? null : getEventStatus(event, attendeeCount);
 
   const startDate = new Date(event.start_time);
   const monthAbbrev = format(startDate, 'MMM').toUpperCase();
@@ -94,7 +102,15 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
               <h3 className="font-semibold text-base leading-tight line-clamp-1 text-foreground">
                 {event.title}
               </h3>
-              {status && <ConveneEventBadge status={status} />}
+              {isCancelled ? (
+                <Badge variant="destructive">Cancelled</Badge>
+              ) : isCompleted ? (
+                <Badge variant="secondary">Completed</Badge>
+              ) : isDraft ? (
+                <Badge variant="outline">Draft</Badge>
+              ) : (
+                liveStatus && <ConveneEventBadge status={liveStatus} />
+              )}
             </div>
 
             <p className="text-sm text-muted-foreground">
@@ -116,10 +132,15 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
                     Share Recap
                   </Button>
                 </>
-              ) : event.is_cancelled ? (
+              ) : isCancelled ? (
                 <Button variant="outline" size="sm" onClick={navigateTo('/dna/convene/events/new')}>
                   <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
                   Duplicate
+                </Button>
+              ) : isDraft ? (
+                <Button variant="outline" size="sm" onClick={navigateTo(eventPath)}>
+                  <Edit className="h-3.5 w-3.5 mr-1.5" />
+                  Edit Draft
                 </Button>
               ) : (
                 <>
@@ -143,7 +164,7 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
       </Card>
 
       {/* CONVENE → CONVEY nudge for past events */}
-      {isPast && !event.is_cancelled && (
+      {isPast && !isCancelled && (
         <PastEventDiaNudge eventId={event.id} eventTitle={event.title} variant="share_story" />
       )}
     </div>
