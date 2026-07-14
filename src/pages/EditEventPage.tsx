@@ -10,6 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { EventForm } from '@/components/events/EventForm';
+import { ConveneShell } from '@/components/convene/ConveneShell';
 import {
   eventRowToFormValues,
   eventRowStatus,
@@ -62,24 +63,28 @@ export default function EditEventPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="py-12 text-center text-muted-foreground">Loading event…</div>
+      <ConveneShell>
+        <div className="min-h-screen bg-background">
+          <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="py-12 text-center text-muted-foreground">Loading event…</div>
+          </div>
         </div>
-      </div>
+      </ConveneShell>
     );
   }
 
   if (!event) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="py-12 text-center">
-            <h2 className="mb-2 text-2xl font-bold">Event not found</h2>
-            <Button onClick={() => navigate('/dna/convene/events')}>Back to Events</Button>
+      <ConveneShell>
+        <div className="min-h-screen bg-background">
+          <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="py-12 text-center">
+              <h2 className="mb-2 text-2xl font-bold">Event not found</h2>
+              <Button onClick={() => navigate('/dna/convene/events')}>Back to Events</Button>
+            </div>
           </div>
         </div>
-      </div>
+      </ConveneShell>
     );
   }
 
@@ -87,6 +92,8 @@ export default function EditEventPage() {
   const status = eventRowStatus(row);
 
   return (
+    // Mobile chrome comes from the shared ConveneShell.
+    <ConveneShell>
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center gap-4">
@@ -118,5 +125,6 @@ export default function EditEventPage() {
         </Card>
       </div>
     </div>
+    </ConveneShell>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Calendar, BarChart3, List, CalendarDays, Plus, Brain, ArrowRight } from 'lucide-react';
+import { Calendar, BarChart3, List, CalendarDays } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,8 +16,8 @@ import { EventCalendarView } from '@/components/convene/EventCalendarView';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { MyEventCard } from '@/components/convene/MyEventCard';
 import { MyEventsStatsHeader } from '@/components/convene/MyEventsStatsHeader';
-import { DiaOrganizerInsight } from '@/components/convene/DiaOrganizerInsight';
 import { PastEventDiaNudge } from '@/components/convene/PastEventDiaNudge';
+import { ConveneShell } from '@/components/convene/ConveneShell';
 import { MutualAttendeesLine } from '@/components/convene/MutualAttendeesLine';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { useOrganizerStats } from '@/hooks/convene/useOrganizerStats';
@@ -150,29 +150,10 @@ const MyEvents = () => {
     [attendingEvents]
   );
 
-  // ── DIA insight data ─────────────────────────────────
-  // pastHosting only holds completed/past published events, so the most
-  // recent one is simply the head of the (desc-sorted) list.
-  const lastPastEvent = pastHosting[0];
-  const daysSinceLastEvent = lastPastEvent
-    ? Math.floor((now.getTime() - new Date(lastPastEvent.start_time).getTime()) / (1000 * 60 * 60 * 24))
-    : undefined;
-  const lastEventAttendees = lastPastEvent
-    ? ((lastPastEvent.event_attendees as Array<{ count: number }>)?.[0]?.count ?? 0)
-    : undefined;
-
-  // Find top category
-  const topCategory = useMemo(() => {
-    const counts: Record<string, number> = {};
-    hostingEvents.forEach((e) => {
-      const cat = e.event_type;
-      if (cat) counts[cat] = (counts[cat] || 0) + 1;
-    });
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    return sorted[0]?.[0];
-  }, [hostingEvents]);
-
   return (
+    // Mobile chrome comes from the shared ConveneShell. LayoutController
+    // already mounts MobileBottomNav, so the shell must not add a second one.
+    <ConveneShell showBottomNav={false}>
     <LayoutController
       leftColumn={<LeftNav />}
       centerColumn={
@@ -231,31 +212,13 @@ const MyEvents = () => {
                   <MyEventsStatsHeader stats={stats ?? { eventsHosted: 0, totalAttendees: 0, upcoming: 0 }} isLoading={statsLoading} />
                 )}
 
-                {/* Quick Actions */}
+                {/* Quick Actions — event creation lives in the header composer */}
                 <div className="flex items-center gap-3">
-                  <Button
-                    className="bg-module-convene hover:bg-module-convene-dark text-white"
-                    onClick={() => composer.open('event')}
-                  >
-                    <Plus className="h-4 w-4 mr-1.5" />
-                    Host an Event
-                  </Button>
                   <Button variant="outline" onClick={() => navigate('/dna/convene/analytics')}>
                     <BarChart3 className="h-4 w-4 mr-1.5" />
                     Analytics
                   </Button>
                 </div>
-
-                {/* DIA Organizer Insight */}
-                {stats && (
-                  <DiaOrganizerInsight
-                    stats={stats}
-                    lastEventTitle={lastPastEvent?.title}
-                    lastEventAttendees={lastEventAttendees}
-                    daysSinceLastEvent={daysSinceLastEvent}
-                    topCategory={topCategory}
-                  />
-                )}
 
                 {hostingLoading ? (
                   <p className="text-center text-muted-foreground py-8">Loading events...</p>
@@ -267,8 +230,11 @@ const MyEvents = () => {
                       <p className="text-muted-foreground mb-4">
                         Host your first event and bring the diaspora together!
                       </p>
+                      {/* dna-copper, not module-convene: white on the convene
+                          gold is near-invisible, and copper is the CTA color
+                          the contrast guard in index.css actually covers. */}
                       <Button
-                        className="bg-module-convene hover:bg-module-convene-dark text-white"
+                        className="bg-dna-copper hover:bg-dna-copper-dark text-white"
                         onClick={() => composer.open('event')}
                       >
                         Create Your First Event
@@ -508,6 +474,7 @@ const MyEvents = () => {
         onDismissSuccess={composer.dismissSuccess}
       />
     </LayoutController>
+    </ConveneShell>
   );
 };
 

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_COLUMNS } from '@/lib/events/formatPlace';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
+import { ConveneShell } from '@/components/convene/ConveneShell';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
@@ -126,6 +127,9 @@ const EventsIndex = () => {
   ].filter(Boolean).length;
 
   return (
+    // Mobile chrome comes from the shared ConveneShell; this page renders
+    // body only (desktop keeps its own header row below).
+    <ConveneShell>
     <div className="w-full h-full overflow-auto p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
@@ -292,6 +296,7 @@ const EventsIndex = () => {
         />
       </div>
     </div>
+    </ConveneShell>
   );
 };
 
