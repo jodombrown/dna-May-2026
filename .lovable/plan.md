@@ -1,28 +1,22 @@
-Regenerate `src/integrations/supabase/types.ts` from the live Supabase schema so the `get_public_event` RPC signature reflects the current database.
+## Plan: Tailwind config truth patch
 
-## What changes
+Update `tailwind.config.ts` with two additive tokens and verify the build still compiles.
 
-Only one file changes: `src/integrations/supabase/types.ts`.
+### Changes
+1. In `theme.extend.fontSize`, add the `hero` token:
+   ```ts
+   hero: ['3rem', { lineHeight: '1.05', fontWeight: '600' }], // 48px - marketing hero only
+   ```
+2. In `theme.extend.fontFamily`, add the `body` alias:
+   ```ts
+   body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+   ```
 
-The `get_public_event` RPC's `Returns` type will be updated to match the live DB:
+### Non-changes
+- `sans`, `ui`, `serif`, and `heritage` aliases remain untouched as legacy aliases.
+- No call-site usage will be changed in this patch; the gate prevents new code from using the old aliases.
 
-- Add: `status: string`
-- Add: `visibility: string`
-- Remove: `is_cancelled: boolean`
+### Verification
+- Run `npm run build` (or the project's typecheck/build check) to confirm the config parses cleanly.
+- No visual changes are expected until a component consumes `text-hero` or `font-body`.
 
-All other tables, enums, functions, and RPC signatures in the file remain unchanged — this is a targeted regeneration for the one function whose signature drifted.
-
-## How
-
-Since Lovable regenerates `types.ts` automatically from the connected Supabase project after schema/migration changes (and direct edits to that file are disallowed by project rules), the mechanism is:
-
-1. Trigger a types regeneration against project `ybhssuehmfnxrzneobok` so the generated `Returns` block for `get_public_event` picks up `status` / `visibility` and drops `is_cancelled`.
-2. Verify the diff on `types.ts` shows exactly those three field changes under `Functions.get_public_event.Returns` and nothing else.
-
-## Follow-up (not in this task)
-
-Callers of `get_public_event` that still read `is_cancelled` (e.g. `PublicEventPage`, any event-state helpers) will need to switch to `status === 'cancelled'` / `visibility === 'public'`. Flag after regeneration; do not change in this task unless you want it bundled.
-
-## Confirm before I proceed
-
-Do you want this task limited strictly to regenerating `types.ts`, or should I also update the call sites that read `is_cancelled` so the app keeps compiling?
