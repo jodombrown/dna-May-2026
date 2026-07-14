@@ -163,6 +163,7 @@ const PublicPostPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <UnifiedHeader />
+        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
@@ -239,6 +240,7 @@ const PublicPostPage = () => {
 
       <div className="min-h-screen bg-background">
         <UnifiedHeader />
+        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
 
         {/* Animated CTA Banner for non-logged-in users */}
         <AnimatePresence>

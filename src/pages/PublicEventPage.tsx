@@ -183,6 +183,7 @@ const PublicEventPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <UnifiedHeader />
+        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
@@ -308,6 +309,7 @@ const PublicEventPage = () => {
         {helmet}
         <div className="min-h-screen bg-background">
           <UnifiedHeader />
+        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
           <CuratedEventPreview event={event} showBack={false} />
         </div>
       </>
@@ -320,6 +322,7 @@ const PublicEventPage = () => {
 
       <div className="min-h-screen bg-background">
         <UnifiedHeader />
+        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
 
         {/* CTA Banner for non-logged-in users */}
         {!isLoggedIn && showBanner && (
