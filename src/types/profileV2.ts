@@ -18,6 +18,8 @@ export interface ProfileV2Bundle {
   completion: ProfileV2Completion;
   verification_meta: ProfileV2VerificationMeta;
   connection_status?: ConnectionStatus;
+  /** True when the bundle was built for an anonymous viewer from get_public_profile. */
+  should_show_public_landing?: boolean;
 }
 
 export interface ProfileV2Data {
