@@ -860,6 +860,8 @@ function App() {
                 <Route path="errors" element={<ErrorDashboard />} />
                 {/* Homepage citation editor */}
                 <Route path="citations" element={<StatCitationsAdmin />} />
+                {/* Curated source review queue (Convene C2.4) */}
+                <Route path="curated-source-reviews" element={<CuratedSourceReviews />} />
               </Route>
 
               {/* Legacy Admin routes */}
