@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, BarChart3, List, CalendarDays, Plus, Brain, ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -35,6 +36,7 @@ const MyEvents = () => {
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   const activeTab = searchParams.get('tab') || 'hosting';
   const [pastHostingOpen, setPastHostingOpen] = useState(false);
+  const [cancelledHostingOpen, setCancelledHostingOpen] = useState(false);
   const [pastAttendingOpen, setPastAttendingOpen] = useState(false);
 
   // ── Organizer stats ──────────────────────────────────
@@ -108,16 +110,32 @@ const MyEvents = () => {
   });
 
   // ── Derived data ─────────────────────────────────────
+  // Hosting groups keyed on canonical `status` (the source of truth — the
+  // legacy boolean mirrors are not read here). Order on the page: Drafts,
+  // Published, Past/Completed, Cancelled.
   const now = new Date();
-  const upcomingHosting = useMemo(
-    () => hostingEvents.filter((e) => !e.is_cancelled && new Date(e.start_time) > now),
+  const statusOf = (e: { status?: string | null }) => e.status ?? 'published';
+  const draftHosting = useMemo(
+    () => hostingEvents.filter((e) => statusOf(e) === 'draft'),
+    [hostingEvents]
+  );
+  const publishedHosting = useMemo(
+    () => hostingEvents.filter((e) => statusOf(e) === 'published' && new Date(e.start_time) > now),
     [hostingEvents]
   );
   const pastHosting = useMemo(
     () =>
       hostingEvents
-        .filter((e) => new Date(e.start_time) <= now || e.is_cancelled)
+        .filter(
+          (e) =>
+            statusOf(e) === 'completed' ||
+            (statusOf(e) === 'published' && new Date(e.start_time) <= now)
+        )
         .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()),
+    [hostingEvents]
+  );
+  const cancelledHosting = useMemo(
+    () => hostingEvents.filter((e) => statusOf(e) === 'cancelled'),
     [hostingEvents]
   );
   const upcomingAttending = useMemo(
@@ -133,7 +151,9 @@ const MyEvents = () => {
   );
 
   // ── DIA insight data ─────────────────────────────────
-  const lastPastEvent = pastHosting.find((e) => !e.is_cancelled);
+  // pastHosting only holds completed/past published events, so the most
+  // recent one is simply the head of the (desc-sorted) list.
+  const lastPastEvent = pastHosting[0];
   const daysSinceLastEvent = lastPastEvent
     ? Math.floor((now.getTime() - new Date(lastPastEvent.start_time).getTime()) / (1000 * 60 * 60 * 24))
     : undefined;
@@ -257,21 +277,44 @@ const MyEvents = () => {
                   </Card>
                 ) : (
                   <>
-                    {/* Upcoming section */}
-                    {upcomingHosting.length > 0 && (
+                    {/* Drafts — loudest group, these need the organizer */}
+                    {draftHosting.length > 0 && (
                       <section>
-                        <h2 className="text-lg font-bold mb-3">
-                          Upcoming ({upcomingHosting.length})
-                        </h2>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h2 className="text-lg font-bold">Drafts</h2>
+                          <Badge
+                            variant="outline"
+                            className="rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30 font-semibold"
+                          >
+                            {draftHosting.length}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Not published yet — only you can see these.
+                        </p>
                         <div className="space-y-3">
-                          {upcomingHosting.map((event) => (
+                          {draftHosting.map((event) => (
                             <MyEventCard key={event.id} event={event} />
                           ))}
                         </div>
                       </section>
                     )}
 
-                    {/* Past section (collapsible on mobile) */}
+                    {/* Published (upcoming) */}
+                    {publishedHosting.length > 0 && (
+                      <section>
+                        <h2 className="text-lg font-bold mb-3">
+                          Published ({publishedHosting.length})
+                        </h2>
+                        <div className="space-y-3">
+                          {publishedHosting.map((event) => (
+                            <MyEventCard key={event.id} event={event} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
+                    {/* Past/Completed (collapsible on mobile) */}
                     {pastHosting.length > 0 && (
                       <Collapsible open={pastHostingOpen} onOpenChange={setPastHostingOpen}>
                         <CollapsibleTrigger asChild>
@@ -288,6 +331,30 @@ const MyEvents = () => {
                         <CollapsibleContent className="mt-3 space-y-3">
                           {pastHosting.map((event) => (
                             <MyEventCard key={event.id} event={event} isPast />
+                          ))}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )}
+
+                    {/* Cancelled (collapsible) */}
+                    {cancelledHosting.length > 0 && (
+                      <Collapsible open={cancelledHostingOpen} onOpenChange={setCancelledHostingOpen}>
+                        <CollapsibleTrigger asChild>
+                          <button className="flex items-center gap-2 w-full text-left group">
+                            <h2 className="text-lg font-bold">
+                              Cancelled ({cancelledHosting.length})
+                            </h2>
+                            <ChevronDown
+                              className={cn(
+                                'h-4 w-4 text-muted-foreground transition-transform',
+                                cancelledHostingOpen && 'rotate-180'
+                              )}
+                            />
+                          </button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-3 space-y-3">
+                          {cancelledHosting.map((event) => (
+                            <MyEventCard key={event.id} event={event} />
                           ))}
                         </CollapsibleContent>
                       </Collapsible>
