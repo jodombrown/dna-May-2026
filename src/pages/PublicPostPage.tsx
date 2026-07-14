@@ -156,7 +156,7 @@ const PublicPostPage = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+        <PublicSiteHeader />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
@@ -233,7 +233,7 @@ const PublicPostPage = () => {
 
       <div className="min-h-screen bg-background">
         {/* Use the standard unified header - fixed at top */}
-        <UnifiedHeader />
+        <PublicSiteHeader />
 
         {/* Spacer for fixed header */}
         <div className="h-16" />
