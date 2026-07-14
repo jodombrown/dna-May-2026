@@ -13265,7 +13265,7 @@ export type Database = {
           curated_source_url: string
           date_confirmed: boolean
           description: string
-          end_time: string | null
+          end_time: string
           event_type: string
           format: string
           going_count: number
@@ -13287,7 +13287,7 @@ export type Database = {
           short_description: string
           slug: string
           speakers: Json
-          start_time: string | null
+          start_time: string
           status: string
           subtitle: string
           tags: string[]

@@ -20,7 +20,8 @@ import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
-import PublicSiteHeader from '@/components/PublicSiteHeader';
+import UnifiedHeader from '@/components/UnifiedHeader';
+import Footer from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mpatapo } from '@/components/icons/adinkra';
 
@@ -161,7 +162,8 @@ const PublicPostPage = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background">
-        <PublicSiteHeader />
+        <UnifiedHeader />
+        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
@@ -237,7 +239,8 @@ const PublicPostPage = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <PublicSiteHeader />
+        <UnifiedHeader />
+        <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
 
         {/* Animated CTA Banner for non-logged-in users */}
         <AnimatePresence>
@@ -457,25 +460,10 @@ const PublicPostPage = () => {
             </Card>
           )}
 
-          {/* Footer */}
-          <footer className="mt-6 pt-4 border-t text-center text-sm text-muted-foreground">
-            <p>
-              DNA - Diaspora Network of Africa
-            </p>
-            <div className="flex items-center justify-center gap-4 mt-2">
-              <Link to="/about" className="hover:text-foreground transition-colors">
-                About
-              </Link>
-              <Link to="/privacy-policy" className="hover:text-foreground transition-colors">
-                Privacy
-              </Link>
-              <Link to="/terms-of-service" className="hover:text-foreground transition-colors">
-                Terms
-              </Link>
-            </div>
-          </footer>
         </div>
+        <Footer />
       </div>
+
     </>
   );
 };
