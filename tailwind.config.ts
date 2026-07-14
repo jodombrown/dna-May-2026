@@ -36,24 +36,26 @@ export default {
 			'2xl': '1536px',
 		},
 		extend: {
-			fontFamily: {
-				sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-				serif: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
-				heritage: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
-				display: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
-				ui: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-				mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
-			},
-			fontSize: {
-				// DNA canonical type scale (see mem://style/typography-scale)
-				display: ['2rem', { lineHeight: '1.15', fontWeight: '600' }],      // 32px - marketing hero
-				h1: ['1.5rem', { lineHeight: '1.25', fontWeight: '600' }],          // 24px - page titles
-				h2: ['1.25rem', { lineHeight: '1.3', fontWeight: '600' }],          // 20px - section headers
-				h3: ['1rem', { lineHeight: '1.4', fontWeight: '600' }],             // 16px - card titles
-				body: ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],       // 14px - default body
-				meta: ['0.8125rem', { lineHeight: '1.45', fontWeight: '400' }],     // 13px - captions
-				micro: ['0.6875rem', { lineHeight: '1.4', fontWeight: '600', letterSpacing: '0.05em' }], // 11px eyebrows
-			},
+		fontFamily: {
+			body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+			sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+			serif: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+			heritage: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+			display: ['Lora', 'Georgia', 'Times New Roman', 'serif'],
+			ui: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+			mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
+		},
+		fontSize: {
+			// DNA canonical type scale (see mem://style/typography-scale)
+			hero: ['3rem', { lineHeight: '1.05', fontWeight: '600' }],          // 48px - marketing hero only
+			display: ['2rem', { lineHeight: '1.15', fontWeight: '600' }],      // 32px - marketing hero
+			h1: ['1.5rem', { lineHeight: '1.25', fontWeight: '600' }],          // 24px - page titles
+			h2: ['1.25rem', { lineHeight: '1.3', fontWeight: '600' }],          // 20px - section headers
+			h3: ['1rem', { lineHeight: '1.4', fontWeight: '600' }],             // 16px - card titles
+			body: ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],       // 14px - default body
+			meta: ['0.8125rem', { lineHeight: '1.45', fontWeight: '400' }],     // 13px - captions
+			micro: ['0.6875rem', { lineHeight: '1.4', fontWeight: '600', letterSpacing: '0.05em' }], // 11px eyebrows
+		},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
