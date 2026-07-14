@@ -105,15 +105,9 @@ const UnifiedHeader = () => {
     path.includes('/dna/convene');
   const { isHeaderHidden } = useHeaderVisibility();
 
-  // Public share routes render their own <PublicSiteHeader />. UnifiedHeader
-  // must not also mount, or the page shows two stacked top bars.
-  const isPublicShareRoute =
-    path.startsWith('/event/') ||
-    path.startsWith('/post/');
+  // Public share routes (/event/, /post/) now render UnifiedHeader too,
+  // so signed-out chrome matches the homepage exactly across the site.
 
-  if (isPublicShareRoute) {
-    return null;
-  }
 
   if (isMobile && (hasOwnMobileHeader || isHeaderHidden)) {
     return null;
