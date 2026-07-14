@@ -19,7 +19,8 @@ import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Vide
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
-import PublicSiteHeader from "@/components/PublicSiteHeader";
+import UnifiedHeader from "@/components/UnifiedHeader";
+import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
@@ -181,7 +182,7 @@ const PublicEventPage = () => {
   if (error || !event) {
     return (
       <div className="min-h-screen bg-background">
-        <PublicSiteHeader />
+        <UnifiedHeader />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
@@ -306,7 +307,7 @@ const PublicEventPage = () => {
       <>
         {helmet}
         <div className="min-h-screen bg-background">
-          <PublicSiteHeader />
+          <UnifiedHeader />
           <CuratedEventPreview event={event} showBack={false} />
         </div>
       </>
@@ -318,7 +319,7 @@ const PublicEventPage = () => {
       {helmet}
 
       <div className="min-h-screen bg-background">
-        <PublicSiteHeader />
+        <UnifiedHeader />
 
         {/* CTA Banner for non-logged-in users */}
         {!isLoggedIn && showBanner && (

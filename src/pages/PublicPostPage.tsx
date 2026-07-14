@@ -20,7 +20,8 @@ import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
-import PublicSiteHeader from '@/components/PublicSiteHeader';
+import UnifiedHeader from '@/components/UnifiedHeader';
+import Footer from '@/components/Footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mpatapo } from '@/components/icons/adinkra';
 
@@ -161,7 +162,7 @@ const PublicPostPage = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background">
-        <PublicSiteHeader />
+        <UnifiedHeader />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
@@ -237,7 +238,7 @@ const PublicPostPage = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <PublicSiteHeader />
+        <UnifiedHeader />
 
         {/* Animated CTA Banner for non-logged-in users */}
         <AnimatePresence>
