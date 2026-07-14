@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_COLUMNS } from '@/lib/events/formatPlace';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { ConveneShell } from '@/components/convene/ConveneShell';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
@@ -48,10 +49,16 @@ const EventsIndex = () => {
         .select('*')
         .eq('status', 'published');
 
-      // Time filter
+      // Time filter. Undated events (date_confirmed false / NULL start_time)
+      // fail every start_time comparison, so they only surface under 'all'
+      // and 'watching' — the timeline scopes are dated events by definition.
       const now = new Date().toISOString();
       if (timeFilter === 'upcoming') {
         query = query.gte('start_time', now);
+      } else if (timeFilter === 'past') {
+        query = query.lt('end_time', now);
+      } else if (timeFilter === 'watching') {
+        query = query.or('start_time.is.null,date_confirmed.eq.false');
       } else if (timeFilter === 'today') {
         const endOfDay = new Date();
         endOfDay.setHours(23, 59, 59, 999);
@@ -99,8 +106,10 @@ const EventsIndex = () => {
         );
       }
 
+      // Past reads most-recent-first; every other scope reads chronologically
+      // with undated events (NULL start_time) at the end.
       const { data, error } = await query
-        .order('start_time', { ascending: true })
+        .order('start_time', { ascending: timeFilter !== 'past', nullsFirst: false })
         .limit(50);
 
       if (error) throw error;
@@ -176,6 +185,9 @@ const EventsIndex = () => {
                 <SelectItem value="today">Today</SelectItem>
                 <SelectItem value="this_week">This Week</SelectItem>
                 <SelectItem value="this_month">This Month</SelectItem>
+                <SelectItem value="past">Past</SelectItem>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="watching">Undated / Watching</SelectItem>
               </SelectContent>
             </Select>
 
@@ -275,7 +287,7 @@ const EventsIndex = () => {
                 <ConveneEventCard
                   key={event.id}
                   event={event}
-                  showRsvp
+                  showRsvp={!isEventCompleted(event)}
                   onRsvp={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
                   onClick={() => navigate(`/dna/convene/events/${event.slug || event.id}`)}
                 />

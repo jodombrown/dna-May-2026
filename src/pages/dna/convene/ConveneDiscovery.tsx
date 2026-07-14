@@ -109,7 +109,10 @@ export function ConveneDiscovery() {
   const viewMode = (searchParams.get('view') as 'list' | 'map') || 'list';
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const { data: cities = [] } = useConveneCities();
+  // Discovery shows upcoming lanes plus the undated ("Dates not yet
+  // announced") lane, so the city picker draws from that same scope —
+  // an undated Accra event still puts Accra in the picker.
+  const { data: cities = [] } = useConveneCities('upcoming');
   const { data: userLocation } = useUserCity();
 
   const updateFilters = (updates: Record<string, string | null>) => {

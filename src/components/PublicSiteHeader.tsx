@@ -12,7 +12,7 @@
  */
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, ChevronDown } from 'lucide-react';
 import dnaLogo from '@/assets/dna-logo.png';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,13 @@ import { aboutUsDropdown } from './header/navigationConfig';
 
 export const PublicSiteHeader = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
+
+  // Sign In returns the visitor to the page they were reading, not the feed.
+  const signInPath = `/auth?redirect=${encodeURIComponent(
+    location.pathname + location.search,
+  )}`;
 
   const go = (path: string) => {
     setOpen(false);
@@ -74,7 +80,7 @@ export const PublicSiteHeader = () => {
 
             <Button
               variant="outline"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate(signInPath)}
               className="border-dna-copper text-dna-copper hover:bg-dna-copper hover:text-white"
             >
               Sign In
@@ -133,7 +139,7 @@ export const PublicSiteHeader = () => {
                     <Button
                       variant="outline"
                       className="justify-start"
-                      onClick={() => go('/auth')}
+                      onClick={() => go(signInPath)}
                     >
                       Sign In
                     </Button>

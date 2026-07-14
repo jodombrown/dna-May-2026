@@ -12,13 +12,27 @@ import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { cn } from '@/lib/utils';
 
+/**
+ * Only same-origin relative paths may be a post-auth destination. A login
+ * screen that forwards to `?redirect=https://evil.com` is an open-redirect
+ * phishing vector, so anything that isn't a single-leading-slash path
+ * (no `//`, no scheme, no backslash tricks) is discarded.
+ */
+const safeRedirectPath = (value: string | null | undefined): string | null => {
+  if (!value) return null;
+  if (!value.startsWith('/') || value.startsWith('//')) return null;
+  if (value.includes('\\')) return null;
+  return value;
+};
+
 const Auth = () => {
   useScrollToTop();
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, signUp } = useAuth();
 
-  const queryMode = new URLSearchParams(location.search).get('mode');
+  const queryParams = new URLSearchParams(location.search);
+  const queryMode = queryParams.get('mode');
   // Toggle between sign-in and sign-up
   const [isSignUp, setIsSignUp] = useState(queryMode === 'signup');
 
@@ -26,8 +40,13 @@ const Auth = () => {
     setIsSignUp(queryMode === 'signup');
   }, [queryMode]);
 
-  // Where to redirect after login (passed via state.from by OnboardingGuard / protected routes)
-  const redirectTo = (location.state as { from?: string })?.from || '/dna/feed';
+  // Where to redirect after login: explicit ?redirect= (public pages like
+  // PublicEventPage), then state.from (OnboardingGuard / protected routes),
+  // then the feed. Both sources are validated to same-origin paths.
+  const redirectTo =
+    safeRedirectPath(queryParams.get('redirect')) ??
+    safeRedirectPath((location.state as { from?: string })?.from) ??
+    '/dna/feed';
   const { toast } = useToast();
   
   // Sign In State
@@ -97,7 +116,7 @@ const Auth = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
         options: {
-          redirectTo: `${window.location.origin}/dna/feed`
+          redirectTo: `${window.location.origin}${redirectTo}`
         }
       });
 
