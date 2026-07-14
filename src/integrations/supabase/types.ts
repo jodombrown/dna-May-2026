@@ -13237,7 +13237,6 @@ export type Database = {
           format: string
           going_count: number
           id: string
-          is_cancelled: boolean
           is_curated: boolean
           location_address: string
           location_city: string
@@ -13256,10 +13255,12 @@ export type Database = {
           slug: string
           speakers: Json
           start_time: string
+          status: string
           subtitle: string
           tags: string[]
           timezone: string
           title: string
+          visibility: string
         }[]
       }
       get_public_profile: { Args: { p_username: string }; Returns: Json }
