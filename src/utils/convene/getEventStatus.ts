@@ -3,6 +3,8 @@
  * Returns status badge info for event cards.
  */
 
+import { eventEndMs, eventStartMs } from '@/lib/events/eventTime';
+
 export type EventStatusType =
   | 'happening_now'
   | 'near_capacity'
@@ -22,6 +24,7 @@ export interface EventStatus {
 interface EventStatusInput {
   start_time?: string | null;
   end_time?: string | null;
+  date_confirmed?: boolean | null;
   is_cancelled?: boolean;
   max_attendees?: number | null;
   attendee_count?: number;
@@ -39,9 +42,12 @@ export function getEventStatus(
     return { type: 'cancelled', label: 'Cancelled', variant: 'destructive' };
   }
 
-  // Past
-  const endTime = event.end_time ? new Date(event.end_time) : null;
-  const startTime = event.start_time ? new Date(event.start_time) : null;
+  // Past — null-safe: an undated event (or an unannounced placeholder time)
+  // has no clock position and never reads as past or happening.
+  const endMs = eventEndMs(event);
+  const startMs = eventStartMs(event);
+  const endTime = endMs !== null ? new Date(endMs) : null;
+  const startTime = startMs !== null ? new Date(startMs) : null;
 
   if (endTime && endTime < now) {
     return { type: 'past', label: 'Past', variant: 'neutral' };

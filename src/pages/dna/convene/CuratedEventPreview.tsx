@@ -31,6 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { EventTime } from '@/components/events/EventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { curatedHostName, curatedSourceDomain, realCuratedCover } from '@/lib/events/curated';
 import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
@@ -70,14 +71,18 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
   const cover = realCuratedCover({ cover_image_url: event.cover_image_url as string | null });
   const cityLine = formatEventPlace(pickEventPlace(event), 'compact');
 
+  const dateConfirmed = (event.date_confirmed as boolean | null | undefined) ?? null;
   const timeInput = {
     start_time: event.start_time as string | null,
     end_time: endTime,
     time_confirmed: timeConfirmed,
+    date_confirmed: dateConfirmed,
     timezone: event.timezone as string | null,
   };
 
-  const isPast = endTime ? new Date(endTime) < new Date() : false;
+  // Completed is derived from the clock; an unannounced placeholder never
+  // reads as past.
+  const isPast = isEventCompleted({ end_time: endTime, date_confirmed: dateConfirmed });
 
   const { pulse, setGoing, isSettingGoing } = useCuratedEventPulse(eventId);
   // Signed-out viewers can't read attendee rows — the public projection's
@@ -181,7 +186,7 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
 
         <div className="space-y-0.5">
           <p className="font-medium text-sm text-foreground">
-            <EventTime event={timeInput} variant="date" />
+            <EventTime event={timeInput} eventId={eventId} variant="date" />
           </p>
           <EventTime
             event={timeInput}

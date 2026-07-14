@@ -16,6 +16,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useEventManagement } from '../EventManagementLayout';
 import { format, differenceInDays, eachDayOfInterval, parseISO } from 'date-fns';
+import { eventEndMs, eventStartMs, DATES_TBA } from '@/lib/events/eventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -160,14 +162,15 @@ const AnalyticsDashboard: React.FC = () => {
     enabled: !!event.id,
   });
 
-  // Calculate days until/since event
+  // Calculate days until/since event — null-safe: an undated event has no
+  // clock position, so it is neither upcoming, live, nor past.
   const now = new Date();
-  const eventStart = new Date(event.start_time);
-  const eventEnd = new Date(event.end_time);
-  const isUpcoming = eventStart > now;
-  const isLive = eventStart <= now && eventEnd >= now;
-  const isPast = eventEnd < now;
-  const daysUntil = differenceInDays(eventStart, now);
+  const startMs = eventStartMs(event);
+  const endMs = eventEndMs(event);
+  const isUpcoming = startMs !== null && startMs > now.getTime();
+  const isLive = startMs !== null && startMs <= now.getTime() && endMs !== null && endMs >= now.getTime();
+  const isPast = isEventCompleted(event, now);
+  const daysUntil = startMs !== null ? differenceInDays(new Date(startMs), now) : 0;
 
   if (isLoading) {
     return (
@@ -203,7 +206,13 @@ const AnalyticsDashboard: React.FC = () => {
           variant={isLive ? 'default' : isPast ? 'secondary' : 'outline'}
           className="self-start sm:self-auto"
         >
-          {isLive ? 'Live Now' : isPast ? 'Event Completed' : `${daysUntil} days until event`}
+          {isLive
+            ? 'Live Now'
+            : isPast
+              ? 'Event Completed'
+              : startMs === null
+                ? DATES_TBA
+                : `${daysUntil} days until event`}
         </Badge>
       </div>
 

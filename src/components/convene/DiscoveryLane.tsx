@@ -16,9 +16,10 @@ interface DiscoveryEvent extends EventPlaceInput {
   id: string;
   title: string;
   slug?: string | null;
-  start_time?: string;
+  start_time?: string | null;
   end_time?: string | null;
   time_confirmed?: boolean | null;
+  date_confirmed?: boolean | null;
   cover_image_url?: string | null;
   event_type?: string | null;
   format?: string | null;
@@ -92,9 +93,10 @@ export function DiscoveryLane({
                   event={{
                     id: event.id,
                     title: event.title,
-                    start_time: event.start_time || '',
+                    start_time: event.start_time || null,
                     end_time: event.end_time,
                     time_confirmed: event.time_confirmed,
+                    date_confirmed: event.date_confirmed,
                     ...pickEventPlace(event),
                     cover_image_url: event.cover_image_url,
                     format: event.format,
@@ -112,6 +114,7 @@ export function DiscoveryLane({
                     start_time: event.start_time,
                     end_time: event.end_time,
                     time_confirmed: event.time_confirmed,
+                    date_confirmed: event.date_confirmed,
                     ...pickEventPlace(event),
                     cover_image_url: event.cover_image_url,
                     event_type: event.event_type || undefined,

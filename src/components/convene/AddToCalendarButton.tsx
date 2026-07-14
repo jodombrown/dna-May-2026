@@ -10,6 +10,7 @@ import {
 import { Calendar, Download, ExternalLink } from 'lucide-react';
 import { downloadICSFile, getGoogleCalendarUrl, getOutlookCalendarUrl, getOffice365CalendarUrl } from '@/utils/calendarExport';
 import { toast } from 'sonner';
+import { datesAnnounced } from '@/lib/events/eventTime';
 import type { EventPlaceInput } from '@/lib/events/formatPlace';
 
 interface AddToCalendarButtonProps {
@@ -17,9 +18,10 @@ interface AddToCalendarButtonProps {
     id: string;
     title: string;
     description?: string;
-    start_time: string;
+    start_time: string | null;
     time_confirmed?: boolean | null;
-    end_time: string;
+    date_confirmed?: boolean | null;
+    end_time: string | null;
     meeting_url?: string;
     format: 'in_person' | 'virtual' | 'hybrid';
   };
@@ -37,6 +39,10 @@ export const AddToCalendarButton = ({
   variant = 'outline',
   size = 'default' 
 }: AddToCalendarButtonProps) => {
+  // No dates, nothing to put on a calendar — the surface shows
+  // "Dates not yet announced" with Notify me instead.
+  if (!datesAnnounced(event)) return null;
+
   const eventData = {
     ...event,
     organizer,

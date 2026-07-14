@@ -63,7 +63,7 @@ export function FiveCsEngagement({
       // Fetch CONVENE (event registrations)
       const { data: eventRegs } = await supabase
         .from('event_attendees')
-        .select('event_id, events(id, title, start_time)')
+        .select('event_id, events(id, title, start_time, date_confirmed)')
         .eq('user_id', userId)
         .eq('status', 'going')
         .limit(5);
@@ -101,10 +101,11 @@ export function FiveCsEngagement({
           active: (eventRegs?.length ?? 0) > 0,
           count: eventRegs?.length ?? 0,
           items:
-            eventRegs?.map((r: { event_id: string; events: { id: string; title: string; start_time: string } | null }) => ({
+            eventRegs?.map((r: { event_id: string; events: { id: string; title: string; start_time: string | null; date_confirmed: boolean | null } | null }) => ({
               id: r.events?.id || r.event_id,
               title: r.events?.title || 'Event',
-              date: r.events?.start_time,
+              // An unannounced placeholder date must never print.
+              date: r.events?.date_confirmed === false ? null : r.events?.start_time,
             })) ?? [],
         },
         collaborate: {

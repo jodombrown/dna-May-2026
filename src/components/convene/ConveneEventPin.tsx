@@ -13,9 +13,10 @@ export interface MapEventData extends EventPlaceInput {
   id: string;
   title: string;
   slug: string | null;
-  start_time: string;
+  start_time: string | null;
   end_time: string | null;
   time_confirmed: boolean | null;
+  date_confirmed: boolean | null;
   location_lat: number;
   location_lng: number;
   cover_image_url: string | null;

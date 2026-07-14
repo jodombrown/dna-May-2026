@@ -4,7 +4,7 @@ import { Calendar, TrendingUp, Users, Award, Info } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
 import { OrganizerAnalytics } from '@/hooks/useEventAnalytics';
 import { format } from 'date-fns';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { DATES_TBA, eventEndMs, eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -119,14 +119,20 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
             
             <TabsContent value="upcoming" className="mt-4">
               <EventListTable
-                events={(event_list || []).filter(e => new Date(e.start_time) > new Date())}
+                events={(event_list || []).filter(e => {
+                  const start = eventStartMs(e);
+                  return start !== null && start > Date.now();
+                })}
                 forecastShowUpRate={avg_show_up_rate}
               />
             </TabsContent>
             
             <TabsContent value="past" className="mt-4">
               <EventListTable 
-                events={(event_list || []).filter(e => new Date(e.end_time) < new Date())} 
+                events={(event_list || []).filter(e => {
+                  const end = eventEndMs(e);
+                  return end !== null && end < Date.now();
+                })} 
               />
             </TabsContent>
           </Tabs>
@@ -175,7 +181,8 @@ const EventListTable = ({ events, forecastShowUpRate }: EventListTableProps) => 
         </TableHeader>
         <TableBody>
           {events.map((event) => {
-            const isPast = new Date(event.end_time) < new Date();
+            const endMs = eventEndMs(event);
+            const isPast = endMs !== null && endMs < Date.now();
             const forecast = showForecast && !isPast
               ? predictAttendance({
                   eventStartIso: event.start_time,
@@ -194,11 +201,13 @@ const EventListTable = ({ events, forecastShowUpRate }: EventListTableProps) => 
                 <TableCell>
                   <div className="flex flex-col">
                     <span className="text-sm">
-                      {format(new Date(event.start_time), 'MMM d, yyyy')}
+                      {eventStartMs(event) !== null
+                        ? format(new Date(eventStartMs(event)!), 'MMM d, yyyy')
+                        : DATES_TBA}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {formatEventDateTime(
-                        { start_time: event.start_time, time_confirmed: null },
+                        { start_time: event.start_time, time_confirmed: null, date_confirmed: null },
                         'clock'
                       )}
                     </span>

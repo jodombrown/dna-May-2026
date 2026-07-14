@@ -31,6 +31,7 @@ import {
   useWeekendEvents,
   useNetworkEvents,
   useDiasporaEvents,
+  useUndatedEvents,
 } from '@/hooks/convene/useConveneDiscoveryLanes';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
@@ -141,6 +142,7 @@ export function ConveneDiscovery() {
   }, [heroEvent, weekendEvents, networkEvents]);
 
   const { data: diasporaEvents = [] } = useDiasporaEvents(shownIds);
+  const { data: undatedEvents = [] } = useUndatedEvents();
 
   // ── Filtered events for pill-specific queries ──
   const { data: filteredEvents = [] } = useQuery({
@@ -229,9 +231,10 @@ export function ConveneDiscovery() {
         id,
         title: event.title as string,
         slug: (event.slug as string | null) ?? null,
-        start_time: event.start_time as string,
+        start_time: event.start_time as string | null,
         end_time: (event.end_time as string | null) ?? null,
         time_confirmed: (event.time_confirmed as boolean | null) ?? null,
+        date_confirmed: (event.date_confirmed as boolean | null) ?? null,
         ...pickEventPlace(event),
         location_lat: lat,
         location_lng: lng,
@@ -465,6 +468,18 @@ export function ConveneDiscovery() {
                 onSeeAll={() => navigate('/dna/convene/events')}
                 emptyMessage="No upcoming events yet. Be the first to host one!"
               />
+
+              {/* Lane: Dates not yet announced — undated events live here,
+                  never sorted into the timeline lanes above */}
+              {undatedEvents.length > 0 && (
+                <>
+                  <CopperDivider />
+                  <DiscoveryLane
+                    title="Dates not yet announced"
+                    events={undatedEvents}
+                  />
+                </>
+              )}
 
               {/* Empty state — absolutely nothing */}
               {!heroEvent &&

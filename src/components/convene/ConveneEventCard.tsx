@@ -10,16 +10,18 @@ import { cn } from '@/lib/utils';
 import { MutualAttendeesLine } from './MutualAttendeesLine';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { EventTime } from '@/components/events/EventTime';
+import { eventStartMs } from '@/lib/events/eventTime';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 export interface ConveneEventCardProps {
   event: EventPlaceInput & {
     id: string;
     title: string;
-    start_time?: string;
+    start_time?: string | null;
     date_time?: string;
-    end_time?: string;
+    end_time?: string | null;
     time_confirmed?: boolean | null;
+    date_confirmed?: boolean | null;
     location?: string | null;
     cover_image_url?: string | null;
     banner_url?: string | null;
@@ -101,11 +103,13 @@ export function ConveneEventCard({
   const organizerUsername =
     event.organizer?.username ?? event.creator_profile?.username ?? event.organizer_username;
 
-  // Dates
+  // Dates — null-safe: an undated event (date_confirmed === false or no
+  // start_time) has no calendar position, no urgency, and is never "past".
   const rawDate = event.start_time || event.date_time;
-  const startDate = rawDate ? new Date(rawDate) : null;
-  const monthAbbrev = startDate ? format(startDate, 'MMM').toUpperCase() : '';
-  const dayNumber = startDate ? format(startDate, 'd') : '';
+  const startMs = eventStartMs({ start_time: rawDate, date_confirmed: event.date_confirmed });
+  const startDate = startMs !== null ? new Date(startMs) : null;
+  const monthAbbrev = startDate ? format(startDate, 'MMM').toUpperCase() : 'TBA';
+  const dayNumber = startDate ? format(startDate, 'd') : '·';
   const isPast = startDate ? startDate < new Date() : false;
 
   // Urgency calculation
@@ -224,7 +228,9 @@ export function ConveneEventCard({
                   start_time: rawDate,
                   end_time: event.end_time,
                   time_confirmed: event.time_confirmed,
+                  date_confirmed: event.date_confirmed,
                 }}
+                eventId={event.id}
                 variant="datetime"
               />
               {locationInfo && (
@@ -396,8 +402,8 @@ export function ConveneEventCard({
           </div>
         )}
 
-        {/* Date line */}
-        {startDate && (
+        {/* Date line — or the TBA line with its Notify-me action */}
+        {startDate ? (
           <div className="flex items-center gap-2.5">
             <div className="flex-shrink-0 w-10 h-10 border border-module-convene/30 rounded-lg bg-module-convene-light flex flex-col items-center justify-center">
               <span className="text-[9px] font-bold text-module-convene uppercase leading-none">
@@ -416,12 +422,25 @@ export function ConveneEventCard({
                   start_time: rawDate,
                   end_time: event.end_time,
                   time_confirmed: event.time_confirmed,
+                  date_confirmed: event.date_confirmed,
                 }}
                 variant="clock"
                 className="block text-xs text-muted-foreground"
               />
             </div>
           </div>
+        ) : (
+          <EventTime
+            event={{
+              start_time: rawDate,
+              end_time: event.end_time,
+              time_confirmed: event.time_confirmed,
+              date_confirmed: event.date_confirmed,
+            }}
+            eventId={event.id}
+            variant="datetime"
+            className="text-sm text-muted-foreground"
+          />
         )}
 
         {/* Social Proof — Mutual Attendees */}

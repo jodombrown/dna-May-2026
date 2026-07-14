@@ -21,6 +21,9 @@ import { ConveneShell } from '@/components/convene/ConveneShell';
 import { MutualAttendeesLine } from '@/components/convene/MutualAttendeesLine';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { useOrganizerStats } from '@/hooks/convene/useOrganizerStats';
+import { EventTime } from '@/components/events/EventTime';
+import { eventStartMs } from '@/lib/events/eventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { toast } from 'sonner';
@@ -113,25 +116,44 @@ const MyEvents = () => {
   // Hosting groups keyed on canonical `status` (the source of truth — the
   // legacy boolean mirrors are not read here). Order on the page: Drafts,
   // Published, Past/Completed, Cancelled.
+  // All clock math is null-safe: an undated event (start_time null or
+  // date_confirmed false) has NO place on a timeline — it gets its own
+  // "Dates TBA" lane instead of sorting to 1970 and reading as "past".
+  // Completed is DERIVED (isEventCompleted) — no scheduler ever writes
+  // status='completed', so the clock is the source of truth.
   const now = new Date();
   const statusOf = (e: { status?: string | null }) => e.status ?? 'published';
+  const byStartDesc = (a: { start_time?: string | null }, b: { start_time?: string | null }) =>
+    (eventStartMs(b) ?? 0) - (eventStartMs(a) ?? 0);
   const draftHosting = useMemo(
     () => hostingEvents.filter((e) => statusOf(e) === 'draft'),
     [hostingEvents]
   );
   const publishedHosting = useMemo(
-    () => hostingEvents.filter((e) => statusOf(e) === 'published' && new Date(e.start_time) > now),
+    () =>
+      hostingEvents.filter((e) => {
+        const start = eventStartMs(e);
+        return statusOf(e) === 'published' && start !== null && start > now.getTime();
+      }),
+    [hostingEvents]
+  );
+  const undatedHosting = useMemo(
+    () =>
+      hostingEvents.filter((e) => statusOf(e) === 'published' && eventStartMs(e) === null),
     [hostingEvents]
   );
   const pastHosting = useMemo(
     () =>
       hostingEvents
-        .filter(
-          (e) =>
-            statusOf(e) === 'completed' ||
-            (statusOf(e) === 'published' && new Date(e.start_time) <= now)
-        )
-        .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()),
+        .filter((e) => {
+          if (statusOf(e) === 'cancelled' || statusOf(e) === 'draft') return false;
+          const start = eventStartMs(e);
+          return (
+            isEventCompleted(e, now) ||
+            (statusOf(e) === 'published' && start !== null && start <= now.getTime())
+          );
+        })
+        .sort(byStartDesc),
     [hostingEvents]
   );
   const cancelledHosting = useMemo(
@@ -139,14 +161,25 @@ const MyEvents = () => {
     [hostingEvents]
   );
   const upcomingAttending = useMemo(
-    () => attendingEvents.filter((e) => new Date(e.start_time) > now),
+    () =>
+      attendingEvents.filter((e) => {
+        const start = eventStartMs(e);
+        return start !== null && start > now.getTime();
+      }),
+    [attendingEvents]
+  );
+  const undatedAttending = useMemo(
+    () => attendingEvents.filter((e) => eventStartMs(e) === null && statusOf(e) !== 'cancelled'),
     [attendingEvents]
   );
   const pastAttending = useMemo(
     () =>
       attendingEvents
-        .filter((e) => new Date(e.start_time) <= now)
-        .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()),
+        .filter((e) => {
+          const start = eventStartMs(e);
+          return start !== null && start <= now.getTime();
+        })
+        .sort(byStartDesc),
     [attendingEvents]
   );
 
@@ -280,6 +313,21 @@ const MyEvents = () => {
                       </section>
                     )}
 
+                    {/* Dates TBA — undated events hold their own lane,
+                        never sorted into the timeline above or below */}
+                    {undatedHosting.length > 0 && (
+                      <section>
+                        <h2 className="text-lg font-bold mb-3">
+                          Dates TBA ({undatedHosting.length})
+                        </h2>
+                        <div className="space-y-3">
+                          {undatedHosting.map((event) => (
+                            <MyEventCard key={event.id} event={event} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
                     {/* Past/Completed (collapsible on mobile) */}
                     {pastHosting.length > 0 && (
                       <Collapsible open={pastHostingOpen} onOpenChange={setPastHostingOpen}>
@@ -366,12 +414,12 @@ const MyEvents = () => {
                                   <h3 className="font-semibold text-base line-clamp-1">
                                     {event.title}
                                   </h3>
-                                  <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
-                                    {new Date(event.start_time).toLocaleDateString('en-US', {
-                                      month: 'short',
-                                      day: 'numeric',
-                                    })}
-                                  </span>
+                                  <EventTime
+                                    event={event}
+                                    variant="compact"
+                                    notifyAction={false}
+                                    className="text-xs text-muted-foreground flex-shrink-0 ml-2"
+                                  />
                                 </div>
                                 <MutualAttendeesLine eventId={event.id} />
                                 <div className="flex items-center gap-2 mt-3">
@@ -406,6 +454,26 @@ const MyEvents = () => {
                       </section>
                     )}
 
+                    {/* Dates TBA — attending events whose dates aren't
+                        announced yet; Notify me rides on the card */}
+                    {undatedAttending.length > 0 && (
+                      <section>
+                        <h2 className="text-lg font-bold mb-3">
+                          Dates TBA ({undatedAttending.length})
+                        </h2>
+                        <div className="space-y-3">
+                          {undatedAttending.map((event) => (
+                            <ConveneEventCard
+                              key={event.id}
+                              event={event}
+                              variant="compact"
+                              showMutualAttendees={false}
+                            />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
                     {/* Past attending */}
                     {pastAttending.length > 0 && (
                       <Collapsible open={pastAttendingOpen} onOpenChange={setPastAttendingOpen}>
@@ -434,12 +502,12 @@ const MyEvents = () => {
                                     <h3 className="font-semibold text-base line-clamp-1">
                                       {event.title}
                                     </h3>
-                                    <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
-                                      {new Date(event.start_time).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                      })}
-                                    </span>
+                                    <EventTime
+                                      event={event}
+                                      variant="compact"
+                                      notifyAction={false}
+                                      className="text-xs text-muted-foreground flex-shrink-0 ml-2"
+                                    />
                                   </div>
                                 </div>
                               </Card>

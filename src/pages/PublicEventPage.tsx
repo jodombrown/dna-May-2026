@@ -24,6 +24,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
 import { EventTime } from '@/components/events/EventTime';
+import { datesAnnounced } from '@/lib/events/eventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import { realCuratedCover } from '@/lib/events/curated';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { getEventSchema } from '@/components/seo/PageSEO';
@@ -205,11 +207,13 @@ const PublicEventPage = () => {
   const hostName = event.organizer_name || 'DNA Host';
   const hostAvatar = event.organizer_avatar_url;
   const goingCount = Number(event.going_count ?? 0);
-  const isPastEvent = new Date(event.end_time) < new Date();
+  // Completed is DERIVED from the clock (status='completed' has never been
+  // written); the badge and the RSVP gate both read the derivation.
+  const isPastEvent = isEventCompleted(event);
   // Canonical event state — status is the source of truth; the legacy
   // cancelled boolean mirror is scheduled for DROP and must not be read.
   const isCancelled = event.status === 'cancelled';
-  const isCompleted = event.status === 'completed';
+  const isCompleted = isPastEvent;
   const currentRsvp = userRsvp?.status;
 
   // Date/time render through the one renderer: an unconfirmed hour never
@@ -218,6 +222,7 @@ const PublicEventPage = () => {
     start_time: event.start_time,
     end_time: event.end_time,
     time_confirmed: event.time_confirmed,
+    date_confirmed: event.date_confirmed,
     timezone: event.timezone,
   };
 
@@ -238,11 +243,20 @@ const PublicEventPage = () => {
   // Generate Event structured data for Google rich results. An unconfirmed
   // hour is a fabrication in machine-readable form too — emit date-only.
   const timeUnconfirmed = event.time_confirmed === false;
+  const datesUnannounced = !datesAnnounced(event);
   const eventStructuredData = getEventSchema({
     name: eventTitle,
     description: seoDescription,
-    startDate: timeUnconfirmed ? event.start_time.slice(0, 10) : event.start_time,
-    endDate: timeUnconfirmed ? event.end_time.slice(0, 10) : event.end_time,
+    startDate: datesUnannounced
+      ? undefined
+      : timeUnconfirmed
+        ? event.start_time.slice(0, 10)
+        : event.start_time,
+    endDate: datesUnannounced || !event.end_time
+      ? undefined
+      : timeUnconfirmed
+        ? event.end_time.slice(0, 10)
+        : event.end_time,
     location: locationDisplay || undefined,
     isVirtual: event.format === 'virtual',
     image: event.cover_image_url,
@@ -394,7 +408,7 @@ const PublicEventPage = () => {
                 <Calendar className="w-5 h-5 mt-0.5 text-primary" />
                 <div>
                   <p className="font-medium">
-                    <EventTime event={timeInput} variant="date" />
+                    <EventTime event={timeInput} eventId={event.id} variant="date" />
                   </p>
                   <EventTime
                     event={timeInput}

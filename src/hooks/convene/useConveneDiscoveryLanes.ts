@@ -19,10 +19,11 @@ interface EventRow {
   id: string;
   title: string;
   slug: string | null;
-  start_time: string;
+  start_time: string | null;
   end_time: string | null;
   timezone: string | null;
   time_confirmed: boolean | null;
+  date_confirmed: boolean | null;
   location_name: string | null;
   location_address: string | null;
   location_city: string | null;
@@ -191,6 +192,32 @@ export function useNetworkEvents() {
       return attachOrganizers((events || []) as Record<string, unknown>[]);
     },
     enabled: !!user?.id,
+    staleTime: 120_000,
+  });
+}
+
+/**
+ * Dates not yet announced — published events whose dates the source hasn't
+ * announced (date_confirmed false / start_time null). They have no place on
+ * a timeline lane, so they hold their own.
+ */
+export function useUndatedEvents() {
+  return useQuery({
+    queryKey: ['convene-undated'],
+    queryFn: async (): Promise<EventRow[]> => {
+      const { data, error } = await supabase
+        .from('events')
+        .select(BASE_SELECT)
+        .eq('status', 'published')
+        .eq('visibility', 'public')
+        .eq('is_cancelled', false)
+        .or('start_time.is.null,date_confirmed.eq.false')
+        .order('created_at', { ascending: false })
+        .limit(8);
+
+      if (error) return [];
+      return attachOrganizers((data || []) as Record<string, unknown>[]);
+    },
     staleTime: 120_000,
   });
 }

@@ -13,6 +13,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { eventStartMs } from '@/lib/events/eventTime';
 import { diaEventBus } from './diaEventBus';
 
 // ── Types for query results ───────────────────────────────
@@ -82,13 +83,18 @@ async function checkUpcomingEvents(userId: string): Promise<UpcomingEvent[]> {
 
   if (!events) return [];
 
-  return events.map(event => ({
-    id: event.id as string,
-    organizer_id: event.organizer_id as string,
-    minutesUntilStart: Math.round(
-      (new Date(event.start_time as string).getTime() - now.getTime()) / (60 * 1000),
-    ),
-  }));
+  // The query bounds start_time between now and one hour out, so rows are
+  // always dated — but the math stays null-safe regardless.
+  return events
+    .filter(event => eventStartMs({ start_time: event.start_time as string | null }) !== null)
+    .map(event => ({
+      id: event.id as string,
+      organizer_id: event.organizer_id as string,
+      minutesUntilStart: Math.round(
+        (eventStartMs({ start_time: event.start_time as string | null })! - now.getTime()) /
+          (60 * 1000),
+      ),
+    }));
 }
 
 // ── Main Periodic Check Runner ────────────────────────────

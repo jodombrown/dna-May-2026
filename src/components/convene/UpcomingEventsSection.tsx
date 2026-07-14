@@ -14,8 +14,9 @@ import { EventTime } from '@/components/events/EventTime';
 interface EventItem extends EventPlaceInput {
   id: string;
   title: string;
-  start_time: string;
+  start_time: string | null;
   time_confirmed?: boolean | null;
+  date_confirmed?: boolean | null;
   format: string;
   event_type: string;
   organizer_id: string;
@@ -48,6 +49,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
             title,
             start_time,
             time_confirmed,
+            date_confirmed,
             format,
             event_type,
             organizer_id,
@@ -201,7 +203,12 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       <EventTime
-                        event={{ start_time: event.start_time, time_confirmed: event.time_confirmed }}
+                        event={{
+                          start_time: event.start_time,
+                          time_confirmed: event.time_confirmed,
+                          date_confirmed: event.date_confirmed,
+                        }}
+                        eventId={event.id}
                         variant="datetime"
                       />
                     </div>

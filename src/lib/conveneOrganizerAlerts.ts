@@ -7,6 +7,7 @@
  */
 
 import type { OrganizerAnalytics } from '@/hooks/useEventAnalytics';
+import { eventStartMs } from '@/lib/events/eventTime';
 
 export type AlertSeverity = 'info' | 'warning' | 'critical';
 
@@ -31,9 +32,10 @@ export function computeOrganizerAlerts(
   analytics: OrganizerAnalytics,
 ): OrganizerAlert[] {
   const baseline = analytics.avg_going_per_event || 0;
-  const upcoming = (analytics.event_list ?? []).filter(
-    (e) => new Date(e.start_time) > new Date(),
-  );
+  const upcoming = (analytics.event_list ?? []).filter((e) => {
+    const start = eventStartMs(e);
+    return start !== null && start > Date.now();
+  });
 
   const alerts: OrganizerAlert[] = [];
 
