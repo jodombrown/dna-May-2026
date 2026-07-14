@@ -7,9 +7,9 @@ import { Calendar, MapPin, Users, TrendingUp } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/lib/logger';
+import { EventTime } from '@/components/events/EventTime';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
@@ -20,6 +20,7 @@ interface RecommendedEvent extends EventPlaceInput {
   event_type: string;
   format: string;
   start_time: string;
+  time_confirmed: boolean | null;
   recommendation_score: number;
   recommendation_reason: string;
   friends_attending_count: number;
@@ -44,7 +45,18 @@ export const EventRecommendations = () => {
           return [];
         }
 
-        return data?.recommendations || [];
+        const recs: RecommendedEvent[] = data?.recommendations || [];
+        if (recs.length === 0) return [];
+
+        // The recommendations function predates time_confirmed and may
+        // surface curated rows — join the flag so no card prints an
+        // unverified hour.
+        const { data: flags } = await supabase
+          .from('events')
+          .select('id, time_confirmed')
+          .in('id', recs.map((r) => r.id));
+        const flagMap = new Map((flags ?? []).map((f) => [f.id, f.time_confirmed]));
+        return recs.map((r) => ({ ...r, time_confirmed: flagMap.get(r.id) ?? null }));
       } catch (error) {
         logger.warn('EventRecommendations', 'Failed to fetch recommendations:', error);
         return [];
@@ -172,11 +184,11 @@ export const EventRecommendations = () => {
               <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  {format(new Date(event.start_time), 'MMM d, h:mm a')}
+                  <EventTime event={event} variant="datetime" />
                 </div>
                 <div className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
-                  {formatEventPlace(event, 'compact') || 'TBA'}
+                  {formatEventPlace(event, 'compact')}
                 </div>
                 {event.friends_attending_count > 0 && (
                   <div className="flex items-center gap-1 text-primary font-medium">

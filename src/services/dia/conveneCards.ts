@@ -305,7 +305,7 @@ async function generateCuratedEventCard(_userId: string): Promise<DIACard | null
       category: 'convene',
       cardType: 'curated_event',
       headline: event.title,
-      body: `${location ? `📍 ${location} · ` : ''}${event.event_type || 'Event'} curated by DNA for the diaspora community.${tags.length > 0 ? ` Tags: ${tags.join(', ')}` : ''}`,
+      body: `${location ? `📍 ${location} · ` : ''}${event.event_type || 'Event'} seen by DNA at its source.${tags.length > 0 ? ` Tags: ${tags.join(', ')}` : ''}`,
       accentColor: ACCENT,
       icon: 'MateMasie',
       priority: 55,

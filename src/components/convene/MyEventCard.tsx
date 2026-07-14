@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Edit, Share2, Copy, BarChart3, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
+import { EventTime } from '@/components/events/EventTime';
 import { cn } from '@/lib/utils';
 import { ConveneEventBadge } from './ConveneEventBadge';
 import { getEventStatus } from '@/utils/convene/getEventStatus';
@@ -21,6 +22,7 @@ interface MyEventCardEvent {
   title: string;
   slug?: string | null;
   start_time: string;
+  time_confirmed?: boolean | null;
   end_time?: string | null;
   status?: string | null;
   max_attendees?: number | null;
@@ -114,7 +116,10 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
             </div>
 
             <p className="text-sm text-muted-foreground">
-              {format(startDate, 'EEE, MMM d · h:mm a')}
+              <EventTime
+                event={{ start_time: event.start_time, time_confirmed: event.time_confirmed }}
+                variant="datetime"
+              />
             </p>
 
             <p className="text-xs text-muted-foreground mt-1">{registrationLabel}</p>

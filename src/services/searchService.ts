@@ -205,7 +205,7 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
   if (!filters?.types.length || filters.types.includes('event')) {
     const { data: events, error: eventsError } = await supabase
       .from('events')
-      .select('id, title, description, location_name, location_city, start_time, cover_image_url, created_at, event_type, is_cancelled')
+      .select('id, title, description, location_name, location_city, start_time, time_confirmed, cover_image_url, created_at, event_type, is_cancelled')
       .eq('status', 'published')
       .or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location_name.ilike.${searchTerm},location_city.ilike.${searchTerm}`)
       .limit(10);
@@ -221,6 +221,7 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
         metadata: {
           location: event.location_name || event.location_city,
           date_time: event.start_time,
+          time_confirmed: event.time_confirmed,
           event_type: event.event_type
         }
       })));

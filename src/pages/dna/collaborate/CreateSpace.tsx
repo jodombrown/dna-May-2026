@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,12 +34,25 @@ const VISIBILITIES: { value: SpaceVisibility; label: string; hint: string }[] = 
 
 export default function CreateSpace() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
 
-  const [name, setName] = useState('');
-  const [tagline, setTagline] = useState('');
-  const [description, setDescription] = useState('');
-  const [spaceType, setSpaceType] = useState('');
+  // Surfaces that open a Space with context (e.g. a curated event's
+  // "go together") seed the form through router state; the member still
+  // owns every value before submit.
+  const prefill = (location.state ?? {}) as {
+    name?: string;
+    tagline?: string;
+    description?: string;
+    spaceType?: string;
+  };
+
+  const [name, setName] = useState(prefill.name ?? '');
+  const [tagline, setTagline] = useState(prefill.tagline ?? '');
+  const [description, setDescription] = useState(prefill.description ?? '');
+  const [spaceType, setSpaceType] = useState(
+    SPACE_TYPES.some((t) => t.value === prefill.spaceType) ? prefill.spaceType! : ''
+  );
   const [visibility, setVisibility] = useState<SpaceVisibility>('community');
   const [submitting, setSubmitting] = useState(false);
 

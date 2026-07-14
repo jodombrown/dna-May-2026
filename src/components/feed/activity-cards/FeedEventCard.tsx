@@ -7,6 +7,7 @@ import { Calendar, MapPin, Video, Globe, MoreHorizontal, Edit3, Pin, Link, Trash
 import { useNavigate } from 'react-router-dom';
 import { Activity } from '@/types/activity';
 import { format, formatDistanceToNow } from 'date-fns';
+import { formatEventDateTime } from '@/lib/events/eventTime';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
@@ -90,9 +91,14 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
   const dayNumber = eventDate ? format(eventDate, 'd') : '';
   const dayOfWeek = eventDate ? format(eventDate, 'EEEE') : '';
   const fullDate = eventDate ? format(eventDate, 'MMMM d') : '';
-  const timeRange = eventDate 
-    ? `${format(eventDate, 'h:mm a')}${eventData.end_time ? ` - ${format(new Date(eventData.end_time), 'h:mm a')}` : ''}`
-    : '';
+  const timeRange = formatEventDateTime(
+    {
+      start_time: eventData.start_time,
+      end_time: eventData.end_time,
+      time_confirmed: eventData.time_confirmed,
+    },
+    'clock'
+  );
 
   // Get location display
   const getLocationDisplay = () => {
@@ -193,7 +199,7 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
-                <p className="text-sm text-muted-foreground">{timeRange}</p>
+                {timeRange && <p className="text-sm text-muted-foreground">{timeRange}</p>}
               </div>
             </div>
           )}

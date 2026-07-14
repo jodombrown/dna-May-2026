@@ -13,6 +13,8 @@ interface EventResult {
   description: string | null;
   start_time: string | null;
   end_time: string | null;
+  /** false → the stored clock is unverified; treat start/end as dates only. */
+  time_confirmed: boolean | null;
   location_name: string | null;
   location_city: string | null;
   location_country: string | null;
@@ -31,7 +33,7 @@ export default defineTool({
     const nowIso = new Date().toISOString();
     const n = limit ?? 10;
     let path =
-      `events?select=id,title,description,start_time,end_time,location_name,location_city,location_country,event_type,slug` +
+      `events?select=id,title,description,start_time,end_time,time_confirmed,location_name,location_city,location_country,event_type,slug` +
       `&start_time=gte.${nowIso}&order=start_time.asc&limit=${n}`;
     if (query) {
       const q = encodeURIComponent(query.replace(/[*(),]/g, ""));
@@ -44,6 +46,7 @@ export default defineTool({
       description: (r.description as string) ?? null,
       start_time: (r.start_time as string) ?? null,
       end_time: (r.end_time as string) ?? null,
+      time_confirmed: (r.time_confirmed as boolean) ?? null,
       location_name: (r.location_name as string) ?? null,
       location_city: (r.location_city as string) ?? null,
       location_country: (r.location_country as string) ?? null,

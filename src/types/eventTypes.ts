@@ -19,6 +19,7 @@ export interface Event {
   meeting_platform?: string | null;
   start_time?: string;
   end_time?: string;
+  time_confirmed?: boolean | null;
   timezone?: string;
   status?: string;
   visibility?: string;

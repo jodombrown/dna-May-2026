@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users as UsersIcon, Image as ImageIcon, Video, Globe } from 'lucide-react';
 import { format } from 'date-fns';
+import { formatEventDateTime } from '@/lib/events/eventTime';
 import { Event } from '@/types/search';
 import { formatEventPlace } from '@/lib/events/formatPlace';
 import ConnectDialogs from './ConnectDialogs';
@@ -128,8 +129,11 @@ const EventCard: React.FC<EventCardProps> = ({
   const monthAbbrev = parsedDate ? format(parsedDate, 'MMM').toUpperCase() : '';
   const dayNumber = parsedDate ? format(parsedDate, 'd') : '';
   const dayOfWeek = parsedDate ? format(parsedDate, 'EEEE') : '';
-  const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : 'Date TBD';
-  const timeRange = parsedDate ? format(parsedDate, 'h:mm a') : '';
+  const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : '';
+  const timeRange = formatEventDateTime(
+    { start_time: eventDate, time_confirmed: event.time_confirmed },
+    'clock'
+  );
 
   // Location info - hide if not available
   const getLocationInfo = () => {
@@ -216,8 +220,10 @@ const EventCard: React.FC<EventCardProps> = ({
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
-                <p className="text-sm text-muted-foreground">{timeRange}</p>
+                {fullDate && (
+                  <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
+                )}
+                {timeRange && <p className="text-sm text-muted-foreground">{timeRange}</p>}
               </div>
             </div>
           )}

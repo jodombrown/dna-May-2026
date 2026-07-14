@@ -9,6 +9,8 @@ interface EventData extends EventPlaceInput {
   description?: string;
   start_time: string;
   end_time: string;
+  /** false → the hour is unverified; export dates only, never a clock. */
+  time_confirmed?: boolean | null;
   meeting_url?: string;
   format: 'in_person' | 'virtual' | 'hybrid';
   organizer?: {
@@ -39,13 +41,20 @@ function dateToICSFormat(isoString: string): DateArray {
   ];
 }
 
+/** Date-only DateArray for events whose hour is unverified. */
+function dateOnlyICSFormat(isoString: string): DateArray {
+  const date = new Date(isoString);
+  return [date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate()];
+}
+
 /**
  * Generate a .ics file for an event
  */
 export function generateICSFile(event: EventData): { error?: Error; value?: string } {
+  // Venue when known, else city/locality — never a placeholder.
   const location = event.format === 'virtual'
     ? event.meeting_url || 'Online Event'
-    : physicalLocation(event, true) || 'Location TBA';
+    : physicalLocation(event, true);
 
   const eventUrl = `${window.location.origin}/dna/convene/events/${event.slug || event.id}`;
   
@@ -58,9 +67,12 @@ export function generateICSFile(event: EventData): { error?: Error; value?: stri
     .join('\n')
     .substring(0, 1000); // Limit description length
 
+  // An unverified hour exports as an all-day (date-only) entry — putting a
+  // fabricated 9 AM on someone's phone is the fabrication with an alarm.
+  const timeConfirmed = event.time_confirmed !== false;
   const eventAttributes: EventAttributes = {
-    start: dateToICSFormat(event.start_time),
-    end: dateToICSFormat(event.end_time),
+    start: timeConfirmed ? dateToICSFormat(event.start_time) : dateOnlyICSFormat(event.start_time),
+    end: timeConfirmed ? dateToICSFormat(event.end_time) : dateOnlyICSFormat(event.end_time),
     title: event.title,
     description,
     location,
@@ -105,8 +117,11 @@ export function getGoogleCalendarUrl(event: EventData): string {
   const startDate = new Date(event.start_time);
   const endDate = new Date(event.end_time);
   
-  // Format dates as YYYYMMDDTHHMMSSZ
+  // Format dates as YYYYMMDDTHHMMSSZ — or YYYYMMDD (all-day) when the hour
+  // is unverified.
+  const timeConfirmed = event.time_confirmed !== false;
   const formatDate = (date: Date) => {
+    if (!timeConfirmed) return date.toISOString().slice(0, 10).replace(/-/g, '');
     return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   };
 

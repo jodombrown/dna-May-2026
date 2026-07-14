@@ -4,6 +4,7 @@ import { Calendar, TrendingUp, Users, Award, Info } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
 import { OrganizerAnalytics } from '@/hooks/useEventAnalytics';
 import { format } from 'date-fns';
+import { formatEventDateTime } from '@/lib/events/eventTime';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -196,7 +197,10 @@ const EventListTable = ({ events, forecastShowUpRate }: EventListTableProps) => 
                       {format(new Date(event.start_time), 'MMM d, yyyy')}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {format(new Date(event.start_time), 'h:mm a')}
+                      {formatEventDateTime(
+                        { start_time: event.start_time, time_confirmed: null },
+                        'clock'
+                      )}
                     </span>
                   </div>
                 </TableCell>

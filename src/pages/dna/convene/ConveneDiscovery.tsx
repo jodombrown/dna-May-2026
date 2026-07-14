@@ -38,6 +38,7 @@ import { ConveneSearchOverlay } from '@/components/convene/ConveneSearchOverlay'
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_SELECT, pickEventPlace } from '@/lib/events/formatPlace';
+import { EVENT_TIME_SELECT } from '@/lib/events/eventTime';
 import type { MapEventData } from '@/components/convene/ConveneEventPin';
 
 const LazyMapView = lazy(() => import('@/components/convene/ConveneMapView'));
@@ -148,7 +149,7 @@ export function ConveneDiscovery() {
       let query = supabase
         .from('events')
         .select(`
-          id, title, slug, start_time, end_time, ${EVENT_PLACE_SELECT},
+          id, title, slug, ${EVENT_TIME_SELECT}, ${EVENT_PLACE_SELECT},
           description, short_description,
           cover_image_url, event_type, format, is_cancelled, max_attendees,
           organizer_id, is_curated, curated_source, curated_source_url,
@@ -230,6 +231,7 @@ export function ConveneDiscovery() {
         slug: (event.slug as string | null) ?? null,
         start_time: event.start_time as string,
         end_time: (event.end_time as string | null) ?? null,
+        time_confirmed: (event.time_confirmed as boolean | null) ?? null,
         ...pickEventPlace(event),
         location_lat: lat,
         location_lng: lng,
