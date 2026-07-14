@@ -1674,6 +1674,134 @@ export type Database = {
         }
         Relationships: []
       }
+      curated_source_checks: {
+        Row: {
+          consecutive_failures: number
+          created_at: string
+          event_id: string
+          last_changed_at: string | null
+          last_checked_at: string | null
+          last_content_hash: string | null
+          last_error: string | null
+          needs_review: boolean
+          review_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_url: string
+          updated_at: string
+        }
+        Insert: {
+          consecutive_failures?: number
+          created_at?: string
+          event_id: string
+          last_changed_at?: string | null
+          last_checked_at?: string | null
+          last_content_hash?: string | null
+          last_error?: string | null
+          needs_review?: boolean
+          review_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_url: string
+          updated_at?: string
+        }
+        Update: {
+          consecutive_failures?: number
+          created_at?: string
+          event_id?: string
+          last_changed_at?: string | null
+          last_checked_at?: string | null
+          last_content_hash?: string | null
+          last_error?: string | null
+          needs_review?: boolean
+          review_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curated_source_checks_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: true
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curated_source_checks_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curated_source_checks_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      curated_source_reviews: {
+        Row: {
+          content_hash: string | null
+          created_at: string
+          detail: string | null
+          event_id: string
+          id: string
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+        }
+        Insert: {
+          content_hash?: string | null
+          created_at?: string
+          detail?: string | null
+          event_id: string
+          id?: string
+          reason: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Update: {
+          content_hash?: string | null
+          created_at?: string
+          detail?: string | null
+          event_id?: string
+          id?: string
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "curated_source_reviews_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curated_source_reviews_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curated_source_reviews_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       currency_stances: {
         Row: {
           archived_at: string | null
@@ -3386,6 +3514,7 @@ export type Database = {
           curated_source: string | null
           curated_source_url: string | null
           date_confirmed: boolean
+          date_decay_notified_at: string | null
           description: string
           dress_code: string | null
           end_time: string | null
@@ -3416,6 +3545,8 @@ export type Database = {
           requires_approval: boolean
           short_description: string | null
           slug: string | null
+          source_last_checked: string | null
+          source_last_hash: string | null
           speakers: Json | null
           start_time: string | null
           status: string
@@ -3438,6 +3569,7 @@ export type Database = {
           curated_source?: string | null
           curated_source_url?: string | null
           date_confirmed?: boolean
+          date_decay_notified_at?: string | null
           description: string
           dress_code?: string | null
           end_time?: string | null
@@ -3468,6 +3600,8 @@ export type Database = {
           requires_approval?: boolean
           short_description?: string | null
           slug?: string | null
+          source_last_checked?: string | null
+          source_last_hash?: string | null
           speakers?: Json | null
           start_time?: string | null
           status?: string
@@ -3490,6 +3624,7 @@ export type Database = {
           curated_source?: string | null
           curated_source_url?: string | null
           date_confirmed?: boolean
+          date_decay_notified_at?: string | null
           description?: string
           dress_code?: string | null
           end_time?: string | null
@@ -3520,6 +3655,8 @@ export type Database = {
           requires_approval?: boolean
           short_description?: string | null
           slug?: string | null
+          source_last_checked?: string | null
+          source_last_hash?: string | null
           speakers?: Json | null
           start_time?: string | null
           status?: string
@@ -13960,6 +14097,14 @@ export type Database = {
       mark_notifications_read: {
         Args: { p_notification_ids: string[]; p_user_id: string }
         Returns: undefined
+      }
+      notify_window_decay: {
+        Args: { p_lead_days?: number }
+        Returns: {
+          event_id: string
+          event_title: string
+          subscribers_notified: number
+        }[]
       }
       offer_fulfillment: {
         Args: {
