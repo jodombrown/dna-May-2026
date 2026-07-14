@@ -3359,9 +3359,10 @@ export type Database = {
           curated_at: string | null
           curated_source: string | null
           curated_source_url: string | null
+          date_confirmed: boolean
           description: string
           dress_code: string | null
-          end_time: string
+          end_time: string | null
           event_type: Database["public"]["Enums"]["event_type"]
           format: Database["public"]["Enums"]["event_format"]
           group_id: string | null
@@ -3388,7 +3389,7 @@ export type Database = {
           short_description: string | null
           slug: string | null
           speakers: Json | null
-          start_time: string
+          start_time: string | null
           status: string
           subtitle: string | null
           tags: string[] | null
@@ -3407,9 +3408,10 @@ export type Database = {
           curated_at?: string | null
           curated_source?: string | null
           curated_source_url?: string | null
+          date_confirmed?: boolean
           description: string
           dress_code?: string | null
-          end_time: string
+          end_time?: string | null
           event_type: Database["public"]["Enums"]["event_type"]
           format: Database["public"]["Enums"]["event_format"]
           group_id?: string | null
@@ -3436,7 +3438,7 @@ export type Database = {
           short_description?: string | null
           slug?: string | null
           speakers?: Json | null
-          start_time: string
+          start_time?: string | null
           status?: string
           subtitle?: string | null
           tags?: string[] | null
@@ -3455,9 +3457,10 @@ export type Database = {
           curated_at?: string | null
           curated_source?: string | null
           curated_source_url?: string | null
+          date_confirmed?: boolean
           description?: string
           dress_code?: string | null
-          end_time?: string
+          end_time?: string | null
           event_type?: Database["public"]["Enums"]["event_type"]
           format?: Database["public"]["Enums"]["event_format"]
           group_id?: string | null
@@ -3484,7 +3487,7 @@ export type Database = {
           short_description?: string | null
           slug?: string | null
           speakers?: Json | null
-          start_time?: string
+          start_time?: string | null
           status?: string
           subtitle?: string | null
           tags?: string[] | null
@@ -13234,6 +13237,7 @@ export type Database = {
           cancellation_reason: string
           cover_image_url: string
           curated_source_url: string
+          date_confirmed: boolean
           description: string
           end_time: string
           event_type: string
