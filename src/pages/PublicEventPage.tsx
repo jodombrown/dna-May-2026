@@ -20,7 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import { format, formatDistanceToNow } from 'date-fns';
-import UnifiedHeader from '@/components/UnifiedHeader';
+import PublicSiteHeader from "@/components/PublicSiteHeader";
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
@@ -177,7 +177,7 @@ const PublicEventPage = () => {
   if (error || !event) {
     return (
       <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+        <PublicSiteHeader />
         <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
           <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
           <h1 className="text-3xl font-bold mb-4">Event Not Found</h1>
@@ -275,15 +275,15 @@ const PublicEventPage = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        <UnifiedHeader />
+        <PublicSiteHeader />
 
-        {/* Sticky CTA Banner for non-logged-in users */}
+        {/* CTA Banner for non-logged-in users */}
         {!isLoggedIn && showBanner && (
-          <div className="sticky top-0 z-40 px-4 sm:px-0 pt-2">
+          <div className="px-4 sm:px-0 pt-3">
             <motion.div
-              initial={{ y: -30, opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+              initial={{ y: -10, opacity: 0 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
               className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest sm:mx-auto sm:max-w-3xl rounded-lg shadow-md"
             >
               <div className="px-4 py-2.5 flex items-center justify-between gap-3">
@@ -307,7 +307,8 @@ const PublicEventPage = () => {
           </div>
         )}
 
-        <div className="container max-w-3xl mx-auto px-4 py-6">
+        <div className="container max-w-3xl mx-auto px-4 pt-3 pb-6">
+
           {/* Cover Image */}
           {event.cover_image_url && (
             <motion.div
