@@ -3,11 +3,12 @@
  *
  * Full-page reading experience for stories created via Universal Composer.
  * Uses slug or post_id from posts table.
- * Publicly accessible for external sharing.
+ * Signed-out visitors are redirected to the public /post/:postId page
+ * (PublicSiteHeader, no in-app chrome); this in-app view is members-only.
  */
 
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,7 +28,7 @@ import { cn } from '@/lib/utils';
 export default function FeedStoryDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [showComments, setShowComments] = useState(false);
@@ -120,6 +121,23 @@ export default function FeedStoryDetail() {
     setPreviewImageUrl(url);
     setShowImagePreview(true);
   };
+
+  // Never redirect on an unresolved session: auth `loading` is true during
+  // the initial session check, so `user` is null for a signed-in member on a
+  // cold load or hard refresh. Hold a neutral loader (no in-app chrome) until
+  // the session resolves, then send signed-out visitors to the public post
+  // page. Redirect on the route param — /post/:postId resolves slug or UUID.
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to={`/post/${slug}`} replace />;
+  }
 
   if (isLoading) {
     return (

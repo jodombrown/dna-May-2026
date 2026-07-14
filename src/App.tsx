@@ -573,7 +573,8 @@ function App() {
                   <EventsIndex />
                 </OnboardingGuard>
               } />
-              {/* Event detail is public - no auth required for viewing */}
+              {/* Event detail is members-only: once the session resolves,
+                  signed-out visitors are redirected to /event/:slugOrId */}
               <Route path="/dna/convene/events/:id" element={<EventDetail />} />
               {/* Event creation wizard — full 5-step flow */}
               {/* Event creation now handled by Universal Composer */}
@@ -725,7 +726,8 @@ function App() {
                   <CreateStory />
                 </OnboardingGuard>
               } />
-              {/* Feed Stories - slug-based detail view (public, no auth required) */}
+              {/* Feed Stories - slug-based detail view. Members-only: once the
+                  session resolves, signed-out visitors go to /post/:postId */}
               <Route path="/dna/story/:slug" element={<FeedStoryDetail />} />
               {/* Convey Items - legacy slug-based detail view (public, no auth required) */}
               <Route path="/dna/convey/stories/:slug" element={<StoryDetail />} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Navigate, Link } from 'react-router-dom';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -90,7 +90,7 @@ const REPORT_REASONS = [
 const EventDetail = () => {
   const { id: slugOrId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
@@ -474,6 +474,28 @@ const EventDetail = () => {
       toast({ title: 'Link Copied', description: 'Event link copied to clipboard' });
     }
   };
+
+  // Never redirect on an unresolved session: `loading` is true during the
+  // initial session check, so `user` is null for a signed-in visitor on any
+  // cold load or hard refresh. A bare `!user` redirect here would bounce
+  // organizers to the public view — with replace, permanently. Wait it out
+  // behind a neutral loader (no shell: the viewer is not yet known to be a
+  // member, so no in-app chrome may flash).
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // Signed out (session resolved) → the public event page, which carries
+  // PublicSiteHeader instead of in-app chrome. Redirect on the route param,
+  // NOT on the fetched-row eventId (null until the query lands, and may be a
+  // slug anyway): /event/:slugOrId resolves either form via get_public_event.
+  if (!user) {
+    return <Navigate to={`/event/${slugOrId}`} replace />;
+  }
 
   if (isLoading) {
     return (
