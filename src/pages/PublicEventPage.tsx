@@ -695,6 +695,8 @@ const PublicEventPage = () => {
 
         </div>
         <Footer />
+      </div>
+
 
     </>
   );
