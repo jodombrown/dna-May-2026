@@ -204,7 +204,10 @@ const PublicEventPage = () => {
   const hostAvatar = event.organizer_avatar_url;
   const goingCount = Number(event.going_count ?? 0);
   const isPastEvent = new Date(event.end_time) < new Date();
-  const isCancelled = event.is_cancelled;
+  // Canonical event state — status is the source of truth; the legacy
+  // cancelled boolean mirror is scheduled for DROP and must not be read.
+  const isCancelled = event.status === 'cancelled';
+  const isCompleted = event.status === 'completed';
   const currentRsvp = userRsvp?.status;
 
   // Format date/time
@@ -309,6 +312,16 @@ const PublicEventPage = () => {
 
         <div className="container max-w-3xl mx-auto px-4 pt-3 pb-6">
 
+          {/* Cancellation banner — shown to everyone, carries the organizer's reason */}
+          {isCancelled && (
+            <div className="mb-4 rounded-lg border-2 border-destructive/50 bg-destructive/5 p-4">
+              <p className="font-semibold text-destructive">This event has been cancelled</p>
+              {event.cancellation_reason && (
+                <p className="mt-1 text-sm text-muted-foreground">{event.cancellation_reason}</p>
+              )}
+            </div>
+          )}
+
           {/* Cover Image */}
           {event.cover_image_url && (
             <motion.div
@@ -397,8 +410,8 @@ const PublicEventPage = () => {
                 </Button>
               </div>
 
-              {/* RSVP Buttons */}
-              {!isPastEvent && !isCancelled && (
+              {/* RSVP Buttons — dead on a cancelled or completed event */}
+              {!isPastEvent && !isCancelled && !isCompleted && (
                 <div className="flex items-center gap-2">
                   {currentRsvp === 'going' ? (
                     <Button 
@@ -443,7 +456,7 @@ const PublicEventPage = () => {
                 </div>
               )}
 
-              {(isPastEvent || isCancelled) && (
+              {(isPastEvent || isCancelled || isCompleted) && (
                 <div className="text-center py-2 text-muted-foreground">
                   {isCancelled ? 'This event has been cancelled' : 'This event has ended'}
                 </div>

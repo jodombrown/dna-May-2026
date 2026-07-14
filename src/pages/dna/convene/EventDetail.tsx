@@ -340,6 +340,29 @@ const EventDetail = () => {
     },
   });
 
+  // Publish event mutation (draft → published)
+  const publishEventMutation = useMutation({
+    mutationFn: async () => {
+      if (!user || !id) throw new Error('Not authenticated');
+      const { error } = await supabase
+        .from('events')
+        .update({
+          // status: 'published' plus the transitional legacy mirror
+          ...eventStateWrite({ status: 'published' }),
+        })
+        .eq('id', id)
+        .eq('organizer_id', user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      invalidateAllEventCaches(queryClient, id);
+      toast({ title: 'Event Published', description: 'Your event is now live and visible to attendees.' });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Failed to publish event', description: error.message, variant: 'destructive' });
+    },
+  });
+
   // Delete event mutation
   const deleteEventMutation = useMutation({
     mutationFn: async () => {
@@ -491,6 +514,14 @@ const EventDetail = () => {
   // and the projection carries no organizer_id, so both sides would be
   // undefined and wrongly read as "organizer".
   const isOrganizer = !!user && user.id === event.organizer_id;
+  // Canonical event state. (status, visibility) is the source of truth;
+  // the legacy cancelled/published boolean columns are trigger-derived
+  // mirrors scheduled for DROP and must not be read here.
+  const eventStatus = (event.status as string | undefined) ?? 'published';
+  const eventVisibility = (event.visibility as string | undefined) ?? 'public';
+  const isCancelled = eventStatus === 'cancelled';
+  const isDraft = eventStatus === 'draft';
+  const isCompleted = eventStatus === 'completed';
   const isPastEvent = event.end_time ? new Date(event.end_time as string) < new Date() : false;
   const place = formatEventPlace(pickEventPlace(event), 'full');
   const currentRsvp = userRsvp?.status || null;
@@ -577,6 +608,26 @@ const EventDetail = () => {
           Back to Events
         </button>
 
+        {/* Draft banner — the anti-silent-failure control. A draft is invisible
+            to everyone but the organizer; without this banner an organizer can
+            share a link nobody else can open and never learn why. */}
+        {isDraft && isOrganizer && (
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border-2 border-amber-500 bg-amber-500/10 p-4">
+            <p className="flex-1 font-semibold text-amber-700 dark:text-amber-400">
+              This event is a draft. Nobody can see it but you.
+            </p>
+            <Button
+              className="shrink-0"
+              onClick={() => publishEventMutation.mutate()}
+              disabled={publishEventMutation.isPending}
+            >
+              {publishEventMutation.isPending
+                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Publishing...</>
+                : 'Publish Event'}
+            </Button>
+          </div>
+        )}
+
         {/* Hero Image — only render when there's a real cover to avoid an empty banner that reads as a duplicate header */}
         {(event.cover_image_url as string) && (
           <div ref={heroRef} className="relative overflow-hidden rounded-lg mb-6 sm:mb-8">
@@ -595,7 +646,12 @@ const EventDetail = () => {
                 <Badge variant="secondary" className="capitalize">{event.event_type as string}</Badge>
                 <Badge variant="outline" className="capitalize">{(event.format as string).replace('_', ' ')}</Badge>
                 {isPastEvent && <Badge variant="secondary">Past Event</Badge>}
-                {event.is_cancelled && <Badge variant="destructive">Cancelled</Badge>}
+                {isCancelled && <Badge variant="destructive">Cancelled</Badge>}
+                {isCompleted && <Badge variant="secondary">Completed</Badge>}
+                {isDraft && isOrganizer && <Badge variant="outline">Draft</Badge>}
+                {(eventVisibility === 'community' || eventVisibility === 'private') && (
+                  <Badge variant="outline" className="capitalize">{eventVisibility}</Badge>
+                )}
               </div>
               <h1 className="text-2xl sm:text-4xl font-bold mb-2">{event.title as string}</h1>
               <EventCountdown startTime={event.start_time as string} endTime={event.end_time as string} className="mt-1" />
@@ -628,7 +684,7 @@ const EventDetail = () => {
                         <QrCode className="mr-2 h-4 w-4" /> Check-in
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      {!event.is_cancelled && (
+                      {!isCancelled && !isCompleted && (
                         <DropdownMenuItem onClick={() => setShowCancelDialog(true)} className="text-amber-600 focus:text-amber-600">
                           <XCircle className="mr-2 h-4 w-4" /> Cancel Event
                         </DropdownMenuItem>
@@ -840,7 +896,7 @@ const EventDetail = () => {
         <StickyRSVPBar
           eventId={id}
           isPastEvent={isPastEvent}
-          isCancelled={!!event.is_cancelled}
+          isCancelled={isCancelled}
           isOrganizer={isOrganizer}
           isAnonymous={!user}
           currentRsvp={currentRsvp}
