@@ -19,6 +19,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useEventManagement } from '../EventManagementLayout';
 import { formatDistanceToNow, differenceInDays, format } from 'date-fns';
+import { eventStartMs } from '@/lib/events/eventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
 interface OverviewStats {
@@ -176,18 +178,22 @@ const OverviewDashboard: React.FC = () => {
     enabled: !!event.id,
   });
 
-  const daysUntilEvent = differenceInDays(new Date(event.start_time), new Date());
+  // Completed is derived from the clock; an undated event has no countdown.
+  const startMs = eventStartMs(event);
+  const daysUntilEvent = startMs !== null ? differenceInDays(new Date(startMs), new Date()) : null;
   const eventStatus = event.is_cancelled
     ? 'Cancelled'
-    : new Date(event.end_time) < new Date()
+    : isEventCompleted(event)
       ? 'Completed'
-      : new Date(event.start_time) <= new Date()
-        ? 'Happening Now'
-        : daysUntilEvent === 0
-          ? 'Today'
-          : daysUntilEvent === 1
-            ? 'Tomorrow'
-            : `${daysUntilEvent} days away`;
+      : startMs === null
+        ? 'Dates not yet announced'
+        : startMs <= Date.now()
+          ? 'Happening Now'
+          : daysUntilEvent === 0
+            ? 'Today'
+            : daysUntilEvent === 1
+              ? 'Tomorrow'
+              : `${daysUntilEvent} days away`;
 
   const checkInPercentage = stats && stats.totalRegistered > 0
     ? Math.round((stats.checkedIn / stats.totalRegistered) * 100)

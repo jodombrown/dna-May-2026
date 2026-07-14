@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, CalendarPlus, Compass, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_SELECT, pickEventPlace } from '@/lib/events/formatPlace';
+import { eventStartMs } from '@/lib/events/eventTime';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
@@ -51,6 +52,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
           start_time,
           end_time,
           time_confirmed,
+          date_confirmed,
           timezone,
           max_attendees,
           cover_image_url,
@@ -93,6 +95,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         start_time: event.start_time,
         end_time: event.end_time,
         time_confirmed: event.time_confirmed,
+        date_confirmed: event.date_confirmed,
         timezone: event.timezone,
         max_attendees: event.max_attendees,
         cover_image_url: event.cover_image_url,
@@ -137,6 +140,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
           start_time,
           end_time,
           time_confirmed,
+          date_confirmed,
           timezone,
           max_attendees,
           cover_image_url,
@@ -180,6 +184,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         start_time: event.start_time,
         end_time: event.end_time,
         time_confirmed: event.time_confirmed,
+        date_confirmed: event.date_confirmed,
         timezone: event.timezone,
         max_attendees: event.max_attendees,
         cover_image_url: event.cover_image_url,
@@ -194,26 +199,34 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
     enabled: !!profileUserId,
   });
 
-  // Split events into upcoming and past
+  // Split events into upcoming, past, and undated — all null-safe. An
+  // undated event (no announced start) never sorts into the timeline; it
+  // holds its own "Dates TBA" lane.
   const now = new Date();
-  const upcomingHosting = hostingEvents.filter(e => new Date(e.start_time) > now);
-  const pastHosting = hostingEvents.filter(e => new Date(e.start_time) <= now);
-  const upcomingAttending = attendingEvents.filter(e => new Date(e.start_time) > now);
-  const pastAttending = attendingEvents.filter(e => new Date(e.start_time) <= now);
+  const isUpcoming = (e: EventListItem) => {
+    const start = eventStartMs(e);
+    return start !== null && start > now.getTime();
+  };
+  const isPastEvent = (e: EventListItem) => {
+    const start = eventStartMs(e);
+    return start !== null && start <= now.getTime();
+  };
+  const upcomingHosting = hostingEvents.filter(isUpcoming);
+  const pastHosting = hostingEvents.filter(isPastEvent);
+  const undatedHosting = hostingEvents.filter(e => eventStartMs(e) === null);
+  const upcomingAttending = attendingEvents.filter(isUpcoming);
+  const pastAttending = attendingEvents.filter(isPastEvent);
+  const undatedAttending = attendingEvents.filter(e => eventStartMs(e) === null);
 
   // Sort: upcoming ascending (nearest first), past descending (most recent first)
-  const sortedUpcomingHosting = [...upcomingHosting].sort(
-    (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-  );
-  const sortedPastHosting = [...pastHosting].sort(
-    (a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
-  );
-  const sortedUpcomingAttending = [...upcomingAttending].sort(
-    (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-  );
-  const sortedPastAttending = [...pastAttending].sort(
-    (a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
-  );
+  const byStartAsc = (a: EventListItem, b: EventListItem) =>
+    (eventStartMs(a) ?? 0) - (eventStartMs(b) ?? 0);
+  const byStartDesc = (a: EventListItem, b: EventListItem) =>
+    (eventStartMs(b) ?? 0) - (eventStartMs(a) ?? 0);
+  const sortedUpcomingHosting = [...upcomingHosting].sort(byStartAsc);
+  const sortedPastHosting = [...pastHosting].sort(byStartDesc);
+  const sortedUpcomingAttending = [...upcomingAttending].sort(byStartAsc);
+  const sortedPastAttending = [...pastAttending].sort(byStartDesc);
 
   const totalHosting = hostingEvents.length;
   const totalAttending = attendingEvents.length;
@@ -256,11 +269,12 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
   const renderEventsList = (
     upcoming: EventListItem[],
     past: EventListItem[],
+    undated: EventListItem[],
     emptyTitle: string,
     emptyDescription: string,
     emptyAction: { label: string; onClick: () => void; gateFeature?: FeatureKey }
   ) => {
-    if (upcoming.length === 0 && past.length === 0) {
+    if (upcoming.length === 0 && past.length === 0 && undated.length === 0) {
       return (
         <div className="text-center py-12 px-4">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
@@ -302,6 +316,23 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             </div>
             <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
               {upcoming.map((event) => (
+                <ConveneEventCard key={event.event_id} event={{ ...event, id: event.event_id }} variant="compact" />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Dates TBA — undated events hold their own lane */}
+        {undated.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <h4 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                Dates TBA ({undated.length})
+              </h4>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+              {undated.map((event) => (
                 <ConveneEventCard key={event.event_id} event={{ ...event, id: event.event_id }} variant="compact" />
               ))}
             </div>
@@ -395,6 +426,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             {renderEventsList(
               sortedUpcomingHosting,
               sortedPastHosting,
+              undatedHosting,
               'No events hosted yet',
               isOwner
                 ? 'Create your first event to bring the community together!'
@@ -407,6 +439,7 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
             {renderEventsList(
               sortedUpcomingAttending,
               sortedPastAttending,
+              undatedAttending,
               'No events yet',
               isOwner
                 ? 'Discover and RSVP to events to see them here!'

@@ -9,14 +9,15 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Radio, Clock, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { eventEndMs, eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
 
 interface HappeningEvent {
   id: string;
   title: string;
-  start_time: string;
+  start_time: string | null;
   end_time: string | null;
   time_confirmed: boolean | null;
+  date_confirmed: boolean | null;
   location_name: string | null;
   location_city: string | null;
   is_live: boolean;
@@ -34,7 +35,7 @@ export const FeedHappeningNow: React.FC = () => {
       // Events currently live OR starting within 2 hours
       const { data } = await supabase
         .from('events')
-        .select('id, title, start_time, end_time, time_confirmed, location_name, location_city')
+        .select('id, title, start_time, end_time, time_confirmed, date_confirmed, location_name, location_city')
         .eq('status', 'published')
         .lte('start_time', twoHoursFromNow.toISOString())
         .or(`end_time.gte.${now.toISOString()},end_time.is.null`)
@@ -44,15 +45,17 @@ export const FeedHappeningNow: React.FC = () => {
       if (!data) return [];
 
       return data.map((evt) => {
-        const start = new Date(evt.start_time);
-        const end = evt.end_time ? new Date(evt.end_time) : null;
-        const isLive = start <= now && (!end || end >= now);
+        const startMs = eventStartMs(evt);
+        const endMs = eventEndMs(evt);
+        const isLive =
+          startMs !== null && startMs <= now.getTime() && (endMs === null || endMs >= now.getTime());
         return {
           id: evt.id,
           title: evt.title,
           start_time: evt.start_time,
           end_time: evt.end_time,
           time_confirmed: evt.time_confirmed,
+          date_confirmed: evt.date_confirmed,
           location_name: evt.location_name,
           location_city: evt.location_city,
           is_live: isLive,

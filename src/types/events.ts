@@ -31,9 +31,10 @@ export interface Event {
   meeting_url?: string;
   meeting_platform?: string;
   
-  start_time: string;
-  end_time: string;
+  start_time: string | null;
+  end_time: string | null;
   time_confirmed?: boolean | null;
+  date_confirmed?: boolean | null;
   timezone: string;
 
   max_attendees?: number;
@@ -79,9 +80,10 @@ export interface EventListItem {
   location_state?: string;
   location_country?: string;
   meeting_url?: string;
-  start_time: string;
-  end_time: string;
+  start_time: string | null;
+  end_time: string | null;
   time_confirmed?: boolean | null;
+  date_confirmed?: boolean | null;
   timezone: string;
   max_attendees?: number;
   cover_image_url?: string;

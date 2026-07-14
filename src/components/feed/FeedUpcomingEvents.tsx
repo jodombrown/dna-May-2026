@@ -13,13 +13,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
 
 interface UpcomingEvent {
   id: string;
   title: string;
-  start_time: string;
+  start_time: string | null;
   time_confirmed: boolean | null;
+  date_confirmed: boolean | null;
   location_name: string | null;
   location_city: string | null;
 }
@@ -36,7 +37,7 @@ export const FeedUpcomingEvents: React.FC = () => {
       // First try events user has RSVP'd to
       const { data: rsvpData } = await supabase
         .from('event_attendees')
-        .select('event_id, events!inner(id, title, start_time, time_confirmed, location_name, location_city)')
+        .select('event_id, events!inner(id, title, start_time, time_confirmed, date_confirmed, location_name, location_city)')
         .eq('user_id', user.id)
         .eq('status', 'going')
         .gt('events.start_time', new Date().toISOString())
@@ -50,6 +51,7 @@ export const FeedUpcomingEvents: React.FC = () => {
           title: evt.title,
           start_time: evt.start_time,
           time_confirmed: evt.time_confirmed,
+          date_confirmed: evt.date_confirmed,
           location_name: evt.location_name,
           location_city: evt.location_city,
         };
@@ -61,7 +63,7 @@ export const FeedUpcomingEvents: React.FC = () => {
       // Otherwise show upcoming platform events as discovery
       const { data: discoveryData } = await supabase
         .from('events')
-        .select('id, title, start_time, time_confirmed, location_name, location_city')
+        .select('id, title, start_time, time_confirmed, date_confirmed, location_name, location_city')
         .eq('status', 'published')
         .gt('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
@@ -72,6 +74,7 @@ export const FeedUpcomingEvents: React.FC = () => {
         title: evt.title,
         start_time: evt.start_time,
         time_confirmed: evt.time_confirmed,
+        date_confirmed: evt.date_confirmed,
         location_name: evt.location_name,
         location_city: evt.location_city,
       }));
@@ -80,8 +83,12 @@ export const FeedUpcomingEvents: React.FC = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const getDateParts = (dateStr: string) => {
-    const date = new Date(dateStr);
+  // The queries filter on start_time > now, so rows here are always dated —
+  // but never trust a possibly-null timestamp into new Date().
+  const getDateParts = (dateStr: string | null) => {
+    const ms = eventStartMs({ start_time: dateStr });
+    if (ms === null) return { month: 'TBA', day: '·' };
+    const date = new Date(ms);
     return {
       month: format(date, 'MMM').toUpperCase(),
       day: format(date, 'd'),

@@ -183,7 +183,8 @@ export function getBreadcrumbSchema(items: { name: string; url: string }[]) {
 export function getEventSchema(event: {
   name: string;
   description: string;
-  startDate: string;
+  /** Omit when dates aren't announced — never emit a placeholder instant. */
+  startDate?: string;
   endDate?: string;
   location?: string;
   isVirtual?: boolean;

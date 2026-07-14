@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Video, Globe, Clock, Users } from 'lucide-react';
 import { isToday, isTomorrow, differenceInDays } from 'date-fns';
 import { EventTime } from '@/components/events/EventTime';
+import { eventStartMs } from '@/lib/events/eventTime';
 import { cn } from '@/lib/utils';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
@@ -19,8 +20,9 @@ interface HeroEventProps {
     id: string;
     title: string;
     slug?: string | null;
-    start_time?: string;
+    start_time?: string | null;
     time_confirmed?: boolean | null;
+    date_confirmed?: boolean | null;
     end_time?: string | null;
     cover_image_url?: string | null;
     event_type?: string | null;
@@ -40,7 +42,8 @@ interface HeroEventProps {
 export function ConveneHeroEvent({ event }: HeroEventProps) {
   const navigate = useNavigate();
   const imageUrl = event.cover_image_url ?? null;
-  const startDate = event.start_time ? new Date(event.start_time) : null;
+  const startMs = eventStartMs(event);
+  const startDate = startMs !== null ? new Date(startMs) : null;
   const attendeeCount = event.event_attendees?.[0]?.count ?? 0;
 
   const isVirtual = event.format === 'virtual';
@@ -118,19 +121,19 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
 
           {/* Meta row */}
           <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm mb-3" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
-            {startDate && (
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" />
-                <EventTime
-                  event={{
-                    start_time: event.start_time,
-                    end_time: event.end_time,
-                    time_confirmed: event.time_confirmed,
-                  }}
-                  variant="datetime"
-                />
-              </span>
-            )}
+            <span className="flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" />
+              <EventTime
+                event={{
+                  start_time: event.start_time,
+                  end_time: event.end_time,
+                  time_confirmed: event.time_confirmed,
+                  date_confirmed: event.date_confirmed,
+                }}
+                eventId={event.id}
+                variant="datetime"
+              />
+            </span>
             {placeText && (
               <span className="flex items-center gap-1">
                 {isVirtual ? (

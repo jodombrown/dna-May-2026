@@ -19,8 +19,9 @@ interface RecommendedEvent extends EventPlaceInput {
   description: string;
   event_type: string;
   format: string;
-  start_time: string;
+  start_time: string | null;
   time_confirmed: boolean | null;
+  date_confirmed: boolean | null;
   recommendation_score: number;
   recommendation_reason: string;
   friends_attending_count: number;
@@ -48,15 +49,19 @@ export const EventRecommendations = () => {
         const recs: RecommendedEvent[] = data?.recommendations || [];
         if (recs.length === 0) return [];
 
-        // The recommendations function predates time_confirmed and may
-        // surface curated rows — join the flag so no card prints an
-        // unverified hour.
+        // The recommendations function predates the truth flags and may
+        // surface curated rows — join them so no card prints an unverified
+        // hour or an unannounced placeholder date.
         const { data: flags } = await supabase
           .from('events')
-          .select('id, time_confirmed')
+          .select('id, time_confirmed, date_confirmed')
           .in('id', recs.map((r) => r.id));
-        const flagMap = new Map((flags ?? []).map((f) => [f.id, f.time_confirmed]));
-        return recs.map((r) => ({ ...r, time_confirmed: flagMap.get(r.id) ?? null }));
+        const flagMap = new Map((flags ?? []).map((f) => [f.id, f]));
+        return recs.map((r) => ({
+          ...r,
+          time_confirmed: flagMap.get(r.id)?.time_confirmed ?? null,
+          date_confirmed: flagMap.get(r.id)?.date_confirmed ?? null,
+        }));
       } catch (error) {
         logger.warn('EventRecommendations', 'Failed to fetch recommendations:', error);
         return [];

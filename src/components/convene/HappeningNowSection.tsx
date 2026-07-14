@@ -58,7 +58,6 @@ export function HappeningNowSection() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {liveEvents.map((event: Record<string, unknown>) => {
           const attendeeCount = (event.event_attendees as Array<{ count: number }>)?.[0]?.count || 0;
-          const startDate = event.start_time ? new Date(event.start_time as string) : null;
           const placeText = formatEventPlace(
             { ...pickEventPlace(event), format: event.format as string | null },
             'compact'
@@ -106,6 +105,7 @@ export function HappeningNowSection() {
                     {
                       start_time: event.start_time as string | null,
                       time_confirmed: event.time_confirmed as boolean | null,
+                      date_confirmed: event.date_confirmed as boolean | null,
                     },
                     'clock'
                   ) && (
@@ -115,6 +115,7 @@ export function HappeningNowSection() {
                         {
                           start_time: event.start_time as string | null,
                           time_confirmed: event.time_confirmed as boolean | null,
+                          date_confirmed: event.date_confirmed as boolean | null,
                         },
                         'clock'
                       )}

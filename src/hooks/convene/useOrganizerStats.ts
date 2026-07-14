@@ -6,6 +6,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { eventStartMs } from '@/lib/events/eventTime';
 
 export interface OrganizerStats {
   eventsHosted: number;
@@ -31,9 +32,10 @@ export function useOrganizerStats() {
 
       const now = new Date();
       const eventsHosted = events?.length ?? 0;
-      const upcoming = events?.filter(
-        (e) => !e.is_cancelled && new Date(e.start_time) > now
-      ).length ?? 0;
+      const upcoming = events?.filter((e) => {
+        const start = eventStartMs(e);
+        return !e.is_cancelled && start !== null && start > now.getTime();
+      }).length ?? 0;
       const totalAttendees = events?.reduce((sum, e) => {
         const count = (e.event_attendees as Array<{ count: number }>)?.[0]?.count ?? 0;
         return sum + count;

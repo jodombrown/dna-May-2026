@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { EventTime } from '@/components/events/EventTime';
+import { eventStartMs } from '@/lib/events/eventTime';
 
 interface ProfileEventsSectionProps {
   userId: string;
@@ -39,6 +40,7 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
             description,
             start_time,
             time_confirmed,
+            date_confirmed,
             event_type,
             format,
             organizer_id
@@ -54,9 +56,18 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
       const allEvents = [
         ...hostedEvents.map(e => ({ ...e, isOrganizer: true })),
         ...(attendeeEvents || [])
-          .filter((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; time_confirmed: boolean | null; event_type: string; format: string; organizer_id: string } | null }) => a.events && a.events.organizer_id !== userId)
-          .map((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; time_confirmed: boolean | null; event_type: string; format: string; organizer_id: string } | null }) => ({ ...a.events!, isOrganizer: false })),
-      ].sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+          .filter((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string | null; time_confirmed: boolean | null; date_confirmed: boolean | null; event_type: string; format: string; organizer_id: string } | null }) => a.events && a.events.organizer_id !== userId)
+          .map((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string | null; time_confirmed: boolean | null; date_confirmed: boolean | null; event_type: string; format: string; organizer_id: string } | null }) => ({ ...a.events!, isOrganizer: false })),
+        // Dated events sort by start; undated events hold their own lane at
+        // the end — they have no place on a timeline.
+      ].sort((a, b) => {
+        const aStart = eventStartMs(a);
+        const bStart = eventStartMs(b);
+        if (aStart === null && bStart === null) return 0;
+        if (aStart === null) return 1;
+        if (bStart === null) return -1;
+        return aStart - bStart;
+      })
        .slice(0, limit);
 
       return allEvents;
@@ -93,7 +104,7 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {events.map((event: { id: string; title: string; description?: string | null; start_time: string; event_type?: string; format?: string; isOrganizer: boolean }) => (
+          {events.map((event: { id: string; title: string; description?: string | null; start_time: string | null; date_confirmed?: boolean | null; event_type?: string; format?: string; isOrganizer: boolean }) => (
             <div
               key={event.id}
               className="flex items-start justify-between p-3 rounded-lg border hover:bg-accent transition-colors cursor-pointer"
@@ -113,7 +124,9 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
                       start_time: event.start_time,
                       time_confirmed:
                         (event as { time_confirmed?: boolean | null }).time_confirmed ?? null,
+                      date_confirmed: event.date_confirmed ?? null,
                     }}
+                    eventId={event.id}
                     variant="datetime"
                   />
                 </div>

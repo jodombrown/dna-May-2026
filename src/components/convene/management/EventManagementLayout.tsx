@@ -19,8 +19,10 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/useMobile';
-import { format } from 'date-fns';
 import { Event as ConveneEvent } from '@/types/eventTypes';
+import { EventTime } from '@/components/events/EventTime';
+import { eventStartMs } from '@/lib/events/eventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 
 interface NavItem {
   label: string;
@@ -166,11 +168,14 @@ const EventManagementLayout: React.FC = () => {
     );
   }
 
+  // Completed is DERIVED from the clock (status='completed' has never been
+  // written in this project's life); undated events are simply 'upcoming'.
+  const startMs = eventStartMs(event);
   const eventStatus = event.is_cancelled
     ? 'cancelled'
-    : new Date(event.end_time) < new Date()
+    : isEventCompleted(event)
       ? 'completed'
-      : new Date(event.start_time) <= new Date()
+      : startMs !== null && startMs <= Date.now()
         ? 'live'
         : 'upcoming';
 
@@ -210,7 +215,7 @@ const EventManagementLayout: React.FC = () => {
                 <h2 className="font-semibold text-lg line-clamp-2">{event.title}</h2>
                 <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span>{format(new Date(event.start_time), 'MMM d, yyyy')}</span>
+                  <EventTime event={event} variant="datetime" notifyAction={false} />
                 </div>
                 <Badge
                   variant={

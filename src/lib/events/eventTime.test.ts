@@ -5,12 +5,18 @@
  * only, with nothing where the clock would be.
  */
 import { describe, it, expect } from 'vitest';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import {
+  datesAnnounced,
+  eventEndMs,
+  eventStartMs,
+  formatEventDateTime,
+} from '@/lib/events/eventTime';
 
 const CONFIRMED = {
   start_time: '2026-11-01T19:00:00Z',
   end_time: '2026-11-01T21:00:00Z',
   time_confirmed: true,
+  date_confirmed: true,
 } as const;
 
 const UNCONFIRMED = { ...CONFIRMED, time_confirmed: false } as const;
@@ -19,6 +25,7 @@ const MULTI_DAY_UNCONFIRMED = {
   start_time: '2026-11-01T09:00:00Z',
   end_time: '2026-11-05T18:00:00Z',
   time_confirmed: false,
+  date_confirmed: true,
 } as const;
 
 describe('clock variant', () => {
@@ -65,7 +72,45 @@ describe('datetime and compact variants', () => {
 
 describe('degenerate inputs', () => {
   it('renders nothing for a missing start_time — never a placeholder', () => {
-    expect(formatEventDateTime({ start_time: null, time_confirmed: false }, 'compact')).toBe('');
-    expect(formatEventDateTime({ start_time: 'garbage', time_confirmed: true }, 'date')).toBe('');
+    expect(
+      formatEventDateTime(
+        { start_time: null, time_confirmed: false, date_confirmed: false },
+        'compact'
+      )
+    ).toBe('');
+    expect(
+      formatEventDateTime(
+        { start_time: 'garbage', time_confirmed: true, date_confirmed: true },
+        'date'
+      )
+    ).toBe('');
+  });
+});
+
+describe('unannounced dates (date_confirmed === false)', () => {
+  const PARKED = { ...CONFIRMED, date_confirmed: false } as const;
+
+  it('never prints a stored placeholder date, in any variant', () => {
+    expect(formatEventDateTime(PARKED, 'compact')).toBe('');
+    expect(formatEventDateTime(PARKED, 'date')).toBe('');
+    expect(formatEventDateTime(PARKED, 'datetime')).toBe('');
+    expect(formatEventDateTime(PARKED, 'clock')).toBe('');
+  });
+
+  it('datesAnnounced gates on the flag AND a real start_time', () => {
+    expect(datesAnnounced(CONFIRMED)).toBe(true);
+    expect(datesAnnounced(PARKED)).toBe(false);
+    expect(datesAnnounced({ start_time: null, date_confirmed: true })).toBe(false);
+    expect(datesAnnounced({ start_time: null, date_confirmed: false })).toBe(false);
+  });
+
+  it('eventStartMs/eventEndMs are null-safe — never NaN, never 1970', () => {
+    expect(eventStartMs(CONFIRMED)).toBe(new Date(CONFIRMED.start_time).getTime());
+    expect(eventEndMs(CONFIRMED)).toBe(new Date(CONFIRMED.end_time).getTime());
+    expect(eventStartMs(PARKED)).toBeNull();
+    expect(eventEndMs(PARKED)).toBeNull();
+    expect(eventStartMs({ start_time: null })).toBeNull();
+    expect(eventStartMs({ start_time: 'garbage' })).toBeNull();
+    expect(eventEndMs({ end_time: null })).toBeNull();
   });
 });

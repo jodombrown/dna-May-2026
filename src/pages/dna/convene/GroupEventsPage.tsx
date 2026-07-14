@@ -10,8 +10,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import LayoutController from '@/components/LayoutController';
 import { LeftNav } from '@/components/layout/columns/LeftNav';
 import { RightWidgets } from '@/components/layout/columns/RightWidgets';
-import { format } from 'date-fns';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
+import { EventTime } from '@/components/events/EventTime';
 import { formatEventPlace } from '@/lib/events/formatPlace';
 import { Event } from '@/types/events';
 
@@ -72,11 +72,20 @@ export default function GroupEventsPage() {
 
   const canHostEvent = membership?.role && ['owner', 'admin', 'moderator'].includes(membership.role);
   const now = new Date();
-  const upcomingEvents = events.filter(e => new Date(e.start_time) > now && !e.is_cancelled);
-  const pastEvents = events.filter(e => new Date(e.start_time) <= now || e.is_cancelled);
+  // An undated event has no place on a timeline — it gets its own lane.
+  const undatedEvents = events.filter(e => eventStartMs(e) === null && !e.is_cancelled);
+  const upcomingEvents = events.filter(e => {
+    const start = eventStartMs(e);
+    return start !== null && start > now.getTime() && !e.is_cancelled;
+  });
+  const pastEvents = events.filter(e => {
+    const start = eventStartMs(e);
+    return (start !== null && start <= now.getTime()) || e.is_cancelled;
+  });
 
   const EventCard = ({ event }: { event: Event }) => {
-    const isPast = new Date(event.start_time) < now;
+    const startMs = eventStartMs(event);
+    const isPast = startMs !== null && startMs < now.getTime();
 
     return (
       <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/dna/convene/events/${event.id}`)}>
@@ -98,12 +107,15 @@ export default function GroupEventsPage() {
           <div className="space-y-2 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              <span>{format(new Date(event.start_time), 'PPP')}</span>
+              <EventTime
+                event={{ ...event, time_confirmed: event.time_confirmed ?? null, date_confirmed: event.date_confirmed ?? null }}
+                variant="date"
+              />
             </div>
-            {formatEventDateTime({ ...event, time_confirmed: event.time_confirmed ?? null }, 'clock') && (
+            {formatEventDateTime({ ...event, time_confirmed: event.time_confirmed ?? null, date_confirmed: event.date_confirmed ?? null }, 'clock') && (
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                <span>{formatEventDateTime({ ...event, time_confirmed: event.time_confirmed ?? null }, 'clock')}</span>
+                <span>{formatEventDateTime({ ...event, time_confirmed: event.time_confirmed ?? null, date_confirmed: event.date_confirmed ?? null }, 'clock')}</span>
               </div>
             )}
             {event.format !== 'virtual' && formatEventPlace(event, 'compact') && (
@@ -161,6 +173,9 @@ export default function GroupEventsPage() {
           <Tabs defaultValue="upcoming" className="space-y-6">
             <TabsList>
               <TabsTrigger value="upcoming">Upcoming ({upcomingEvents.length})</TabsTrigger>
+              {undatedEvents.length > 0 && (
+                <TabsTrigger value="undated">Dates TBA ({undatedEvents.length})</TabsTrigger>
+              )}
               <TabsTrigger value="past">Past ({pastEvents.length})</TabsTrigger>
             </TabsList>
 
@@ -194,6 +209,16 @@ export default function GroupEventsPage() {
                 </div>
               )}
             </TabsContent>
+
+            {undatedEvents.length > 0 && (
+              <TabsContent value="undated" className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {undatedEvents.map((event) => (
+                    <EventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              </TabsContent>
+            )}
 
             <TabsContent value="past" className="space-y-4">
               {pastEvents.length > 0 ? (

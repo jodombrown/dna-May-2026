@@ -1,5 +1,6 @@
 import { createEvent, EventAttributes, DateArray } from 'ics';
 import { config } from '@/lib/config';
+import { datesAnnounced } from '@/lib/events/eventTime';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
 interface EventData extends EventPlaceInput {
@@ -7,10 +8,15 @@ interface EventData extends EventPlaceInput {
   slug?: string;
   title: string;
   description?: string;
-  start_time: string;
-  end_time: string;
+  /** Callers must not export undated events (datesAnnounced === false);
+   *  generateICSFile returns an error and the URL builders return '' when
+   *  dates are missing anyway, so nothing fabricated ever reaches a
+   *  calendar. */
+  start_time: string | null;
+  end_time: string | null;
   /** false → the hour is unverified; export dates only, never a clock. */
   time_confirmed?: boolean | null;
+  date_confirmed?: boolean | null;
   meeting_url?: string;
   format: 'in_person' | 'virtual' | 'hybrid';
   organizer?: {
@@ -51,6 +57,9 @@ function dateOnlyICSFormat(isoString: string): DateArray {
  * Generate a .ics file for an event
  */
 export function generateICSFile(event: EventData): { error?: Error; value?: string } {
+  if (!datesAnnounced(event) || !event.end_time) {
+    return { error: new Error('Event has no announced dates to export') };
+  }
   // Venue when known, else city/locality — never a placeholder.
   const location = event.format === 'virtual'
     ? event.meeting_url || 'Online Event'
@@ -114,6 +123,7 @@ export function downloadICSFile(event: EventData) {
  * Generate Google Calendar URL
  */
 export function getGoogleCalendarUrl(event: EventData): string {
+  if (!datesAnnounced(event) || !event.end_time) return '';
   const startDate = new Date(event.start_time);
   const endDate = new Date(event.end_time);
   
@@ -152,6 +162,7 @@ export function getGoogleCalendarUrl(event: EventData): string {
  * Generate Outlook Calendar URL (web version)
  */
 export function getOutlookCalendarUrl(event: EventData): string {
+  if (!datesAnnounced(event) || !event.end_time) return '';
   const startDate = new Date(event.start_time);
   const endDate = new Date(event.end_time);
 
@@ -184,6 +195,7 @@ export function getOutlookCalendarUrl(event: EventData): string {
  * Generate Office 365 Calendar URL
  */
 export function getOffice365CalendarUrl(event: EventData): string {
+  if (!datesAnnounced(event) || !event.end_time) return '';
   const startDate = new Date(event.start_time);
   const endDate = new Date(event.end_time);
 

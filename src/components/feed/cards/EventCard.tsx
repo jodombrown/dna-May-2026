@@ -37,7 +37,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { formatEventPlace } from '@/lib/events/formatPlace';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { DATES_TBA, datesAnnounced, formatEventDateTime } from '@/lib/events/eventTime';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { useEventDetailsForFeed } from '@/hooks/useEventDetailsForFeed';
@@ -113,7 +113,10 @@ export const EventCard: React.FC<EventCardProps> = ({
     eventDetails?.location_name ||
     null;
 
-  const whenLine = eventDetails ? formatEventDateTime(eventDetails, 'datetime') || null : null;
+  const whenLine = eventDetails
+    ? formatEventDateTime(eventDetails, 'datetime') ||
+      (!datesAnnounced(eventDetails) ? DATES_TBA : null)
+    : null;
 
   const commentsVisible = showComments || localShowComments;
   const handleCommentClick = () => {

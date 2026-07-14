@@ -7,7 +7,7 @@ import { Calendar, MapPin, Video, Globe, MoreHorizontal, Edit3, Pin, Link, Trash
 import { useNavigate } from 'react-router-dom';
 import { Activity } from '@/types/activity';
 import { format, formatDistanceToNow } from 'date-fns';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { DATES_TBA, eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { invalidateAllEventCaches } from '@/lib/eventCacheInvalidation';
@@ -85,8 +85,9 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
     }
   };
 
-  // Parse event date for calendar box display
-  const eventDate = eventData.start_time ? new Date(eventData.start_time) : null;
+  // Parse event date for calendar box display — null-safe via eventStartMs.
+  const eventStart = eventStartMs(eventData);
+  const eventDate = eventStart !== null ? new Date(eventStart) : null;
   const monthAbbrev = eventDate ? format(eventDate, 'MMM').toUpperCase() : '';
   const dayNumber = eventDate ? format(eventDate, 'd') : '';
   const dayOfWeek = eventDate ? format(eventDate, 'EEEE') : '';
@@ -96,6 +97,7 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
       start_time: eventData.start_time,
       end_time: eventData.end_time,
       time_confirmed: eventData.time_confirmed,
+      date_confirmed: eventData.date_confirmed,
     },
     'clock'
   );
@@ -187,6 +189,9 @@ export const FeedEventCard: React.FC<FeedEventCardProps> = ({ activity }) => {
           </div>
 
           {/* Date & Time - Luma-style with calendar icon box */}
+          {!eventDate && (
+            <p className="mb-3 text-sm text-muted-foreground">{DATES_TBA}</p>
+          )}
           {eventDate && (
             <div className="flex items-center gap-3 mb-3">
               <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg overflow-hidden bg-background flex flex-col items-center justify-center">

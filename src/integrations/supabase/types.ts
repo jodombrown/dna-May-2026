@@ -2887,6 +2887,32 @@ export type Database = {
           },
         ]
       }
+      event_date_subscriptions: {
+        Row: {
+          created_at: string
+          event_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_date_subscriptions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_promo_codes: {
         Row: {
           code: string
@@ -13239,7 +13265,7 @@ export type Database = {
           curated_source_url: string
           date_confirmed: boolean
           description: string
-          end_time: string
+          end_time: string | null
           event_type: string
           format: string
           going_count: number
@@ -13261,7 +13287,7 @@ export type Database = {
           short_description: string
           slug: string
           speakers: Json
-          start_time: string
+          start_time: string | null
           status: string
           subtitle: string
           tags: string[]

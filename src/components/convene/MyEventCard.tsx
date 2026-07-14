@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Eye, Edit, Share2, Copy, BarChart3, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { EventTime } from '@/components/events/EventTime';
+import { eventStartMs } from '@/lib/events/eventTime';
+import { isEventCompleted } from '@/lib/events/lifecycle';
 import { cn } from '@/lib/utils';
 import { ConveneEventBadge } from './ConveneEventBadge';
 import { getEventStatus } from '@/utils/convene/getEventStatus';
@@ -21,8 +23,9 @@ interface MyEventCardEvent {
   id: string;
   title: string;
   slug?: string | null;
-  start_time: string;
+  start_time: string | null;
   time_confirmed?: boolean | null;
+  date_confirmed?: boolean | null;
   end_time?: string | null;
   status?: string | null;
   max_attendees?: number | null;
@@ -46,13 +49,14 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
   const eventStatus = event.status ?? 'published';
   const isCancelled = eventStatus === 'cancelled';
   const isDraft = eventStatus === 'draft';
-  const isCompleted = eventStatus === 'completed';
+  const isCompleted = isEventCompleted(event);
   const liveStatus =
     isCancelled || isDraft || isCompleted ? null : getEventStatus(event, attendeeCount);
 
-  const startDate = new Date(event.start_time);
-  const monthAbbrev = format(startDate, 'MMM').toUpperCase();
-  const dayNumber = format(startDate, 'd');
+  const startMs = eventStartMs(event);
+  const startDate = startMs !== null ? new Date(startMs) : null;
+  const monthAbbrev = startDate ? format(startDate, 'MMM').toUpperCase() : 'TBA';
+  const dayNumber = startDate ? format(startDate, 'd') : '·';
 
   const handleCopyLink = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -116,9 +120,15 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
             </div>
 
             <p className="text-sm text-muted-foreground">
+              {/* The organizer's own card — no Notify-me on your own event. */}
               <EventTime
-                event={{ start_time: event.start_time, time_confirmed: event.time_confirmed }}
+                event={{
+                  start_time: event.start_time,
+                  time_confirmed: event.time_confirmed,
+                  date_confirmed: event.date_confirmed,
+                }}
                 variant="datetime"
+                notifyAction={false}
               />
             </p>
 

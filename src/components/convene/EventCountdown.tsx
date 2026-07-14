@@ -10,8 +10,8 @@ import { Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EventCountdownProps {
-  startTime: string;
-  endTime?: string;
+  startTime: string | null;
+  endTime?: string | null;
   className?: string;
 }
 
@@ -23,7 +23,10 @@ export function EventCountdown({ startTime, endTime, className }: EventCountdown
     return () => clearInterval(interval);
   }, []);
 
+  // No announced start — nothing to count down to.
+  if (!startTime) return null;
   const start = new Date(startTime);
+  if (isNaN(start.getTime())) return null;
   const end = endTime ? new Date(endTime) : null;
 
   // Past event

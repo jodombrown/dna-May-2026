@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import type { EventPlaceInput } from '@/lib/events/formatPlace';
+import { eventEndMs, eventStartMs } from '@/lib/events/eventTime';
 import './EventCalendarView.css';
 
 const localizer = momentLocalizer(moment);
@@ -13,9 +14,10 @@ const localizer = momentLocalizer(moment);
 interface Event extends EventPlaceInput {
   id: string;
   title: string;
-  start_time: string;
-  end_time: string;
+  start_time: string | null;
+  end_time: string | null;
   time_confirmed?: boolean | null;
+  date_confirmed?: boolean | null;
   format: 'in_person' | 'virtual' | 'hybrid';
   event_type?: string;
 }
@@ -30,19 +32,23 @@ export const EventCalendarView = ({ events, onCreateEvent }: EventCalendarViewPr
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState(new Date());
 
-  // Transform events to react-big-calendar format
+  // Transform events to react-big-calendar format. An undated event has no
+  // place on a calendar at all — it is dropped here and surfaces in the
+  // "Dates TBA" lane of the list view instead.
   const calendarEvents = useMemo(
     () =>
-      events.map((event) => ({
-        id: event.id,
-        title: event.title,
-        start: new Date(event.start_time),
-        end: new Date(event.end_time),
-        // An unconfirmed hour renders as an all-day entry — the grid never
-        // places it at a fabricated clock position.
-        allDay: event.time_confirmed === false,
-        resource: event,
-      })),
+      events
+        .filter((event) => eventStartMs(event) !== null)
+        .map((event) => ({
+          id: event.id,
+          title: event.title,
+          start: new Date(eventStartMs(event)!),
+          end: new Date(eventEndMs(event) ?? eventStartMs(event)!),
+          // An unconfirmed hour renders as an all-day entry — the grid never
+          // places it at a fabricated clock position.
+          allDay: event.time_confirmed === false,
+          resource: event,
+        })),
     [events]
   );
 

@@ -19,10 +19,11 @@ export interface SearchEventResult {
   id: string;
   title: string;
   slug: string | null;
-  start_time: string;
-  end_time: string;
+  start_time: string | null;
+  end_time: string | null;
   timezone: string | null;
   time_confirmed: boolean | null;
+  date_confirmed: boolean | null;
   location_name: string | null;
   location_address: string | null;
   location_city: string | null;

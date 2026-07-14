@@ -37,6 +37,7 @@ export interface CuratedEventCardProps {
     start_time?: string | null;
     end_time?: string | null;
     time_confirmed: boolean | null | undefined;
+    date_confirmed: boolean | null | undefined;
     cover_image_url?: string | null;
     slug?: string | null;
     organizer_name?: string | null;

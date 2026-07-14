@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users as UsersIcon, Image as ImageIcon, Video, Globe } from 'lucide-react';
 import { format } from 'date-fns';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
 import { Event } from '@/types/search';
 import { formatEventPlace } from '@/lib/events/formatPlace';
 import ConnectDialogs from './ConnectDialogs';
@@ -123,7 +123,8 @@ const EventCard: React.FC<EventCardProps> = ({
 
   const eventBanner = event.banner_url || event.cover_image_url;
   const eventDate = event.start_time || event.date_time;
-  const parsedDate = eventDate ? new Date(eventDate) : null;
+  const eventDateMs = eventStartMs({ start_time: eventDate, date_confirmed: event.date_confirmed });
+  const parsedDate = eventDateMs !== null ? new Date(eventDateMs) : null;
   
   // Date formatting
   const monthAbbrev = parsedDate ? format(parsedDate, 'MMM').toUpperCase() : '';
@@ -131,7 +132,7 @@ const EventCard: React.FC<EventCardProps> = ({
   const dayOfWeek = parsedDate ? format(parsedDate, 'EEEE') : '';
   const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : '';
   const timeRange = formatEventDateTime(
-    { start_time: eventDate, time_confirmed: event.time_confirmed },
+    { start_time: eventDate, time_confirmed: event.time_confirmed, date_confirmed: event.date_confirmed },
     'clock'
   );
 

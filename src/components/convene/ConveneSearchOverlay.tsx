@@ -5,7 +5,7 @@ import { ArrowLeft, Search, X, TrendingUp, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEventSearch, useTrendingEvents, type EventSearchFilters } from '@/hooks/convene/useEventSearch';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { DATES_TBA, datesAnnounced, formatEventDateTime } from '@/lib/events/eventTime';
 import { getEventStatus } from '@/utils/convene/getEventStatus';
 import { ConveneEventBadge } from '@/components/convene/ConveneEventBadge';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
@@ -245,9 +245,10 @@ interface SearchResultCardProps {
     id: string;
     title: string;
     slug: string | null;
-    start_time: string;
-    end_time: string;
+    start_time: string | null;
+    end_time: string | null;
     time_confirmed: boolean | null;
+    date_confirmed: boolean | null;
     cover_image_url: string | null;
     event_type: string;
     format: string;
@@ -265,6 +266,7 @@ function SearchResultCard({ event, onClick }: SearchResultCardProps) {
   const status = getEventStatus({
     start_time: event.start_time,
     end_time: event.end_time,
+    date_confirmed: event.date_confirmed,
     max_attendees: event.max_attendees,
     attendee_count: event.attendee_count,
   });
@@ -291,7 +293,7 @@ function SearchResultCard({ event, onClick }: SearchResultCardProps) {
           {event.title}
         </p>
         <p className="text-xs text-muted-foreground mt-0.5">
-          {formatEventDateTime(event, 'compact')}
+          {formatEventDateTime(event, 'compact') || (!datesAnnounced(event) ? DATES_TBA : '')}
         </p>
         {(formatEventPlace(event, 'compact') || event.location_name) && (
           <p className="text-xs text-muted-foreground">

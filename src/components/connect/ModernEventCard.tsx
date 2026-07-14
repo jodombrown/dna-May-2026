@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Event } from '@/types/search';
 import { formatEventPlace } from '@/lib/events/formatPlace';
 import { format } from 'date-fns';
-import { formatEventDateTime } from '@/lib/events/eventTime';
+import { eventEndMs, eventStartMs, formatEventDateTime } from '@/lib/events/eventTime';
 import { Sankofa } from '@/components/icons/adinkra';
 
 interface ModernEventCardProps {
@@ -25,8 +25,10 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
 }) => {
   const eventBanner = event.cover_image_url || event.banner_url;
   const eventDate = event.start_time || event.date_time;
-  const parsedDate = eventDate ? new Date(eventDate) : null;
-  const endDate = event.end_time ? new Date(event.end_time) : null;
+  const eventDateMs = eventStartMs({ start_time: eventDate, date_confirmed: event.date_confirmed });
+  const parsedDate = eventDateMs !== null ? new Date(eventDateMs) : null;
+  const endMs = eventEndMs(event);
+  const endDate = endMs !== null ? new Date(endMs) : null;
   
   // Date formatting
   const monthAbbrev = parsedDate ? format(parsedDate, 'MMM').toUpperCase() : '';
@@ -34,7 +36,12 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
   const dayOfWeek = parsedDate ? format(parsedDate, 'EEEE') : '';
   const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : '';
   const timeRange = formatEventDateTime(
-    { start_time: eventDate, end_time: event.end_time, time_confirmed: event.time_confirmed },
+    {
+      start_time: eventDate,
+      end_time: event.end_time,
+      time_confirmed: event.time_confirmed,
+      date_confirmed: event.date_confirmed,
+    },
     'clock'
   );
 

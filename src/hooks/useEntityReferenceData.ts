@@ -21,7 +21,7 @@ interface EntityLiveData {
 async function fetchEventData(entityId: string): Promise<EntityLiveData> {
   const { data, error } = await db
     .from('events')
-    .select('id, title, slug, start_time, location_name, event_type, is_cancelled')
+    .select('id, title, slug, start_time, date_confirmed, location_name, event_type, is_cancelled')
     .eq('id', entityId)
     .maybeSingle();
 
@@ -38,7 +38,7 @@ async function fetchEventData(entityId: string): Promise<EntityLiveData> {
     title: data.title,
     slug: data.slug,
     deleted: data.is_cancelled || false,
-    startDate: data.start_time,
+    startDate: data.date_confirmed === false ? null : data.start_time,
     location: data.location_name,
     eventType: data.event_type,
     attendeeCount: count ?? 0,
