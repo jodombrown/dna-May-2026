@@ -6,7 +6,7 @@
 import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { formatEventTime } from '@/utils/convene/formatEventTime';
+import { formatEventDateTime } from '@/lib/events/eventTime';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
 export interface MapEventData extends EventPlaceInput {
@@ -15,6 +15,7 @@ export interface MapEventData extends EventPlaceInput {
   slug: string | null;
   start_time: string;
   end_time: string | null;
+  time_confirmed: boolean | null;
   location_lat: number;
   location_lng: number;
   cover_image_url: string | null;
@@ -86,7 +87,7 @@ export function ConveneEventPin({ event, onClick }: ConveneEventPinProps) {
           )}
           <p className="font-semibold text-sm leading-tight mb-1">{event.title}</p>
           <p className="text-xs text-muted-foreground">
-            {formatEventTime(event.start_time, event.end_time)}
+            {formatEventDateTime(event, 'compact')}
           </p>
           {(event.location_name || placeText) && (
             <p className="text-xs text-muted-foreground mt-0.5">

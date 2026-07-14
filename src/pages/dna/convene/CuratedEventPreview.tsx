@@ -1,267 +1,344 @@
 /**
- * DNA | CONVENE — Curated Event Preview
+ * DNA | CONVENE — Curated Event Page (shared body)
  *
- * Lightweight detail page for DNA-curated events.
- * Shows key info + prominent external source link + internal RSVP.
- * No organizer card, activity feed, attendees grid, or manage actions.
+ * The detail surface for events DNA has SEEN at a source, not hosted.
+ * Rendered by EventDetail (signed-in shell) and PublicEventPage (anon
+ * chrome) whenever is_curated is true.
+ *
+ * Order is deliberate:
+ *   1. The facts, which belong to the source: host, title, dates, city.
+ *   2. Register at source — the terminal CTA. A clean handoff, never an
+ *      interception.
+ *   3. Who from the body is going — DNA's actual contribution — with the
+ *      "I'm going" action (sign-in wall AT the action, D089).
+ *   4. Open a Space to go together (D052/D084).
+ *   5. The yield, after the event has passed (D088): the people, who
+ *      outlast the room.
+ *   6. A plain line naming what DNA has not confirmed, linked to the source.
+ *
+ * Dates render through <EventTime> — an unconfirmed hour never prints.
+ * Covers render through realCuratedCover — no stock photography.
  */
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Calendar, MapPin, Video, Globe, ExternalLink, Share2, Heart, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+import { ArrowLeft, ExternalLink, Share2, Check, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { supabase } from '@/integrations/supabase/client';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { EventTime } from '@/components/events/EventTime';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
+import { curatedHostName, curatedSourceDomain, realCuratedCover } from '@/lib/events/curated';
+import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
+import { ROUTES } from '@/config/routes';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 interface CuratedEventPreviewProps {
   event: Record<string, unknown>;
+  /** PublicEventPage brings its own chrome; the in-app shell wants a back row. */
+  showBack?: boolean;
 }
 
-function extractDomain(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '');
-  } catch {
-    return url;
-  }
-}
-
-export function CuratedEventPreview({ event }: CuratedEventPreviewProps) {
+export function CuratedEventPreview({ event, showBack = true }: CuratedEventPreviewProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const eventId = event.id as string;
   const title = event.title as string;
   const description = event.description as string | null;
-  const coverImg = (event.cover_image_url || event.banner_url || event.image_url) as string | null;
-  const startTime = event.start_time as string | null;
-  const endTime = event.end_time as string | null;
-  const locationName = event.location_name as string | null;
+  const slug = event.slug as string | null;
   const eventFormat = event.format as string | null;
-  const curatedSource = event.curated_source as string | null;
+  const locationName = event.location_name as string | null;
   const curatedSourceUrl = event.curated_source_url as string | null;
-  const sourceDomain = curatedSourceUrl ? extractDomain(curatedSourceUrl) : curatedSource;
+  const organizerName =
+    (event.organizer_name as string | null) ||
+    (event.organizer as { full_name?: string } | null)?.full_name ||
+    null;
+  const timeConfirmed = (event.time_confirmed as boolean | null | undefined) ?? null;
+  const endTime = event.end_time as string | null;
 
-  const startDate = startTime ? new Date(startTime) : null;
-  const endDate = endTime ? new Date(endTime) : null;
-
-  const isVirtual = eventFormat === 'virtual';
-  const isHybrid = eventFormat === 'hybrid';
-  // Place-only line ("Lagos, Nigeria") — the Virtual/Hybrid label is rendered
-  // by the format branch below, so don't let the formatter repeat it.
-  const locality = formatEventPlace(pickEventPlace(event), 'compact');
-  const locationParts = [locationName, locality].filter(Boolean);
-
-  // Fetch user RSVP
-  const { data: userRsvp } = useQuery({
-    queryKey: ['user-rsvp', eventId, user?.id],
-    queryFn: async () => {
-      if (!user) return null;
-      const { data } = await supabase
-        .from('event_attendees')
-        .select('status')
-        .eq('event_id', eventId)
-        .eq('user_id', user.id)
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!user,
+  const hostName = curatedHostName({
+    organizer_name: organizerName,
+    curated_source_url: curatedSourceUrl,
   });
+  const sourceDomain = curatedSourceDomain(curatedSourceUrl);
+  const cover = realCuratedCover({ cover_image_url: event.cover_image_url as string | null });
+  const cityLine = formatEventPlace(pickEventPlace(event), 'compact');
 
-  const currentRsvp = userRsvp?.status || null;
+  const timeInput = {
+    start_time: event.start_time as string | null,
+    end_time: endTime,
+    time_confirmed: timeConfirmed,
+    timezone: event.timezone as string | null,
+  };
 
-  // RSVP mutation
-  const rsvpMutation = useMutation({
-    mutationFn: async (status: 'going' | 'maybe' | 'not_going') => {
-      if (!user) throw new Error('Not authenticated');
-      const { error } = await supabase
-        .from('event_attendees')
-        .upsert({ event_id: eventId, user_id: user.id, status }, { onConflict: 'event_id,user_id' });
-      if (error) throw error;
-      return status;
-    },
-    onSuccess: (status) => {
-      queryClient.invalidateQueries({ queryKey: ['user-rsvp', eventId, user?.id] });
-      toast({
-        title: 'RSVP Updated',
-        description: `You've marked yourself as ${status === 'going' ? 'interested' : status === 'maybe' ? 'maybe' : 'not interested'}`,
-      });
-    },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to update RSVP', variant: 'destructive' });
-    },
-  });
+  const isPast = endTime ? new Date(endTime) < new Date() : false;
 
-  const handleRsvp = (status: 'going' | 'maybe' | 'not_going') => {
-    if (!user) {
-      toast({ title: 'Sign in required', description: 'Please log in to RSVP', variant: 'destructive' });
-      navigate('/auth');
-      return;
-    }
-    rsvpMutation.mutate(status);
+  const { pulse, setGoing, isSettingGoing } = useCuratedEventPulse(eventId);
+  // Signed-out viewers can't read attendee rows — the public projection's
+  // going_count carries the headcount instead.
+  const goingCount = pulse?.goingCount ?? Number((event.going_count as number | null) ?? 0);
+  const chapterCount = pulse?.chapterCount ?? 0;
+  const isGoing = pulse?.isGoing ?? false;
+  const attendeePreview = (pulse?.attendees ?? []).slice(0, 8);
+
+  const eventPath = `/dna/convene/events/${slug || eventId}`;
+
+  const requireUser = (): boolean => {
+    if (user) return true;
+    // The sign-in wall lives at the action (D089) and returns here after.
+    navigate(`/auth?redirect=${encodeURIComponent(eventPath)}`);
+    return false;
+  };
+
+  const handleGoing = () => {
+    if (!requireUser()) return;
+    setGoing(!isGoing);
+  };
+
+  const handleOpenSpace = () => {
+    if (!requireUser()) return;
+    navigate(ROUTES.collaborate.createSpace, {
+      state: {
+        name: `Going to ${title}`,
+        tagline: cityLine ? `Members heading to ${title} · ${cityLine}` : `Members heading to ${title}`,
+        description: curatedSourceUrl
+          ? `Coordinating around ${title}. Event details: ${curatedSourceUrl}`
+          : `Coordinating around ${title}.`,
+        spaceType: 'working_group',
+      },
+    });
   };
 
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) {
-      try { await navigator.share({ title, url }); } catch { /* cancelled */ }
+      try {
+        await navigator.share({ title, url });
+      } catch {
+        /* cancelled */
+      }
     } else {
       await navigator.clipboard.writeText(url);
       toast({ title: 'Link Copied', description: 'Event link copied to clipboard' });
     }
   };
 
+  // The plain line: name exactly what DNA has not confirmed.
+  const unconfirmed: string[] = [];
+  if (timeConfirmed === false) unconfirmed.push('the start time');
+  if (!locationName && eventFormat !== 'virtual') unconfirmed.push('the venue');
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 space-y-6">
       {/* Back + actions */}
       <div className="flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back
-        </button>
+        {showBack ? (
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1" /> Back
+          </button>
+        ) : (
+          <span />
+        )}
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShare}>
           <Share2 className="h-4 w-4" />
         </Button>
       </div>
 
-      {/* Curated badge */}
-      <div className="flex items-center gap-2">
-        <Badge className="bg-[hsl(var(--module-connect))]/10 text-[hsl(var(--module-connect))] border-[hsl(var(--module-connect))]/20 hover:bg-[hsl(var(--module-connect))]/15">
-          <Nkonsonkonson className="h-3 w-3 mr-1" />
-          Curated by DNA
-        </Badge>
-      </div>
-
-      {/* Cover image */}
-      {coverImg && (
+      {/* Only a real image from the source gets to be the cover. */}
+      {cover && (
         <div className="rounded-lg overflow-hidden">
-          <img
-            src={coverImg}
-            alt={title}
-            className="w-full h-48 sm:h-64 object-cover"
-            loading="lazy"
-          />
+          <img src={cover} alt={title} className="w-full h-48 sm:h-64 object-cover" loading="lazy" />
         </div>
       )}
 
-      {/* Title */}
-      <h1 className="text-2xl sm:text-h1 font-serif text-foreground leading-tight">
-        {title}
-      </h1>
+      {/* 1 — The facts, which belong to the source: host leads. */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          {hostName && (
+            <p className="text-sm font-semibold uppercase tracking-wide text-foreground">
+              {hostName}
+            </p>
+          )}
+          <Badge
+            variant="outline"
+            className="shrink-0 gap-1 border-border/70 px-1.5 py-0 text-[10px] font-medium text-muted-foreground"
+          >
+            <Nkonsonkonson className="h-2.5 w-2.5" />
+            Seen by DNA
+          </Badge>
+        </div>
 
-      {/* Date & Location */}
-      <div className="space-y-3">
-        {startDate && (
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
-              <span className="text-[10px] font-semibold text-[hsl(var(--module-connect))] uppercase leading-none">
-                {format(startDate, 'MMM').toUpperCase()}
-              </span>
-              <span className="text-lg font-bold leading-none mt-0.5">
-                {format(startDate, 'd')}
-              </span>
-            </div>
-            <div>
-              <p className="font-medium text-sm text-foreground">
-                {format(startDate, 'EEEE, MMMM d, yyyy')}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {format(startDate, 'h:mm a')}
-                {endDate ? ` – ${format(endDate, 'h:mm a')}` : ''}
-              </p>
-            </div>
-          </div>
-        )}
+        <h1 className="text-2xl sm:text-h1 font-serif text-foreground leading-tight">{title}</h1>
 
-        {(locationParts.length > 0 || isVirtual || isHybrid) && (
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex items-center justify-center">
-              {isVirtual ? <Video className="h-5 w-5 text-muted-foreground" /> :
-               isHybrid ? <Globe className="h-5 w-5 text-muted-foreground" /> :
-               <MapPin className="h-5 w-5 text-muted-foreground" />}
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                {isVirtual ? 'Virtual Event' : isHybrid ? 'Hybrid Event' : locationParts[0]}
-              </p>
-              {locationParts.length > 1 && (
-                <p className="text-sm text-muted-foreground">{locationParts.slice(1).join(', ')}</p>
-              )}
-            </div>
-          </div>
-        )}
+        <div className="space-y-0.5">
+          <p className="font-medium text-sm text-foreground">
+            <EventTime event={timeInput} variant="date" />
+          </p>
+          <EventTime
+            event={timeInput}
+            variant="clock"
+            className="block text-sm text-muted-foreground"
+          />
+          {cityLine && <p className="text-sm text-muted-foreground">{cityLine}</p>}
+        </div>
       </div>
 
-      {/* Source attribution + Register CTA */}
-      {curatedSourceUrl && (
-        <Card className="border-[hsl(var(--module-connect))]/20 bg-[hsl(var(--module-connect))]/5">
-          <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground">Register at the source</p>
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                via {sourceDomain} <ExternalLink className="h-2.5 w-2.5" />
+      {/* 2 — Register at source: the terminal CTA. Clean handoff. */}
+      {curatedSourceUrl && !isPast && (
+        <Button
+          size="lg"
+          className="w-full"
+          onClick={() => window.open(curatedSourceUrl, '_blank', 'noopener,noreferrer')}
+        >
+          Register at source
+          <ExternalLink className="h-4 w-4 ml-2" />
+        </Button>
+      )}
+
+      {description && (
+        <>
+          <Separator />
+          <div className="prose prose-sm max-w-none text-foreground/90">
+            <p className="whitespace-pre-wrap">{description}</p>
+          </div>
+        </>
+      )}
+
+      <Separator />
+
+      {/* 3 — Who from the body is going (+ the DNA-side action). */}
+      {!isPast && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">From the body</h3>
+          {goingCount > 0 ? (
+            <div className="flex items-center gap-3">
+              {attendeePreview.length > 0 && (
+                <div className="flex -space-x-2">
+                  {attendeePreview.map((a) => (
+                    <Avatar key={a.id} className="h-8 w-8 border-2 border-background">
+                      <AvatarImage src={a.avatar_url || undefined} />
+                      <AvatarFallback className="text-xs">
+                        {(a.full_name || '?')[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
+                </div>
+              )}
+              <p className="text-sm text-foreground">
+                {goingCount} {goingCount === 1 ? 'Member is' : 'Members are'} going
+                {chapterCount > 0 && (
+                  <span className="text-muted-foreground"> · {chapterCount} from your chapter</span>
+                )}
               </p>
             </div>
-            <Button
-              className="bg-[hsl(var(--module-connect))] hover:bg-[hsl(var(--module-connect))]/90 text-white shrink-0"
-              onClick={() => window.open(curatedSourceUrl, '_blank', 'noopener,noreferrer')}
-            >
-              Register at Source
-              <ExternalLink className="h-4 w-4 ml-1.5" />
+          ) : (
+            <p className="text-sm text-muted-foreground">No Members have signed on yet.</p>
+          )}
+          <Button
+            variant={isGoing ? 'default' : 'outline'}
+            onClick={handleGoing}
+            disabled={isSettingGoing}
+          >
+            {isGoing ? (
+              <>
+                <Check className="h-4 w-4 mr-1.5" /> Going
+              </>
+            ) : (
+              "I'm going"
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* 4 — Go together (D052/D084). */}
+      {!isPast && (
+        <Card>
+          <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground">Go together</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Open a Space to coordinate travel, tickets, and meetups with Members who are going.
+              </p>
+            </div>
+            <Button variant="outline" className="shrink-0" onClick={handleOpenSpace}>
+              <Users className="h-4 w-4 mr-1.5" /> Open a Space
             </Button>
           </CardContent>
         </Card>
       )}
 
-      <Separator />
-
-      {/* Description */}
-      {description && (
-        <div className="prose prose-sm max-w-none text-foreground/90">
-          <p className="whitespace-pre-wrap">{description}</p>
+      {/* 5 — The yield, after (D088): the room is gone; the people remain. */}
+      {isPast && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">The yield</h3>
+          {goingCount > 0 ? (
+            <>
+              <div className="flex items-center gap-3">
+                {attendeePreview.length > 0 && (
+                  <div className="flex -space-x-2">
+                    {attendeePreview.map((a) => (
+                      <Avatar key={a.id} className="h-8 w-8 border-2 border-background">
+                        <AvatarImage src={a.avatar_url || undefined} />
+                        <AvatarFallback className="text-xs">
+                          {(a.full_name || '?')[0]}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
+                  </div>
+                )}
+                <p className="text-sm text-foreground">
+                  {goingCount} {goingCount === 1 ? 'Member was' : 'Members were'} there
+                  {chapterCount > 0 && (
+                    <span className="text-muted-foreground">
+                      {' '}
+                      · {chapterCount} from your chapter
+                    </span>
+                  )}
+                  .
+                </p>
+              </div>
+              <Button variant="outline" onClick={handleOpenSpace}>
+                <Users className="h-4 w-4 mr-1.5" /> Open a Space to follow up
+              </Button>
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              This event has passed. No Members marked themselves as going.
+            </p>
+          )}
         </div>
       )}
 
-      <Separator />
-
-      {/* RSVP buttons */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-foreground">Track this event on DNA</h3>
-        <div className="flex flex-wrap gap-2">
-          {(['going', 'maybe', 'not_going'] as const).map((status) => {
-            const labels = { going: 'Interested', maybe: 'Maybe', not_going: 'Not Interested' };
-            const isActive = currentRsvp === status;
-            return (
-              <Button
-                key={status}
-                variant={isActive ? 'default' : 'outline'}
-                size="sm"
-                className={cn(
-                  'h-9',
-                  isActive && status !== 'not_going' && 'bg-[hsl(var(--module-connect))] hover:bg-[hsl(var(--module-connect))]/90 text-white',
-                )}
-                onClick={() => handleRsvp(status)}
-                disabled={rsvpMutation.isPending}
-              >
-                {status === 'going' && <Heart className={cn('h-3.5 w-3.5 mr-1', isActive && 'fill-current')} />}
-                {labels[status]}
-              </Button>
-            );
-          })}
-        </div>
-      </div>
+      {/* 6 — What DNA has not confirmed, in plain words, linked to the source. */}
+      <p className="text-xs text-muted-foreground border-t border-border pt-4">
+        {unconfirmed.length > 0 ? (
+          <>DNA has not confirmed {unconfirmed.join(' or ')} for this event. </>
+        ) : (
+          <>DNA lists this event as seen at its source; details can change there. </>
+        )}
+        {curatedSourceUrl ? (
+          <a
+            href={curatedSourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-foreground"
+          >
+            {sourceDomain || 'The source'} is authoritative
+            <ExternalLink className="inline h-3 w-3 ml-0.5 align-[-1px]" />
+          </a>
+        ) : (
+          <>The source is authoritative.</>
+        )}
+      </p>
     </div>
   );
 }

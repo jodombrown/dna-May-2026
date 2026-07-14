@@ -18,6 +18,7 @@ interface AddToCalendarButtonProps {
     title: string;
     description?: string;
     start_time: string;
+    time_confirmed?: boolean | null;
     end_time: string;
     meeting_url?: string;
     format: 'in_person' | 'virtual' | 'hybrid';

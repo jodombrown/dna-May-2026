@@ -37,6 +37,7 @@ export const transformDbEvent = (dbEvent: DbEvent): Event => {
     // Timing
     start_time: dbEvent.start_time,
     end_time: dbEvent.end_time,
+    time_confirmed: dbEvent.time_confirmed,
     timezone: dbEvent.timezone,
     
     // Capacity

@@ -9,7 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Video, Globe, Clock, Users } from 'lucide-react';
-import { format, isToday, isTomorrow, differenceInDays } from 'date-fns';
+import { isToday, isTomorrow, differenceInDays } from 'date-fns';
+import { EventTime } from '@/components/events/EventTime';
 import { cn } from '@/lib/utils';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 
@@ -19,6 +20,7 @@ interface HeroEventProps {
     title: string;
     slug?: string | null;
     start_time?: string;
+    time_confirmed?: boolean | null;
     end_time?: string | null;
     cover_image_url?: string | null;
     event_type?: string | null;
@@ -119,7 +121,14 @@ export function ConveneHeroEvent({ event }: HeroEventProps) {
             {startDate && (
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
-                {format(startDate, 'EEE, MMM d · h:mm a')}
+                <EventTime
+                  event={{
+                    start_time: event.start_time,
+                    end_time: event.end_time,
+                    time_confirmed: event.time_confirmed,
+                  }}
+                  variant="datetime"
+                />
               </span>
             )}
             {placeText && (

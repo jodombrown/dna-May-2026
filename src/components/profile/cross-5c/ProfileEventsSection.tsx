@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, ArrowRight } from 'lucide-react';
-import { format } from 'date-fns';
+import { EventTime } from '@/components/events/EventTime';
 
 interface ProfileEventsSectionProps {
   userId: string;
@@ -38,6 +38,7 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
             title,
             description,
             start_time,
+            time_confirmed,
             event_type,
             format,
             organizer_id
@@ -53,8 +54,8 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
       const allEvents = [
         ...hostedEvents.map(e => ({ ...e, isOrganizer: true })),
         ...(attendeeEvents || [])
-          .filter((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; event_type: string; format: string; organizer_id: string } | null }) => a.events && a.events.organizer_id !== userId)
-          .map((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; event_type: string; format: string; organizer_id: string } | null }) => ({ ...a.events, isOrganizer: false })),
+          .filter((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; time_confirmed: boolean | null; event_type: string; format: string; organizer_id: string } | null }) => a.events && a.events.organizer_id !== userId)
+          .map((a: { status: string; events: { id: string; title: string; description: string | null; start_time: string; time_confirmed: boolean | null; event_type: string; format: string; organizer_id: string } | null }) => ({ ...a.events!, isOrganizer: false })),
       ].sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
        .slice(0, limit);
 
@@ -107,7 +108,14 @@ export const ProfileEventsSection: React.FC<ProfileEventsSectionProps> = ({ user
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Calendar className="w-3 h-3" />
-                  <span>{format(new Date(event.start_time), 'MMM d, yyyy • h:mm a')}</span>
+                  <EventTime
+                    event={{
+                      start_time: event.start_time,
+                      time_confirmed:
+                        (event as { time_confirmed?: boolean | null }).time_confirmed ?? null,
+                    }}
+                    variant="datetime"
+                  />
                 </div>
                 {event.description && (
                   <p className="text-xs text-muted-foreground line-clamp-2 mt-1">

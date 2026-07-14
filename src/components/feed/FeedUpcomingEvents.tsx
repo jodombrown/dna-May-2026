@@ -12,13 +12,16 @@ import { Calendar, MapPin, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
-import { format, isToday, isTomorrow } from 'date-fns';
+import { format } from 'date-fns';
+import { formatEventDateTime } from '@/lib/events/eventTime';
 
 interface UpcomingEvent {
   id: string;
   title: string;
   start_time: string;
+  time_confirmed: boolean | null;
   location_name: string | null;
+  location_city: string | null;
 }
 
 export const FeedUpcomingEvents: React.FC = () => {
@@ -33,7 +36,7 @@ export const FeedUpcomingEvents: React.FC = () => {
       // First try events user has RSVP'd to
       const { data: rsvpData } = await supabase
         .from('event_attendees')
-        .select('event_id, events!inner(id, title, start_time, location_name)')
+        .select('event_id, events!inner(id, title, start_time, time_confirmed, location_name, location_city)')
         .eq('user_id', user.id)
         .eq('status', 'going')
         .gt('events.start_time', new Date().toISOString())
@@ -42,7 +45,14 @@ export const FeedUpcomingEvents: React.FC = () => {
 
       const rsvpEvents = (rsvpData || []).map((row) => {
         const evt = row.events as unknown as UpcomingEvent;
-        return { id: evt.id, title: evt.title, start_time: evt.start_time, location_name: evt.location_name };
+        return {
+          id: evt.id,
+          title: evt.title,
+          start_time: evt.start_time,
+          time_confirmed: evt.time_confirmed,
+          location_name: evt.location_name,
+          location_city: evt.location_city,
+        };
       });
 
       // If user has RSVP'd events, show those
@@ -51,7 +61,7 @@ export const FeedUpcomingEvents: React.FC = () => {
       // Otherwise show upcoming platform events as discovery
       const { data: discoveryData } = await supabase
         .from('events')
-        .select('id, title, start_time, location_name')
+        .select('id, title, start_time, time_confirmed, location_name, location_city')
         .eq('status', 'published')
         .gt('start_time', new Date().toISOString())
         .order('start_time', { ascending: true })
@@ -61,19 +71,14 @@ export const FeedUpcomingEvents: React.FC = () => {
         id: evt.id,
         title: evt.title,
         start_time: evt.start_time,
+        time_confirmed: evt.time_confirmed,
         location_name: evt.location_name,
+        location_city: evt.location_city,
       }));
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000,
   });
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    if (isToday(date)) return `Today, ${format(date, 'h:mm a')}`;
-    if (isTomorrow(date)) return `Tomorrow, ${format(date, 'h:mm a')}`;
-    return format(date, 'EEE, MMM d');
-  };
 
   const getDateParts = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -150,12 +155,12 @@ export const FeedUpcomingEvents: React.FC = () => {
                   {evt.title}
                 </p>
                 <div className="flex items-center gap-1 mt-0.5 text-xs text-muted-foreground">
-                  <span>{formatDate(evt.start_time)}</span>
-                  {evt.location_name && (
+                  <span>{formatEventDateTime(evt, 'compact')}</span>
+                  {(evt.location_name || evt.location_city) && (
                     <>
                       <span>·</span>
                       <MapPin className="h-2.5 w-2.5 shrink-0" />
-                      <span className="truncate">{evt.location_name}</span>
+                      <span className="truncate">{evt.location_name || evt.location_city}</span>
                     </>
                   )}
                 </div>

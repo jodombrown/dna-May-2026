@@ -6,15 +6,16 @@ import { Calendar, MapPin, ArrowRight, Users } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
 import { useState } from 'react';
 import { logger } from '@/lib/logger';
 import { EVENT_PLACE_SELECT, formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
+import { EventTime } from '@/components/events/EventTime';
 
 interface EventItem extends EventPlaceInput {
   id: string;
   title: string;
   start_time: string;
+  time_confirmed?: boolean | null;
   format: string;
   event_type: string;
   organizer_id: string;
@@ -46,6 +47,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
             id,
             title,
             start_time,
+            time_confirmed,
             format,
             event_type,
             organizer_id,
@@ -81,6 +83,7 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
               id,
               title,
               start_time,
+              time_confirmed,
               format,
               event_type,
               organizer_id,
@@ -197,7 +200,10 @@ export const UpcomingEventsSection = ({ onCreateEvent }: { onCreateEvent?: () =>
                   <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      {format(new Date(event.start_time), 'MMM d, h:mm a')}
+                      <EventTime
+                        event={{ start_time: event.start_time, time_confirmed: event.time_confirmed }}
+                        variant="datetime"
+                      />
                     </div>
                     <div className="flex items-center gap-1">
                       <MapPin className="h-3 w-3" />

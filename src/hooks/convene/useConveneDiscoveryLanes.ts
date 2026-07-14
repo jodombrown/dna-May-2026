@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { startOfDay, endOfDay, nextSunday, isFriday, isSaturday, isSunday, addDays } from 'date-fns';
 import { EVENT_PLACE_SELECT } from '@/lib/events/formatPlace';
+import { EVENT_TIME_SELECT } from '@/lib/events/eventTime';
 import { logger } from '@/lib/logger';
 
 interface EventRow {
@@ -20,6 +21,8 @@ interface EventRow {
   slug: string | null;
   start_time: string;
   end_time: string | null;
+  timezone: string | null;
+  time_confirmed: boolean | null;
   location_name: string | null;
   location_address: string | null;
   location_city: string | null;
@@ -46,7 +49,7 @@ interface EventRow {
 }
 
 const BASE_SELECT = `
-  id, title, slug, start_time, end_time, ${EVENT_PLACE_SELECT},
+  id, title, slug, ${EVENT_TIME_SELECT}, ${EVENT_PLACE_SELECT},
   description, short_description,
   cover_image_url, event_type, format, is_cancelled, max_attendees,
   organizer_id, is_curated, curated_source, curated_source_url,

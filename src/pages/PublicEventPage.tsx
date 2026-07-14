@@ -19,11 +19,13 @@ import { Calendar, MapPin, Users, Clock, Share2, ExternalLink, Copy, Check, Vide
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
-import { format, formatDistanceToNow } from 'date-fns';
 import PublicSiteHeader from "@/components/PublicSiteHeader";
 import { motion, AnimatePresence } from 'framer-motion';
 import { config } from '@/lib/config';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
+import { EventTime } from '@/components/events/EventTime';
+import { realCuratedCover } from '@/lib/events/curated';
+import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { getEventSchema } from '@/components/seo/PageSEO';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
@@ -210,11 +212,14 @@ const PublicEventPage = () => {
   const isCompleted = event.status === 'completed';
   const currentRsvp = userRsvp?.status;
 
-  // Format date/time
-  const eventDate = new Date(event.start_time);
-  const eventEndDate = new Date(event.end_time);
-  const dateStr = format(eventDate, 'EEEE, MMMM d, yyyy');
-  const timeStr = `${format(eventDate, 'h:mm a')} - ${format(eventEndDate, 'h:mm a')}`;
+  // Date/time render through the one renderer: an unconfirmed hour never
+  // prints, on this page or anywhere else.
+  const timeInput = {
+    start_time: event.start_time,
+    end_time: event.end_time,
+    time_confirmed: event.time_confirmed,
+    timezone: event.timezone,
+  };
 
   // Build location string
   const getLocationDisplay = () => {
@@ -230,12 +235,14 @@ const PublicEventPage = () => {
   // SEO description
   const seoDescription = event.short_description || event.description?.slice(0, 160) || `${eventTitle} hosted by ${hostName} on DNA`;
 
-  // Generate Event structured data for Google rich results
+  // Generate Event structured data for Google rich results. An unconfirmed
+  // hour is a fabrication in machine-readable form too — emit date-only.
+  const timeUnconfirmed = event.time_confirmed === false;
   const eventStructuredData = getEventSchema({
     name: eventTitle,
     description: seoDescription,
-    startDate: event.start_time,
-    endDate: event.end_time,
+    startDate: timeUnconfirmed ? event.start_time.slice(0, 10) : event.start_time,
+    endDate: timeUnconfirmed ? event.end_time.slice(0, 10) : event.end_time,
     location: locationDisplay || undefined,
     isVirtual: event.format === 'virtual',
     image: event.cover_image_url,
@@ -244,11 +251,12 @@ const PublicEventPage = () => {
   });
 
   const canonicalUrl = `${config.APP_URL}/event/${event.slug || event.id}`;
-  const ogImage = event.cover_image_url || `${config.APP_URL}/og-image.png`;
+  const ogImage =
+    (event.is_curated ? realCuratedCover(event) : event.cover_image_url) ||
+    `${config.APP_URL}/og-image.png`;
 
-  return (
-    <>
-      {/* SEO Meta Tags - Critical for link previews & Google rich results */}
+  // SEO Meta Tags - Critical for link previews & Google rich results
+  const helmet = (
       <Helmet>
         <title>{eventTitle} | African Diaspora Event | DNA</title>
         <meta name="description" content={seoDescription} />
@@ -276,6 +284,24 @@ const PublicEventPage = () => {
           {JSON.stringify(eventStructuredData)}
         </script>
       </Helmet>
+  );
+
+  // ── Curated event → the curated page (shared body) in public chrome ──
+  if (event.is_curated) {
+    return (
+      <>
+        {helmet}
+        <div className="min-h-screen bg-background">
+          <PublicSiteHeader />
+          <CuratedEventPreview event={event} showBack={false} />
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {helmet}
 
       <div className="min-h-screen bg-background">
         <PublicSiteHeader />
@@ -362,15 +388,19 @@ const PublicEventPage = () => {
               {/* Title */}
               <h1 className="text-2xl sm:text-3xl font-bold mb-4">{eventTitle}</h1>
 
-              {/* Date & Time */}
+              {/* Date & Time — through the one renderer; no clock line when
+                  the hour is unconfirmed */}
               <div className="flex items-start gap-3 mb-3">
                 <Calendar className="w-5 h-5 mt-0.5 text-primary" />
                 <div>
-                  <p className="font-medium">{dateStr}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {timeStr}
-                    {event.timezone && ` (${event.timezone})`}
+                  <p className="font-medium">
+                    <EventTime event={timeInput} variant="date" />
                   </p>
+                  <EventTime
+                    event={timeInput}
+                    variant="clock"
+                    className="block text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
 

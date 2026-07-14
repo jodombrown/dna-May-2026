@@ -23,6 +23,7 @@ export interface FeedEventDetails {
   meeting_platform: string | null;
   start_time: string | null;
   end_time: string | null;
+  time_confirmed: boolean | null;
   timezone: string | null;
   cover_image_url: string | null;
   max_attendees: number | null;
@@ -64,6 +65,7 @@ export function useEventDetailsForFeed(eventId: string | null) {
           meeting_platform,
           start_time,
           end_time,
+          time_confirmed,
           timezone,
           cover_image_url,
           max_attendees,

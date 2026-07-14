@@ -15,6 +15,7 @@ interface Event extends EventPlaceInput {
   title: string;
   start_time: string;
   end_time: string;
+  time_confirmed?: boolean | null;
   format: 'in_person' | 'virtual' | 'hybrid';
   event_type?: string;
 }
@@ -37,6 +38,9 @@ export const EventCalendarView = ({ events, onCreateEvent }: EventCalendarViewPr
         title: event.title,
         start: new Date(event.start_time),
         end: new Date(event.end_time),
+        // An unconfirmed hour renders as an all-day entry — the grid never
+        // places it at a fabricated clock position.
+        allDay: event.time_confirmed === false,
         resource: event,
       })),
     [events]

@@ -5,7 +5,7 @@ import { ArrowLeft, Search, X, TrendingUp, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEventSearch, useTrendingEvents, type EventSearchFilters } from '@/hooks/convene/useEventSearch';
-import { formatEventTime } from '@/utils/convene/formatEventTime';
+import { formatEventDateTime } from '@/lib/events/eventTime';
 import { getEventStatus } from '@/utils/convene/getEventStatus';
 import { ConveneEventBadge } from '@/components/convene/ConveneEventBadge';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
@@ -247,6 +247,7 @@ interface SearchResultCardProps {
     slug: string | null;
     start_time: string;
     end_time: string;
+    time_confirmed: boolean | null;
     cover_image_url: string | null;
     event_type: string;
     format: string;
@@ -290,12 +291,14 @@ function SearchResultCard({ event, onClick }: SearchResultCardProps) {
           {event.title}
         </p>
         <p className="text-xs text-muted-foreground mt-0.5">
-          {formatEventTime(event.start_time, event.end_time)}
+          {formatEventDateTime(event, 'compact')}
         </p>
-        <p className="text-xs text-muted-foreground">
-          {event.format === 'virtual' ? '🌐' : '📍'}{' '}
-          {formatEventPlace(event, 'compact') || event.location_name || 'TBA'}
-        </p>
+        {(formatEventPlace(event, 'compact') || event.location_name) && (
+          <p className="text-xs text-muted-foreground">
+            {event.format === 'virtual' ? '🌐' : '📍'}{' '}
+            {formatEventPlace(event, 'compact') || event.location_name}
+          </p>
+        )}
       </div>
 
       {/* Status Badge */}

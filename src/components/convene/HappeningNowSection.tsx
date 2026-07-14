@@ -11,8 +11,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Users, ArrowRight, MapPin } from 'lucide-react';
-import { format } from 'date-fns';
 import { EVENT_PLACE_SELECT, formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
+import { EVENT_TIME_SELECT, formatEventDateTime } from '@/lib/events/eventTime';
 
 export function HappeningNowSection() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export function HappeningNowSection() {
       const { data, error } = await supabase
         .from('events')
         .select(`
-          id, title, slug, start_time, end_time, ${EVENT_PLACE_SELECT},
+          id, title, slug, ${EVENT_TIME_SELECT}, ${EVENT_PLACE_SELECT},
           event_type, format, organizer_id,
           event_attendees(count)
         `)
@@ -102,8 +102,23 @@ export function HappeningNowSection() {
                     <Users className="h-3 w-3" />
                     <span>{attendeeCount} attending</span>
                   </div>
-                  {startDate && (
-                    <span>Started {format(startDate, 'h:mm a')}</span>
+                  {formatEventDateTime(
+                    {
+                      start_time: event.start_time as string | null,
+                      time_confirmed: event.time_confirmed as boolean | null,
+                    },
+                    'clock'
+                  ) && (
+                    <span>
+                      Started{' '}
+                      {formatEventDateTime(
+                        {
+                          start_time: event.start_time as string | null,
+                          time_confirmed: event.time_confirmed as boolean | null,
+                        },
+                        'clock'
+                      )}
+                    </span>
                   )}
                 </div>
 

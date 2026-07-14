@@ -33,11 +33,12 @@ export interface Event {
   
   start_time: string;
   end_time: string;
+  time_confirmed?: boolean | null;
   timezone: string;
-  
+
   max_attendees?: number;
   cover_image_url?: string;
-  
+
   is_public: boolean;
   requires_approval: boolean;
   allow_guests: boolean;
@@ -80,6 +81,7 @@ export interface EventListItem {
   meeting_url?: string;
   start_time: string;
   end_time: string;
+  time_confirmed?: boolean | null;
   timezone: string;
   max_attendees?: number;
   cover_image_url?: string;

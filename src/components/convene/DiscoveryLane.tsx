@@ -18,6 +18,7 @@ interface DiscoveryEvent extends EventPlaceInput {
   slug?: string | null;
   start_time?: string;
   end_time?: string | null;
+  time_confirmed?: boolean | null;
   cover_image_url?: string | null;
   event_type?: string | null;
   format?: string | null;
@@ -91,18 +92,17 @@ export function DiscoveryLane({
                   event={{
                     id: event.id,
                     title: event.title,
-                    description: event.description,
-                    short_description: event.short_description,
                     start_time: event.start_time || '',
                     end_time: event.end_time,
+                    time_confirmed: event.time_confirmed,
                     ...pickEventPlace(event),
                     cover_image_url: event.cover_image_url,
                     format: event.format,
                     slug: event.slug,
+                    organizer_name: event.organizer?.full_name ?? null,
                     curated_source: event.curated_source,
                     curated_source_url: event.curated_source_url,
                   }}
-                  variant="full"
                 />
               ) : (
                 <ConveneEventCard
@@ -111,6 +111,7 @@ export function DiscoveryLane({
                     title: event.title,
                     start_time: event.start_time,
                     end_time: event.end_time,
+                    time_confirmed: event.time_confirmed,
                     ...pickEventPlace(event),
                     cover_image_url: event.cover_image_url,
                     event_type: event.event_type || undefined,

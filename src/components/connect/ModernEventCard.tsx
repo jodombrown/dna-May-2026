@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Event } from '@/types/search';
 import { formatEventPlace } from '@/lib/events/formatPlace';
 import { format } from 'date-fns';
+import { formatEventDateTime } from '@/lib/events/eventTime';
 import { Sankofa } from '@/components/icons/adinkra';
 
 interface ModernEventCardProps {
@@ -31,10 +32,11 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
   const monthAbbrev = parsedDate ? format(parsedDate, 'MMM').toUpperCase() : '';
   const dayNumber = parsedDate ? format(parsedDate, 'd') : '';
   const dayOfWeek = parsedDate ? format(parsedDate, 'EEEE') : '';
-  const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : 'Date TBD';
-  const timeRange = parsedDate 
-    ? `${format(parsedDate, 'h:mm a')}${endDate ? ` - ${format(endDate, 'h:mm a')}` : ''}`
-    : '';
+  const fullDate = parsedDate ? format(parsedDate, 'MMMM d, yyyy') : '';
+  const timeRange = formatEventDateTime(
+    { start_time: eventDate, end_time: event.end_time, time_confirmed: event.time_confirmed },
+    'clock'
+  );
 
   // Location info - hide if not available
   const getLocationInfo = () => {
@@ -90,8 +92,11 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
         {/* Host info or Curated Badge */}
         {(event as any).is_curated ? (
           <div className="flex items-center gap-2 mb-4">
-            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-              Curated by DNA
+            <Badge
+              variant="outline"
+              className="gap-1 border-border/70 text-[10px] font-medium text-muted-foreground"
+            >
+              Seen by DNA
             </Badge>
           </div>
         ) : event.creator_profile ? (
@@ -126,8 +131,10 @@ const ModernEventCard: React.FC<ModernEventCardProps> = ({
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
-              <p className="text-sm text-muted-foreground">{timeRange}</p>
+              {fullDate && (
+                <p className="font-medium text-sm text-foreground">{dayOfWeek}, {fullDate}</p>
+              )}
+              {timeRange && <p className="text-sm text-muted-foreground">{timeRange}</p>}
             </div>
           </div>
         )}

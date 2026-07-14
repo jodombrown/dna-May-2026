@@ -211,7 +211,7 @@ var list_events_default = defineTool3({
   handler: wrapHandler("list_upcoming_events", InputSchema3, async ({ query, limit }) => {
     const nowIso = (/* @__PURE__ */ new Date()).toISOString();
     const n = limit ?? 10;
-    let path = `events?select=id,title,description,start_time,end_time,location_name,location_city,location_country,event_type,slug&start_time=gte.${nowIso}&order=start_time.asc&limit=${n}`;
+    let path = `events?select=id,title,description,start_time,end_time,time_confirmed,location_name,location_city,location_country,event_type,slug&start_time=gte.${nowIso}&order=start_time.asc&limit=${n}`;
     if (query) {
       const q = encodeURIComponent(query.replace(/[*(),]/g, ""));
       path += `&or=(title.ilike.*${q}*,description.ilike.*${q}*)`;
@@ -223,6 +223,7 @@ var list_events_default = defineTool3({
       description: r.description ?? null,
       start_time: r.start_time ?? null,
       end_time: r.end_time ?? null,
+      time_confirmed: r.time_confirmed ?? null,
       location_name: r.location_name ?? null,
       location_city: r.location_city ?? null,
       location_country: r.location_country ?? null,

@@ -3392,6 +3392,7 @@ export type Database = {
           status: string
           subtitle: string | null
           tags: string[] | null
+          time_confirmed: boolean
           timezone: string
           title: string
           updated_at: string
@@ -3439,6 +3440,7 @@ export type Database = {
           status?: string
           subtitle?: string | null
           tags?: string[] | null
+          time_confirmed?: boolean
           timezone?: string
           title: string
           updated_at?: string
@@ -3486,6 +3488,7 @@ export type Database = {
           status?: string
           subtitle?: string | null
           tags?: string[] | null
+          time_confirmed?: boolean
           timezone?: string
           title?: string
           updated_at?: string
@@ -13258,6 +13261,7 @@ export type Database = {
           status: string
           subtitle: string
           tags: string[]
+          time_confirmed: boolean
           timezone: string
           title: string
           visibility: string

@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { MutualAttendeesLine } from './MutualAttendeesLine';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
+import { EventTime } from '@/components/events/EventTime';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
 export interface ConveneEventCardProps {
@@ -18,6 +19,7 @@ export interface ConveneEventCardProps {
     start_time?: string;
     date_time?: string;
     end_time?: string;
+    time_confirmed?: boolean | null;
     location?: string | null;
     cover_image_url?: string | null;
     banner_url?: string | null;
@@ -102,7 +104,6 @@ export function ConveneEventCard({
   // Dates
   const rawDate = event.start_time || event.date_time;
   const startDate = rawDate ? new Date(rawDate) : null;
-  const endDate = event.end_time ? new Date(event.end_time) : null;
   const monthAbbrev = startDate ? format(startDate, 'MMM').toUpperCase() : '';
   const dayNumber = startDate ? format(startDate, 'd') : '';
   const isPast = startDate ? startDate < new Date() : false;
@@ -218,7 +219,14 @@ export function ConveneEventCard({
               {event.title}
             </h3>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">
-              {startDate && <span>{format(startDate, 'MMM d, yyyy · h:mm a')}</span>}
+              <EventTime
+                event={{
+                  start_time: rawDate,
+                  end_time: event.end_time,
+                  time_confirmed: event.time_confirmed,
+                }}
+                variant="datetime"
+              />
               {locationInfo && (
                 <span className="flex items-center gap-1">
                   <locationInfo.icon className="h-3 w-3" />
@@ -403,10 +411,15 @@ export function ConveneEventCard({
               <p className="font-medium text-sm text-foreground">
                 {format(startDate, 'EEEE, MMM d')}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {format(startDate, 'h:mm a')}
-                {endDate ? ` – ${format(endDate, 'h:mm a')}` : ''}
-              </p>
+              <EventTime
+                event={{
+                  start_time: rawDate,
+                  end_time: event.end_time,
+                  time_confirmed: event.time_confirmed,
+                }}
+                variant="clock"
+                className="block text-xs text-muted-foreground"
+              />
             </div>
           </div>
         )}
@@ -439,9 +452,12 @@ export function ConveneEventCard({
         <div className="flex items-center justify-between pt-1 mt-auto">
           {/* Left: Organizer or attendee count */}
           {event.is_curated ? (
-            <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 text-xs">
-              <Nkonsonkonson className="h-3 w-3 mr-1" />
-              Curated
+            <Badge
+              variant="outline"
+              className="gap-1 border-border/70 text-[10px] font-medium text-muted-foreground"
+            >
+              <Nkonsonkonson className="h-2.5 w-2.5" />
+              Seen by DNA
             </Badge>
           ) : showOrganizer && organizerName ? (
             <button

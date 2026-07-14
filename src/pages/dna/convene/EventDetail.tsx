@@ -54,12 +54,12 @@ import {
 } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { formatEventPlace, pickEventPlace } from '@/lib/events/formatPlace';
+import { EventTime } from '@/components/events/EventTime';
 import { eventStateWrite } from '@/lib/events/state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useUniversalComposer } from '@/hooks/useUniversalComposer';
 import { UniversalComposer } from '@/components/composer/UniversalComposer';
-import { formatDistanceToNow, format } from 'date-fns';
 import { EventCountdown } from '@/components/convene/EventCountdown';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
@@ -537,6 +537,12 @@ const EventDetail = () => {
   const isCompleted = eventStatus === 'completed';
   const isPastEvent = event.end_time ? new Date(event.end_time as string) < new Date() : false;
   const place = formatEventPlace(pickEventPlace(event), 'full');
+  const eventTimeInput = {
+    start_time: event.start_time as string | null,
+    end_time: event.end_time as string | null,
+    time_confirmed: event.time_confirmed as boolean | null | undefined,
+    timezone: event.timezone as string | null,
+  };
   const currentRsvp = userRsvp?.status || null;
   // Signed-in headcount comes from the live count query; signed-out from the
   // projection's going_count (attendee/registration queries are auth-gated).
@@ -667,7 +673,7 @@ const EventDetail = () => {
 
             {/* Action buttons — condensed */}
             <div className="flex gap-2 flex-wrap items-center">
-              <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, ...pickEventPlace(event), meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" />
+              <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, time_confirmed: event.time_confirmed as boolean | null, ...pickEventPlace(event), meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" />
               <Button variant="outline" size="icon" onClick={handleShareEvent}>
                 <Share2 className="h-4 w-4" />
               </Button>
@@ -754,10 +760,14 @@ const EventDetail = () => {
                 <div className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 mt-0.5 text-muted-foreground" />
                   <div>
-                    <p className="font-medium">{format(new Date(event.start_time as string), 'EEEE, MMMM d, yyyy')}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(new Date(event.start_time as string), 'h:mm a')} - {format(new Date(event.end_time as string), 'h:mm a')} {event.timezone as string}
+                    <p className="font-medium">
+                      <EventTime event={eventTimeInput} variant="date" />
                     </p>
+                    <EventTime
+                      event={eventTimeInput}
+                      variant="clock"
+                      className="block text-sm text-muted-foreground"
+                    />
                   </div>
                 </div>
 
@@ -891,7 +901,7 @@ const EventDetail = () => {
 
               <Card>
                 <CardContent className="pt-6">
-                  <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, ...pickEventPlace(event), meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" size="default" />
+                  <AddToCalendarButton event={{ id: event.id as string, title: event.title as string, description: event.description as string | undefined, start_time: event.start_time as string, end_time: event.end_time as string, time_confirmed: event.time_confirmed as boolean | null, ...pickEventPlace(event), meeting_url: event.meeting_url as string | undefined, format: (event.format as 'in_person' | 'virtual' | 'hybrid') || 'in_person' }} organizer={organizer} variant="outline" size="default" />
                 </CardContent>
               </Card>
             </div>
