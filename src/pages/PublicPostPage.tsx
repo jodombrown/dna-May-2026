@@ -460,25 +460,10 @@ const PublicPostPage = () => {
             </Card>
           )}
 
-          {/* Footer */}
-          <footer className="mt-6 pt-4 border-t text-center text-sm text-muted-foreground">
-            <p>
-              DNA - Diaspora Network of Africa
-            </p>
-            <div className="flex items-center justify-center gap-4 mt-2">
-              <Link to="/about" className="hover:text-foreground transition-colors">
-                About
-              </Link>
-              <Link to="/privacy-policy" className="hover:text-foreground transition-colors">
-                Privacy
-              </Link>
-              <Link to="/terms-of-service" className="hover:text-foreground transition-colors">
-                Terms
-              </Link>
-            </div>
-          </footer>
         </div>
+        <Footer />
       </div>
+
     </>
   );
 };
