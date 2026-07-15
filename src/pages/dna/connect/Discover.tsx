@@ -135,7 +135,7 @@ export default function Discover() {
           p_regional_expertise: filters.regional_expertise?.length ? filters.regional_expertise : null,
           p_industries: filters.industries?.length ? filters.industries : null,
           p_country_of_origin: filters.primary_origin_country ? (originNameToCode(filters.primary_origin_country) || filters.primary_origin_country) : null,
-          p_location_country: filters.current_country || null,
+          p_location_country: filters.current_country ? (originNameToCode(filters.current_country) || filters.current_country) : null,
           p_skills: filters.skills?.length ? filters.skills : null,
           p_search_query: searchQuery || null,
           p_sort_by: 'match',
@@ -161,7 +161,7 @@ export default function Discover() {
           if (filters?.regional_expertise?.length) q = q.overlaps('regional_expertise', filters.regional_expertise);
           if (filters?.industries?.length) q = q.overlaps('industries', filters.industries);
           if (filters?.skills?.length) q = q.overlaps('skills', filters.skills);
-          if (filters?.current_country) q = q.eq('current_country_name', filters.current_country);
+          if (filters?.current_country) q = q.eq('current_country_code', originNameToCode(filters.current_country) || filters.current_country);
           if (searchQuery) {
             q = q.or(
               `full_name.ilike.%${searchQuery}%,headline.ilike.%${searchQuery}%,bio.ilike.%${searchQuery}%`

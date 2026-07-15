@@ -13,7 +13,7 @@ import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/component
 import TourResumeBanner from '@/components/onboarding/TourResumeBanner';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import UsernameManager from '@/components/profile/UsernameManager';
-import { upsertPrimaryOrigin, getPrimaryOriginCode } from '@/lib/memberHeritage';
+import { upsertPrimaryOrigin, getPrimaryOriginCode, originNameToCode } from '@/lib/memberHeritage';
 
 // Import modular profile edit components
 import {
@@ -309,6 +309,7 @@ const ProfileEdit = () => {
       location,
       // BD038: primary_origin_country handled via member_heritage in the mutation
       current_country: currentCountry,
+      current_country_code: originNameToCode(currentCountry) || null,
       pronouns,
 
       // Contact preferences (unified)
