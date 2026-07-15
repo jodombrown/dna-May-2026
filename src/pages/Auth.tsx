@@ -41,6 +41,11 @@ const Auth = () => {
     setIsSignUp(queryMode === 'signup');
   }, [queryMode]);
 
+  // Waitlist mode: signup tab is closed; funnel to /waitlist.
+  if (WAITLIST_MODE && isSignUp) {
+    return <Navigate to="/waitlist" replace />;
+  }
+
   // Where to redirect after login: explicit ?redirect= (public pages like
   // PublicEventPage), then state.from (OnboardingGuard / protected routes),
   // then the feed. Both sources are validated to same-origin paths.
