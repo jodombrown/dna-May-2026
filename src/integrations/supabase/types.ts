@@ -7478,8 +7478,12 @@ export type Database = {
           current_country_code: string | null
           current_country_id: string | null
           current_country_name: string | null
+          current_lat: number | null
+          current_lng: number | null
           current_location: string | null
+          current_place_id: string | null
           current_region: string | null
+          current_state: string | null
           dashboard_version: string | null
           deleted_at: string | null
           dia_insight: string | null
@@ -7685,8 +7689,12 @@ export type Database = {
           current_country_code?: string | null
           current_country_id?: string | null
           current_country_name?: string | null
+          current_lat?: number | null
+          current_lng?: number | null
           current_location?: string | null
+          current_place_id?: string | null
           current_region?: string | null
+          current_state?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
           dia_insight?: string | null
@@ -7892,8 +7900,12 @@ export type Database = {
           current_country_code?: string | null
           current_country_id?: string | null
           current_country_name?: string | null
+          current_lat?: number | null
+          current_lng?: number | null
           current_location?: string | null
+          current_place_id?: string | null
           current_region?: string | null
+          current_state?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
           dia_insight?: string | null
@@ -11814,8 +11826,12 @@ export type Database = {
           current_country_code: string | null
           current_country_id: string | null
           current_country_name: string | null
+          current_lat: number | null
+          current_lng: number | null
           current_location: string | null
+          current_place_id: string | null
           current_region: string | null
+          current_state: string | null
           dashboard_version: string | null
           deleted_at: string | null
           dia_insight: string | null
@@ -13094,8 +13110,12 @@ export type Database = {
           current_country_code: string | null
           current_country_id: string | null
           current_country_name: string | null
+          current_lat: number | null
+          current_lng: number | null
           current_location: string | null
+          current_place_id: string | null
           current_region: string | null
+          current_state: string | null
           dashboard_version: string | null
           deleted_at: string | null
           dia_insight: string | null
