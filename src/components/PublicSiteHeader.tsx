@@ -4,7 +4,7 @@
  * Lightweight, non-fixed marketing header used on publicly-shareable pages
  * (PublicPostPage, PublicEventPage). Mirrors the landing page chrome shown
  * to signed-out visitors: DNA logo left, hamburger menu right on mobile,
- * About / Sign In / Join Now on desktop.
+ * About / Sign In / Join the Waitlist on desktop.
  *
  * Intentionally does NOT show the authenticated user's chrome (search bubble,
  * bell, avatar) even when a session exists — public share links must feel
@@ -89,7 +89,7 @@ export const PublicSiteHeader = () => {
               onClick={() => navigate('/auth?mode=signup')}
               className="bg-dna-emerald text-white hover:bg-dna-forest"
             >
-              Join Now
+              Join the Waitlist
             </Button>
           </nav>
 
@@ -134,7 +134,7 @@ export const PublicSiteHeader = () => {
                       className="justify-start bg-dna-emerald hover:bg-dna-forest text-white"
                       onClick={() => go('/auth?mode=signup')}
                     >
-                      Join Now
+                      Join the Waitlist
                     </Button>
                     <Button
                       variant="outline"

@@ -193,7 +193,7 @@ const Contact = () => {
                       onClick={() => navigate('/auth?mode=signup')}
                     >
                       <MateMasie className="w-4 h-4 mr-2" />
-                      Join Now
+                      Join the Waitlist
                     </Button>
                   )}
                 </CardContent>

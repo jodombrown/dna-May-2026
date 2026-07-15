@@ -196,7 +196,7 @@ const PublicEventPage = () => {
             </Button>
             {!isLoggedIn && (
               <Button variant="outline" onClick={() => navigate('/auth?mode=signup')}>
-                Join Now
+                Join the Waitlist
               </Button>
             )}
           </div>
@@ -346,7 +346,7 @@ const PublicEventPage = () => {
                   asChild
                 >
                   <Link to="/auth?mode=signup">
-                    Join Now
+                    Join the Waitlist
                   </Link>
                 </Button>
               </div>
@@ -653,7 +653,7 @@ const PublicEventPage = () => {
                         asChild
                       >
                         <Link to="/auth?mode=signup">
-                          Join Now
+                          Join the Waitlist
                         </Link>
                       </Button>
                       <Button 
