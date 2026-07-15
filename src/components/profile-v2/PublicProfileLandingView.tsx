@@ -10,12 +10,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  MapPin, 
-  Globe, 
-  Briefcase, 
-  UserPlus, 
-  ArrowLeft,
+import {
+  MapPin,
+  Globe,
+  Briefcase,
+  UserPlus,
   Users,
   Target,
   Heart,
@@ -27,6 +26,7 @@ import {
 import { ProfileV2Bundle } from '@/types/profileV2';
 import { BANNER_GRADIENTS, BannerGradientKey } from '@/lib/constants/bannerGradients';
 import { PublicProfileSEO } from '@/components/public-profile';
+import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 import { motion } from 'framer-motion';
 import { getFlag } from '@/lib/countryFlags';
 import { originCodeToName } from '@/lib/memberHeritage';
