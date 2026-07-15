@@ -141,7 +141,7 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
   const rawContent = (post.content || '').trim();
   const contentPreview = rawContent.length >= 50
     ? (rawContent.length > 160 ? rawContent.slice(0, 157).trimEnd() + '...' : rawContent)
-    : `Read this post by ${authorName} on DNA, the operating system mobilizing the Global African Diaspora for Africa's economic transformation.`;
+    : `Read this post by ${authorName} on DNA, the mobilization infrastructure for the Global African Diaspora's return.`;
   const postUrl = `${SITE_URL}/post/${postId}`;
   const ogImage = post.image_url || post.author?.avatar_url || `${SITE_URL}/og-image.png`;
   const absoluteOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
