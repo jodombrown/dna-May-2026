@@ -22,8 +22,7 @@ import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mpatapo } from '@/components/icons/adinkra';
+import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 
 const PublicPostPage = () => {
   const { postId } = useParams<{ postId: string }>();
