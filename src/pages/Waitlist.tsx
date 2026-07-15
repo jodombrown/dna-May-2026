@@ -57,7 +57,6 @@ const Waitlist = () => {
           email: formData.email,
           location: formData.location || null,
           role: 'individual',
-          status: 'pending'
         });
 
       if (error) {
