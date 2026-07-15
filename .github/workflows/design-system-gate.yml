@@ -18,6 +18,11 @@ jobs:
       - name: Gate changed files
         shell: bash
         run: |
+          # GitHub's `shell: bash` injects -e, but this script manages rg
+          # exit codes itself (rc 1 = clean pass, handled explicitly). Under
+          # -e the first check that finds NO violations aborts the job, so
+          # the gate could never pass on a PR with changed src files.
+          set +e
           set -uo pipefail
 
           BASE_REF="${{ github.base_ref }}"
