@@ -36,3 +36,15 @@ export const FEATURE_FLAGS: FeatureFlags = {
  * gated by this flag.
  */
 export const MESSAGING_ENABLED = false;
+
+/**
+ * Waitlist mode. When true:
+ *   - All "Join Now" CTAs render as "Join the Waitlist"
+ *   - The /auth signup tab redirects to /waitlist
+ *
+ * To restore Join Now:
+ *   1. Set WAITLIST_MODE = false below
+ *   2. Run: git grep -l "Join the Waitlist" src | xargs sed -i '' 's/Join the Waitlist/Join Now/g'
+ *      (or the reverse of the sed used to swap them in)
+ */
+export const WAITLIST_MODE = true;
