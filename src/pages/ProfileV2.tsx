@@ -152,29 +152,40 @@ const ProfileV2: React.FC = () => {
     );
   }
 
-  // Show beautiful public landing view for non-logged-in visitors
-  // (bundle comes from the anon-callable get_public_profile RPC).
-  // This provides a focused, inviting experience that drives sign-ups.
-  if (!user || bundle.should_show_public_landing) {
-    return <PublicProfileLandingView bundle={bundle} />;
-  }
-
-  // === Bundle structure check (Development Mode) ===
-  // Bundle validation happens here in development
-
   // Normalize the bundle - handle both flat RPC response and expected structure
   const profile = bundle.profile;
   const tags = bundle.tags ?? {};
   const activity = bundle.activity ?? { spaces: [], events: [] };
-  
-  // Handle flat isOwner from RPC vs nested permissions object
-  const rawIsOwner = (bundle as unknown as { isOwner?: boolean }).isOwner ?? bundle.permissions?.is_owner ?? false;
+
+  // Owner detection: derive client-side so we NEVER render the visitor UI on
+  // the owner's own profile even if the RPC forgets to stamp is_owner. The
+  // RPC returns is_owner (snake_case) at the top of the bundle; older paths
+  // returned isOwner (camelCase) or a nested permissions.is_owner. Fall back
+  // to comparing the signed-in user id to the profile id as the source of truth.
+  const rpcIsOwner =
+    (bundle as unknown as { is_owner?: boolean; isOwner?: boolean }).is_owner ??
+    (bundle as unknown as { isOwner?: boolean }).isOwner ??
+    bundle.permissions?.is_owner ??
+    false;
+  const isOwnerViewer = !!user && !!bundle.profile?.id && user.id === bundle.profile.id;
+  const rawIsOwner = rpcIsOwner || isOwnerViewer;
+
+  // Show public landing view for signed-out visitors ONLY. An owner viewing
+  // their own profile must never be routed through the visitor experience.
+  if (!user || (bundle.should_show_public_landing && !isOwnerViewer)) {
+    return <PublicProfileLandingView bundle={bundle} />;
+  }
+
   const permissions = bundle.permissions ?? {
     is_owner: rawIsOwner,
     can_edit: rawIsOwner,
     can_create_events: true,
     can_create_public_spaces: true,
   };
+  // Force the derived owner flag through, in case the RPC nested permissions
+  // block came back with is_owner=false for the actual owner.
+  permissions.is_owner = rawIsOwner;
+  permissions.can_edit = permissions.can_edit || rawIsOwner;
   
   // Get connection status from bundle (populated by RPC)
   const connectionStatus = bundle.connection_status ?? 'none';
