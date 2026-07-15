@@ -398,43 +398,15 @@ const PublicPostPage = () => {
             </Card>
           )}
 
-          {/* Compact CTA Card for non-logged-in users */}
+          {/* Five C's discovery - signed-out visitors only */}
           {!isLoggedIn && (
-            <Card className="mt-4 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
-              <CardContent className="py-4 px-4">
-                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                  <div className="text-center sm:text-left flex-1">
-                    <h2 className="text-base font-bold">
-                      Join the Conversation on DNA
-                    </h2>
-                    <p className="text-white/80 text-xs mt-0.5">
-                      Connect with the global African diaspora. Like, comment, and share your own stories.
-                    </p>
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <Button 
-                      size="sm" 
-                      className="bg-dna-copper hover:bg-dna-gold text-white h-8 text-xs"
-                      asChild
-                    >
-                      <Link to="/auth?mode=signup">
-                        Join the Waitlist
-                      </Link>
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="secondary"
-                      className="bg-white text-dna-forest hover:bg-white/90 h-8 text-xs"
-                      asChild
-                    >
-                      <Link to="/about">
-                        Learn About DNA
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="mt-8">
+              <FiveCsDiscoverySection
+                username={authorUsername}
+                memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
+                source="public_post"
+              />
+            </div>
           )}
 
         </div>
@@ -444,5 +416,6 @@ const PublicPostPage = () => {
     </>
   );
 };
+
 
 export default PublicPostPage;
