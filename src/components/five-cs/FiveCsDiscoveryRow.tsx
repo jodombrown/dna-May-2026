@@ -28,10 +28,10 @@ export const FiveCsDiscoveryRow: React.FC<FiveCsDiscoveryRowProps> = ({ onOpen }
     >
       <div className="text-center mb-6">
         <h2 className="text-lg sm:text-title font-display text-foreground mb-1">
-          The Five C's of DNA
+          {"\n"}
         </h2>
         <p className="text-sm text-muted-foreground">
-          One operating system for the Global African Diaspora. Explore each layer.
+          {"\n"}
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export const FiveCsDiscoveryRow: React.FC<FiveCsDiscoveryRowProps> = ({ onOpen }
                 className="mt-1 inline-flex items-center gap-1 text-xs font-medium transition-transform group-hover:translate-y-0.5"
                 style={{ color: c.colorToken }}
               >
-                Learn More
+                Click to Learn More
                 <ChevronDown className="w-3.5 h-3.5" />
               </span>
             </button>
