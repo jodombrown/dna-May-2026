@@ -395,6 +395,15 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Five C's discovery block - universal on every signed-out profile.
+            Educates the visitor on what DNA is; every path lands on the waitlist. */}
+        <motion.div variants={itemVariants}>
+          <FiveCsDiscoverySection
+            username={profile.username}
+            memberFirstName={profile.first_name || profile.full_name?.split(' ')[0] || null}
+          />
+        </motion.div>
       </motion.div>
 
       {/* Footer */}
