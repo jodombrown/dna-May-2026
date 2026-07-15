@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '@/components/ui/card';
+
 import { ChevronDown } from 'lucide-react';
 import { Sankofa, Nkonsonkonson, FuntunfunefuDenkyemfunefu, Adinkrahene, Mpatapo } from '@/components/icons/adinkra';
 import { FIVE_CS, type FiveCId, type FiveCAdinkraKey } from '@/content/fiveCs.content';
