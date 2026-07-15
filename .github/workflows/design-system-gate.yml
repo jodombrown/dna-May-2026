@@ -44,8 +44,10 @@ jobs:
             local label="$1"; shift
             local pattern="$1"; shift
             local out rc
+            set +e
             out="$(rg -n --no-heading -e "$pattern" "${FILES[@]}")"
             rc=$?
+            set -e
             if [ "$rc" -eq 0 ]; then
               echo "::error::${label}"
               echo "$out"
@@ -68,8 +70,10 @@ jobs:
           # Arbitrary values. Two-step so we can allow the hsl(var(--x)) escape
           # without needing PCRE lookaheads.
           ARB='\b(text|bg|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|w|h|min-w|min-h|max-w|max-h|gap|top|left|right|bottom|rounded|border|leading|tracking)-\['
+          set +e
           raw="$(rg -n --no-heading -e "$ARB" "${FILES[@]}")"
           rc=$?
+          set -e
           if [ "$rc" -gt 1 ]; then
             echo "::error::rg errored (exit $rc) on arbitrary-value check. Failing closed."
             FAILED=1
@@ -85,8 +89,10 @@ jobs:
           # Page-level layout values, only under src/pages
           mapfile -t PAGES < <(printf '%s\n' "${FILES[@]}" | grep '^src/pages/' || true)
           if [ "${#PAGES[@]}" -gt 0 ]; then
+            set +e
             out="$(rg -n --no-heading -e '\b(max-w-|container|px-|py-|mt-|mb-)' "${PAGES[@]}")"
             rc=$?
+            set -e
             if [ "$rc" -eq 0 ]; then
               echo "::error::Page-level layout value. Section owns rhythm, Container owns width."
               echo "$out"
