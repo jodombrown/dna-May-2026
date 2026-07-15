@@ -233,36 +233,8 @@ const PublicPostPage = () => {
         <UnifiedHeader />
         <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
 
-        {/* Animated CTA Banner for non-logged-in users */}
-        <AnimatePresence>
-          {!isLoggedIn && showBanner && (
-            <motion.div
-              initial={{ y: -10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -10, opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest mt-3 mx-4 sm:mx-auto sm:max-w-2xl rounded-lg shadow-md"
-            >
-              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-white min-w-0">
-                  <Mpatapo className="w-4 h-4 shrink-0" />
-                  <span className="text-sm font-medium truncate">
-                    Shared from DNA. Connect with the diaspora
-                  </span>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
-                  asChild
-                >
-                  <Link to="/auth?mode=signup">
-                    Join the Waitlist
-                  </Link>
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+
 
         <div className="container max-w-2xl mx-auto px-4 pt-3 pb-6">
 
