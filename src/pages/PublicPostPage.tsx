@@ -320,18 +320,31 @@ const PublicPostPage = () => {
 
               {/* Action Buttons */}
               <div className="flex items-center gap-2 pt-4">
-                <Button
-                  onClick={handleEngage}
-                  className="flex-1 bg-primary hover:bg-primary/90"
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  {isLoggedIn ? 'Like & Comment' : 'Join the Waitlist to Engage'}
-                </Button>
-                
+                {isLoggedIn ? (
+                  <Button
+                    onClick={handleEngage}
+                    className="flex-1 bg-primary hover:bg-primary/90"
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Like & Comment
+                  </Button>
+                ) : (
+                  <div className="flex-1 flex items-center justify-between gap-3 rounded-md bg-muted/40 border border-border px-3 py-2">
+                    <div className="flex items-center gap-2 min-w-0 text-sm text-muted-foreground">
+                      <Heart className="w-4 h-4 shrink-0" />
+                      <span className="truncate">Like, comment, and reply on DNA</span>
+                    </div>
+                    <Button size="sm" variant="outline" className="shrink-0 h-8 text-xs" asChild>
+                      <Link to="/auth?mode=signup">Join the Waitlist</Link>
+                    </Button>
+                  </div>
+                )}
+
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={handleCopyLink}
+                  aria-label="Copy link to post"
                 >
                   {copied ? (
                     <Check className="w-4 h-4 text-green-500" />
@@ -340,6 +353,7 @@ const PublicPostPage = () => {
                   )}
                 </Button>
               </div>
+
             </CardContent>
           </Card>
 
