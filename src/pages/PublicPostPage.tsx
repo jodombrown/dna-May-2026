@@ -6,7 +6,7 @@
  * Shows post content and CTAs to sign up or engage.
  */
 
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -185,13 +185,20 @@ const PublicPostPage = () => {
     );
   }
 
+  if (post.post_type === 'event') {
+    const eventTarget = post.event_id || post.linked_entity_id;
+    if (eventTarget) {
+      return <Navigate to={`/event/${eventTarget}`} replace />;
+    }
+  }
+
   const authorName = post.author?.full_name || 'DNA Member';
   const authorUsername = post.author?.username;
   const SITE_URL = 'https://diasporanetwork.africa';
   const rawContent = (post.content || '').trim();
   const contentPreview = rawContent.length >= 50
     ? (rawContent.length > 160 ? rawContent.slice(0, 157).trimEnd() + '...' : rawContent)
-    : `Read this post by ${authorName} on DNA, the operating system mobilizing the Global African Diaspora for Africa's economic transformation.`;
+    : `Read this post by ${authorName} on DNA, the mobilization infrastructure for the Global African Diaspora's return.`;
   const postUrl = `${SITE_URL}/post/${postId}`;
   const ogImage = post.image_url || post.author?.avatar_url || `${SITE_URL}/og-image.png`;
   const absoluteOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
@@ -238,7 +245,7 @@ const PublicPostPage = () => {
         <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-dvh bg-background">
         <UnifiedHeader />
         <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
 
