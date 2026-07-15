@@ -7,30 +7,32 @@ interface FiveCsDiscoverySectionProps {
   /** Optional profile context for analytics. */
   username?: string;
   memberFirstName?: string | null;
+  /** Analytics source tag. Defaults to 'public_profile'. */
+  source?: 'public_profile' | 'public_post';
 }
 
 /**
  * Universal Five C's discovery block: card row + right-sheet detail. Mounted
- * inside PublicProfileLandingView so it appears on every signed-out profile
- * automatically. Signed-in visitors never render this component because they
- * go through the authenticated ProfileV2 view.
+ * on every signed-out public surface (profile, post) so visitors get one
+ * consistent "what is DNA" learning affordance. Signed-in visitors never
+ * render this component.
  */
 export const FiveCsDiscoverySection: React.FC<FiveCsDiscoverySectionProps> = ({
   username,
   memberFirstName,
+  source = 'public_profile',
 }) => {
   const [openId, setOpenId] = useState<FiveCId | null>(null);
 
   const handleOpen = (id: FiveCId) => {
     setOpenId(id);
-    // Analytics hook - swallow if the global tracker is not present.
     try {
       const w = window as unknown as {
         posthog?: { capture: (name: string, props: Record<string, unknown>) => void };
       };
       w.posthog?.capture('five_cs_card_open', {
         c_id: id,
-        source: 'public_profile',
+        source,
         username: username ?? null,
         member_first_name: memberFirstName ?? null,
       });

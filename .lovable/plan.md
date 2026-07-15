@@ -1,90 +1,97 @@
+# Signed-out Post Page: CTA Consolidation + Five C's Discovery
 
-## Goal
+Mirror the pattern we shipped on signed-out profiles (`/dna/:username`) on the public post page (`/post/:slug`). Today that page has **five** CTAs stacked on one screen (top-nav "Join the Waitlist", floating banner "Join the Waitlist", inline "Join the Waitlist to Engage", bottom card "Join the Waitlist", bottom card "Learn About DNA"). We're cutting that to a single primary CTA on the post itself, keeping the platform header as the persistent join affordance, and adding the same Five C's discovery row + right-sheet used on signed-out profiles.
 
-Close the server-side loop on the "owner sees visitor UI on own profile" bug so the client-side fallback in `ProfileV2.tsx` becomes defense-in-depth, not the only guard. Verify with database impersonation and a live Playwright pass.
+## Scope
 
-## Root cause (confirmed from live catalog)
+File: `src/pages/PublicPostPage.tsx` only. No schema, no RPC, no auth changes. Signed-in view is untouched.
 
-`rpc_get_profile_bundle` currently returns:
+## What changes
 
-```json
-{ "profile": {...}, "activity": {...}, "connection_status": "...", "is_owner": true }
+### 1. Remove redundant CTAs (signed-out only)
+
+Remove these three elements entirely:
+
+- **Floating animated banner** ("Shared from DNA. Connect with the diaspora" + Join the Waitlist button) — lines ~245-274 and the `showBanner` state/effect. This is the direct analog of the "← DNA / Join DNA" banner we killed on profiles.
+- **Bottom "Join the Conversation on DNA" gradient card** with dual CTAs (Join Waitlist + Learn About DNA) — lines ~424-460. Replaced by the Five C's row.
+- **Inline "Join the Waitlist to Engage" button** on the post card — replace with a single quieter engagement affordance (see below).
+
+Kept CTAs:
+- `UnifiedHeader` "Join the Waitlist" (top-right) — this is the universal, non-intrusive join affordance, matching profile pages.
+- Share / copy-link icon button on the post card — utility, not a join CTA.
+
+### 2. Replace inline engagement CTA
+
+The current button reads "Join the Waitlist to Engage" (full-width, primary green). Replace for signed-out users with a subtler, purpose-specific bar directly under the engagement stats:
+
+```
+[ Heart icon ]  Like, comment, and reply on DNA   →  [ Join the Waitlist ]
 ```
 
-But the client (`ProfileV2Bundle` type + `ProfileV2.tsx`) reads `bundle.permissions.is_owner` and `bundle.should_show_public_landing`. Neither key is emitted by the RPC. So `permissions.is_owner` is always `undefined` in the authenticated path, which is exactly the bug the user reported at `/dna/jaunelamarro`.
+- Single row, `bg-muted/40`, small text on the left, one outline-primary button on the right.
+- No gradient, no full-width green block.
+- Signed-in users keep the existing "Like & Comment" primary button unchanged.
 
-## Changes
+### 3. Add Five C's discovery row + sheet (signed-out only)
 
-### 1. Migration: rewrite `rpc_get_profile_bundle` return shape
+Reuse the existing `FiveCsDiscoverySection` component (`src/components/five-cs/FiveCsDiscoverySection.tsx`) that already powers the signed-out profile. Mount it below the author card when `!isLoggedIn`, passing post/author context for analytics:
 
-One migration, one function replacement. Same signature, same security definer, same auth checks. The only change is the returned JSON:
+```tsx
+{!isLoggedIn && (
+  <div className="mt-8">
+    <FiveCsDiscoverySection
+      username={authorUsername}
+      memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
+    />
+  </div>
+)}
+```
+
+Same 5 cards, same right-sheet detail, same waitlist CTA inside the sheet — one consistent "learn what DNA is" surface across public profile + public post.
+
+### 4. Analytics
+
+Extend the existing `five_cs_card_open` PostHog event with a `source: 'public_post'` tag (the component already accepts `username`; we'll pass the author's username and add `source` inside `FiveCsDiscoverySection` via a new optional `source` prop, defaulting to `'public_profile'` so profile behavior is unchanged).
+
+## Final signed-out page structure
 
 ```text
-{
-  profile,
-  tags: {},                       -- placeholder, matches client type
-  activity,
-  permissions: {
-    is_owner,
-    can_edit: is_owner,
-    can_create_events: is_owner,
-    can_create_public_spaces: is_owner,
-    can_connect: NOT is_owner
-  },
-  visibility: { about, skills, interests, activity all 'public' },
-  completion: { score: 0, suggested_actions: [] },
-  verification_meta: {},
-  connection_status,
-  should_show_public_landing: false      -- authenticated bundle is never the public landing
-}
+[ UnifiedHeader: logo | About Us | Join the Waitlist | Sign In ]
+
+[ Post Card ]
+  author row + share icon
+  post content / image / link preview
+  engagement stats (likes, comments)
+  subtle "Like, comment, and reply on DNA → Join the Waitlist" bar
+  copy-link icon
+
+[ Compact Author Card: avatar + name + View Profile ]
+
+[ Five C's Discovery Row: 5 Adinkra cards ]
+  → click opens right-sheet with detail + Join the Waitlist CTA
+
+[ Footer ]
 ```
 
-Owner semantics: `is_owner = (v_auth_uid = v_profile.id)`. `should_show_public_landing` is hard-coded false for this RPC. The anon `get_public_profile` RPC (already stamps `should_show_public_landing: true` via the client normalizer) is untouched.
+CTA count drops from 5 to 2 above the fold (header + inline join bar), plus the Five C's cards which are discovery, not join-nags.
 
-### 2. Four-persona certification (rolled-back transaction)
+## Signed-in behavior
 
-Run inside `BEGIN; ... ROLLBACK;` against the live DB:
-
-```text
-persona            | expected is_owner | expected should_show_public_landing | expected connect
--------------------|-------------------|-------------------------------------|-----------------
-owner (self)       | true              | false                               | n/a
-auth non-owner     | false             | false                               | can_connect: true
-anon               | -> get_public_profile path, is_owner=false, landing=true
-service_role       | RAISE 'authentication required'
-```
-
-Read `pg_get_functiondef` back after apply to confirm the new body, and print the JSON output per persona.
-
-### 3. Client cleanup (frontend)
-
-- `src/hooks/useProfileV2.ts`: no code change needed, but add a defensive `permissions: data.permissions ?? { is_owner: false, ... }` fallback so a stale RPC never crashes the view.
-- `src/pages/ProfileV2.tsx`: keep the `isOwnerViewer = rawIsOwner || user?.id === profile.id` fallback. It stays as belt-and-suspenders.
-
-### 4. Playwright verification
-
-Signed-in as owner: visit `/dna/jaunelamarro`, assert (a) no "Connect" CTA, (b) no fixed "← DNA / Join DNA" banner, (c) owner chrome (edit affordance) renders. Screenshot.
-
-Signed out: same URL, assert (a) `PublicSiteHeader` renders (no duplicate profile header), (b) Five C's discovery row renders, (c) clicking a C opens the right-sheet with waitlist CTA. Screenshot.
-
-### 5. Guard against regression
-
-Add a one-line note to `docs/03-ROUTES-AND-PAGES.md` (or the closest doc) that `rpc_get_profile_bundle` must return `permissions` and `should_show_public_landing`, mirroring the client type. Not a runtime guard, but a search hit for the next engineer.
-
-## Files touched
-
-- `supabase/migrations/<timestamp>_rpc_profile_bundle_permissions.sql` (new)
-- `src/hooks/useProfileV2.ts` (defensive fallback)
-- `docs/03-ROUTES-AND-PAGES.md` (contract note)
-- `/tmp/browser/profile-owner/verify.py` (Playwright, not committed)
+Unchanged: no banner today (already conditional), no bottom gradient card (already conditional), keeps "Like & Comment" primary button, no Five C's row.
 
 ## Out of scope
 
-- Splitting the RPC into owner/visitor variants
-- Permanent pgTAP suite
-- Any RLS policy changes
-- Any Five C's content/copy changes
+- No changes to the post card's data model, share behavior, SEO/JSON-LD, or the Author card.
+- No changes to `FiveCsDiscoveryRow` copy/icons (still empty heading/subtitle per your last edit).
+- No mobile-specific redesign — the existing responsive rules already cover it.
+- No changes to `/post/:id` route or slug resolution.
 
-## Rollback
+## Files touched
 
-Migration is a single `CREATE OR REPLACE FUNCTION`. Rollback = re-apply the previous body captured above in this plan.
+- `src/pages/PublicPostPage.tsx` — remove 2 CTA blocks, replace inline engage button, mount `FiveCsDiscoverySection`.
+- `src/components/five-cs/FiveCsDiscoverySection.tsx` — add optional `source` prop for analytics tagging (default `'public_profile'`).
+
+## Verification
+
+- Playwright signed-out visit to `/post/gipc-and-dacf-investment-partnership`: assert no floating banner, no "Join the Conversation" gradient card, no "Join the Waitlist to Engage" button, Five C's row present, right-sheet opens on card click.
+- Signed-in visit: assert page still shows "Like & Comment" and no Five C's row.

@@ -16,14 +16,13 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { MessageCircle, Heart, Share2, ExternalLink, FileText, Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mpatapo } from '@/components/icons/adinkra';
+import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 
 const PublicPostPage = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -31,17 +30,9 @@ const PublicPostPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
 
   const isLoggedIn = !!user;
 
-  // Animate banner in after a short delay for non-logged-in users
-  useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => setShowBanner(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoggedIn]);
 
   // Fetch post data. The :postId param accepts a UUID or a slug — internal
   // in-app URLs carry `slug || id`, and signed-out visitors are redirected
@@ -242,36 +233,8 @@ const PublicPostPage = () => {
         <UnifiedHeader />
         <div aria-hidden style={{ height: "var(--unified-header-height, 64px)" }} />
 
-        {/* Animated CTA Banner for non-logged-in users */}
-        <AnimatePresence>
-          {!isLoggedIn && showBanner && (
-            <motion.div
-              initial={{ y: -10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -10, opacity: 0 }}
-              transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-              className="bg-gradient-to-r from-dna-forest via-dna-emerald to-dna-forest mt-3 mx-4 sm:mx-auto sm:max-w-2xl rounded-lg shadow-md"
-            >
-              <div className="px-4 py-2.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-white min-w-0">
-                  <Mpatapo className="w-4 h-4 shrink-0" />
-                  <span className="text-sm font-medium truncate">
-                    Shared from DNA. Connect with the diaspora
-                  </span>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-white text-dna-forest hover:bg-white/90 shrink-0 h-7 text-xs px-3"
-                  asChild
-                >
-                  <Link to="/auth?mode=signup">
-                    Join the Waitlist
-                  </Link>
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+
 
         <div className="container max-w-2xl mx-auto px-4 pt-3 pb-6">
 
@@ -357,18 +320,31 @@ const PublicPostPage = () => {
 
               {/* Action Buttons */}
               <div className="flex items-center gap-2 pt-4">
-                <Button
-                  onClick={handleEngage}
-                  className="flex-1 bg-primary hover:bg-primary/90"
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  {isLoggedIn ? 'Like & Comment' : 'Join the Waitlist to Engage'}
-                </Button>
-                
+                {isLoggedIn ? (
+                  <Button
+                    onClick={handleEngage}
+                    className="flex-1 bg-primary hover:bg-primary/90"
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Like & Comment
+                  </Button>
+                ) : (
+                  <div className="flex-1 flex items-center justify-between gap-3 rounded-md bg-muted/40 border border-border px-3 py-2">
+                    <div className="flex items-center gap-2 min-w-0 text-sm text-muted-foreground">
+                      <Heart className="w-4 h-4 shrink-0" />
+                      <span className="truncate">Like, comment, and reply on DNA</span>
+                    </div>
+                    <Button size="sm" variant="outline" className="shrink-0 h-8 text-xs" asChild>
+                      <Link to="/auth?mode=signup">Join the Waitlist</Link>
+                    </Button>
+                  </div>
+                )}
+
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={handleCopyLink}
+                  aria-label="Copy link to post"
                 >
                   {copied ? (
                     <Check className="w-4 h-4 text-green-500" />
@@ -377,6 +353,7 @@ const PublicPostPage = () => {
                   )}
                 </Button>
               </div>
+
             </CardContent>
           </Card>
 
@@ -421,43 +398,15 @@ const PublicPostPage = () => {
             </Card>
           )}
 
-          {/* Compact CTA Card for non-logged-in users */}
+          {/* Five C's discovery - signed-out visitors only */}
           {!isLoggedIn && (
-            <Card className="mt-4 bg-gradient-to-r from-dna-forest to-dna-emerald text-white overflow-hidden">
-              <CardContent className="py-4 px-4">
-                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
-                  <div className="text-center sm:text-left flex-1">
-                    <h2 className="text-base font-bold">
-                      Join the Conversation on DNA
-                    </h2>
-                    <p className="text-white/80 text-xs mt-0.5">
-                      Connect with the global African diaspora. Like, comment, and share your own stories.
-                    </p>
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <Button 
-                      size="sm" 
-                      className="bg-dna-copper hover:bg-dna-gold text-white h-8 text-xs"
-                      asChild
-                    >
-                      <Link to="/auth?mode=signup">
-                        Join the Waitlist
-                      </Link>
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="secondary"
-                      className="bg-white text-dna-forest hover:bg-white/90 h-8 text-xs"
-                      asChild
-                    >
-                      <Link to="/about">
-                        Learn About DNA
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="mt-8">
+              <FiveCsDiscoverySection
+                username={authorUsername}
+                memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
+                source="public_post"
+              />
+            </div>
           )}
 
         </div>
@@ -467,5 +416,6 @@ const PublicPostPage = () => {
     </>
   );
 };
+
 
 export default PublicPostPage;
