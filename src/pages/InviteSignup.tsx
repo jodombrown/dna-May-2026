@@ -145,7 +145,7 @@ const InviteSignup = () => {
               onClick={() => navigate('/auth?mode=signup')}
               className="w-full bg-dna-forest hover:bg-dna-forest/90"
             >
-              Join Now
+              Join the Waitlist
             </Button>
           </CardContent>
         </Card>

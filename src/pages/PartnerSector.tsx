@@ -205,7 +205,7 @@ const PartnerSector = () => {
             onClick={handleCTAClick}
           >
             <Link to={sector.ctaLink}>
-              Join Now
+              Join the Waitlist
             </Link>
           </EnhancedButton>
         </div>

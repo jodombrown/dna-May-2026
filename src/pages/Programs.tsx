@@ -181,7 +181,7 @@ const Programs = () => {
                 Join thousands of African diaspora professionals who are making a difference through our programs.
               </p>
               <Button size="lg" className="bg-white text-dna-forest hover:bg-neutral-100">
-                Join Now
+                Join the Waitlist
               </Button>
             </CardContent>
           </Card>

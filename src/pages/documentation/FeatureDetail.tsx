@@ -193,7 +193,7 @@ export default function FeatureDetail() {
             to="/auth?mode=signup"
             className="inline-block bg-white text-dna-forest px-6 py-3 rounded-lg font-medium hover:bg-white/90 transition-colors"
           >
-            Join Now
+            Join the Waitlist
           </Link>
         </div>
       </div>

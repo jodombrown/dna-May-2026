@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ArrowLeft, Globe, Users, Handshake, Eye, EyeOff } from 'lucide-react';
 import { useScrollToTop } from '@/hooks/useScrollToTop';
@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getErrorMessage } from '@/lib/errorLogger';
 import { cn } from '@/lib/utils';
+import { WAITLIST_MODE } from '@/config/featureFlags';
 
 /**
  * Only same-origin relative paths may be a post-auth destination. A login
@@ -39,6 +40,11 @@ const Auth = () => {
   useEffect(() => {
     setIsSignUp(queryMode === 'signup');
   }, [queryMode]);
+
+  // Waitlist mode: signup tab is closed; funnel to /waitlist.
+  if (WAITLIST_MODE && isSignUp) {
+    return <Navigate to="/waitlist" replace />;
+  }
 
   // Where to redirect after login: explicit ?redirect= (public pages like
   // PublicEventPage), then state.from (OnboardingGuard / protected routes),

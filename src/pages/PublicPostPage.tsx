@@ -176,7 +176,7 @@ const PublicPostPage = () => {
             </Button>
             {!isLoggedIn && (
               <Button variant="outline" onClick={() => navigate('/auth?mode=signup')}>
-                Join Now
+                Join the Waitlist
               </Button>
             )}
           </div>
@@ -265,7 +265,7 @@ const PublicPostPage = () => {
                   asChild
                 >
                   <Link to="/auth?mode=signup">
-                    Join Now
+                    Join the Waitlist
                   </Link>
                 </Button>
               </div>
@@ -362,7 +362,7 @@ const PublicPostPage = () => {
                   className="flex-1 bg-primary hover:bg-primary/90"
                 >
                   <Heart className="w-4 h-4 mr-2" />
-                  {isLoggedIn ? 'Like & Comment' : 'Join Now to Engage'}
+                  {isLoggedIn ? 'Like & Comment' : 'Join the Waitlist to Engage'}
                 </Button>
                 
                 <Button
@@ -441,7 +441,7 @@ const PublicPostPage = () => {
                       asChild
                     >
                       <Link to="/auth?mode=signup">
-                        Join Now
+                        Join the Waitlist
                       </Link>
                     </Button>
                     <Button 

@@ -107,7 +107,7 @@ export const DemoMovement = forwardRef<HTMLElement, DemoMovementProps>(
               onClick={() => navigate('/auth?mode=signup')}
               className="bg-white hover:bg-dna-pearl text-dna-emerald font-outfit font-medium px-8 py-6 text-lg rounded-xl mb-10"
             >
-              Join Now
+              Join the Waitlist
             </Button>
           </motion.div>
 
