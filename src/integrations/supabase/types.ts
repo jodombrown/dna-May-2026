@@ -7476,13 +7476,10 @@ export type Database = {
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
-          current_country_id: string | null
-          current_country_name: string | null
           current_lat: number | null
           current_lng: number | null
           current_location: string | null
           current_place_id: string | null
-          current_region: string | null
           current_state: string | null
           dashboard_version: string | null
           deleted_at: string | null
@@ -7687,13 +7684,10 @@ export type Database = {
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
-          current_country_id?: string | null
-          current_country_name?: string | null
           current_lat?: number | null
           current_lng?: number | null
           current_location?: string | null
           current_place_id?: string | null
-          current_region?: string | null
           current_state?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
@@ -7898,13 +7892,10 @@ export type Database = {
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
-          current_country_id?: string | null
-          current_country_name?: string | null
           current_lat?: number | null
           current_lng?: number | null
           current_location?: string | null
           current_place_id?: string | null
-          current_region?: string | null
           current_state?: string | null
           dashboard_version?: string | null
           deleted_at?: string | null
@@ -8060,13 +8051,6 @@ export type Database = {
           years_of_experience?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "profiles_current_country_id_fkey"
-            columns: ["current_country_id"]
-            isOneToOne: false
-            referencedRelation: "countries"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "profiles_referrer_id_fkey"
             columns: ["referrer_id"]
@@ -11584,8 +11568,6 @@ export type Database = {
           created_at: string | null
           current_city: string | null
           current_country: string | null
-          current_country_name: string | null
-          current_region: string | null
           display_name: string | null
           first_name: string | null
           full_name: string | null
@@ -11625,8 +11607,6 @@ export type Database = {
           created_at?: string | null
           current_city?: string | null
           current_country?: string | null
-          current_country_name?: string | null
-          current_region?: string | null
           display_name?: string | null
           first_name?: string | null
           full_name?: string | null
@@ -11666,8 +11646,6 @@ export type Database = {
           created_at?: string | null
           current_city?: string | null
           current_country?: string | null
-          current_country_name?: string | null
-          current_region?: string | null
           display_name?: string | null
           first_name?: string | null
           full_name?: string | null
@@ -11824,13 +11802,10 @@ export type Database = {
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
-          current_country_id: string | null
-          current_country_name: string | null
           current_lat: number | null
           current_lng: number | null
           current_location: string | null
           current_place_id: string | null
-          current_region: string | null
           current_state: string | null
           dashboard_version: string | null
           deleted_at: string | null
@@ -13108,13 +13083,10 @@ export type Database = {
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
-          current_country_id: string | null
-          current_country_name: string | null
           current_lat: number | null
           current_lng: number | null
           current_location: string | null
           current_place_id: string | null
-          current_region: string | null
           current_state: string | null
           dashboard_version: string | null
           deleted_at: string | null
@@ -13559,9 +13531,7 @@ export type Database = {
           created_at: string
           current_city: string
           current_country: string
-          current_country_name: string
           current_location: string
-          current_region: string
           display_name: string
           email: string
           first_name: string
