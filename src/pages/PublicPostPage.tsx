@@ -30,17 +30,9 @@ const PublicPostPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
-  const [showBanner, setShowBanner] = useState(false);
 
   const isLoggedIn = !!user;
 
-  // Animate banner in after a short delay for non-logged-in users
-  useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => setShowBanner(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoggedIn]);
 
   // Fetch post data. The :postId param accepts a UUID or a slug — internal
   // in-app URLs carry `slug || id`, and signed-out visitors are redirected
