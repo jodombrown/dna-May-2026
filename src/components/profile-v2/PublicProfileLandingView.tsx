@@ -178,38 +178,14 @@ const PublicProfileLandingView: React.FC<PublicProfileLandingViewProps> = ({ bun
         memberSince={profile.created_at}
       />
 
-      {/* Minimal Header */}
-      <motion.header 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.2 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border"
-      >
-        <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <Link 
-            to="/" 
-            className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="font-semibold text-sm">DNA</span>
-          </Link>
-          <Button 
-            onClick={() => navigate('/auth?mode=signup')}
-            size="sm"
-            className="bg-primary hover:bg-primary/90"
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            Join DNA
-          </Button>
-        </div>
-      </motion.header>
-
-      {/* Hero Banner */}
+      {/* Hero Banner (no fixed top chrome - the "← DNA / Join DNA" bar was
+          removed platform-wide; the public site header is mounted at the
+          layout level instead). */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
-        className="h-40 sm:h-52 md:h-64 w-full relative pt-14"
+        className="h-40 sm:h-52 md:h-64 w-full relative"
         style={getBannerStyle()}
       >
         {/* Gradient overlay for better text contrast */}
