@@ -119,7 +119,29 @@ export const useProfileV2 = (username: string | undefined) => {
           return null;
         }
 
-        return data as unknown as ProfileV2Bundle;
+        // Defensive fallback: if a stale RPC ever forgets to stamp `permissions`
+        // or `should_show_public_landing`, derive them from the viewer id so
+        // owners never fall through to the visitor UI.
+        const bundle = data as unknown as ProfileV2Bundle & { is_owner?: boolean };
+        const derivedIsOwner =
+          bundle?.permissions?.is_owner ??
+          bundle?.is_owner ??
+          (!!user?.id && bundle?.profile?.id === user.id);
+
+        return {
+          ...bundle,
+          permissions: {
+            is_owner: derivedIsOwner,
+            can_edit: bundle?.permissions?.can_edit ?? derivedIsOwner,
+            can_create_events: bundle?.permissions?.can_create_events ?? derivedIsOwner,
+            can_create_public_spaces:
+              bundle?.permissions?.can_create_public_spaces ?? derivedIsOwner,
+            can_connect: bundle?.permissions?.can_connect ?? !derivedIsOwner,
+          },
+          should_show_public_landing: derivedIsOwner
+            ? false
+            : bundle?.should_show_public_landing ?? false,
+        } as ProfileV2Bundle;
       } catch {
         // Catch any unexpected errors - NEVER throw
         return null;
