@@ -414,39 +414,6 @@ export interface DIATierLimits {
   custom_reports: boolean;
 }
 
-export const DIA_TIER_LIMITS: Record<SubscriptionTier, DIATierLimits> = {
-  free: {
-    tier: 'free',
-    ambient_intelligence: 'basic',
-    proactive_suggestions_per_session: 2,
-    reactive_queries_per_day: 5,
-    opportunity_match_scores: false,
-    network_analytics: 'none',
-    content_performance: false,
-    custom_reports: false,
-  },
-  pro: {
-    tier: 'pro',
-    ambient_intelligence: 'full',
-    proactive_suggestions_per_session: Infinity,
-    reactive_queries_per_day: Infinity,
-    opportunity_match_scores: true,
-    network_analytics: 'personal',
-    content_performance: true,
-    custom_reports: false,
-  },
-  org: {
-    tier: 'org',
-    ambient_intelligence: 'full',
-    proactive_suggestions_per_session: Infinity,
-    reactive_queries_per_day: Infinity,
-    opportunity_match_scores: true,
-    network_analytics: 'team',
-    content_performance: 'branded',
-    custom_reports: true,
-  },
-};
-
 // =====================================================
 // DIA CORE SERVICE INTERFACE
 // =====================================================
