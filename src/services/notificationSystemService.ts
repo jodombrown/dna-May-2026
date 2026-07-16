@@ -1074,15 +1074,44 @@ export const notificationSystemService = {
   },
 
   async updatePreferences(
-    _userId: string,
-    _updates: Partial<NotificationPreferences>
+    userId: string,
+    updates: Partial<NotificationPreferences>
   ): Promise<void> {
-    // v0.0: the notification_preferences table is not provisioned (the real
-    // persistence model is owned by BD059/D064). Short-circuit the write path so
-    // we never upsert into an absent table or present a pretend-save to the user.
-    // getPreferences() intentionally still resolves to DEFAULT_NOTIFICATION_PREFERENCES
-    // so the bell + notification center keep working on defaults.
-    return;
+    // N4: the notification_preferences table is live (owner-only RLS). Upsert the
+    // changed columns on user_id, mapping camelCase -> the snake_case DB shape that
+    // getPreferences() reads back. Only touched fields are written so a partial
+    // save never clobbers unrelated preferences. category_preferences is the jsonb
+    // the DB router (notif_should_push) reads, so it round-trips verbatim.
+    const row: Record<string, unknown> = {
+      user_id: userId,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (updates.globalEnabled !== undefined) row.global_enabled = updates.globalEnabled;
+    if (updates.pushEnabled !== undefined) row.push_enabled = updates.pushEnabled;
+    if (updates.emailEnabled !== undefined) row.email_enabled = updates.emailEnabled;
+    if (updates.emailDigestEnabled !== undefined) row.email_digest_enabled = updates.emailDigestEnabled;
+    if (updates.emailDigestDay !== undefined) row.email_digest_day = updates.emailDigestDay;
+    if (updates.emailDigestHour !== undefined) row.email_digest_hour = updates.emailDigestHour;
+    if (updates.quietHoursEnabled !== undefined) row.quiet_hours_enabled = updates.quietHoursEnabled;
+    if (updates.quietHoursStart !== undefined) row.quiet_hours_start = updates.quietHoursStart;
+    if (updates.quietHoursEnd !== undefined) row.quiet_hours_end = updates.quietHoursEnd;
+    if (updates.timezone !== undefined) row.timezone = updates.timezone;
+    if (updates.categoryPreferences !== undefined) row.category_preferences = updates.categoryPreferences;
+    if (updates.typeOverrides !== undefined) row.type_overrides = updates.typeOverrides;
+    if (updates.diaInsightFrequency !== undefined) row.dia_insight_frequency = updates.diaInsightFrequency;
+    if (updates.mutedUserIds !== undefined) row.muted_user_ids = updates.mutedUserIds;
+    if (updates.mutedSpaceIds !== undefined) row.muted_space_ids = updates.mutedSpaceIds;
+    if (updates.mutedEventIds !== undefined) row.muted_event_ids = updates.mutedEventIds;
+
+    const { error } = await db
+      .from('notification_preferences')
+      .upsert(row, { onConflict: 'user_id' });
+
+    if (error) {
+      logger.error('NotificationSystemService', 'Failed to update preferences', error);
+      throw error;
+    }
   },
 
   // ============================================
