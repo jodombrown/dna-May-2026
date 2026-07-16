@@ -2302,10 +2302,13 @@ export type Database = {
           email_messages: boolean | null
           email_reactions: boolean | null
           email_stories: boolean | null
+          global_enabled: boolean | null
           id: string
           in_app_enabled: boolean | null
           notification_frequency: string | null
           nudge_categories: Json | null
+          push_categories: Json | null
+          push_enabled: boolean | null
           quiet_hours_enabled: boolean | null
           quiet_hours_end: string | null
           quiet_hours_start: string | null
@@ -2324,10 +2327,13 @@ export type Database = {
           email_messages?: boolean | null
           email_reactions?: boolean | null
           email_stories?: boolean | null
+          global_enabled?: boolean | null
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
           nudge_categories?: Json | null
+          push_categories?: Json | null
+          push_enabled?: boolean | null
           quiet_hours_enabled?: boolean | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
@@ -2346,10 +2352,13 @@ export type Database = {
           email_messages?: boolean | null
           email_reactions?: boolean | null
           email_stories?: boolean | null
+          global_enabled?: boolean | null
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
           nudge_categories?: Json | null
+          push_categories?: Json | null
+          push_enabled?: boolean | null
           quiet_hours_enabled?: boolean | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null

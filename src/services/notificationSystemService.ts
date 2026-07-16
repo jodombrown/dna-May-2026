@@ -30,9 +30,9 @@ import type {
   NotificationRecord,
   NotificationType,
   NotificationChannel,
-  NotificationCategory,
   NotificationPriority,
   NotificationPreferences,
+  NotificationFrequency,
   NotificationBatch,
   NotificationDisplayConfig,
   NotificationDisplayItem,
@@ -46,10 +46,24 @@ import type {
 } from '@/types/notificationSystem';
 import {
   NotificationStatus,
+  NotificationCategory,
   NOTIFICATION_DISPLAY_CONFIGS,
   DEFAULT_NOTIFICATION_PREFERENCES,
 } from '@/types/notificationSystem';
 import { CModule } from '@/types/composer';
+
+// dia_preferences stores quiet hours as `time` (HH:MM:SS); the client models them as
+// an integer hour (0-23). These two helpers bridge that at the persistence boundary.
+function hourFromTime(value: unknown, fallback: number): number {
+  if (typeof value !== 'string') return fallback;
+  const hour = parseInt(value.slice(0, 2), 10);
+  return Number.isNaN(hour) ? fallback : hour;
+}
+
+function timeFromHour(hour: number): string {
+  const clamped = Math.max(0, Math.min(23, Math.trunc(hour)));
+  return `${String(clamped).padStart(2, '0')}:00:00`;
+}
 
 // ============================================================
 // CONTENT TEMPLATES
@@ -473,15 +487,12 @@ export const notificationSystemService = {
         return null;
       }
 
-      // Step 1: Check if recipient has this type enabled
+      // Step 1: Check if the recipient has notifications enabled at all. In-app is
+      // always on when globally enabled — it's the notification row itself. Per-category
+      // routing only gates push, which the DB router (notif_should_push) decides from
+      // dia_preferences.push_categories; the in-app record is written regardless.
       const prefs = await this.getPreferences(params.recipientId);
       if (!prefs.globalEnabled) return null;
-
-      const categoryPref = prefs.categoryPreferences[config.category];
-      if (categoryPref && !categoryPref.enabled) return null;
-
-      // Step 2: Check for muted entities
-      if (params.actorId && prefs.mutedUserIds.includes(params.actorId)) return null;
 
       // Step 3: Generate headline and body
       const templateParams: Record<string, unknown> = {
@@ -526,7 +537,7 @@ export const notificationSystemService = {
       const channels = this.determineChannels(config, prefs);
 
       // Step 5: Check batching
-      if (config.batchable && categoryPref?.batchingEnabled !== false) {
+      if (config.batchable) {
         const batched = await this.tryBatch(params, config, actorName, actorAvatarUrl);
         if (batched) return null;
       }
@@ -611,32 +622,13 @@ export const notificationSystemService = {
     config: NotificationDisplayConfig,
     prefs: NotificationPreferences
   ): NotificationChannel[] {
-    const channels: NotificationChannel[] = [];
-    const categoryPref = prefs.categoryPreferences[config.category];
+    // In-app is always on — it's the notification row itself — plus the badge count.
+    // Push follows the per-category bool gated by the global push master. Email is
+    // deferred (Tier 2): the router does not dispatch it, so it's never added here.
+    const channels: NotificationChannel[] = ['in_app' as NotificationChannel, 'badge' as NotificationChannel];
 
-    if (!categoryPref) {
-      return ['in_app', 'badge'] as NotificationChannel[];
-    }
-
-    for (const ch of categoryPref.channels) {
-      switch (ch) {
-        case 'in_app':
-          channels.push('in_app' as NotificationChannel);
-          break;
-        case 'push':
-          if (prefs.pushEnabled) channels.push('push' as NotificationChannel);
-          break;
-        case 'email_immediate':
-          if (prefs.emailEnabled) channels.push('email_immediate' as NotificationChannel);
-          break;
-        case 'badge':
-          channels.push('badge' as NotificationChannel);
-          break;
-      }
-    }
-
-    if (channels.length === 0) {
-      channels.push('in_app' as NotificationChannel);
+    if (prefs.pushEnabled && prefs.pushCategories[config.category]) {
+      channels.push('push' as NotificationChannel);
     }
 
     return channels;
@@ -1038,7 +1030,7 @@ export const notificationSystemService = {
 
   async getPreferences(userId: string): Promise<NotificationPreferences> {
     const { data, error } = await db
-      .from('notification_preferences')
+      .from('dia_preferences')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -1051,38 +1043,79 @@ export const notificationSystemService = {
       };
     }
 
+    // push_categories is a flat Five-C + system → bool jsonb. Merge over the default
+    // so a partial/absent map still yields every key notif_should_push expects.
+    const storedCategories = (data.push_categories ?? {}) as Partial<Record<NotificationCategory, boolean>>;
+    const pushCategories = { ...DEFAULT_NOTIFICATION_PREFERENCES.pushCategories };
+    for (const key of Object.values(NotificationCategory)) {
+      const value = storedCategories[key];
+      if (typeof value === 'boolean') pushCategories[key] = value;
+    }
+
     return {
       userId: data.user_id,
       globalEnabled: data.global_enabled ?? true,
-      quietHoursEnabled: data.quiet_hours_enabled ?? true,
-      quietHoursStart: data.quiet_hours_start ?? 22,
-      quietHoursEnd: data.quiet_hours_end ?? 8,
-      timezone: data.timezone ?? 'Africa/Lagos',
+      quietHoursEnabled: data.quiet_hours_enabled ?? false,
+      quietHoursStart: hourFromTime(data.quiet_hours_start, 22),
+      quietHoursEnd: hourFromTime(data.quiet_hours_end, 8),
+      timezone: data.timezone ?? 'UTC',
       pushEnabled: data.push_enabled ?? true,
       emailEnabled: data.email_enabled ?? true,
-      emailDigestEnabled: data.email_digest_enabled ?? true,
-      emailDigestDay: data.email_digest_day ?? 1,
-      emailDigestHour: data.email_digest_hour ?? 9,
-      categoryPreferences: data.category_preferences || DEFAULT_NOTIFICATION_PREFERENCES.categoryPreferences,
-      typeOverrides: data.type_overrides || {},
-      diaInsightFrequency: data.dia_insight_frequency ?? 'normal',
-      mutedUserIds: data.muted_user_ids || [],
-      mutedSpaceIds: data.muted_space_ids || [],
-      mutedEventIds: data.muted_event_ids || [],
+      inAppEnabled: data.in_app_enabled ?? true,
+      pushCategories,
+      notificationFrequency: (data.notification_frequency as NotificationFrequency) ?? 'normal',
+      emailConnections: data.email_connections ?? true,
+      emailComments: data.email_comments ?? true,
+      emailReactions: data.email_reactions ?? true,
+      emailMentions: data.email_mentions ?? true,
+      emailMessages: data.email_messages ?? true,
+      emailEvents: data.email_events ?? true,
+      emailStories: data.email_stories ?? true,
+      unsubscribeToken: data.unsubscribe_token ?? null,
       updatedAt: data.updated_at,
     };
   },
 
   async updatePreferences(
-    _userId: string,
-    _updates: Partial<NotificationPreferences>
+    userId: string,
+    updates: Partial<NotificationPreferences>
   ): Promise<void> {
-    // v0.0: the notification_preferences table is not provisioned (the real
-    // persistence model is owned by BD059/D064). Short-circuit the write path so
-    // we never upsert into an absent table or present a pretend-save to the user.
-    // getPreferences() intentionally still resolves to DEFAULT_NOTIFICATION_PREFERENCES
-    // so the bell + notification center keep working on defaults.
-    return;
+    // dia_preferences is the canonical preferences table (owner-only RLS). Upsert the
+    // changed columns on user_id, mapping camelCase -> the snake_case DB shape that
+    // getPreferences() reads back. Only touched fields are written so a partial save
+    // never clobbers unrelated preferences. push_categories is the jsonb the DB router
+    // (notif_should_push) reads, so it round-trips verbatim.
+    const row: Record<string, unknown> = {
+      user_id: userId,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (updates.globalEnabled !== undefined) row.global_enabled = updates.globalEnabled;
+    if (updates.pushEnabled !== undefined) row.push_enabled = updates.pushEnabled;
+    if (updates.emailEnabled !== undefined) row.email_enabled = updates.emailEnabled;
+    if (updates.inAppEnabled !== undefined) row.in_app_enabled = updates.inAppEnabled;
+    if (updates.quietHoursEnabled !== undefined) row.quiet_hours_enabled = updates.quietHoursEnabled;
+    if (updates.quietHoursStart !== undefined) row.quiet_hours_start = timeFromHour(updates.quietHoursStart);
+    if (updates.quietHoursEnd !== undefined) row.quiet_hours_end = timeFromHour(updates.quietHoursEnd);
+    if (updates.timezone !== undefined) row.timezone = updates.timezone;
+    if (updates.pushCategories !== undefined) row.push_categories = updates.pushCategories;
+    if (updates.notificationFrequency !== undefined) row.notification_frequency = updates.notificationFrequency;
+    if (updates.emailConnections !== undefined) row.email_connections = updates.emailConnections;
+    if (updates.emailComments !== undefined) row.email_comments = updates.emailComments;
+    if (updates.emailReactions !== undefined) row.email_reactions = updates.emailReactions;
+    if (updates.emailMentions !== undefined) row.email_mentions = updates.emailMentions;
+    if (updates.emailMessages !== undefined) row.email_messages = updates.emailMessages;
+    if (updates.emailEvents !== undefined) row.email_events = updates.emailEvents;
+    if (updates.emailStories !== undefined) row.email_stories = updates.emailStories;
+
+    const { error } = await db
+      .from('dia_preferences')
+      .upsert(row, { onConflict: 'user_id' });
+
+    if (error) {
+      logger.error('NotificationSystemService', 'Failed to update preferences', error);
+      throw error;
+    }
   },
 
   // ============================================

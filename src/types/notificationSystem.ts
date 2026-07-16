@@ -108,15 +108,16 @@ export enum NotificationType {
 // NOTIFICATION ENUMS
 // ============================================================
 
+// Category taxonomy is the Five C's spine plus system, keyed to match the DB
+// `dia_preferences.push_categories` jsonb exactly. notif_should_push reads these
+// keys directly, so any drift here silently breaks the push router.
 export enum NotificationCategory {
-  SOCIAL = 'social',
-  EVENT = 'event',
-  COLLABORATION = 'collaboration',
-  MARKETPLACE = 'marketplace',
-  CONTENT = 'content',
-  INTELLIGENCE = 'intelligence',
+  CONNECT = 'connect',
+  CONVENE = 'convene',
+  COLLABORATE = 'collaborate',
+  CONTRIBUTE = 'contribute',
+  CONVEY = 'convey',
   SYSTEM = 'system',
-  MESSAGING = 'messaging',
 }
 
 export enum NotificationPriority {
@@ -284,76 +285,74 @@ export interface NotificationBatch {
 // USER NOTIFICATION PREFERENCES
 // ============================================================
 
+export type NotificationFrequency = 'high' | 'normal' | 'low' | 'never';
+
+// Client shape of a `dia_preferences` row — the canonical preferences table.
+// getPreferences/updatePreferences map this to/from the snake_case DB columns.
 export interface NotificationPreferences {
   userId: string;
 
   // Global controls
   globalEnabled: boolean;
   quietHoursEnabled: boolean;
-  quietHoursStart: number; // 0-23
-  quietHoursEnd: number;   // 0-23
+  quietHoursStart: number; // 0-23, from dia_preferences.quiet_hours_start (time)
+  quietHoursEnd: number;   // 0-23, from dia_preferences.quiet_hours_end (time)
   timezone: string;
 
-  // Channel preferences (global)
+  // Channel masters
   pushEnabled: boolean;
   emailEnabled: boolean;
-  emailDigestEnabled: boolean;
-  emailDigestDay: number;  // 0=Sunday
-  emailDigestHour: number;
+  inAppEnabled: boolean;
 
-  // Per-category channel overrides
-  categoryPreferences: Record<NotificationCategory, CategoryPreference>;
+  // Per-category push — a flat Five-C + system → bool map, mirroring
+  // `dia_preferences.push_categories`. In-app is always on (it's the row itself);
+  // push follows this bool. notif_should_push reads these keys directly.
+  pushCategories: Record<NotificationCategory, boolean>;
 
-  // Per-type granular overrides
-  typeOverrides: Record<string, TypeOverride>;
+  // Email cadence + per-type email switches. Email is deferred (Tier 2); these
+  // round-trip the DB row so the deferred UI stays truthful.
+  notificationFrequency: NotificationFrequency;
+  emailConnections: boolean;
+  emailComments: boolean;
+  emailReactions: boolean;
+  emailMentions: boolean;
+  emailMessages: boolean;
+  emailEvents: boolean;
+  emailStories: boolean;
 
-  // DIA preferences
-  diaInsightFrequency: 'frequent' | 'normal' | 'minimal' | 'off';
-
-  // Muted entities
-  mutedUserIds: string[];
-  mutedSpaceIds: string[];
-  mutedEventIds: string[];
+  unsubscribeToken: string | null;
 
   updatedAt: string;
 }
 
-export interface CategoryPreference {
-  enabled: boolean;
-  channels: NotificationChannel[];
-  batchingEnabled: boolean;
-}
-
-export interface TypeOverride {
-  enabled: boolean;
-  channels: NotificationChannel[];
-}
-
 export const DEFAULT_NOTIFICATION_PREFERENCES: Omit<NotificationPreferences, 'userId' | 'updatedAt'> = {
   globalEnabled: true,
-  quietHoursEnabled: true,
+  quietHoursEnabled: false,
   quietHoursStart: 22,
   quietHoursEnd: 8,
-  timezone: 'Africa/Lagos',
+  timezone: 'UTC',
   pushEnabled: true,
   emailEnabled: true,
-  emailDigestEnabled: true,
-  emailDigestDay: 1,
-  emailDigestHour: 9,
-  diaInsightFrequency: 'normal',
-  mutedUserIds: [],
-  mutedSpaceIds: [],
-  mutedEventIds: [],
-  typeOverrides: {},
-  categoryPreferences: {
-    [NotificationCategory.SOCIAL]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.BADGE], batchingEnabled: true },
-    [NotificationCategory.EVENT]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.PUSH, NotificationChannel.BADGE], batchingEnabled: false },
-    [NotificationCategory.COLLABORATION]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.PUSH, NotificationChannel.BADGE], batchingEnabled: false },
-    [NotificationCategory.MARKETPLACE]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.BADGE], batchingEnabled: true },
-    [NotificationCategory.CONTENT]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.BADGE], batchingEnabled: true },
-    [NotificationCategory.INTELLIGENCE]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.BADGE], batchingEnabled: true },
-    [NotificationCategory.SYSTEM]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.PUSH, NotificationChannel.EMAIL_IMMEDIATE, NotificationChannel.BADGE], batchingEnabled: false },
-    [NotificationCategory.MESSAGING]: { enabled: true, channels: [NotificationChannel.IN_APP, NotificationChannel.PUSH, NotificationChannel.BADGE], batchingEnabled: false },
+  inAppEnabled: true,
+  notificationFrequency: 'normal',
+  emailConnections: true,
+  emailComments: true,
+  emailReactions: true,
+  emailMentions: true,
+  emailMessages: true,
+  emailEvents: true,
+  emailStories: true,
+  unsubscribeToken: null,
+  // Mirrors the DB `dia_preferences.push_categories` default: high-signal C's
+  // (convene/collaborate/system) push, low-signal (connect/contribute/convey) stay
+  // in-app only. In-app is always on — it's the notification row itself.
+  pushCategories: {
+    [NotificationCategory.CONNECT]: false,
+    [NotificationCategory.CONVENE]: true,
+    [NotificationCategory.COLLABORATE]: true,
+    [NotificationCategory.CONTRIBUTE]: false,
+    [NotificationCategory.CONVEY]: false,
+    [NotificationCategory.SYSTEM]: true,
   },
 };
 
@@ -407,9 +406,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.CONNECTION_REQUEST_RECEIVED]: {
     type: NotificationType.CONNECTION_REQUEST_RECEIVED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'connect_request',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -421,9 +420,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.CONNECTION_REQUEST_ACCEPTED]: {
     type: NotificationType.CONNECTION_REQUEST_ACCEPTED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'connect_accepted',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: false,
     batchThreshold: 0,
@@ -435,9 +434,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.CONNECTION_SUGGESTION]: {
     type: NotificationType.CONNECTION_SUGGESTION,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'connect_request',
-    category: NotificationCategory.INTELLIGENCE,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.LOW,
     batchable: true,
     batchThreshold: 5,
@@ -449,9 +448,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.PROFILE_VIEWED]: {
     type: NotificationType.PROFILE_VIEWED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'connect_request',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.LOW,
     batchable: true,
     batchThreshold: 3,
@@ -463,9 +462,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.POST_LIKED]: {
     type: NotificationType.POST_LIKED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'like',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.LOW,
     batchable: true,
     batchThreshold: 3,
@@ -477,9 +476,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.POST_COMMENTED]: {
     type: NotificationType.POST_COMMENTED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'comment',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: true,
     batchThreshold: 5,
@@ -491,9 +490,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.POST_RESHARED]: {
     type: NotificationType.POST_RESHARED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'reshare',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: true,
     batchThreshold: 3,
@@ -505,9 +504,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.MENTIONED_IN_POST]: {
     type: NotificationType.MENTIONED_IN_POST,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'mention',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -519,9 +518,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.NETWORK_MILESTONE]: {
     type: NotificationType.NETWORK_MILESTONE,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'milestone',
-    category: NotificationCategory.SOCIAL,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: false,
     batchThreshold: 0,
@@ -535,9 +534,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_INVITATION]: {
     type: NotificationType.EVENT_INVITATION,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_invite',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -549,9 +548,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_REMINDER_24H]: {
     type: NotificationType.EVENT_REMINDER_24H,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_reminder',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -563,9 +562,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_REMINDER_1H]: {
     type: NotificationType.EVENT_REMINDER_1H,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_reminder',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.URGENT,
     batchable: false,
     batchThreshold: 0,
@@ -577,9 +576,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_STARTING_NOW]: {
     type: NotificationType.EVENT_STARTING_NOW,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_live',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.URGENT,
     batchable: false,
     batchThreshold: 0,
@@ -591,9 +590,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_UPDATED]: {
     type: NotificationType.EVENT_UPDATED,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_update',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: false,
     batchThreshold: 0,
@@ -605,9 +604,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_CANCELLED]: {
     type: NotificationType.EVENT_CANCELLED,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_update',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -619,9 +618,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_NEW_ATTENDEE]: {
     type: NotificationType.EVENT_NEW_ATTENDEE,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_invite',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.LOW,
     batchable: true,
     batchThreshold: 5,
@@ -633,9 +632,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.EVENT_CONNECTIONS_ATTENDING]: {
     type: NotificationType.EVENT_CONNECTIONS_ATTENDING,
     cModule: CModule.CONVENE,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'event_invite',
-    category: NotificationCategory.EVENT,
+    category: NotificationCategory.CONVENE,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: false,
     batchThreshold: 0,
@@ -649,9 +648,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.SPACE_INVITATION]: {
     type: NotificationType.SPACE_INVITATION,
     cModule: CModule.COLLABORATE,
-    accentColor: '#2D5A3D',
+    accentColor: 'hsl(var(--module-collaborate))',
     icon: 'space_invite',
-    category: NotificationCategory.COLLABORATION,
+    category: NotificationCategory.COLLABORATE,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -663,9 +662,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.TASK_ASSIGNED]: {
     type: NotificationType.TASK_ASSIGNED,
     cModule: CModule.COLLABORATE,
-    accentColor: '#2D5A3D',
+    accentColor: 'hsl(var(--module-collaborate))',
     icon: 'task_assign',
-    category: NotificationCategory.COLLABORATION,
+    category: NotificationCategory.COLLABORATE,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -677,9 +676,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.TASK_COMPLETED]: {
     type: NotificationType.TASK_COMPLETED,
     cModule: CModule.COLLABORATE,
-    accentColor: '#2D5A3D',
+    accentColor: 'hsl(var(--module-collaborate))',
     icon: 'task_complete',
-    category: NotificationCategory.COLLABORATION,
+    category: NotificationCategory.COLLABORATE,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: true,
     batchThreshold: 3,
@@ -691,9 +690,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.TASK_DUE_SOON]: {
     type: NotificationType.TASK_DUE_SOON,
     cModule: CModule.COLLABORATE,
-    accentColor: '#2D5A3D',
+    accentColor: 'hsl(var(--module-collaborate))',
     icon: 'task_assign',
-    category: NotificationCategory.COLLABORATION,
+    category: NotificationCategory.COLLABORATE,
     defaultPriority: NotificationPriority.URGENT,
     batchable: false,
     batchThreshold: 0,
@@ -705,9 +704,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.TASK_OVERDUE]: {
     type: NotificationType.TASK_OVERDUE,
     cModule: CModule.COLLABORATE,
-    accentColor: '#2D5A3D',
+    accentColor: 'hsl(var(--module-collaborate))',
     icon: 'task_assign',
-    category: NotificationCategory.COLLABORATION,
+    category: NotificationCategory.COLLABORATE,
     defaultPriority: NotificationPriority.URGENT,
     batchable: false,
     batchThreshold: 0,
@@ -719,9 +718,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.SPACE_STALL_ALERT]: {
     type: NotificationType.SPACE_STALL_ALERT,
     cModule: CModule.COLLABORATE,
-    accentColor: '#2D5A3D',
+    accentColor: 'hsl(var(--module-collaborate))',
     icon: 'stall_alert',
-    category: NotificationCategory.COLLABORATION,
+    category: NotificationCategory.COLLABORATE,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: false,
     batchThreshold: 0,
@@ -735,9 +734,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.OPPORTUNITY_MATCH]: {
     type: NotificationType.OPPORTUNITY_MATCH,
     cModule: CModule.CONTRIBUTE,
-    accentColor: '#B87333',
+    accentColor: 'hsl(var(--module-contribute))',
     icon: 'opportunity_match',
-    category: NotificationCategory.MARKETPLACE,
+    category: NotificationCategory.CONTRIBUTE,
     defaultPriority: NotificationPriority.HIGH,
     batchable: true,
     batchThreshold: 5,
@@ -749,9 +748,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.OPPORTUNITY_INTEREST_RECEIVED]: {
     type: NotificationType.OPPORTUNITY_INTEREST_RECEIVED,
     cModule: CModule.CONTRIBUTE,
-    accentColor: '#B87333',
+    accentColor: 'hsl(var(--module-contribute))',
     icon: 'opportunity_interest',
-    category: NotificationCategory.MARKETPLACE,
+    category: NotificationCategory.CONTRIBUTE,
     defaultPriority: NotificationPriority.HIGH,
     batchable: true,
     batchThreshold: 5,
@@ -763,9 +762,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.OPPORTUNITY_DEADLINE_APPROACHING]: {
     type: NotificationType.OPPORTUNITY_DEADLINE_APPROACHING,
     cModule: CModule.CONTRIBUTE,
-    accentColor: '#B87333',
+    accentColor: 'hsl(var(--module-contribute))',
     icon: 'opportunity_deadline',
-    category: NotificationCategory.MARKETPLACE,
+    category: NotificationCategory.CONTRIBUTE,
     defaultPriority: NotificationPriority.URGENT,
     batchable: false,
     batchThreshold: 0,
@@ -779,9 +778,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.STORY_LIKED]: {
     type: NotificationType.STORY_LIKED,
     cModule: CModule.CONVEY,
-    accentColor: '#2A7A8C',
+    accentColor: 'hsl(var(--module-convey))',
     icon: 'story_engage',
-    category: NotificationCategory.CONTENT,
+    category: NotificationCategory.CONVEY,
     defaultPriority: NotificationPriority.LOW,
     batchable: true,
     batchThreshold: 3,
@@ -793,9 +792,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.STORY_COMMENTED]: {
     type: NotificationType.STORY_COMMENTED,
     cModule: CModule.CONVEY,
-    accentColor: '#2A7A8C',
+    accentColor: 'hsl(var(--module-convey))',
     icon: 'comment',
-    category: NotificationCategory.CONTENT,
+    category: NotificationCategory.CONVEY,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: true,
     batchThreshold: 5,
@@ -807,9 +806,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.STORY_NEW_FOLLOWER]: {
     type: NotificationType.STORY_NEW_FOLLOWER,
     cModule: CModule.CONVEY,
-    accentColor: '#2A7A8C',
+    accentColor: 'hsl(var(--module-convey))',
     icon: 'follower',
-    category: NotificationCategory.CONTENT,
+    category: NotificationCategory.CONVEY,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: true,
     batchThreshold: 3,
@@ -821,9 +820,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.STORY_TRENDING]: {
     type: NotificationType.STORY_TRENDING,
     cModule: CModule.CONVEY,
-    accentColor: '#2A7A8C',
+    accentColor: 'hsl(var(--module-convey))',
     icon: 'trending',
-    category: NotificationCategory.CONTENT,
+    category: NotificationCategory.CONVEY,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -835,9 +834,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.STORY_ENGAGEMENT_MILESTONE]: {
     type: NotificationType.STORY_ENGAGEMENT_MILESTONE,
     cModule: CModule.CONVEY,
-    accentColor: '#2A7A8C',
+    accentColor: 'hsl(var(--module-convey))',
     icon: 'milestone',
-    category: NotificationCategory.CONTENT,
+    category: NotificationCategory.CONVEY,
     defaultPriority: NotificationPriority.MEDIUM,
     batchable: false,
     batchThreshold: 0,
@@ -851,9 +850,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.DIA_WEEKLY_DIGEST]: {
     type: NotificationType.DIA_WEEKLY_DIGEST,
     cModule: CModule.CONNECT,
-    accentColor: '#C4942A',
+    accentColor: 'hsl(var(--module-convene))',
     icon: 'dia_digest',
-    category: NotificationCategory.INTELLIGENCE,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.DIGEST,
     batchable: false,
     batchThreshold: 0,
@@ -867,7 +866,7 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.SYSTEM_SECURITY_ALERT]: {
     type: NotificationType.SYSTEM_SECURITY_ALERT,
     cModule: CModule.CONNECT,
-    accentColor: '#CC3333',
+    accentColor: 'hsl(var(--destructive))',
     icon: 'security',
     category: NotificationCategory.SYSTEM,
     defaultPriority: NotificationPriority.CRITICAL,
@@ -881,7 +880,7 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.SYSTEM_PAYMENT_FAILED]: {
     type: NotificationType.SYSTEM_PAYMENT_FAILED,
     cModule: CModule.CONNECT,
-    accentColor: '#CC3333',
+    accentColor: 'hsl(var(--destructive))',
     icon: 'payment',
     category: NotificationCategory.SYSTEM,
     defaultPriority: NotificationPriority.CRITICAL,
@@ -895,7 +894,7 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.SYSTEM_PAYMENT_CONFIRMED]: {
     type: NotificationType.SYSTEM_PAYMENT_CONFIRMED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'payment',
     category: NotificationCategory.SYSTEM,
     defaultPriority: NotificationPriority.HIGH,
@@ -911,9 +910,9 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
   [NotificationType.MESSAGE_RECEIVED]: {
     type: NotificationType.MESSAGE_RECEIVED,
     cModule: CModule.CONNECT,
-    accentColor: '#4A8D77',
+    accentColor: 'hsl(var(--module-connect))',
     icon: 'message',
-    category: NotificationCategory.MESSAGING,
+    category: NotificationCategory.CONNECT,
     defaultPriority: NotificationPriority.HIGH,
     batchable: false,
     batchThreshold: 0,
@@ -948,15 +947,15 @@ export const NOTIFICATION_CENTER_LAYOUT = {
     avatarSize: 44,
     avatarSizeCompact: 36,
     leftBorderWidth: 3,
-    unreadBackground: '#F9F7F4',
-    readBackground: '#FFFFFF',
+    unreadBackground: 'hsl(var(--background))',
+    readBackground: 'hsl(var(--card))',
     inlineActionHeight: 36,
     maxBodyLines: 2,
     timestampFontSize: 12,
   },
   groupHeader: {
     fontSize: 13,
-    color: '#666666',
+    color: 'hsl(var(--muted-foreground))',
     paddingVertical: 8,
     paddingHorizontal: 16,
     labels: ['Just now', 'Today', 'Yesterday', 'This week', 'Earlier'] as const,
@@ -970,11 +969,11 @@ export const NOTIFICATION_CENTER_LAYOUT = {
 
 export const NOTIFICATION_FILTERS = [
   { label: 'All', value: 'all' as const, icon: null, color: null },
-  { label: 'Connect', value: CModule.CONNECT, icon: 'connect-icon', color: '#4A8D77' },
-  { label: 'Convene', value: CModule.CONVENE, icon: 'convene-icon', color: '#C4942A' },
-  { label: 'Collaborate', value: CModule.COLLABORATE, icon: 'collaborate-icon', color: '#2D5A3D' },
-  { label: 'Contribute', value: CModule.CONTRIBUTE, icon: 'contribute-icon', color: '#B87333' },
-  { label: 'Convey', value: CModule.CONVEY, icon: 'convey-icon', color: '#2A7A8C' },
+  { label: 'Connect', value: CModule.CONNECT, icon: 'connect-icon', color: 'hsl(var(--module-connect))' },
+  { label: 'Convene', value: CModule.CONVENE, icon: 'convene-icon', color: 'hsl(var(--module-convene))' },
+  { label: 'Collaborate', value: CModule.COLLABORATE, icon: 'collaborate-icon', color: 'hsl(var(--module-collaborate))' },
+  { label: 'Contribute', value: CModule.CONTRIBUTE, icon: 'contribute-icon', color: 'hsl(var(--module-contribute))' },
+  { label: 'Convey', value: CModule.CONVEY, icon: 'convey-icon', color: 'hsl(var(--module-convey))' },
 ] as const;
 
 // ============================================================
