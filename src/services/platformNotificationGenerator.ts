@@ -43,7 +43,7 @@ async function createPlatformNotification(
         link_url: params.linkUrl,
         entity_type: params.entityType,
         entity_id: params.entityId,
-        is_read: false,
+        read: false,
         payload: params.actorId
           ? { actor_id: params.actorId }
           : {},

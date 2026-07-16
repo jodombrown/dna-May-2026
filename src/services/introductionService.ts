@@ -140,7 +140,7 @@ export async function sendGroupIntroduction(
       title: `${introducerName} introduced you to ${personBProfile?.full_name || 'someone'}`,
       message: message.slice(0, 120),
       link_url: `/dna/messages?conversation=${conversationId}`,
-      is_read: false,
+      read: false,
       payload: { actor_id: introducerId, conversation_id: conversationId },
     });
 
@@ -151,7 +151,7 @@ export async function sendGroupIntroduction(
       title: `${introducerName} introduced you to ${personAProfile?.full_name || 'someone'}`,
       message: message.slice(0, 120),
       link_url: `/dna/messages?conversation=${conversationId}`,
-      is_read: false,
+      read: false,
       payload: { actor_id: introducerId, conversation_id: conversationId },
     });
 

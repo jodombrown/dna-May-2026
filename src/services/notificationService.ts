@@ -38,7 +38,7 @@ export async function createNotification(params: CreateNotificationParams): Prom
         message: params.message,
         link_url: params.link_url,
         payload: params.payload ? JSON.parse(JSON.stringify(params.payload)) : {},
-        is_read: false,
+        read: false,
       }])
       .select('id')
       .single();

@@ -23,19 +23,16 @@ import {
   SheetContent,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { useUnifiedNotificationCount } from '@/hooks/useUnifiedNotifications';
+import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 import { UnifiedNotificationPanel } from './UnifiedNotificationPanel';
 import { useMobile } from '@/hooks/useMobile';
 
 export function UnifiedNotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
-  const { unreadCount, platformCount, diaCount } = useUnifiedNotificationCount();
+  const { data: unreadCount = 0 } = useUnreadNotificationCount();
   const { isMobile } = useMobile();
 
   const hasUnread = unreadCount > 0;
-
-  // Badge color: gold if only DIA unreads, primary otherwise
-  const badgeIsDiaOnly = diaCount > 0 && platformCount === 0;
 
   const handleClose = () => setIsOpen(false);
 
@@ -52,12 +49,7 @@ export function UnifiedNotificationBell() {
           <Bell className={cn('h-5 w-5', hasUnread && 'text-primary')} />
           {hasUnread && (
             <Badge
-              className={cn(
-                'absolute -top-1 -right-1 h-5 min-w-5 px-1 flex items-center justify-center text-xs text-white',
-                badgeIsDiaOnly
-                  ? 'bg-[#C4942A] hover:bg-[#C4942A]/90'
-                  : 'bg-primary hover:bg-primary/90'
-              )}
+              className="absolute -top-1 -right-1 h-5 min-w-5 px-1 flex items-center justify-center text-micro text-primary-foreground bg-primary hover:bg-primary/90"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
@@ -86,12 +78,7 @@ export function UnifiedNotificationBell() {
           <Bell className={cn('h-5 w-5', hasUnread && 'text-primary')} />
           {hasUnread && (
             <Badge
-              className={cn(
-                'absolute -top-1 -right-1 h-5 min-w-5 px-1 flex items-center justify-center text-xs text-white',
-                badgeIsDiaOnly
-                  ? 'bg-[#C4942A] hover:bg-[#C4942A]/90'
-                  : 'bg-primary hover:bg-primary/90'
-              )}
+              className="absolute -top-1 -right-1 h-5 min-w-5 px-1 flex items-center justify-center text-micro text-primary-foreground bg-primary hover:bg-primary/90"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
@@ -99,7 +86,7 @@ export function UnifiedNotificationBell() {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[420px] p-0"
+        className="w-96 p-0"
         align="end"
         sideOffset={8}
       >

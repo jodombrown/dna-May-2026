@@ -29,7 +29,9 @@ import {
 // ============================================================
 
 const QK_UNIFIED_NOTIFICATIONS = 'unified-notifications';
-const QK_UNIFIED_UNREAD = 'unified-notifications-unread';
+// The canonical unread count lives in useUnreadNotificationCount (RPC-backed,
+// query key ['notifications-unread-count']). Keep it in sync on realtime events.
+const QK_UNREAD_COUNT = 'notifications-unread-count';
 
 // ============================================================
 // TIME GROUPING
@@ -98,18 +100,6 @@ export function useUnifiedNotifications(
     refetchInterval: 60000,
   });
 
-  // Fetch unread count
-  const unreadQuery = useQuery({
-    queryKey: [QK_UNIFIED_UNREAD, user?.id],
-    queryFn: async () => {
-      if (!user) return { total: 0, platform: 0, dia: 0 };
-      return unifiedNotificationService.getUnreadCount(user.id);
-    },
-    enabled: !!user,
-    staleTime: 30000,
-    refetchInterval: 60000,
-  });
-
   // Real-time subscription for platform notifications
   useEffect(() => {
     if (!user?.id) return;
@@ -131,7 +121,7 @@ export function useUnifiedNotifications(
           queryClient.invalidateQueries({
             queryKey: [QK_UNIFIED_NOTIFICATIONS],
           });
-          queryClient.invalidateQueries({ queryKey: [QK_UNIFIED_UNREAD] });
+          queryClient.invalidateQueries({ queryKey: [QK_UNREAD_COUNT] });
         }
       )
       .subscribe();
@@ -146,13 +136,10 @@ export function useUnifiedNotifications(
     return groupByTime(notificationsQuery.data || []);
   }, [notificationsQuery.data]);
 
-  // Invalidate helper
+  // Invalidate helper — refresh the unified stream and the canonical RPC count.
   const invalidateAll = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: [QK_UNIFIED_NOTIFICATIONS] });
-    queryClient.invalidateQueries({ queryKey: [QK_UNIFIED_UNREAD] });
-    // Also invalidate legacy queries for badge consistency
-    queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
-    queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    queryClient.invalidateQueries({ queryKey: [QK_UNREAD_COUNT] });
   }, [queryClient]);
 
   // Mark as read
@@ -202,9 +189,6 @@ export function useUnifiedNotifications(
     // Data
     notifications: notificationsQuery.data || [],
     groupedNotifications,
-    unreadCount: unreadQuery.data?.total || 0,
-    unreadPlatformCount: unreadQuery.data?.platform || 0,
-    unreadDiaCount: unreadQuery.data?.dia || 0,
     isLoading: notificationsQuery.isLoading,
 
     // Filter
@@ -219,31 +203,5 @@ export function useUnifiedNotifications(
 
     // Refresh
     refetch: notificationsQuery.refetch,
-  };
-}
-
-// ============================================================
-// LIGHTWEIGHT UNREAD COUNT HOOK (for bell icon)
-// ============================================================
-
-export function useUnifiedNotificationCount() {
-  const { user } = useAuth();
-
-  const unreadQuery = useQuery({
-    queryKey: [QK_UNIFIED_UNREAD, user?.id],
-    queryFn: async () => {
-      if (!user) return { total: 0, platform: 0, dia: 0 };
-      return unifiedNotificationService.getUnreadCount(user.id);
-    },
-    enabled: !!user,
-    staleTime: 30000,
-    refetchInterval: 60000,
-  });
-
-  return {
-    unreadCount: unreadQuery.data?.total || 0,
-    platformCount: unreadQuery.data?.platform || 0,
-    diaCount: unreadQuery.data?.dia || 0,
-    isLoading: unreadQuery.isLoading,
   };
 }

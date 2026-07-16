@@ -1,16 +1,18 @@
 /**
- * DNA | UnifiedNotificationPanel — Sprint 4C
+ * DNA | UnifiedNotificationPanel
  *
- * The main notification center that shows both platform and DIA notifications
- * in a unified stream. Supports desktop dropdown and mobile fullscreen modes.
+ * The single notification surface for the whole product. Renders both platform
+ * and DIA notifications in one time-grouped stream, filtered by lane
+ * (All | Unread | DIA).
  *
- * Features:
- * - All/Activity/DIA filter tabs
- * - Time-grouped notifications (Just now, Today, Yesterday, etc.)
- * - DIA notifications visually distinct with accent colors
- * - Mark all as read
- * - Empty state with DNA branding
- * - Desktop dropdown (420px wide) and mobile fullscreen
+ * Variants:
+ * - `dropdown`   — desktop popover (420px) opened from the header bell
+ * - `fullscreen` — mobile sheet opened from the header bell
+ * - `page`       — embedded in the routed /dna/notifications page (full width,
+ *                  no dropdown chrome, no close button)
+ *
+ * The unread number is the canonical RPC count (useUnreadNotificationCount),
+ * the same source the header bell badge uses.
  */
 
 import { useEffect, useCallback } from 'react';
@@ -23,16 +25,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Bell, CheckCheck, Settings, MoreVertical, X } from 'lucide-react';
+import { Bell, CheckCheck, Settings, MoreVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUnifiedNotifications } from '@/hooks/useUnifiedNotifications';
+import { useUnreadNotificationCount } from '@/hooks/useUnreadNotificationCount';
 import { UnifiedNotificationFilters } from './UnifiedNotificationFilters';
 import { UnifiedNotificationCard } from './UnifiedNotificationCard';
 import type { UnifiedNotification } from '@/services/unifiedNotificationService';
 
 interface UnifiedNotificationPanelProps {
-  onClose: () => void;
-  variant?: 'dropdown' | 'fullscreen';
+  onClose?: () => void;
+  variant?: 'dropdown' | 'fullscreen' | 'page';
 }
 
 export function UnifiedNotificationPanel({
@@ -43,9 +46,6 @@ export function UnifiedNotificationPanel({
   const {
     notifications,
     groupedNotifications,
-    unreadCount,
-    unreadPlatformCount,
-    unreadDiaCount,
     isLoading,
     filter,
     setFilter,
@@ -54,6 +54,11 @@ export function UnifiedNotificationPanel({
     dismiss,
     markAllAsRead,
   } = useUnifiedNotifications();
+
+  // Canonical unread count — same RPC source as the header bell badge.
+  const { data: unreadCount = 0 } = useUnreadNotificationCount();
+
+  const close = useCallback(() => onClose?.(), [onClose]);
 
   // Mark visible DIA notifications as seen when panel opens
   useEffect(() => {
@@ -72,17 +77,17 @@ export function UnifiedNotificationPanel({
       if (notification.primaryAction?.route) {
         navigate(notification.primaryAction.route);
       }
-      onClose();
+      close();
     },
-    [markAsRead, navigate, onClose]
+    [markAsRead, navigate, close]
   );
 
   const handleAction = useCallback(
     (notification: UnifiedNotification, _route: string) => {
       markAsActed(notification);
-      onClose();
+      close();
     },
-    [markAsActed, onClose]
+    [markAsActed, close]
   );
 
   const handleDismiss = useCallback(
@@ -94,29 +99,85 @@ export function UnifiedNotificationPanel({
 
   const handleSettings = () => {
     navigate('/dna/settings/notifications');
-    onClose();
+    close();
   };
 
   const handleViewAll = () => {
     navigate('/dna/notifications');
-    onClose();
+    close();
   };
 
   const isDropdown = variant === 'dropdown';
+  const isPage = variant === 'page';
+
+  const list = (
+    <>
+      {isLoading ? (
+        <div className="flex items-center justify-center h-32">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+        </div>
+      ) : notifications.length === 0 ? (
+        /* Empty state */
+        <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+            <Bell className="h-8 w-8 text-muted-foreground/50" />
+          </div>
+          <p className="font-medium text-body mb-1">
+            {filter === 'dia'
+              ? 'No DIA insights yet'
+              : filter === 'unread'
+                ? "You're all caught up"
+                : 'No notifications yet'}
+          </p>
+          <p className="text-meta text-muted-foreground max-w-xs">
+            {filter === 'dia'
+              ? 'DIA will surface intelligence as you use the platform.'
+              : "When something happens in your diaspora network, you'll see it here."}
+          </p>
+        </div>
+      ) : (
+        <div>
+          {groupedNotifications.map(group => (
+            <div key={group.label}>
+              {/* Time group header */}
+              <div className="px-4 py-2 text-meta font-medium text-muted-foreground bg-muted/30 sticky top-0 z-10">
+                {group.label}
+              </div>
+
+              {/* Notifications */}
+              <div className="divide-y divide-border/50">
+                {group.notifications.map(notif => (
+                  <UnifiedNotificationCard
+                    key={notif.id}
+                    notification={notif}
+                    onOpen={handleOpen}
+                    onDismiss={handleDismiss}
+                    onAction={handleAction}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
 
   return (
     <div
       className={cn(
         'flex flex-col bg-background',
-        isDropdown ? 'w-[420px] max-h-[80vh]' : 'h-full w-full'
+        isDropdown && 'w-full max-h-screen',
+        variant === 'fullscreen' && 'h-full w-full',
+        isPage && 'w-full'
       )}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0">
         <div className="flex items-center gap-2">
-          <h3 className="font-semibold text-base">Notifications</h3>
+          <h3 className="font-semibold text-h3">Notifications</h3>
           {unreadCount > 0 && (
-            <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+            <span className="text-micro bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
@@ -147,77 +208,28 @@ export function UnifiedNotificationPanel({
         </div>
       </div>
 
-      {/* Filter tabs: All | Activity | DIA */}
+      {/* Filter lanes: All | Unread | DIA */}
       <div className="flex-shrink-0">
         <UnifiedNotificationFilters
           activeFilter={filter}
           onFilterChange={setFilter}
-          counts={{
-            all: unreadCount,
-            activity: unreadPlatformCount,
-            dia: unreadDiaCount,
-          }}
+          unreadCount={unreadCount}
         />
       </div>
 
       {/* Notification list */}
-      <ScrollArea className="flex-1">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-32">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-          </div>
-        ) : notifications.length === 0 ? (
-          /* Empty state */
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-              <Bell className="h-8 w-8 text-muted-foreground/50" />
-            </div>
-            <p className="font-medium text-sm mb-1">
-              {filter === 'dia'
-                ? 'No DIA insights yet'
-                : filter === 'activity'
-                  ? 'No activity notifications'
-                  : "You're all caught up"}
-            </p>
-            <p className="text-xs text-muted-foreground max-w-[240px]">
-              {filter === 'dia'
-                ? 'DIA will surface intelligence as you use the platform.'
-                : "When something happens in your diaspora network, you'll see it here."}
-            </p>
-          </div>
-        ) : (
-          <div>
-            {groupedNotifications.map(group => (
-              <div key={group.label}>
-                {/* Time group header */}
-                <div className="px-4 py-2 text-xs font-medium text-muted-foreground bg-muted/30 sticky top-0 z-10">
-                  {group.label}
-                </div>
+      {isPage ? (
+        <div className="flex-1">{list}</div>
+      ) : (
+        <ScrollArea className="flex-1">{list}</ScrollArea>
+      )}
 
-                {/* Notifications */}
-                <div className="divide-y divide-border/50">
-                  {group.notifications.map(notif => (
-                    <UnifiedNotificationCard
-                      key={notif.id}
-                      notification={notif}
-                      onOpen={handleOpen}
-                      onDismiss={handleDismiss}
-                      onAction={handleAction}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </ScrollArea>
-
-      {/* Footer */}
+      {/* Footer — dropdown only */}
       {notifications.length > 0 && isDropdown && (
         <div className="p-2 border-t flex-shrink-0">
           <Button
             variant="ghost"
-            className="w-full text-sm text-primary hover:text-primary/90"
+            className="w-full text-body text-primary hover:text-primary/90"
             onClick={handleViewAll}
           >
             View All Notifications
