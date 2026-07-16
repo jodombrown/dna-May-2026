@@ -16,7 +16,7 @@ import {
   type DIAProactiveNudge,
 } from '@/services/dia/diaNudgeStorage';
 import { MODULE_ACCENT_COLORS, type DIACardCategory } from '@/services/diaCardService';
-import type { Notification } from '@/types/notifications';
+import type { NotificationRow } from '@/types/notificationsV2';
 
 // ============================================================
 // UNIFIED NOTIFICATION TYPES
@@ -24,7 +24,13 @@ import type { Notification } from '@/types/notifications';
 
 export type UnifiedNotificationType = 'platform' | 'dia';
 
-export type UnifiedNotificationFilter = 'all' | 'activity' | 'dia';
+/**
+ * Panel filter lanes:
+ * - `all`    — every notification (read + unread), across sources
+ * - `unread` — read = false only
+ * - `dia`    — the DIA insight lane only
+ */
+export type UnifiedNotificationFilter = 'all' | 'unread' | 'dia';
 
 export interface UnifiedNotification {
   id: string;
@@ -55,7 +61,7 @@ export interface UnifiedNotification {
 // PLATFORM NOTIFICATION CONVERSION
 // ============================================================
 
-function convertPlatformNotification(notif: Notification): UnifiedNotification {
+function convertPlatformNotification(notif: NotificationRow): UnifiedNotification {
   const routeMap: Record<string, string> = {
     connection_request: '/dna/connect/network?tab=requests',
     connection_accepted: notif.actor_username
@@ -146,7 +152,7 @@ function convertPlatformNotification(notif: Notification): UnifiedNotification {
       route: routeMap[notif.type] || notif.action_url || '/dna/feed',
     },
     secondaryAction: null,
-    isRead: notif.is_read,
+    isRead: notif.read,
     createdAt: notif.created_at,
     diaCategory: null,
     diaNudgeId: null,
@@ -169,7 +175,7 @@ function convertDiaNudge(nudge: DIAProactiveNudge): UnifiedNotification {
     headline: nudge.card.headline,
     body: nudge.card.body,
     icon: nudge.card.icon,
-    accentColor: nudge.card.accentColor || MODULE_ACCENT_COLORS[nudge.card.category] || '#C4942A',
+    accentColor: nudge.card.accentColor || MODULE_ACCENT_COLORS[nudge.card.category],
     actorName: null,
     actorAvatarUrl: null,
     primaryAction: primaryAction
@@ -200,33 +206,40 @@ function convertDiaNudge(nudge: DIAProactiveNudge): UnifiedNotification {
 export const unifiedNotificationService = {
   /**
    * Get unified notifications from both platform and DIA sources.
+   *
+   * `filter` selects the lane:
+   * - `all`    → all platform + DIA notifications (paginated by `limit`/`offset`)
+   * - `unread` → read = false only
+   * - `dia`    → DIA lane only
    */
   async getNotifications(
     userId: string,
     filter: UnifiedNotificationFilter = 'all',
     options?: {
-      unreadOnly?: boolean;
       limit?: number;
+      offset?: number;
     }
   ): Promise<UnifiedNotification[]> {
     const limit = options?.limit || 50;
+    const offset = options?.offset || 0;
+    const unreadOnly = filter === 'unread';
     const notifications: UnifiedNotification[] = [];
 
-    // Get platform notifications
+    // Get platform notifications (skipped only for the DIA-only lane)
     if (filter !== 'dia') {
       try {
-      const { data, error } = await (supabase.rpc as Function)(
+        const { data, error } = await (supabase.rpc as Function)(
           'get_user_notifications',
           {
             p_user_id: userId,
-            p_unread_only: options?.unreadOnly || false,
+            p_unread_only: unreadOnly,
             p_limit: limit,
-            p_offset: 0,
+            p_offset: offset,
           }
         );
 
         if (!error && data) {
-          const platformNotifs = (data as unknown as Notification[]).map(
+          const platformNotifs = (data as unknown as NotificationRow[]).map(
             convertPlatformNotification
           );
           notifications.push(...platformNotifs);
@@ -236,18 +249,15 @@ export const unifiedNotificationService = {
       }
     }
 
-    // Get DIA notifications
-    if (filter !== 'activity') {
-      const diaNudges = getPendingNudgesForUser(userId).filter(
-        n => n.channel === 'notification' || n.channel === 'both'
-      );
-      const diaNotifs = diaNudges.map(convertDiaNudge);
-
-      if (options?.unreadOnly) {
-        notifications.push(...diaNotifs.filter(n => !n.isRead));
-      } else {
-        notifications.push(...diaNotifs);
-      }
+    // Get DIA notifications (present in every lane; unread lane keeps unseen only)
+    const diaNudges = getPendingNudgesForUser(userId).filter(
+      n => n.channel === 'notification' || n.channel === 'both'
+    );
+    const diaNotifs = diaNudges.map(convertDiaNudge);
+    if (unreadOnly) {
+      notifications.push(...diaNotifs.filter(n => !n.isRead));
+    } else {
+      notifications.push(...diaNotifs);
     }
 
     // Sort by createdAt descending
@@ -260,43 +270,11 @@ export const unifiedNotificationService = {
   },
 
   /**
-   * Get total unread count across both sources.
-   */
-  async getUnreadCount(userId: string): Promise<{
-    total: number;
-    platform: number;
-    dia: number;
-  }> {
-    let platformCount = 0;
-
-    try {
-      const { data, error } = await (supabase.rpc as Function)(
-        'get_unread_notification_count',
-        { p_user_id: userId }
-      );
-
-      if (!error && data) {
-        platformCount = (data as number) || 0;
-      }
-    } catch {
-      // Platform count unavailable
-    }
-
-    const diaNudges = getPendingNudgesForUser(userId).filter(
-      n =>
-        n.status === 'pending' &&
-        (n.channel === 'notification' || n.channel === 'both')
-    );
-
-    return {
-      total: platformCount + diaNudges.length,
-      platform: platformCount,
-      dia: diaNudges.length,
-    };
-  },
-
-  /**
    * Mark a platform notification as read.
+   *
+   * `read` is the canonical column post-N2; the DB keeps the legacy `is_read`
+   * column in lockstep via the notifications_sync_read trigger until it is
+   * dropped in the N2 DB tail.
    */
   async markPlatformAsRead(
     userId: string,
@@ -304,7 +282,7 @@ export const unifiedNotificationService = {
   ): Promise<void> {
     await supabase
       .from('notifications')
-      .update({ is_read: true, read: true })
+      .update({ read: true })
       .eq('id', notificationId)
       .eq('user_id', userId);
   },
@@ -350,7 +328,7 @@ export const unifiedNotificationService = {
   async markAllPlatformAsRead(userId: string): Promise<void> {
     await supabase
       .from('notifications')
-      .update({ is_read: true, read: true })
+      .update({ read: true })
       .eq('user_id', userId);
   },
 

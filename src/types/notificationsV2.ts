@@ -132,7 +132,7 @@ export interface NotificationV2 {
 
   // Delivery
   channels_delivered: DeliveryChannel[];
-  is_read: boolean;
+  read: boolean;
   is_batched: boolean;
   batch_id?: string;
 
@@ -146,6 +146,34 @@ export interface NotificationV2 {
   delivered_at?: string;
 
   // Extensible payload
+  payload?: Record<string, unknown>;
+}
+
+// =====================================================
+// PLATFORM NOTIFICATION ROW (get_user_notifications RPC shape)
+// =====================================================
+
+/**
+ * Row shape returned by the `get_user_notifications` RPC for a platform
+ * notification. Folded here from the retired `types/notifications.ts` during
+ * the N2 notifications convergence. `read` is the canonical read column
+ * (post-N2); there is no `is_read` field on this type.
+ */
+export interface NotificationRow {
+  notification_id: string;
+  actor_id?: string;
+  actor_username?: string;
+  actor_full_name?: string;
+  actor_avatar_url?: string;
+  type: string;
+  title: string;
+  message: string;
+  action_url?: string;
+  entity_type?: string;
+  entity_id?: string;
+  read: boolean;
+  created_at: string;
+  read_at?: string;
   payload?: Record<string, unknown>;
 }
 
@@ -283,7 +311,7 @@ export interface DigestSection {
 export interface NotificationIntelligenceService {
   /** Evaluate notification and decide priority, channels, and batching */
   evaluateNotification(
-    notification: Omit<NotificationV2, 'id' | 'channels_delivered' | 'is_read' | 'is_batched' | 'created_at'>,
+    notification: Omit<NotificationV2, 'id' | 'channels_delivered' | 'read' | 'is_batched' | 'created_at'>,
     userPrefs: NotificationPreferencesV2,
   ): ChannelDecision;
 

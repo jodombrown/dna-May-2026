@@ -36,7 +36,7 @@ import type { NudgePriority } from '@/types/dia';
  * This is the core intelligence function — DIA decides HOW to deliver.
  */
 function evaluateNotification(
-  notification: Omit<NotificationV2, 'id' | 'channels_delivered' | 'is_read' | 'is_batched' | 'created_at'>,
+  notification: Omit<NotificationV2, 'id' | 'channels_delivered' | 'read' | 'is_batched' | 'created_at'>,
   userPrefs: NotificationPreferencesV2,
 ): ChannelDecision {
   const { category, type, priority } = notification;

@@ -1,6 +1,10 @@
 /**
  * DNA | Notification System Service
  *
+ * N4: consolidate into unified preferences. Retained past the N2 convergence
+ * because NotificationPreferencesPanel's preferences path (getPreferences)
+ * belongs to N4; no other code references this service after N2.
+ *
  * Core notification creation, delivery, batching, and management.
  * Every notification flows through this service: create -> DIA evaluate -> deliver.
  *

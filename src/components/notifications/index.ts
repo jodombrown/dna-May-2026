@@ -1,31 +1,16 @@
 /**
- * DNA | Notification System — Component Exports
+ * DNA | Notifications — Component Exports
  *
- * Re-exports all notification system components for clean imports.
- *
- * Legacy components (V1):
- * - NotificationCenter, NotificationBell, NotificationItem, NotificationList,
- *   NotificationsDropdown, BadgeToastListener
- *
- * New Notification System (V2):
- * - NotificationSystemBell — Nav bar bell with Five C's badge counts
- * - NotificationSystemCenter — Main notification panel (dropdown + fullscreen)
- * - NotificationSystemCard — Individual notification card with C-module accents
- * - NotificationFilterBar — Five C's filter chips
- * - NotificationPreferencesPanel — Settings for notification preferences
+ * One notification component family: Unified. Everything renders through
+ * UnifiedNotificationPanel (bell dropdown, mobile sheet, and the routed page).
  */
 
-// New Notification System components
-export { NotificationSystemBell } from './NotificationSystemBell';
-export { NotificationSystemCenter } from './NotificationSystemCenter';
-export { NotificationSystemCard } from './NotificationSystemCard';
-export { NotificationFilterBar } from './NotificationFilterBar';
-export { NotificationPreferencesPanel } from './NotificationPreferencesPanel';
+// Unified notification family
+export { UnifiedNotificationBell } from './UnifiedNotificationBell';
+export { UnifiedNotificationPanel } from './UnifiedNotificationPanel';
+export { UnifiedNotificationCard } from './UnifiedNotificationCard';
+export { UnifiedNotificationFilters } from './UnifiedNotificationFilters';
 
-// Legacy components (kept for backward compatibility)
-export { NotificationCenter } from './NotificationCenter';
-export { NotificationBell } from './NotificationBell';
-export { NotificationItem } from './NotificationItem';
-export { NotificationList } from './NotificationList';
-export { NotificationsDropdown } from './NotificationsDropdown';
+// Supporting surfaces
 export { default as BadgeToastListener } from './BadgeToastListener';
+export { NotificationPreferencesPanel } from './NotificationPreferencesPanel';

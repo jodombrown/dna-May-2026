@@ -137,7 +137,7 @@ export function createUniqueChannel(
  * ✓ Each component has its OWN callback/state (e.g., different notification dropdowns)
  * ✓ Same component mounted multiple times needs separate subscriptions
  * ✓ You're okay with multiple database subscriptions for the same data
- * ✓ Example: useNotifications (different panels), useDiaNudges (dashboard vs nudge center)
+ * ✓ Example: useUnifiedNotifications (different panels), useDiaNudges (dashboard vs nudge center)
  * 
  * When in doubt: Use UNIQUE (safer, prevents collisions)
  */
