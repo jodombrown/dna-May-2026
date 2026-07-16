@@ -4,6 +4,7 @@
 
 // deno-lint-ignore-file no-explicit-any
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { PERPLEXITY_MODEL, PERPLEXITY_URL } from "./dia-core/models.ts";
 
 const ROW_CAP = 20;
 
@@ -434,11 +435,11 @@ export async function executeTool(
       case "web_search": {
         const apiKey = Deno.env.get("PERPLEXITY_API_KEY");
         if (!apiKey) return { text: JSON.stringify({ error: "web_search unavailable" }), results: {} };
-        const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+        const resp = await fetch(PERPLEXITY_URL, {
           method: "POST",
           headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "sonar",
+            model: PERPLEXITY_MODEL,
             messages: [
               { role: "system", content: "Answer concisely with citations. Focus on Africa, diaspora, and allied communities where relevant." },
               { role: "user", content: args.query },
