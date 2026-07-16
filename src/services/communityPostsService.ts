@@ -1,10 +1,10 @@
 import { supabase } from '@/integrations/supabase/client';
 import { createCommunityFeedPost } from '@/lib/feedWriter';
 
-// Helper function to trigger DIA prompt (calls legacy 'trigger-adin-prompt' edge function)
+// Helper function to trigger DIA prompt (calls 'dia-trigger-prompt' edge function)
 const triggerDiaPrompt = async (userId: string, eventType: string) => {
   try {
-    await supabase.functions.invoke('trigger-adin-prompt', {
+    await supabase.functions.invoke('dia-trigger-prompt', {
       body: { user_id: userId, event_type: eventType }
     });
   } catch (error) {
