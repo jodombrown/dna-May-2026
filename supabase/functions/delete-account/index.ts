@@ -62,6 +62,11 @@ Deno.serve(async (req) => {
       { table: "connections", col: "b" },
       { table: "dia_nudges", col: "user_id" },
       { table: "dia_recommendations", col: "user_id" },
+      { table: "dia_events", col: "user_id" },
+      { table: "dia_user_usage", col: "user_id" },
+      { table: "dia_query_log", col: "user_id" },
+      { table: "dia_preferences", col: "user_id" },
+      { table: "dia_messaging_events", col: "user_id" },
       { table: "profiles", col: "id" },
     ];
 

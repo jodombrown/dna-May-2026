@@ -1,8 +1,6 @@
-// DIA search — platform-smart tool-loop.
-// Uses Lovable AI Gateway (Gemini) with OpenAI-compat function-calling to
-// decide when to hit platform tools vs. web search. All platform tools run
-// under the caller's JWT so RLS still guards every row.
-
+// DIA search — platform-smart tool-loop, re-pointed through dia-core (DIA2/BD125).
+// Identity, model-config, limits, and audit now come from _shared/dia-core.
+// This function owns only its orchestration (tool loop, cache, prompts).
 // deno-lint-ignore-file no-explicit-any
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -12,24 +10,25 @@ import {
   makeUserClient,
   emptyResults,
   type AggregatedResults,
-} from "../_shared/dia-tools.ts";
+  callModel,
+  requireUser,
+  checkLimit,
+  recordUsage,
+  writeEvent,
+  modelFor,
+} from "../_shared/dia-core/index.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const MODEL = "google/gemini-2.5-flash";
+const CAPABILITY = "reactive_query" as const;
 const MAX_TOOL_STEPS = 6;
-// Phase 4 guardrails
-const MAX_TOOL_CALLS_TOTAL = 12;   // hard cap across all steps
-const MAX_TOOL_ERRORS = 2;          // per-tool error budget before we drop it
-const MAX_TOKENS_TOTAL = 6000;      // rough cap across the whole loop
+const MAX_TOOL_CALLS_TOTAL = 12;
+const MAX_TOOL_ERRORS = 2;
+const MAX_TOKENS_TOTAL = 6000;
 
-// Very light prompt-injection heuristics. These are STRIPPED from the raw
-// query before we forward it to the model, so a hostile query can't easily
-// rewrite the system prompt or make DIA call web_search for private data.
 const INJECTION_PATTERNS: RegExp[] = [
   /\bignore (all )?(previous|above|prior) (instructions|prompts?)\b/gi,
   /\bdisregard (the )?system prompt\b/gi,
@@ -43,7 +42,6 @@ function sanitizeQuery(raw: string): { clean: string; blocked: boolean; reason?:
   for (const pat of INJECTION_PATTERNS) {
     if (pat.test(clean)) { hit = true; clean = clean.replace(pat, "[redacted]"); }
   }
-  // Block only if the ENTIRE query is basically the injection
   if (hit && clean.replace(/\[redacted\]/g, "").trim().length < 8) {
     return { clean, blocked: true, reason: "prompt_injection" };
   }
@@ -82,29 +80,19 @@ interface ChatMessage {
   name?: string;
 }
 
-async function callGateway(messages: ChatMessage[], apiKey: string): Promise<any> {
-  const resp = await fetch(GATEWAY_URL, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      messages,
-      tools: TOOL_DEFINITIONS,
-      tool_choice: "auto",
-      temperature: 0.2,
-      max_tokens: 900,
-    }),
+// Single gateway call, now via dia-core.callModel (no gateway URL / model literal here).
+async function callGateway(messages: ChatMessage[]): Promise<any> {
+  const r = await callModel({
+    capability: CAPABILITY,
+    messages,
+    tools: TOOL_DEFINITIONS,
+    toolChoice: "auto",
+    temperature: 0.2,
+    maxTokens: 900,
   });
-  if (!resp.ok) {
-    const err = await resp.text();
-    throw new Error(`AI gateway ${resp.status}: ${err.slice(0, 300)}`);
-  }
-  return resp.json();
+  return r.raw;
 }
 
-// Prior turns replayed as follow-up context (max 4). Kept short to stay
-// under the token budget — we send the previous user question and a
-// truncated assistant answer, no tool payloads.
 interface PriorTurn { question: string; answer: string }
 const MAX_PRIOR_TURNS = 4;
 const PRIOR_ANSWER_CLIP = 600;
@@ -113,7 +101,6 @@ async function runToolLoop(
   query: string,
   userId: string,
   accessToken: string,
-  apiKey: string,
   priorTurns: PriorTurn[] = [],
 ): Promise<{ answer: string; citations: string[]; results: AggregatedResults; toolsFired: string[]; tokensUsed: number }> {
   const userSupabase = makeUserClient(accessToken);
@@ -122,7 +109,6 @@ async function runToolLoop(
   const citations: string[] = [];
   const toolsFired: string[] = [];
 
-  // Phase 4: per-loop memoization + per-tool error budget
   const toolCache = new Map<string, { text: string; partial: any }>();
   const toolErrors = new Map<string, number>();
   let totalToolCalls = 0;
@@ -131,7 +117,6 @@ async function runToolLoop(
   const messages: ChatMessage[] = [
     { role: "system", content: SYSTEM_PROMPT },
   ];
-  // Replay up to MAX_PRIOR_TURNS previous Q&A pairs so DIA can refine.
   for (const t of priorTurns.slice(-MAX_PRIOR_TURNS)) {
     messages.push({ role: "user", content: t.question });
     messages.push({ role: "assistant", content: (t.answer ?? "").slice(0, PRIOR_ANSWER_CLIP) });
@@ -140,7 +125,7 @@ async function runToolLoop(
 
   for (let step = 0; step < MAX_TOOL_STEPS; step++) {
     if (tokensUsed > MAX_TOKENS_TOTAL) break;
-    const completion = await callGateway(messages, apiKey);
+    const completion = await callGateway(messages);
     tokensUsed += completion?.usage?.total_tokens ?? 0;
     const msg = completion?.choices?.[0]?.message;
     if (!msg) throw new Error("Empty model response");
@@ -167,13 +152,11 @@ async function runToolLoop(
       let args: any = {};
       try { args = JSON.parse(call.function?.arguments ?? "{}"); } catch { args = {}; }
 
-      // Skip tools that have errored too many times this loop
       if ((toolErrors.get(name) ?? 0) >= MAX_TOOL_ERRORS) {
         messages.push({ role: "tool", tool_call_id: call.id, name, content: JSON.stringify({ error: "tool_disabled_after_repeated_errors" }) });
         continue;
       }
 
-      // Per-loop memoization: identical (tool, args) returns cached result
       const cacheKey = `${name}:${JSON.stringify(args)}`;
       let text: string;
       let partial: any;
@@ -208,7 +191,6 @@ async function runToolLoop(
 
   const final = await callGateway(
     messages.concat([{ role: "user", content: "Summarize the tool results concisely." }]),
-    apiKey,
   );
   tokensUsed += final?.usage?.total_tokens ?? 0;
   return {
@@ -220,7 +202,6 @@ async function runToolLoop(
   };
 }
 
-// De-duplicate merged results by id
 function dedupe(results: AggregatedResults): AggregatedResults {
   const uniq = <T extends { id?: string }>(arr: T[]) => {
     const seen = new Set<string>();
@@ -242,26 +223,18 @@ function dedupe(results: AggregatedResults): AggregatedResults {
   };
 }
 
-// Generate 3 short follow-up prompts based on the current answer.
-// One cheap gateway call, no tools, ~60 tokens out.
-async function generateFollowUps(question: string, answer: string, apiKey: string): Promise<string[]> {
+async function generateFollowUps(question: string, answer: string): Promise<string[]> {
   try {
-    const resp = await fetch(GATEWAY_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: MODEL,
-        temperature: 0.4,
-        max_tokens: 120,
-        messages: [
-          { role: "system", content: "You suggest 3 concise follow-up questions a DNA (Diaspora Network of Africa) member could ask DIA next, based on the answer they just received. Each under 60 chars. Output ONLY a JSON array of 3 strings, nothing else." },
-          { role: "user", content: `Question: ${question}\n\nAnswer: ${answer.slice(0, 800)}\n\nSuggest 3 follow-ups as JSON array.` },
-        ],
-      }),
+    const r = await callModel({
+      capability: CAPABILITY,
+      temperature: 0.4,
+      maxTokens: 120,
+      messages: [
+        { role: "system", content: "You suggest 3 concise follow-up questions a DNA (Diaspora Network of Africa) member could ask DIA next, based on the answer they just received. Each under 60 chars. Output ONLY a JSON array of 3 strings, nothing else." },
+        { role: "user", content: `Question: ${question}\n\nAnswer: ${answer.slice(0, 800)}\n\nSuggest 3 follow-ups as JSON array.` },
+      ],
     });
-    if (!resp.ok) return [];
-    const j = await resp.json();
-    const raw: string = j?.choices?.[0]?.message?.content ?? "";
+    const raw: string = r.message?.content ?? "";
     const match = raw.match(/\[[\s\S]*\]/);
     if (!match) return [];
     const arr = JSON.parse(match[0]);
@@ -272,28 +245,17 @@ async function generateFollowUps(question: string, answer: string, apiKey: strin
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const startTime = Date.now();
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const lovableKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!lovableKey) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY missing" }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const admin = createClient(supabaseUrl, serviceKey); // used only for auth check + rate-limit tables
+    const admin = createClient(supabaseUrl, serviceKey); // service-role: auth check + rate-limit + audit tables
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized", message: "Authentication required" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await admin.auth.getUser(token);
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Invalid token", message: "Please sign in to use DIA" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
+    // Identity (dia-core / _shared auth)
+    const auth = await requireUser(req);
+    if (!auth.ok) return auth.response;
+    const userId = auth.userId;
+    const token = auth.token;
 
     const body = await req.json();
     const rawQuery: string = body?.query;
@@ -313,47 +275,39 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Phase 4 guardrail: sanitize prompt-injection attempts
     const { clean: query, blocked, reason: sanitizeReason } = sanitizeQuery(String(rawQuery));
     if (blocked) {
       admin.from("dia_query_log").insert({
-        user_id: user.id, query_text: rawQuery, cache_hit: false,
+        user_id: userId, query_text: rawQuery, cache_hit: false,
         response_time_ms: 0, source, success: false,
         blocked_reason: sanitizeReason, tools_fired: [],
       }).then(() => {}).catch(() => {});
+      await writeEvent(admin, {
+        userId, capability: CAPABILITY, surface: "dia-search",
+        provider: "gemini", model: modelFor(CAPABILITY), success: false,
+        latencyMs: Date.now() - startTime, errorCode: "blocked",
+        meta: { blocked_reason: sanitizeReason, source },
+      });
       return new Response(JSON.stringify({
         error: "Query blocked",
         message: "Your question was blocked by DIA's safety filter. Try rephrasing.",
       }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const startTime = Date.now();
     const normalized = normalizeQuery(query);
-    const queryHash = await hashQuery(`${user.id}:${normalized}`);
+    const queryHash = await hashQuery(`${userId}:${normalized}`);
 
-    // Rate limit
-    const currentMonth = new Date();
-    currentMonth.setDate(1); currentMonth.setHours(0, 0, 0, 0);
-    const periodStart = currentMonth.toISOString().split("T")[0];
-    let { data: usage } = await admin.from("dia_user_usage").select("*")
-      .eq("user_id", user.id).eq("period_start", periodStart).single();
-    if (!usage) {
-      const { data: newUsage } = await admin.from("dia_user_usage").insert({
-        user_id: user.id, period_start: periodStart, query_count: 0, query_limit: 10,
-      }).select().single();
-      usage = newUsage;
-    }
-    if (usage && usage.query_count >= usage.query_limit) {
+    // Limits (dia-core → dia_check_limit). Source of truth is dia_tier_limits.
+    const limit = await checkLimit(admin, userId, CAPABILITY);
+    if (!limit.allowed) {
       return new Response(JSON.stringify({
         error: "Monthly query limit reached",
         message: "You've used all your DIA queries this month",
-        limit: usage.query_limit, used: usage.query_count,
+        limit: limit.limit, used: limit.used,
         resets_at: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
       }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Cache lookup (per-user, since tool results are user-scoped).
-    // Follow-ups bypass the cache — they depend on prior_turns context.
     const { data: cached } = isFollowUp
       ? { data: null as any }
       : await admin.from("dia_queries").select("*")
@@ -380,7 +334,7 @@ serve(async (req) => {
         .eq("id", cached.id).then(() => {}).catch(() => {});
     } else {
       try {
-        const loop = await runToolLoop(query, user.id, token, lovableKey, priorTurns);
+        const loop = await runToolLoop(query, userId, token, priorTurns);
         const deduped = dedupe(loop.results);
         toolsFired = loop.toolsFired;
         tokensUsed = loop.tokensUsed;
@@ -393,7 +347,6 @@ serve(async (req) => {
           query_hash: queryHash,
         };
 
-        // Cache (24h)
         await admin.from("dia_queries").insert({
           query_hash: queryHash,
           query_text: query,
@@ -401,25 +354,20 @@ serve(async (req) => {
           perplexity_response: { answer: loop.answer, tools_fired: toolsFired },
           citations: loop.citations,
           network_matches: deduped,
-          model_used: MODEL,
+          model_used: modelFor(CAPABILITY),
           tokens_used: tokensUsed,
           estimated_cost: 0,
           expires_at: new Date(Date.now() + 24 * 3600_000).toISOString(),
         }).then(() => {}).catch((e: any) => console.error("cache insert:", e?.message));
 
-        // Update usage
-        await admin.from("dia_user_usage").update({
-          query_count: (usage?.query_count ?? 0) + 1,
-          last_query_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }).eq("user_id", user.id).eq("period_start", periodStart);
+        // Limits: record AFTER success so failed loops don't count.
+        await recordUsage(admin, userId, CAPABILITY, tokensUsed);
       } catch (loopErr: any) {
         loopError = loopErr?.message ?? "loop_error";
         throw loopErr;
       } finally {
-        // Phase 4 telemetry: always record even if the loop failed
         admin.from("dia_query_log").insert({
-          user_id: user.id,
+          user_id: userId,
           query_text: rawQuery,
           cache_hit: cacheHit,
           response_time_ms: Date.now() - startTime,
@@ -433,10 +381,9 @@ serve(async (req) => {
       }
     }
 
-    // Log cache-hit path (the loop path logs in its finally block)
     if (cacheHit) {
       admin.from("dia_query_log").insert({
-        user_id: user.id,
+        user_id: userId,
         query_text: rawQuery,
         cache_hit: true,
         response_time_ms: Date.now() - startTime,
@@ -447,23 +394,29 @@ serve(async (req) => {
       }).then(() => {}).catch(() => {});
     }
 
-    // Follow-up suggestions — only when there's room left in the thread.
-    // If we're already at MAX_PRIOR_TURNS priors, this is the final turn.
     let followUps: string[] = [];
     const turnsRemaining = MAX_PRIOR_TURNS - priorTurns.length;
     if (turnsRemaining > 0 && response.answer) {
-      followUps = await generateFollowUps(rawQuery, response.answer, lovableKey);
+      followUps = await generateFollowUps(rawQuery, response.answer);
     }
     response.follow_ups = followUps;
     response.turns_remaining = turnsRemaining;
+
+    // Audit: the unified spine (dia_events). Read back by the DIA2 exit-gate probe.
+    await writeEvent(admin, {
+      userId, capability: CAPABILITY, surface: "dia-search",
+      provider: "gemini", model: modelFor(CAPABILITY), success: true,
+      latencyMs: Date.now() - startTime, tokens: tokensUsed,
+      meta: { cache_hit: cacheHit, tools_fired: toolsFired, source, sanitize_reason: sanitizeReason ?? null },
+    });
 
     return new Response(JSON.stringify({
       success: true,
       data: response,
       usage: {
-        queries_used: (usage?.query_count ?? 0) + (cacheHit ? 0 : 1),
-        queries_limit: usage?.query_limit ?? 10,
-        queries_remaining: Math.max(0, (usage?.query_limit ?? 10) - (usage?.query_count ?? 0) - (cacheHit ? 0 : 1)),
+        queries_used: limit.used + (cacheHit ? 0 : 1),
+        queries_limit: limit.limit,
+        queries_remaining: limit.remaining == null ? null : Math.max(0, limit.remaining - (cacheHit ? 0 : 1)),
       },
       response_time_ms: Date.now() - startTime,
       tools_fired: toolsFired,
@@ -473,6 +426,20 @@ serve(async (req) => {
     }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err: any) {
     console.error("DIA search error:", err?.message ?? err);
+    // Failure is recorded to the unified spine too — a swallowed error is a lie.
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const admin2 = createClient(supabaseUrl, serviceKey);
+      const auth2 = await requireUser(req).catch(() => null);
+      const uid = auth2 && (auth2 as any).ok ? (auth2 as any).userId : null;
+      await writeEvent(admin2, {
+        userId: uid, capability: CAPABILITY, surface: "dia-search",
+        provider: "gemini", model: modelFor(CAPABILITY), success: false,
+        latencyMs: Date.now() - startTime, errorCode: "server_error",
+        errorMessage: (err?.message ?? "unknown").slice(0, 300),
+      });
+    } catch { /* never let audit failure mask the original error */ }
     return new Response(JSON.stringify({
       error: "Internal server error",
       message: err?.message ?? "Something went wrong",
