@@ -1,14 +1,14 @@
 /**
  * DNA | NotificationPreferencesPanel
  *
- * N4: the client half of the notification_preferences spine. Members open this
- * to enable push on a device and tune push per Five-C category. Everything here
- * reads/writes notification_preferences via notificationSystemService — the same
- * row the DB router (notif_should_push) reads to decide whether to push.
+ * N4: the client half of the dia_preferences spine. Members open this to enable
+ * push on a device and tune push per Five-C category. Everything here reads/writes
+ * dia_preferences via notificationSystemService — the same row the DB router
+ * (notif_should_push) reads to decide whether to push.
  *
- * Taxonomy is the Five C's + system, matching the DB category_preferences keys.
- * In-app is always on (it's the notification row itself). Email renders but is
- * visibly deferred — the router does not dispatch email at v0.0 (Tier 2).
+ * Taxonomy is the Five C's + system, matching the DB push_categories keys. In-app
+ * is always on (it's the notification row itself). Email renders but is visibly
+ * deferred — the router does not dispatch email at v0.0 (Tier 2).
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -19,9 +19,7 @@ import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { notificationSystemService } from '@/services/notificationSystemService';
 import {
   NotificationCategory,
-  NotificationChannel,
   type NotificationPreferences,
-  type CategoryPreference,
 } from '@/types/notificationSystem';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -60,9 +58,6 @@ function formatHour(h: number): string {
   return `${display}:00 ${period}`;
 }
 
-function categoryHasPush(pref: CategoryPreference | undefined): boolean {
-  return !!pref?.channels?.includes(NotificationChannel.PUSH);
-}
 
 export function NotificationPreferencesPanel() {
   const { user } = useAuth();
@@ -110,21 +105,12 @@ export function NotificationPreferencesPanel() {
   const toggleCategoryPush = useCallback(
     (category: NotificationCategory, enablePush: boolean) => {
       if (!prefs) return;
-      const current = prefs.categoryPreferences[category];
-      const channels = new Set<NotificationChannel>(current?.channels ?? [NotificationChannel.IN_APP]);
-      channels.add(NotificationChannel.IN_APP); // in-app is always on — it's the row
-      if (enablePush) channels.add(NotificationChannel.PUSH);
-      else channels.delete(NotificationChannel.PUSH);
-
-      const nextCategory: CategoryPreference = {
-        enabled: current?.enabled ?? true,
-        channels: Array.from(channels),
-        batchingEnabled: current?.batchingEnabled ?? true,
-      };
+      // In-app is always on — it's the notification row itself. This bool only steers
+      // push, mirroring dia_preferences.push_categories[category].
       persist({
-        categoryPreferences: {
-          ...prefs.categoryPreferences,
-          [category]: nextCategory,
+        pushCategories: {
+          ...prefs.pushCategories,
+          [category]: enablePush,
         },
       });
     },
@@ -133,7 +119,7 @@ export function NotificationPreferencesPanel() {
 
   if (!user) {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Sign in to manage your notification preferences.
       </p>
     );
@@ -165,12 +151,12 @@ export function NotificationPreferencesPanel() {
         </CardHeader>
         <CardContent>
           {!push.isSupported ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-meta text-muted-foreground">
               This browser doesn&rsquo;t support push notifications.
             </p>
           ) : push.isSubscribed ? (
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+              <div className="flex items-center gap-2 text-body font-medium text-primary">
                 <Bell className="h-4 w-4" />
                 This device is subscribed
               </div>
@@ -191,7 +177,7 @@ export function NotificationPreferencesPanel() {
                 Enable push on this device
               </Button>
               {push.permission === 'denied' && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-meta text-muted-foreground">
                   Notifications are blocked in your browser settings. Allow them for DNA to
                   enable push here.
                 </p>
@@ -213,10 +199,10 @@ export function NotificationPreferencesPanel() {
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <Label htmlFor="global_enabled" className="text-base font-medium">
+              <Label htmlFor="global_enabled" className="text-body font-medium">
                 All notifications
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 Turn every notification on or off. In-app notifications always appear in your
                 notification center.
               </p>
@@ -230,10 +216,10 @@ export function NotificationPreferencesPanel() {
 
           <div className="flex items-center justify-between gap-4">
             <div>
-              <Label htmlFor="push_enabled" className="text-base font-medium">
+              <Label htmlFor="push_enabled" className="text-body font-medium">
                 Push notifications
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-meta text-muted-foreground">
                 The master switch for push across your subscribed devices.
               </p>
             </div>
@@ -247,10 +233,10 @@ export function NotificationPreferencesPanel() {
 
           <div className="flex items-center justify-between gap-4">
             <div>
-              <Label htmlFor="email_enabled" className="text-base font-medium text-muted-foreground">
+              <Label htmlFor="email_enabled" className="text-body font-medium text-muted-foreground">
                 Email notifications
               </Label>
-              <p className="text-sm text-muted-foreground">Email delivery is coming soon.</p>
+              <p className="text-meta text-muted-foreground">Email delivery is coming soon.</p>
             </div>
             <Switch id="email_enabled" checked={false} disabled />
           </div>
@@ -268,31 +254,31 @@ export function NotificationPreferencesPanel() {
         </CardHeader>
         <CardContent className="divide-y divide-border">
           {CATEGORY_META.map(({ key, label, description }) => {
-            const pref = prefs.categoryPreferences[key];
+            const pushOn = prefs.pushCategories[key] ?? false;
             return (
               <div
                 key={key}
                 className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="sm:max-w-md">
-                  <p className="text-sm font-medium">{label}</p>
-                  <p className="text-xs text-muted-foreground">{description}</p>
+                  <p className="text-body font-medium">{label}</p>
+                  <p className="text-meta text-muted-foreground">{description}</p>
                 </div>
                 <div className="flex items-center gap-6">
-                  <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <label className="flex items-center gap-2 text-meta text-muted-foreground">
                     <Switch checked disabled aria-label={`${label} in-app`} />
                     In-app
                   </label>
-                  <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <label className="flex items-center gap-2 text-meta text-muted-foreground">
                     <Switch
-                      checked={categoryHasPush(pref)}
+                      checked={pushOn}
                       disabled={pushMasterOff}
                       aria-label={`${label} push`}
                       onCheckedChange={(checked) => toggleCategoryPush(key, checked)}
                     />
                     Push
                   </label>
-                  <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <label className="flex items-center gap-2 text-meta text-muted-foreground">
                     <Switch checked={false} disabled aria-label={`${label} email`} />
                     Email
                   </label>
@@ -302,7 +288,7 @@ export function NotificationPreferencesPanel() {
           })}
         </CardContent>
       </Card>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-meta text-muted-foreground">
         Email delivery is coming soon — email toggles are shown but not yet active.
       </p>
 
@@ -319,7 +305,7 @@ export function NotificationPreferencesPanel() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between gap-4">
-            <Label htmlFor="quiet_hours_enabled" className="text-base font-medium">
+            <Label htmlFor="quiet_hours_enabled" className="text-body font-medium">
               Enable quiet hours
             </Label>
             <Switch
