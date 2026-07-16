@@ -344,7 +344,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in adin-hub-intelligence:', error);
+    console.error('Error in dia-hub-intelligence:', error);
     return new Response(JSON.stringify({
       success: false,
       error: error.message,

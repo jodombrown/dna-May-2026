@@ -19,7 +19,7 @@ export function useHubData({ hubType, hubSlug, userId, feeds }: UseHubDataOption
   return useQuery({
     queryKey: ['hub', hubType, hubSlug, userId],
     queryFn: async (): Promise<HubData> => {
-      const { data, error } = await supabase.functions.invoke('adin-hub-intelligence', {
+      const { data, error } = await supabase.functions.invoke('dia-hub-intelligence', {
         body: {
           hub_type: hubType,
           hub_slug: hubSlug,

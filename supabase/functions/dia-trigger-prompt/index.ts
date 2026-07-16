@@ -73,7 +73,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error in trigger-adin-prompt (DIA) function:', error)
+    console.error('Error in dia-trigger-prompt (DIA) function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

@@ -30,8 +30,6 @@ project_id = "ybhssuehmfnxrzneobok"
     port = 54329
 
 [functions]
-  [functions.adin-search]
-    verify_jwt = true
   [functions.auth-email-hook]
     verify_jwt = false
   [functions.collect-email]
