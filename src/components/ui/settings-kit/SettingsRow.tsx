@@ -132,9 +132,7 @@ function NavRow({
   iconEl,
   labelEl,
 }: NavProps & { rowClass: string; iconEl: React.ReactNode; labelEl: React.ReactNode }) {
-  // Only use the sheet context when a subpage is provided. Otherwise this row
-  // may be rendered outside an IdentitySheet (e.g. inside a page).
-  const sheet = subpage ? useSafeIdentitySheet() : null;
+  const sheet = useIdentitySheetSafe();
 
   const handleClick = () => {
     if (subpage && sheet) {
@@ -154,12 +152,4 @@ function NavRow({
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
     </button>
   );
-}
-
-function useSafeIdentitySheet() {
-  try {
-    return useIdentitySheet();
-  } catch {
-    return null;
-  }
 }
