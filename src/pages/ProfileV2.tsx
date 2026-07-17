@@ -42,6 +42,7 @@ import { MutualConnectionsWidget } from '@/components/connections/MutualConnecti
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
 import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
 import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
+import ProfileSectionLabel from '@/components/profile-v2/ProfileSectionLabel';
 
 // SEO component for public profiles
 import { PublicProfileSEO } from '@/components/public-profile';
