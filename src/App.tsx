@@ -166,14 +166,7 @@ const ApplicationsReceived = lazy(() => import("./pages/ApplicationsReceived"));
 const ProfileEdit = lazy(() => import("./pages/ProfileEdit"));
 
 // Settings Hub pages
-const AccountSettings = lazy(() => import("./pages/dna/settings/AccountSettings"));
-const PrivacySettings = lazy(() => import("./pages/dna/settings/PrivacySettings"));
-const BlockedUsersSettings = lazy(() => import("./pages/dna/settings/BlockedUsersSettings"));
-const MyReportsSettings = lazy(() => import("./pages/dna/settings/MyReportsSettings"));
-const NotificationSettings = lazy(() => import("./pages/dna/settings/NotificationSettings"));
-const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
-const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
-const SettingsRouteShell = lazy(() => import("./pages/dna/settings/SettingsRouteShell"));
+// Settings Hub — single sheet renders every sub-panel via lazy in SettingsSheet
 const SettingsSheet = lazy(() => import("./pages/dna/settings/SettingsSheet"));
 const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
 
