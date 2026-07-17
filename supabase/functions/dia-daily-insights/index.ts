@@ -62,6 +62,7 @@ Return: { "insights": [ ...6 items... ] }`;
       { role: 'user', content: user },
     ],
     responseFormat: { type: 'json_object' },
+    maxTokens: 2000,
   });
   const content = result.message?.content ?? '{}';
   const parsed = JSON.parse(content);
