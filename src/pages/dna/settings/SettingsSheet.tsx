@@ -21,6 +21,8 @@ import {
   Hash,
   Flag,
   UserX,
+  VolumeX,
+
   FileText,
   LogOut,
   Info,
@@ -46,7 +48,9 @@ const PreferencesSettings = React.lazy(() => import('./PreferencesSettings'));
 const MyHashtagsSettings = React.lazy(() => import('./MyHashtagsSettings'));
 const MyReportsSettings = React.lazy(() => import('./MyReportsSettings'));
 const BlockedUsersSettings = React.lazy(() => import('./BlockedUsersSettings'));
+const MutedAuthorsSettings = React.lazy(() => import('./MutedAuthorsSettings'));
 const ProfileEdit = React.lazy(() => import('@/pages/ProfileEdit'));
+
 
 const PanelFallback = () => (
   <div className="flex items-center justify-center py-16 text-muted-foreground">
@@ -86,18 +90,26 @@ const SUBPAGES: Record<
     title: 'Blocked users',
     content: wrap(<BlockedUsersSettings />),
   },
+  muted: {
+    id: 'muted',
+    title: 'Muted authors',
+    content: wrap(<MutedAuthorsSettings />),
+  },
 };
+
 
 const SECTION_ALIASES: Record<string, keyof typeof SUBPAGES> = {
   account: 'account',
   privacy: 'privacy',
   blocked: 'blocked',
+  muted: 'muted',
   reports: 'reports',
   notifications: 'notifications',
   preferences: 'preferences',
   hashtags: 'hashtags',
   profile: 'profile',
 };
+
 
 /** Inner body — has access to useIdentitySheet (provider is in IdentitySheet). */
 function SettingsSheetBody({
@@ -205,12 +217,19 @@ function SettingsSheetBody({
           subpage={SUBPAGES.reports}
         />
         <SettingsRow
+          icon={VolumeX}
+          label="Muted authors"
+          description="Creators hidden from your feed"
+          subpage={SUBPAGES.muted}
+        />
+        <SettingsRow
           icon={UserX}
           label="Blocked users"
           description="People you have blocked"
           subpage={SUBPAGES.blocked}
         />
       </SettingsGroup>
+
 
       <SettingsGroup label="About">
         <SettingsRow icon={Info} label="About DNA" onClick={() => navigate(ROUTES.about)} />
