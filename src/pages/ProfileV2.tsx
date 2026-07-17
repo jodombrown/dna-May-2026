@@ -355,92 +355,96 @@ const ProfileV2: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Left Column - Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            <ProfileV2About
-              profile={profile}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
-              onUpdate={handleUpdateAbout}
-            />
+          <div className="lg:col-span-2 space-y-8">
+            <section>
+              <ProfileSectionLabel>About</ProfileSectionLabel>
+              <div className="space-y-4">
+                <ProfileV2About
+                  profile={profile}
+                  visibility={visibility}
+                  isOwner={permissions.is_owner}
+                  onUpdate={handleUpdateAbout}
+                />
+                <ManifestRenderer
+                  targetUserId={profile.id}
+                  viewerUserId={user?.id ?? null}
+                />
+                <NeedsRenderer
+                  targetUserId={profile.id}
+                  viewerUserId={user?.id ?? null}
+                />
+              </div>
+            </section>
 
-            <section className="py-2 space-y-4">
-              <ManifestRenderer
-                targetUserId={profile.id}
-                viewerUserId={user?.id ?? null}
-              />
-              <NeedsRenderer
-                targetUserId={profile.id}
-                viewerUserId={user?.id ?? null}
+            <section>
+              <ProfileSectionLabel>Five C&apos;s footprint</ProfileSectionLabel>
+              <DiasporaFootprint
+                userId={profile.id}
+                isOwner={permissions.is_owner}
+                username={profile.username}
               />
             </section>
 
-            {/* Enhancement 2: Diaspora Footprint - Five C's Activity Bar */}
-            <DiasporaFootprint
-              userId={profile.id}
-              isOwner={permissions.is_owner}
-              username={profile.username}
-            />
+            <section>
+              <ProfileSectionLabel>Activity</ProfileSectionLabel>
+              <div className="space-y-4">
+                <ProfileRecentPosts userId={profile.id} username={profile.username} />
+                {!permissions.is_owner && user?.id && profile?.id && (
+                  <ProfileConnectionContext
+                    currentUserId={user.id}
+                    targetUserId={profile.id}
+                    targetName={profile.full_name || 'this member'}
+                  />
+                )}
+                <ProfileV2Connection
+                  profile={profile}
+                  isOwner={permissions.is_owner}
+                />
+                <ProfileV2Events
+                  profile={profile}
+                  visibility={visibility}
+                  isOwner={permissions.is_owner}
+                />
+                <ProfileV2Spaces
+                  profile={profile}
+                  visibility={visibility}
+                  isOwner={permissions.is_owner}
+                />
+                <ProfileV2Opportunities
+                  profile={profile}
+                  visibility={visibility}
+                  isOwner={permissions.is_owner}
+                />
+                <ProfileV2Stories
+                  profile={profile}
+                  visibility={visibility}
+                  isOwner={permissions.is_owner}
+                />
+              </div>
+            </section>
 
-            {/* Enhancement 5: Recent Activity Preview */}
-            <ProfileRecentPosts userId={profile.id} username={profile.username} />
-
-            {/* Enhancement 4: Connection Context */}
-            {!permissions.is_owner && user?.id && profile?.id && (
-              <ProfileConnectionContext
-                currentUserId={user.id}
-                targetUserId={profile.id}
-                targetName={profile.full_name || 'this member'}
-              />
-            )}
-
-            <ProfileV2Connection
-              profile={profile}
-              isOwner={permissions.is_owner}
-            />
-
-            <ProfileV2Skills
-              tags={tags}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
-              onUpdate={handleUpdateSkills}
-            />
-
-            <ProfileV2Contributions
-              tags={tags}
-              isOwner={permissions.is_owner}
-              onUpdate={handleUpdateContributions}
-            />
-
-            <ProfileV2Interests
-              tags={tags}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
-              onUpdate={handleUpdateInterests}
-            />
-
-            <ProfileV2Events
-              profile={profile}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
-            />
-
-            <ProfileV2Spaces
-              profile={profile}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
-            />
-
-            <ProfileV2Opportunities
-              profile={profile}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
-            />
-
-            <ProfileV2Stories
-              profile={profile}
-              visibility={visibility}
-              isOwner={permissions.is_owner}
-            />
+            <section>
+              <ProfileSectionLabel>Expertise &amp; interests</ProfileSectionLabel>
+              <div className="space-y-4">
+                <ProfileV2Skills
+                  tags={tags}
+                  visibility={visibility}
+                  isOwner={permissions.is_owner}
+                  onUpdate={handleUpdateSkills}
+                />
+                <ProfileV2Contributions
+                  tags={tags}
+                  isOwner={permissions.is_owner}
+                  onUpdate={handleUpdateContributions}
+                />
+                <ProfileV2Interests
+                  tags={tags}
+                  visibility={visibility}
+                  isOwner={permissions.is_owner}
+                  onUpdate={handleUpdateInterests}
+                />
+              </div>
+            </section>
           </div>
 
           {/* Right Column - Sidebar */}
