@@ -11,7 +11,7 @@ import * as React from 'react';
 import { ChevronRight, type LucideIcon } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
-import { useIdentitySheet } from './IdentitySheet';
+import { useIdentitySheetSafe } from './IdentitySheet';
 
 type BaseProps = {
   icon?: LucideIcon;
