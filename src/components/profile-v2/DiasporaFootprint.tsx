@@ -66,11 +66,14 @@ export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({
   userId,
   isOwner = false,
   username,
+  counts: countsProp,
 }) => {
   const navigate = useNavigate();
 
-  const { data: counts } = useQuery({
+  const { data: fetchedCounts } = useQuery({
     queryKey: ['diaspora-footprint', userId],
+    // Skip the network fetch entirely when the bundle already carried counts.
+    enabled: !countsProp && !!userId,
     queryFn: async (): Promise<FootprintCounts> => {
       const [connections, events, spaces, contributions, posts] = await Promise.all([
         supabase
@@ -107,7 +110,9 @@ export const DiasporaFootprint: React.FC<DiasporaFootprintProps> = ({
     staleTime: 5 * 60 * 1000,
   });
 
+  const counts = countsProp ?? fetchedCounts;
   if (!counts) return null;
+
 
   const activePills = FIVE_CS.filter(c => (counts[c.key] ?? 0) > 0);
   if (activePills.length === 0) return null;
