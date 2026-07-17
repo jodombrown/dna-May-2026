@@ -1,65 +1,28 @@
-## What's actually broken
+## What the "red dot behind the bar" actually is
 
-The crash on Settings → Preferences isn't a rendering bug — it's a real runtime error surfaced by the global `ErrorBoundary`:
+Zooming into the annotation on IMG_5444: it is not a red pixel — the red circle is your marker. The artifact inside the circle is a **thin vertical orange-brown line at the right edge of the screen**, sitting between the second card (the Convene "Hosting" event card with the copper border) and continuing down behind the semi-transparent `MobileBottomNav`.
 
-> tried to subscribe multiple times. 'subscribe' can only be called a single time per channel instance
+Reading the card structure, the color and vertical position match the **`border-2` right edge of the Convene event card poking out past its container by ~1–2px**. The card above it (the Convey "Update" post card) has a slightly narrower box because it uses different horizontal padding / max-width than the event card. When the event card is wider than the feed column, its right border pokes past the feed's clip line and shows through the translucent bottom nav (which uses `bg-background/95 backdrop-blur-md`), which is exactly the "behind the bar" appearance.
 
-Trace: `PreferencesSettings` → `useFirstRunTour` → two `supabase.channel(...).subscribe()` calls.
-
-`useFirstRunTour` (src/hooks/useFirstRunTour.ts:154-182) creates channels named `first-run-tour:conn:<uid>` and `first-run-tour:evt:<uid>` — stable per user. The hook is already mounted elsewhere (the feed's tour panel). When Preferences opens inside the new in-sheet subpage, the hook mounts a second time, Supabase returns the same channel instance for that name, and `.subscribe()` throws.
-
-`useProfile` already solved this with a ref-counted registry (src/hooks/useProfile.ts:20-60). `useFirstRunTour` needs the same treatment.
+No red UI element exists there — no notification dot, no FeedbackFAB (that's hidden on mobile), no `bg-destructive` badge on this route.
 
 ## Plan
 
-### 1. Fix the subscribe crash (real bug)
+1. Confirm the source on a live signed-in session with Playwright — take an element screenshot of the second card + right screen edge, log `getBoundingClientRect().right` for the feed column, each card, and the event card's image/media wrapper. Expect the event card's right edge > feed column's right edge by 1–4px.
+2. Identify the specific card wrapper that overflows. Prime suspects (in order):
+   - `src/components/feed/activity-cards/FeedEventCard.tsx` outer wrapper — mismatched `mx-` / negative margin vs the Convey post card.
+   - `src/components/convene/ConveneEventCard.tsx` if the feed reuses it — its media block uses `absolute inset-0` gradients that assume no border; combined with `border-2`, total width = container + 4px.
+   - The feed row container in `src/components/feed` (`FeedList` / `UniversalFeed`) — the two card types may be rendered with different padding.
+3. Fix in the frontend only, no logic changes:
+   - Align the event card's outer container to match the Convey card's padding/width so both cards clip identically to the feed column.
+   - Add `overflow-hidden` on the card wrapper so the `border-2` and any inner absolute layers are always contained.
+   - If the border is the culprit, either move it to `ring-2 ring-inset` (stays inside the box) or reduce to `border` and rely on the existing shadow.
+4. Verify: re-run Playwright at 420×741, screenshot the same region, confirm the two cards share the same right edge and nothing bleeds under the bottom nav. Also check at 375px and 768px.
 
-`src/hooks/useFirstRunTour.ts` — replace the raw channel effect with the same ref-counted `Map` pattern used in `useProfile`:
+## Technical notes
 
-- Module-level `Map<uid, { conn, evt, refs }>`.
-- On mount: if entry exists, `refs++`; else create both channels, subscribe once, store.
-- On unmount: `refs--`; when 0, `removeChannel` both and delete the map entry.
-- Invalidation callback closes over `queryClient` via a `useRef` so a stale QC doesn't leak.
+- Root cause is almost certainly a width/padding mismatch between the Convey post card and the Convene event card in the feed list, plus a `border-2` on the outer box that adds 2px each side outside the "content box" the sibling card uses.
+- `MobileBottomNav` (`fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md`, z-50) lets anything with a lower z-index show through faintly — that's why the sliver looks like it's "behind" the bar.
+- Change is presentation-only: card wrapper classes in one or two files. No route, data, or state changes.
 
-This resolves the Preferences crash and any other place the tour hook is used twice.
-
-### 2. Redesign the error surface to match the Identity Sheet
-
-Replace `src/components/ErrorBoundary.tsx`'s fallback UI. Current design uses gradient background, dna-terra/emerald/ochre stripe borders, colored dot decoration, and a hero-style layout — none of that matches the new Claude-style Identity Sheet.
-
-New design language, matching `IdentitySheet` / `SettingsSheet`:
-
-- Plain `bg-background` page, centered card at `max-w-lg`.
-- Card: `bg-card border border-border rounded-lg` (no gradient stripes, no colored dots, no African-proverb block by default).
-- Header row: small circular `bg-muted` icon tile with `AlertCircle` in `text-dna-copper`, then `text-heading font-display` title "Something went wrong" and a single `text-body text-muted-foreground` line.
-- Primary action: `Try again` (calls a new `handleReset` that clears boundary state — no full page reload).
-- Secondary actions rendered as `SettingsRow`-style rows (chevron-less): "Go back", "Return home", "Copy error details".
-- Technical details in a `<details>` block using `text-caption font-mono` on `bg-muted/40` — closed by default (not `open`).
-- Remove `dna-terra`, `dna-ochre`, gradient stripes, the proverb card, and the four-dot decoration to align with the anti-vibe-coded doctrine (no gradient-heavy hero, no decorative dots).
-- Add a `reset` capability so the boundary can recover without `window.location.reload()` when the underlying error is transient (which this subscribe error is, after the fix).
-
-### 3. Also apply inside the sheet
-
-When an error is thrown by a lazy subpage inside `IdentitySheet`, today the whole app crashes into the global boundary because there's no inner boundary. Add a lightweight `SheetErrorPanel` (same visual language, smaller) wrapping the `Suspense` in `SettingsSheet.tsx` and `AccountDrawer.tsx` subpage renderer so a broken subpage shows a scoped error inside the sheet with Retry / Back, instead of blowing away the whole app.
-
-### 4. Scope guardrails
-
-- No schema, RLS, or backend changes.
-- No changes to `useProfile` (already correct).
-- No changes to the feed / preview area — this is purely error UI + one hook fix.
-- Anti-vibe-coded doctrine respected: no gradient text, no pastel decoration, `font-display` only on the heading, semantic tokens only.
-
-## Files touched
-
-- `src/hooks/useFirstRunTour.ts` — ref-counted channel registry (fix crash).
-- `src/components/ErrorBoundary.tsx` — redesigned fallback + `reset` handler.
-- `src/components/ui/settings-kit/SheetErrorPanel.tsx` — new, scoped in-sheet error card.
-- `src/pages/dna/settings/SettingsSheet.tsx` — wrap subpage `Suspense` in `SheetErrorPanel`.
-- `src/components/navigation/AccountDrawer.tsx` — same wrap around its subpage `Suspense`.
-
-## Verification
-
-- Open Settings → Preferences: no crash, tour restart button still works.
-- Force-throw inside a settings subpage: scoped `SheetErrorPanel` shows inside the sheet, main app + feed remain interactive.
-- Force-throw at route level: new global error card renders in Identity Sheet visual language, "Try again" recovers without a page reload.
-- Typecheck clean.
+Ready to switch to build mode and apply the fix once you approve.
