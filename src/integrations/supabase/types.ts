@@ -5981,12 +5981,16 @@ export type Database = {
       }
       notifications: {
         Row: {
+          category: string | null
+          channel_sent: Json
           created_at: string
+          group_key: string | null
           id: string
           is_read: boolean
           link_url: string | null
           message: string
           payload: Json | null
+          priority: string
           read: boolean
           title: string
           type: string
