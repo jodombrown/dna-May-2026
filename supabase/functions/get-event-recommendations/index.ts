@@ -1,6 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.9';
-import { requireUser, makeUserClient, callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,28 +12,44 @@ serve(async (req) => {
   }
 
   try {
-    const startTime = Date.now();
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    );
 
-    const auth = await requireUser(req);
-    if (!auth.ok) return auth.response;
-    const userId = auth.userId;
-    const supabaseClient = makeUserClient(auth.token);   // preserves all five .from reads under RLS
-    const admin = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Unauthorized: Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    console.log('Fetching recommendations for user:', userId);
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token);
+
+    if (authError || !user) {
+      console.error('Auth error:', authError);
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('Fetching recommendations for user:', user.id);
 
     // Get user profile
     const { data: profile } = await supabaseClient
       .from('profiles')
       .select('interests, interest_tags, current_country, location')
-      .eq('id', userId)
+      .eq('id', user.id)
       .single();
 
     // Get user's groups
     const { data: userGroups } = await supabaseClient
       .from('group_members')
       .select('group_id')
-      .eq('user_id', userId);
+      .eq('user_id', user.id);
 
     const groupIds = userGroups?.map(g => g.group_id) || [];
 
@@ -42,11 +57,11 @@ serve(async (req) => {
     const { data: connections } = await supabaseClient
       .from('connections')
       .select('requester_id, recipient_id')
-      .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`)
+      .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
       .eq('status', 'accepted');
 
-    const connectionIds = connections?.map(c =>
-      c.requester_id === userId ? c.recipient_id : c.requester_id
+    const connectionIds = connections?.map(c => 
+      c.requester_id === user.id ? c.recipient_id : c.requester_id
     ) || [];
 
     // Get upcoming events
@@ -78,7 +93,16 @@ serve(async (req) => {
       return acc;
     }, {} as Record<string, string[]>) || {};
 
-    // Use the DIA model spine to score and rank events
+    // Use Lovable AI to score and rank events
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY not configured');
+      return new Response(JSON.stringify({ error: 'AI service not configured' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const systemPrompt = `You are an intelligent event recommendation system for the Diaspora Network of Africa (DNA). 
 Your task is to analyze events and user profiles to recommend the most relevant events.
 
@@ -111,10 +135,14 @@ ${events.map((e, i) => {
 
 Recommend the top 10 events with scores and brief reasoning.`;
 
-    let result;
-    try {
-      result = await callModel({
-        capability: 'event_recommendations',
+    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
@@ -144,24 +172,35 @@ Recommend the top 10 events with scores and brief reasoning.`;
             }
           }
         }],
-        toolChoice: { type: 'function', function: { name: 'recommend_events' } },
-      });
-    } catch (modelError) {
-      console.error('Model error:', modelError);
-      await writeEvent(admin, {
-        userId, capability: 'event_recommendations', surface: 'get-event-recommendations',
-        provider: 'gemini', model: modelFor('event_recommendations'), success: false,
-        latencyMs: Date.now() - startTime, errorCode: 'model_unavailable',
-        errorMessage: (modelError instanceof Error ? modelError.message : String(modelError)).slice(0, 300),
-      });
+        tool_choice: { type: 'function', function: { name: 'recommend_events' } }
+      }),
+    });
+
+    if (!aiResponse.ok) {
+      if (aiResponse.status === 429) {
+        return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (aiResponse.status === 402) {
+        return new Response(JSON.stringify({ error: 'AI credits exhausted. Please contact support.' }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      const errorText = await aiResponse.text();
+      console.error('AI API error:', aiResponse.status, errorText);
       return new Response(JSON.stringify({ error: 'AI service error' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const toolCall = result.message?.tool_calls?.[0];
-
+    const aiData = await aiResponse.json();
+    const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+    
     if (!toolCall) {
       console.error('No tool call in AI response');
       return new Response(JSON.stringify({ recommendations: [] }), {
@@ -190,14 +229,7 @@ Recommend the top 10 events with scores and brief reasoning.`;
       })
       .filter(Boolean);
 
-    await writeEvent(admin, {
-      userId, capability: 'event_recommendations', surface: 'get-event-recommendations',
-      provider: result.provider, model: result.model, success: true,
-      latencyMs: Date.now() - startTime, tokens: result.tokens,
-      meta: { events_scored: events.length },
-    });
-
-    console.log(`Generated ${recommendations.length} recommendations for user ${userId}`);
+    console.log(`Generated ${recommendations.length} recommendations for user ${user.id}`);
 
     return new Response(JSON.stringify({ recommendations }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

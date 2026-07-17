@@ -79,11 +79,6 @@ export function storeNudge(nudge: DIAProactiveNudge): void {
 /**
  * Get all pending/delivered nudges for a specific user.
  * Filters out expired and terminal-state nudges.
- *
- * N6: the notification panel no longer reads this — DIA notifications now flow
- * through the notifications spine (see unifiedNotificationService). `dia_nudges`
- * remains the raw signal store the DB bridge reads. This reader (and
- * `getNudgesForChannel` below) has no remaining consumers; retire in N6.
  */
 export function getPendingNudgesForUser(userId: string): DIAProactiveNudge[] {
   const now = new Date().toISOString();

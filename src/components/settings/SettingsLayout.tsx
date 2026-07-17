@@ -5,6 +5,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag } from 'lucide-react';
+import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 
 interface SettingsNavItem {
   label: string;
@@ -68,9 +69,23 @@ interface SettingsLayoutProps {
 
 export function SettingsLayout({ children, title, description }: SettingsLayoutProps) {
   const location = useLocation();
+  const inSheet = useIdentitySheetSafe();
+
+  // Inside IdentitySheet, render bare content — the sheet owns chrome + title.
+  if (inSheet) {
+    return (
+      <div className="px-4 py-4">
+        {description ? (
+          <p className="mb-4 text-caption text-muted-foreground">{description}</p>
+        ) : null}
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
+
       <UnifiedHeader />
 
       <div className="container max-w-6xl mx-auto px-4 py-8">

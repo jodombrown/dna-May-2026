@@ -1,30 +1,22 @@
 /**
- * DNA | Unified Notification Service
+ * DNA | Unified Notification Service — Sprint 4C
  *
- * Single source for the notification panel. Everything the panel shows is a row
- * in the Supabase `notifications` table — including DIA insight cards, which the
- * DB bridge (`dia_promote_grounded_to_notifications`) promotes onto the spine
- * with `payload.source === 'dia'`. There is no longer a parallel client-side
- * `dia_nudges` merge in the panel path; the DIA lane is simply a filter over the
- * platform stream where `payload.source === 'dia'`.
+ * Bridges platform notifications (Supabase `notifications` table) with
+ * DIA nudge notifications (localStorage from Sprint 4B) into a single
+ * notification stream for the notification panel.
+ *
+ * For alpha: hybrid storage — Supabase for platform, localStorage for DIA.
+ * Future: single Supabase-backed store for all notification types.
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import { updateNudgeStatus } from '@/services/dia/diaNudgeStorage';
+import {
+  getPendingNudgesForUser,
+  updateNudgeStatus,
+  type DIAProactiveNudge,
+} from '@/services/dia/diaNudgeStorage';
 import { MODULE_ACCENT_COLORS, type DIACardCategory } from '@/services/diaCardService';
 import type { NotificationRow } from '@/types/notificationsV2';
-
-/**
- * Notification `type` values written by the DIA→notifications bridge. Rows with
- * these types carry `payload.source === 'dia'` and are rendered as DIA cards
- * from the spine, so they are dropped from the generic platform stream (they
- * would otherwise render twice / without their C accent).
- */
-const DIA_SPINE_TYPES = ['dia_brief', 'dia_nudge'] as const;
-
-const DIA_CARD_CATEGORIES: DIACardCategory[] = [
-  'connect', 'convene', 'collaborate', 'contribute', 'convey', 'cross_c',
-];
 
 // ============================================================
 // UNIFIED NOTIFICATION TYPES
@@ -170,99 +162,41 @@ function convertPlatformNotification(notif: NotificationRow): UnifiedNotificatio
 }
 
 // ============================================================
-// DIA SPINE CONVERSION
+// DIA NUDGE CONVERSION
 // ============================================================
 
-/**
- * Raw shape of a DIA notification row read straight off the spine. The generated
- * Supabase types lag the live schema in places, so the columns we depend on are
- * declared here explicitly.
- */
-interface DiaSpineRow {
-  id: string;
-  type: string;
-  title: string | null;
-  message: string | null;
-  link_url: string | null;
-  category: string | null;
-  payload: Record<string, unknown> | null;
-  read: boolean;
-  created_at: string;
-}
-
-/** The row's `category` column is the C. Fall back to cross-C if absent. */
-function normalizeDiaCategory(category: string | null): DIACardCategory {
-  return category && (DIA_CARD_CATEGORIES as string[]).includes(category)
-    ? (category as DIACardCategory)
-    : 'cross_c';
-}
-
-/**
- * Convert a promoted DIA notification row into a unified DIA card. The visual
- * accent maps to the row's `category` (the C), so a promoted convene brief reads
- * as convene-accented. Marking/dismissing routes through the notifications table
- * (via `platformNotificationId`) — these are ordinary notification rows now.
- */
-function convertDiaSpineRow(row: DiaSpineRow): UnifiedNotification {
-  const payload = row.payload ?? {};
-  const diaKind = payload.dia_kind === 'nudge' ? 'nudge' : 'brief';
-  const category = normalizeDiaCategory(row.category);
-  const ctaLabel =
-    typeof payload.cta_label === 'string' && payload.cta_label
-      ? payload.cta_label
-      : null;
-  const defaultHeadline = diaKind === 'nudge' ? 'DIA suggestion' : 'DIA insight';
-  const defaultCta = diaKind === 'nudge' ? 'View suggestion' : 'View insight';
+function convertDiaNudge(nudge: DIAProactiveNudge): UnifiedNotification {
+  const primaryAction = nudge.card.actions.find(a => a.isPrimary);
+  const secondaryAction = nudge.card.actions.find(a => !a.isPrimary);
 
   return {
-    id: `platform-${row.id}`,
+    id: `dia-${nudge.id}`,
     type: 'dia',
-    headline: row.title || defaultHeadline,
-    body: row.message || null,
-    icon: 'MateMasie',
-    accentColor: MODULE_ACCENT_COLORS[category],
+    headline: nudge.card.headline,
+    body: nudge.card.body,
+    icon: nudge.card.icon,
+    accentColor: nudge.card.accentColor || MODULE_ACCENT_COLORS[nudge.card.category],
     actorName: null,
     actorAvatarUrl: null,
-    primaryAction: row.link_url
-      ? { label: ctaLabel || defaultCta, route: row.link_url }
+    primaryAction: primaryAction
+      ? {
+          label: primaryAction.label,
+          route: (primaryAction.payload.url as string) || '/dna/feed',
+        }
       : null,
-    secondaryAction: null,
-    isRead: row.read,
-    createdAt: row.created_at,
-    diaCategory: category,
-    diaNudgeId: null,
-    platformNotificationId: row.id,
-    sourceType: row.type,
+    secondaryAction: secondaryAction
+      ? {
+          label: secondaryAction.label,
+          route: (secondaryAction.payload.url as string) || '/dna/feed',
+        }
+      : null,
+    isRead: nudge.status !== 'pending',
+    createdAt: nudge.createdAt,
+    diaCategory: nudge.card.category,
+    diaNudgeId: nudge.id,
+    platformNotificationId: null,
+    sourceType: 'dia_nudge',
   };
-}
-
-/**
- * Read DIA notifications off the spine (`payload.source === 'dia'`). Server-side
- * filtered so the DIA lane shows every DIA row, not just those that happened to
- * land in the platform stream's page.
- */
-async function fetchDiaSpineNotifications(
-  userId: string,
-  opts: { unreadOnly: boolean; limit: number }
-): Promise<UnifiedNotification[]> {
-  try {
-    let query = supabase
-      .from('notifications')
-      .select('id, type, title, message, link_url, category, payload, read, created_at')
-      .eq('user_id', userId)
-      .contains('payload', { source: 'dia' })
-      .order('created_at', { ascending: false })
-      .limit(opts.limit);
-
-    if (opts.unreadOnly) query = query.eq('read', false);
-
-    const { data, error } = await query;
-    if (error || !data) return [];
-
-    return (data as unknown as DiaSpineRow[]).map(convertDiaSpineRow);
-  } catch {
-    return [];
-  }
 }
 
 // ============================================================
@@ -291,9 +225,7 @@ export const unifiedNotificationService = {
     const unreadOnly = filter === 'unread';
     const notifications: UnifiedNotification[] = [];
 
-    // Get platform notifications (skipped only for the DIA-only lane). DIA rows
-    // live in this same stream (type dia_brief/dia_nudge); we drop them here and
-    // re-add them below from the spine with full DIA styling and their C accent.
+    // Get platform notifications (skipped only for the DIA-only lane)
     if (filter !== 'dia') {
       try {
         const { data, error } = await (supabase.rpc as Function)(
@@ -307,9 +239,9 @@ export const unifiedNotificationService = {
         );
 
         if (!error && data) {
-          const platformNotifs = (data as unknown as NotificationRow[])
-            .filter(n => !(DIA_SPINE_TYPES as readonly string[]).includes(n.type))
-            .map(convertPlatformNotification);
+          const platformNotifs = (data as unknown as NotificationRow[]).map(
+            convertPlatformNotification
+          );
           notifications.push(...platformNotifs);
         }
       } catch {
@@ -317,13 +249,16 @@ export const unifiedNotificationService = {
       }
     }
 
-    // Get DIA notifications off the spine (present in every lane; unread lane
-    // keeps unread rows only). This is the DIA lane's only source.
-    const diaNotifs = await fetchDiaSpineNotifications(userId, {
-      unreadOnly,
-      limit,
-    });
-    notifications.push(...diaNotifs);
+    // Get DIA notifications (present in every lane; unread lane keeps unseen only)
+    const diaNudges = getPendingNudgesForUser(userId).filter(
+      n => n.channel === 'notification' || n.channel === 'both'
+    );
+    const diaNotifs = diaNudges.map(convertDiaNudge);
+    if (unreadOnly) {
+      notifications.push(...diaNotifs.filter(n => !n.isRead));
+    } else {
+      notifications.push(...diaNotifs);
+    }
 
     // Sort by createdAt descending
     notifications.sort(
@@ -398,19 +333,15 @@ export const unifiedNotificationService = {
   },
 
   /**
-   * Mark a unified notification as read.
-   *
-   * Both platform and promoted-DIA notifications are rows in the notifications
-   * table (they carry `platformNotificationId`), so both mark through the table.
-   * The `diaNudgeId` branch remains only for any legacy localStorage nudge.
+   * Mark a unified notification as read/acted based on its type.
    */
   async markAsRead(
     userId: string,
     notification: UnifiedNotification
   ): Promise<void> {
-    if (notification.platformNotificationId) {
+    if (notification.type === 'platform' && notification.platformNotificationId) {
       await this.markPlatformAsRead(userId, notification.platformNotificationId);
-    } else if (notification.diaNudgeId) {
+    } else if (notification.type === 'dia' && notification.diaNudgeId) {
       this.markDiaAsRead(notification.diaNudgeId);
     }
   },
@@ -422,9 +353,9 @@ export const unifiedNotificationService = {
     userId: string,
     notification: UnifiedNotification
   ): Promise<void> {
-    if (notification.platformNotificationId) {
+    if (notification.type === 'platform' && notification.platformNotificationId) {
       await this.markPlatformAsRead(userId, notification.platformNotificationId);
-    } else if (notification.diaNudgeId) {
+    } else if (notification.type === 'dia' && notification.diaNudgeId) {
       this.markDiaAsActed(notification.diaNudgeId);
     }
   },
@@ -436,9 +367,9 @@ export const unifiedNotificationService = {
     userId: string,
     notification: UnifiedNotification
   ): Promise<void> {
-    if (notification.platformNotificationId) {
+    if (notification.type === 'platform' && notification.platformNotificationId) {
       await this.dismissPlatform(userId, notification.platformNotificationId);
-    } else if (notification.diaNudgeId) {
+    } else if (notification.type === 'dia' && notification.diaNudgeId) {
       this.dismissDia(notification.diaNudgeId);
     }
   },

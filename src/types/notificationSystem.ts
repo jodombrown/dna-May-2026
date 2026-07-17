@@ -89,9 +89,6 @@ export enum NotificationType {
   DIA_FIVE_C_ACTIVATION = 'dia_five_c_activation',
   DIA_RECONNECT_SUGGESTION = 'dia_reconnect_suggestion',
   DIA_TRENDING_TOPIC = 'dia_trending_topic',
-  // Promoted onto the notifications spine by dia_promote_grounded_to_notifications.
-  DIA_BRIEF = 'dia_brief',
-  DIA_NUDGE = 'dia_nudge',
 
   // -- SYSTEM --
   SYSTEM_SECURITY_ALERT = 'system_security_alert',
@@ -402,8 +399,6 @@ export interface NotificationDisplayConfig {
   inlineActions: boolean;
   showAvatar: boolean;
   expiresAfterMinutes: number | null;
-  /** Optional short kind label (e.g. "DIA insight"). Used by DIA spine rows. */
-  label?: string;
 }
 
 export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, NotificationDisplayConfig>> = {
@@ -865,42 +860,6 @@ export const NOTIFICATION_DISPLAY_CONFIGS: Partial<Record<NotificationType, Noti
     inlineActions: false,
     showAvatar: false,
     expiresAfterMinutes: null,
-  },
-  // DIA spine promotions. These rows are written by the DB bridge
-  // (dia_promote_grounded_to_notifications), not notificationSystemService.create();
-  // the entries exist for registry completeness. The unified panel maps each
-  // row's visual accent to its own `category` (the C) at runtime — see
-  // unifiedNotificationService.convertDiaSpineRow — so a promoted convene brief
-  // reads as convene-accented rather than the static accent here.
-  [NotificationType.DIA_BRIEF]: {
-    type: NotificationType.DIA_BRIEF,
-    cModule: CModule.CONNECT,
-    accentColor: 'hsl(var(--module-convene))',
-    icon: 'dia_digest',
-    category: NotificationCategory.CONNECT,
-    defaultPriority: NotificationPriority.DIGEST,
-    batchable: false,
-    batchThreshold: 0,
-    batchWindow: 0,
-    inlineActions: false,
-    showAvatar: false,
-    expiresAfterMinutes: null,
-    label: 'DIA insight',
-  },
-  [NotificationType.DIA_NUDGE]: {
-    type: NotificationType.DIA_NUDGE,
-    cModule: CModule.CONNECT,
-    accentColor: 'hsl(var(--module-convene))',
-    icon: 'dia_insight',
-    category: NotificationCategory.CONNECT,
-    defaultPriority: NotificationPriority.LOW,
-    batchable: false,
-    batchThreshold: 0,
-    batchWindow: 0,
-    inlineActions: false,
-    showAvatar: false,
-    expiresAfterMinutes: null,
-    label: 'DIA suggestion',
   },
 
   // SYSTEM

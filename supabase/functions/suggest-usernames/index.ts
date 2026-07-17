@@ -1,7 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.9";
 import { requireUser } from "../_shared/auth.ts";
-import { callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,10 +16,12 @@ serve(async (req) => {
   if (!__auth.ok) return __auth.response;
 
   try {
-    const admin = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
-    const startTime = Date.now();
-
     const { fullName, industry, countryOrigin, currentLocation } = await req.json();
+
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    if (!lovableApiKey) {
+      throw new Error('LOVABLE_API_KEY is not configured');
+    }
 
     // Create focused, name-based prompt for username suggestions
     const prompt = `Generate 8 short, clean username suggestions based ONLY on this person's name.
@@ -49,10 +49,14 @@ Return ONLY a JSON array of objects with this exact format:
 
     console.log('Generating username suggestions for:', { fullName, industry, countryOrigin });
 
-    let result;
-    try {
-      result = await callModel({
-        capability: 'suggest_usernames',
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${lovableApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
@@ -63,19 +67,31 @@ Return ONLY a JSON array of objects with this exact format:
             content: prompt
           }
         ],
-      });
-    } catch (e) {
-      const msg = String((e as Error)?.message ?? e);
-      console.error('Model error in suggest-usernames:', msg);
-      await writeEvent(admin, { userId: __auth.userId, capability: 'suggest_usernames', surface: 'suggest-usernames',
-        provider: 'gemini', model: modelFor('suggest_usernames'), success: false, latencyMs: Date.now() - startTime,
-        errorCode: msg.includes('429') ? 'rate_limited' : msg.includes('402') ? 'payment_required' : 'model_unavailable' });
-      if (msg.includes('429')) return new Response(JSON.stringify({ error: 'Rate limit exceeded, please try again later.', suggestions: [] }), { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-      if (msg.includes('402')) return new Response(JSON.stringify({ error: 'AI service unavailable, please try again later.', suggestions: [] }), { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-      throw e;
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Lovable AI Gateway error:', response.status, errorData);
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded, please try again later.', suggestions: [] }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'AI service unavailable, please try again later.', suggestions: [] }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      throw new Error(`AI Gateway error: ${response.status}`);
     }
 
-    const suggestions = result.message?.content;
+    const data = await response.json();
+    const suggestions = data.choices[0]?.message?.content;
 
     if (!suggestions) {
       throw new Error('No suggestions generated');
@@ -126,9 +142,6 @@ Return ONLY a JSON array of objects with this exact format:
     }
 
     console.log('Generated suggestions:', parsedSuggestions);
-
-    await writeEvent(admin, { userId: __auth.userId, capability: 'suggest_usernames', surface: 'suggest-usernames',
-      provider: result.provider, model: result.model, success: true, latencyMs: Date.now() - startTime, tokens: result.tokens });
 
     return new Response(
       JSON.stringify({ suggestions: parsedSuggestions }),

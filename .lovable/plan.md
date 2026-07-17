@@ -1,97 +1,94 @@
-# Signed-out Post Page: CTA Consolidation + Five C's Discovery
+## Part 2b — Account drawer replaced by IdentitySheet + Part 4 backend consolidation + legacy cleanup
 
-Mirror the pattern we shipped on signed-out profiles (`/dna/:username`) on the public post page (`/post/:slug`). Today that page has **five** CTAs stacked on one screen (top-nav "Join the Waitlist", floating banner "Join the Waitlist", inline "Join the Waitlist to Engage", bottom card "Join the Waitlist", bottom card "Learn About DNA"). We're cutting that to a single primary CTA on the post itself, keeping the platform header as the persistent join affordance, and adding the same Five C's discovery row + right-sheet used on signed-out profiles.
+### 1. Rebuild the Account drawer in the new Settings sheet language
 
-## Scope
+Screenshot 1 (the old `AccountDrawer` with big "View full profile" pill, Edit / Share buttons, then MY ACTIVITY / COLLABORATE / ACCOUNT lists) becomes the same visual language as Screenshot 2 (the new `SettingsSheet`).
 
-File: `src/pages/PublicPostPage.tsx` only. No schema, no RPC, no auth changes. Signed-in view is untouched.
+New file: `src/components/navigation/AccountDrawerV2.tsx`.
 
-## What changes
-
-### 1. Remove redundant CTAs (signed-out only)
-
-Remove these three elements entirely:
-
-- **Floating animated banner** ("Shared from DNA. Connect with the diaspora" + Join the Waitlist button) — lines ~245-274 and the `showBanner` state/effect. This is the direct analog of the "← DNA / Join DNA" banner we killed on profiles.
-- **Bottom "Join the Conversation on DNA" gradient card** with dual CTAs (Join Waitlist + Learn About DNA) — lines ~424-460. Replaced by the Five C's row.
-- **Inline "Join the Waitlist to Engage" button** on the post card — replace with a single quieter engagement affordance (see below).
-
-Kept CTAs:
-- `UnifiedHeader` "Join the Waitlist" (top-right) — this is the universal, non-intrusive join affordance, matching profile pages.
-- Share / copy-link icon button on the post card — utility, not a join CTA.
-
-### 2. Replace inline engagement CTA
-
-The current button reads "Join the Waitlist to Engage" (full-width, primary green). Replace for signed-out users with a subtler, purpose-specific bar directly under the engagement stats:
+Structure inside a shared `IdentitySheet` titled **Account**:
 
 ```
-[ Heart icon ]  Like, comment, and reply on DNA   →  [ Join the Waitlist ]
+[avatar] Jaûne Odombrown            >     (tap → pushes Profile edit subpage)
+         @jaunelamarro
+         United States
+
+MY WORK
+  • My posts & updates    >
+  • My stories            >
+  • My spaces             >
+  • My events             >
+  • Saved items           >
+
+ACCOUNT
+  • Settings & preferences  >   (pushes the full SettingsSheet body inside)
+  • View public profile     >   (navigates to /dna/:username)
+  • Share my profile        >   (opens ProfileShareDropdown)
+  • Take platform tour      >
+  • Alpha test guide        >
+  • Help & feedback         >
+
+Sign out
 ```
 
-- Single row, `bg-muted/40`, small text on the left, one outline-primary button on the right.
-- No gradient, no full-width green block.
-- Signed-in users keep the existing "Like & Comment" primary button unchanged.
+Every row is a `SettingsRow` with a chevron. "Settings & preferences" pushes the same subpages the settings sheet uses — no separate stacked sheet, just one identity sheet. This gives the user a single continuous back-stack from `Account → Settings & preferences → Profile → …` without ever leaving the sheet.
 
-### 3. Add Five C's discovery row + sheet (signed-out only)
+Old `AccountDrawer.tsx` (the 382-line legacy drawer with pill, Edit/Share buttons, dropdown menu) is deleted. `AccountDrawerContext` stays and now drives `AccountDrawerV2`.
 
-Reuse the existing `FiveCsDiscoverySection` component (`src/components/five-cs/FiveCsDiscoverySection.tsx`) that already powers the signed-out profile. Mount it below the author card when `!isLoggedIn`, passing post/author context for analytics:
+### 2. Stop the feed from being disturbed when the sheet opens
 
-```tsx
-{!isLoggedIn && (
-  <div className="mt-8">
-    <FiveCsDiscoverySection
-      username={authorUsername}
-      memberFirstName={post.author?.full_name?.split(' ')[0] ?? null}
-    />
-  </div>
-)}
+Cause: Radix Dialog (used by the desktop path of `IdentitySheet`) locks `<body>` scroll and adds `padding-right` to compensate for the scrollbar. That's the visible "the feed gets removed / shifts" behavior in Screenshot 3.
+
+Fix in `IdentitySheet.tsx`:
+- Desktop uses a right-anchored panel that does NOT scroll-lock the underlying app. Replace Radix Dialog with a plain portal + fixed panel + focus-trap. Overlay stays as a click-to-close scrim but does not touch `<body>` styles.
+- Result: opening/closing the sheet leaves the feed's scroll position and horizontal layout untouched. The `DnaRightRail` / feed grid does not reflow.
+
+Mobile behavior (Vaul bottom sheet) is unchanged.
+
+### 3. Kill all legacy settings routes and the feature flag
+
+- Delete `src/config/featureFlags.ts` `SETTINGS_SHEET_V2` and every reference. `SettingsSheet` at `/dna/settings` is the standard, unconditionally.
+- Delete `src/pages/dna/settings/SettingsRouteShell.tsx`, `src/components/settings/SettingsLayout.tsx`, `MobileSettingsView`, `MobileSettingsMainContent`.
+- Convert the six standalone settings routes to redirects that keep email deep-links working:
+
+```
+/dna/settings/account         → /dna/settings?section=account
+/dna/settings/privacy         → /dna/settings?section=privacy
+/dna/settings/blocked         → /dna/settings?section=blocked
+/dna/settings/reports         → /dna/settings?section=reports
+/dna/settings/notifications   → /dna/settings?section=notifications
+/dna/settings/preferences     → /dna/settings?section=preferences
+/dna/settings/hashtags        → /dna/settings?section=hashtags
 ```
 
-Same 5 cards, same right-sheet detail, same waitlist CTA inside the sheet — one consistent "learn what DNA is" surface across public profile + public post.
+The `SettingsSheet` already handles `?section=` on mount, so every legacy URL lands the user on the right subpage inside the new sheet.
 
-### 4. Analytics
+### 4. Part 4 — Backend consolidation (additive migration)
 
-Extend the existing `five_cs_card_open` PostHog event with a `source: 'public_post'` tag (the component already accepts `username`; we'll pass the author's username and add `source` inside `FiveCsDiscoverySection` via a new optional `source` prop, defaulting to `'public_profile'` so profile behavior is unchanged).
+One migration, no schema break, no CASCADE:
 
-## Final signed-out page structure
+1. `profiles.profile_settings jsonb not null default '{}'` — sheet-scoped prefs (appearance, haptics, digest cadence, mapbox flag). No new table.
+2. Materialized view `public.profile_footprint_counts` (columns: `profile_id`, `connections`, `events_hosted`, `events_attended`, `active_spaces`, `contributions_given`, `stories`). Unique index on `profile_id`. `GRANT SELECT` to `anon, authenticated`, `GRANT ALL` to `service_role`.
+3. `pg_cron` refresh every 15 min via `REFRESH MATERIALIZED VIEW CONCURRENTLY`.
+4. Extend the existing `rpc_get_profile_bundle` to include a `footprint_counts` key from the MV in its JSON payload. No new RPC.
 
-```text
-[ UnifiedHeader: logo | About Us | Join the Waitlist | Sign In ]
+Front-end wiring:
+- New hook `src/hooks/useSettingsPrefs.ts`: reads/writes `profiles.profile_settings` with a 300 ms debounced optimistic update through TanStack Query. No realtime.
+- `useProfileV2` picks up `footprint_counts` automatically once the RPC returns it. `DiasporaFootprint` reads from `bundle.footprint_counts` instead of its per-count queries — one call replaces six.
 
-[ Post Card ]
-  author row + share icon
-  post content / image / link preview
-  engagement stats (likes, comments)
-  subtle "Like, comment, and reply on DNA → Join the Waitlist" bar
-  copy-link icon
+Everything is additive; existing components keep working until they're switched over.
 
-[ Compact Author Card: avatar + name + View Profile ]
+### 5. Out of scope for this turn
 
-[ Five C's Discovery Row: 5 Adinkra cards ]
-  → click opens right-sheet with detail + Join the Waitlist CTA
+- Notifications center, My reports, Blocked users list conversions (Part 5, one PR each).
+- Composer secondary screens (Part 5).
+- Public profile hero further polish beyond what Part 3 already shipped.
 
-[ Footer ]
-```
+### Acceptance
 
-CTA count drops from 5 to 2 above the fold (header + inline join bar), plus the Five C's cards which are discovery, not join-nags.
-
-## Signed-in behavior
-
-Unchanged: no banner today (already conditional), no bottom gradient card (already conditional), keeps "Like & Comment" primary button, no Five C's row.
-
-## Out of scope
-
-- No changes to the post card's data model, share behavior, SEO/JSON-LD, or the Author card.
-- No changes to `FiveCsDiscoveryRow` copy/icons (still empty heading/subtitle per your last edit).
-- No mobile-specific redesign — the existing responsive rules already cover it.
-- No changes to `/post/:id` route or slug resolution.
-
-## Files touched
-
-- `src/pages/PublicPostPage.tsx` — remove 2 CTA blocks, replace inline engage button, mount `FiveCsDiscoverySection`.
-- `src/components/five-cs/FiveCsDiscoverySection.tsx` — add optional `source` prop for analytics tagging (default `'public_profile'`).
-
-## Verification
-
-- Playwright signed-out visit to `/post/gipc-and-dacf-investment-partnership`: assert no floating banner, no "Join the Conversation" gradient card, no "Join the Waitlist to Engage" button, Five C's row present, right-sheet opens on card click.
-- Signed-in visit: assert page still shows "Like & Comment" and no Five C's row.
+- Tapping the avatar in the header opens the new IdentitySheet-styled Account view. Screenshot 1's legacy pill/dropdown layout is gone.
+- Opening/closing the sheet does not shift, scroll, or blank the feed grid. The right rail stays put. Content behind is dimmed but layout is untouched.
+- Every legacy `/dna/settings/{section}` URL still lands the user in the correct subpage of the new sheet.
+- `SETTINGS_SHEET_V2` flag and `SettingsRouteShell` are gone from the tree.
+- One RPC call powers the public profile page (verifiable in the Network tab).
+- Migration passes; new column has default; MV is populated on refresh.
