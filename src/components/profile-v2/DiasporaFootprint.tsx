@@ -21,9 +21,18 @@ interface DiasporaFootprintProps {
   userId: string;
   isOwner?: boolean;
   username?: string;
+  /** Preferred: pass counts from the profile bundle to avoid a second round-trip. */
+  counts?: FootprintCounts;
 }
 
 interface FootprintCounts {
+  connections: number;
+  events: number;
+  spaces: number;
+  contributions: number;
+  posts: number;
+}
+
   connections: number;
   events: number;
   spaces: number;

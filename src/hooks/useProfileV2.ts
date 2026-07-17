@@ -109,10 +109,11 @@ export const useProfileV2 = (username: string | undefined) => {
           return normalizePublicProfileBundle(data as unknown as PublicProfileRow);
         }
 
-        const { data, error } = await supabase.rpc('rpc_get_profile_bundle', {
+        const { data, error } = await supabase.rpc('rpc_get_profile_bundle_v2' as never, {
           p_username: username,
           p_viewer_id: user?.id || null,
-        });
+        } as never);
+
 
         // Return null on error - NEVER throw to avoid ErrorBoundary
         if (error) {
