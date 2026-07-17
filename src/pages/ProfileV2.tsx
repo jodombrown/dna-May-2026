@@ -393,7 +393,8 @@ const ProfileV2: React.FC = () => {
 
             </section>
 
-            <section>
+            <section id="activity">
+
               <ProfileSectionLabel>Activity</ProfileSectionLabel>
               <div className="space-y-4">
                 <ProfileRecentPosts userId={profile.id} username={profile.username} />
