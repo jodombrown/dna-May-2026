@@ -59,7 +59,13 @@ const DnaMessages = lazy(() => import("./pages/dna/Messages"));
 const GroupThreadPage = lazy(() => import("./pages/dna/GroupThread"));
 const DnaNotifications = lazy(() => import("./pages/dna/Notifications"));
 const DnaAnalytics = lazy(() => import("./pages/dna/Analytics"));
-const DnaFeedback = lazy(() => import("./pages/dna/feedback/FeedbackPage"));
+// DnaFeedback full-page removed — feedback lives in the right-side drawer.
+const FeedbackRedirect = () => {
+  React.useEffect(() => {
+    window.dispatchEvent(new CustomEvent('dna:open-feedback'));
+  }, []);
+  return <Navigate to="/dna/feed" replace />;
+};
 const Affirm = lazy(() => import("./pages/dna/affirm/Affirm"));
 const AttestAffirmation = lazy(() => import("./pages/dna/affirm/AttestAffirmation"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
