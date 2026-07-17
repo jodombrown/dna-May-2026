@@ -1,18 +1,20 @@
 /**
  * SettingsSheet — Claude-inspired grouped identity sheet at /dna/settings.
  *
- * Part 1 (reversible, no schema changes):
- *  - Renders an IdentitySheet listing all settings surfaces as a grouped list.
- *  - Each row navigates to the existing subpage route (which retains its own
- *    SettingsLayout). Legacy deep-links via ?section= are honored on mount.
- *  - Closing the sheet returns the user to the feed (or previous route).
- *  - Rollback: flip SETTINGS_SHEET_V2 in featureFlags.ts to fall back to the
- *    legacy Navigate → /dna/settings/account redirect.
+ * Part 2: everything stays inside the sheet.
+ *  - Every row pushes a subpage that renders the existing settings panel in
+ *    bare form (SettingsLayout auto-detects the sheet and drops its chrome).
+ *  - Identity header card is clickable and pushes the profile editor as a
+ *    subpage. ProfileEdit hides its UnifiedHeader + Back button when in sheet.
+ *  - Each subpage inherits the sheet's own back / close chrome from IdentitySheet.
+ *  - Legacy ?section= deep-links auto-push the matching subpage on mount.
+ *  - Rollback: flip SETTINGS_SHEET_V2 in featureFlags.ts.
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import {
   User,
+  UserCircle,
   Shield,
   Bell,
   Settings as SettingsIcon,
@@ -22,39 +24,100 @@ import {
   FileText,
   LogOut,
   Info,
+  Loader2,
+  ChevronRight,
 } from 'lucide-react';
-import { IdentitySheet, SettingsGroup, SettingsRow } from '@/components/ui/settings-kit';
+import {
+  IdentitySheet,
+  SettingsGroup,
+  SettingsRow,
+  useIdentitySheet,
+} from '@/components/ui/settings-kit';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ROUTES } from '@/config/routes';
 
-const SECTION_ROUTE: Record<string, string> = {
-  account: ROUTES.settings.account,
-  privacy: ROUTES.settings.privacy,
-  blocked: ROUTES.settings.blocked,
-  reports: ROUTES.settings.reports,
-  notifications: ROUTES.settings.notifications,
-  preferences: ROUTES.settings.preferences,
-  hashtags: ROUTES.settings.hashtags,
+// Lazy-load subpage content so switching the sheet doesn't pull every panel.
+const AccountSettings = React.lazy(() => import('./AccountSettings'));
+const PrivacySettings = React.lazy(() => import('./PrivacySettings'));
+const NotificationSettings = React.lazy(() => import('./NotificationSettings'));
+const PreferencesSettings = React.lazy(() => import('./PreferencesSettings'));
+const MyHashtagsSettings = React.lazy(() => import('./MyHashtagsSettings'));
+const MyReportsSettings = React.lazy(() => import('./MyReportsSettings'));
+const BlockedUsersSettings = React.lazy(() => import('./BlockedUsersSettings'));
+const ProfileEdit = React.lazy(() => import('@/pages/ProfileEdit'));
+
+const PanelFallback = () => (
+  <div className="flex items-center justify-center py-16 text-muted-foreground">
+    <Loader2 className="h-5 w-5 animate-spin" />
+  </div>
+);
+
+const wrap = (node: React.ReactNode) => (
+  <Suspense fallback={<PanelFallback />}>{node}</Suspense>
+);
+
+const SUBPAGES: Record<
+  string,
+  { id: string; title: string; content: React.ReactNode }
+> = {
+  profile: { id: 'profile', title: 'Profile', content: wrap(<ProfileEdit />) },
+  account: { id: 'account', title: 'Account', content: wrap(<AccountSettings />) },
+  privacy: { id: 'privacy', title: 'Privacy', content: wrap(<PrivacySettings />) },
+  notifications: {
+    id: 'notifications',
+    title: 'Notifications',
+    content: wrap(<NotificationSettings />),
+  },
+  preferences: {
+    id: 'preferences',
+    title: 'Preferences',
+    content: wrap(<PreferencesSettings />),
+  },
+  hashtags: {
+    id: 'hashtags',
+    title: 'My hashtags',
+    content: wrap(<MyHashtagsSettings />),
+  },
+  reports: { id: 'reports', title: 'My reports', content: wrap(<MyReportsSettings />) },
+  blocked: {
+    id: 'blocked',
+    title: 'Blocked users',
+    content: wrap(<BlockedUsersSettings />),
+  },
 };
 
-export default function SettingsSheet() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [params] = useSearchParams();
+const SECTION_ALIASES: Record<string, keyof typeof SUBPAGES> = {
+  account: 'account',
+  privacy: 'privacy',
+  blocked: 'blocked',
+  reports: 'reports',
+  notifications: 'notifications',
+  preferences: 'preferences',
+  hashtags: 'hashtags',
+  profile: 'profile',
+};
+
+/** Inner body — has access to useIdentitySheet (provider is in IdentitySheet). */
+function SettingsSheetBody({
+  initialSection,
+}: {
+  initialSection: keyof typeof SUBPAGES | null;
+}) {
+  const { push } = useIdentitySheet();
   const { user, signOut } = useAuth();
   const { data: profile } = useProfile();
+  const navigate = useNavigate();
 
-  const [open, setOpen] = useState(true);
-
-  // Legacy ?section= deep-link: route directly to the existing subpage.
+  // Honor ?section= by pushing the matching subpage once on mount.
   useEffect(() => {
-    const section = params.get('section');
-    if (section && SECTION_ROUTE[section]) {
-      navigate(SECTION_ROUTE[section], { replace: true });
+    if (initialSection && SUBPAGES[initialSection]) {
+      const sp = SUBPAGES[initialSection];
+      push({ id: sp.id, title: sp.title, node: sp.content });
     }
-  }, [params, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const initials = useMemo(() => {
     const name = profile?.full_name || user?.email || '';
@@ -66,59 +129,50 @@ export default function SettingsSheet() {
       .join('');
   }, [profile?.full_name, user?.email]);
 
-  const handleClose = (next: boolean) => {
-    setOpen(next);
-    if (!next) {
-      const from = (location.state as { from?: string } | null)?.from;
-      navigate(from || ROUTES.feed);
-    }
-  };
-
-  const go = (path: string) => () => navigate(path);
-
-  const identityHeader = (
-    <div className="flex items-center gap-3 rounded-xl border border-border/40 bg-card p-3">
-      <Avatar className="h-12 w-12">
-        <AvatarImage src={profile?.avatar_url || undefined} alt="" />
-        <AvatarFallback>{initials || 'DNA'}</AvatarFallback>
-      </Avatar>
-      <div className="min-w-0 flex-1">
-        <div className="truncate text-body font-normal text-foreground">
-          {profile?.full_name || 'Your profile'}
-        </div>
-        <div className="truncate text-caption text-muted-foreground">
-          {user?.email || ''}
-        </div>
-      </div>
-    </div>
-  );
-
-  const footer = (
-    <div className="pt-2 text-center text-caption text-muted-foreground">
-      DNA - Diaspora Network of Africa
-    </div>
-  );
+  const openProfile = () =>
+    push({ id: SUBPAGES.profile.id, title: SUBPAGES.profile.title, node: SUBPAGES.profile.content });
 
   return (
-    <IdentitySheet
-      open={open}
-      onOpenChange={handleClose}
-      title="Settings"
-      header={identityHeader}
-      footer={footer}
-    >
+    <>
+      {/* Identity card — clickable, pushes Profile subpage */}
+      <button
+        type="button"
+        onClick={openProfile}
+        className="mb-4 flex w-full items-center gap-3 rounded-xl border border-border/40 bg-card p-3 text-left transition-colors hover:bg-muted/50 min-h-touch"
+      >
+        <Avatar className="h-12 w-12">
+          <AvatarImage src={profile?.avatar_url || undefined} alt="" />
+          <AvatarFallback>{initials || 'DNA'}</AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-body font-normal text-foreground">
+            {profile?.full_name || 'Your profile'}
+          </div>
+          <div className="truncate text-caption text-muted-foreground">
+            {user?.email || ''}
+          </div>
+        </div>
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      </button>
+
       <SettingsGroup label="Account">
+        <SettingsRow
+          icon={UserCircle}
+          label="Profile"
+          description="Name, headline, avatar, bio"
+          subpage={SUBPAGES.profile}
+        />
         <SettingsRow
           icon={User}
           label="Account"
           description="Email, password, delete account"
-          onClick={go(ROUTES.settings.account)}
+          subpage={SUBPAGES.account}
         />
         <SettingsRow
           icon={Shield}
           label="Privacy"
           description="Who can see your profile"
-          onClick={go(ROUTES.settings.privacy)}
+          subpage={SUBPAGES.privacy}
         />
       </SettingsGroup>
 
@@ -127,13 +181,13 @@ export default function SettingsSheet() {
           icon={Bell}
           label="Notifications"
           description="Push, email, quiet hours"
-          onClick={go(ROUTES.settings.notifications)}
+          subpage={SUBPAGES.notifications}
         />
         <SettingsRow
           icon={SettingsIcon}
           label="Preferences"
           description="Density, module visibility"
-          onClick={go(ROUTES.settings.preferences)}
+          subpage={SUBPAGES.preferences}
         />
       </SettingsGroup>
 
@@ -142,37 +196,33 @@ export default function SettingsSheet() {
           icon={Hash}
           label="My hashtags"
           description="Personal hashtag slots"
-          onClick={go(ROUTES.settings.hashtags)}
+          subpage={SUBPAGES.hashtags}
         />
         <SettingsRow
           icon={Flag}
           label="My reports"
           description="Reports you have submitted"
-          onClick={go(ROUTES.settings.reports)}
+          subpage={SUBPAGES.reports}
         />
         <SettingsRow
           icon={UserX}
           label="Blocked users"
           description="People you have blocked"
-          onClick={go(ROUTES.settings.blocked)}
+          subpage={SUBPAGES.blocked}
         />
       </SettingsGroup>
 
       <SettingsGroup label="About">
-        <SettingsRow
-          icon={Info}
-          label="About DNA"
-          onClick={go(ROUTES.about)}
-        />
+        <SettingsRow icon={Info} label="About DNA" onClick={() => navigate(ROUTES.about)} />
         <SettingsRow
           icon={FileText}
           label="Terms of service"
-          onClick={go(ROUTES.termsOfService)}
+          onClick={() => navigate(ROUTES.termsOfService)}
         />
         <SettingsRow
           icon={FileText}
           label="Privacy policy"
-          onClick={go(ROUTES.privacyPolicy)}
+          onClick={() => navigate(ROUTES.privacyPolicy)}
         />
       </SettingsGroup>
 
@@ -187,6 +237,41 @@ export default function SettingsSheet() {
           }}
         />
       </SettingsGroup>
+    </>
+  );
+}
+
+export default function SettingsSheet() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [params] = useSearchParams();
+  const [open, setOpen] = useState(true);
+
+  const sectionParam = params.get('section');
+  const initialSection = sectionParam && SECTION_ALIASES[sectionParam]
+    ? SECTION_ALIASES[sectionParam]
+    : null;
+
+  const handleClose = (next: boolean) => {
+    setOpen(next);
+    if (!next) {
+      const from = (location.state as { from?: string } | null)?.from;
+      navigate(from || ROUTES.feed);
+    }
+  };
+
+  return (
+    <IdentitySheet
+      open={open}
+      onOpenChange={handleClose}
+      title="Settings"
+      footer={
+        <div className="pt-2 text-center text-caption text-muted-foreground">
+          DNA - Diaspora Network of Africa
+        </div>
+      }
+    >
+      <SettingsSheetBody initialSection={initialSection} />
     </IdentitySheet>
   );
 }

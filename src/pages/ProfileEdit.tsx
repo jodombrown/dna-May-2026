@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/components/profile/ProfileCompletionBar';
 import TourResumeBanner from '@/components/onboarding/TourResumeBanner';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
@@ -34,6 +35,7 @@ const ProfileEdit = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const inSheet = !!useIdentitySheetSafe();
   const [showTour, setShowTour] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   
@@ -436,20 +438,22 @@ const ProfileEdit = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
-      <div className="container max-w-4xl mx-auto px-4 py-8">
+    <div className={inSheet ? '' : 'min-h-screen bg-background'}>
+      {!inSheet && <UnifiedHeader />}
+
+      <div className={inSheet ? 'px-4 py-4' : 'container max-w-4xl mx-auto px-4 py-8'}>
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/dna/feed')}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Feed
-            </Button>
+            {!inSheet && (
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/dna/feed')}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Feed
+              </Button>
+            )}
             
             {/* Mobile Save Button - top right */}
             <Button
