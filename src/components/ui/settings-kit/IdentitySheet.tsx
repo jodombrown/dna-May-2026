@@ -35,6 +35,11 @@ export function useIdentitySheet() {
   return ctx;
 }
 
+/** Non-throwing variant for components that may render outside a sheet. */
+export function useIdentitySheetSafe() {
+  return React.useContext(IdentitySheetContext);
+}
+
 export interface IdentitySheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
