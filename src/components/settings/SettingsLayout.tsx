@@ -5,6 +5,7 @@ import UnifiedHeader from '@/components/UnifiedHeader';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag } from 'lucide-react';
+import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 
 interface SettingsNavItem {
   label: string;
