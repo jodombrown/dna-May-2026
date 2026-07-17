@@ -1,10 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { callModel, writeEvent, modelFor, requireUser } from "../_shared/dia-core/index.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+const CAPABILITY = "daily_pulse" as const;
 
 interface PulseEvent { id: string; title: string; startsAt: string; }
 interface PulseTask {
@@ -35,15 +39,19 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  const startTime = Date.now();
+  const admin = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+  );
+
+  // Best-effort identity (dia-core). Pulse has no auth gate and must never 401 —
+  // it takes pre-fetched data in the body and reads no user data itself.
+  const auth = await requireUser(req);
+  const userId = auth.ok ? auth.userId : null;
+
   try {
     const body = (await req.json()) as BodyShape;
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "missing key" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
 
     const totals = {
       events: body.events?.length ?? 0,
@@ -52,6 +60,7 @@ serve(async (req) => {
     };
 
     if (totals.events + totals.tasks + totals.needs === 0) {
+      // Quiet day: no model call, so no event.
       return new Response(
         JSON.stringify({
           headline: "Quiet day across your modules",
@@ -87,84 +96,91 @@ serve(async (req) => {
       .filter(Boolean)
       .join("\n");
 
-    const response = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt },
-          ],
-          tools: [
-            {
-              type: "function",
-              function: {
-                name: "build_daily_pulse",
-                description: "Return a compact cross-module daily pulse.",
-                parameters: {
-                  type: "object",
-                  properties: {
-                    headline: { type: "string" },
-                    narrative: { type: "string" },
-                    highlights: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          module: {
-                            type: "string",
-                            enum: ["convene", "collaborate", "contribute"],
-                          },
-                          refId: { type: "string" },
-                          oneLiner: { type: "string" },
-                          suggestion: { type: "string" },
+    // Model (dia-core). Same messages/tool/tool_choice as before; transport centralized.
+    let result;
+    try {
+      result = await callModel({
+        capability: CAPABILITY,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "build_daily_pulse",
+              description: "Return a compact cross-module daily pulse.",
+              parameters: {
+                type: "object",
+                properties: {
+                  headline: { type: "string" },
+                  narrative: { type: "string" },
+                  highlights: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        module: {
+                          type: "string",
+                          enum: ["convene", "collaborate", "contribute"],
                         },
-                        required: ["module", "refId", "oneLiner"],
-                        additionalProperties: false,
+                        refId: { type: "string" },
+                        oneLiner: { type: "string" },
+                        suggestion: { type: "string" },
                       },
+                      required: ["module", "refId", "oneLiner"],
+                      additionalProperties: false,
                     },
                   },
-                  required: ["headline", "narrative", "highlights"],
-                  additionalProperties: false,
                 },
+                required: ["headline", "narrative", "highlights"],
+                additionalProperties: false,
               },
             },
-          ],
-          tool_choice: {
-            type: "function",
-            function: { name: "build_daily_pulse" },
           },
-        }),
-      },
-    );
-
-    if (response.status === 429) {
-      return new Response(
-        JSON.stringify({ error: "Rate limited, try again shortly." }),
-        {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        ],
+        toolChoice: {
+          type: "function",
+          function: { name: "build_daily_pulse" },
         },
+      });
+    } catch (e) {
+      await writeEvent(admin, {
+        userId,
+        capability: CAPABILITY,
+        surface: "dia-daily-pulse",
+        provider: "gemini",
+        model: modelFor(CAPABILITY),
+        success: false,
+        latencyMs: Date.now() - startTime,
+        errorCode: "model_unavailable",
+        errorMessage: String((e as Error)?.message ?? e).slice(0, 300),
+        meta: { totals },
+      });
+      // Preserve the prior 429 / 402 passthrough behaviour.
+      const status = Number(
+        String((e as Error)?.message ?? "").match(/gateway (\d+)/)?.[1],
       );
-    }
-    if (response.status === 402) {
-      return new Response(
-        JSON.stringify({ error: "AI credits exhausted." }),
-        {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
-    if (!response.ok) {
-      const text = await response.text();
-      console.error("dia-daily-pulse gateway error", response.status, text);
+      if (status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limited, try again shortly." }),
+          {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+      if (status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI credits exhausted." }),
+          {
+            status: 402,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+      console.error("dia-daily-pulse gateway error", (e as Error)?.message ?? e);
       return new Response(
         JSON.stringify({ error: "AI gateway error" }),
         {
@@ -174,8 +190,20 @@ serve(async (req) => {
       );
     }
 
-    const json = await response.json();
-    const toolCall = json?.choices?.[0]?.message?.tool_calls?.[0];
+    // Audit (dia-core). One event per model call.
+    await writeEvent(admin, {
+      userId,
+      capability: CAPABILITY,
+      surface: "dia-daily-pulse",
+      provider: result.provider,
+      model: result.model,
+      success: true,
+      latencyMs: Date.now() - startTime,
+      tokens: result.tokens,
+      meta: { totals },
+    });
+
+    const toolCall = result.message?.tool_calls?.[0];
     const args = toolCall?.function?.arguments
       ? JSON.parse(toolCall.function.arguments)
       : null;
