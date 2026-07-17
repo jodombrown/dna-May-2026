@@ -1,4 +1,4 @@
-// DIA Compose Read — verb inference + field extraction (BD085)
+// DIA Compose Read — verb inference + field extraction (BD085). Re-pointed through dia-core (DIA2/BD125).
 //
 // The member writes plainly. DIA reads it and proposes the verb (which C) and
 // the structured fields the card renders. DIA PROPOSES; THE AUTHOR OWNS THE
@@ -9,10 +9,11 @@
 // pattern-matcher only reads phrasings we anticipated.
 //
 // Failure is a NO-OP, never an error to the member: if the model is down, slow,
-// or unsure, we return { mode: null } and the composer behaves like an ordinary
+// or unsure, we return { verb: null } and the composer behaves like an ordinary
 // composer. A wrong guess is worse than no guess.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { requireUser, callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -24,6 +25,7 @@ const CONFIDENCE_FLOOR = 0.6;
 /** DIA does not interrupt before the member has said enough to be read. */
 const MIN_CHARS = 18;
 const MAX_CHARS = 4000;
+const CAPABILITY = 'compose_read' as const;
 
 const SYSTEM_PROMPT = `You read a draft post for DNA, a platform for the African diaspora, and decide which of the Five C's it is, then extract the structured fields that C's card renders.
 
@@ -114,63 +116,51 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const startTime = Date.now();
+  const admin = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
+
   try {
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
-    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
-
-    if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      return quiet('not_configured');
-    }
-
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData?.user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    // Identity (dia-core). compose-read reads no data, so no user client is needed.
+    const auth = await requireUser(req);
+    if (!auth.ok) return auth.response;
+    const userId = auth.userId;
 
     const body = await req.json().catch(() => ({}));
     const text = typeof body?.text === 'string' ? body.text.trim() : '';
 
     if (text.length < MIN_CHARS) return quiet('too_short');
 
-    const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-3-flash-preview',
+    // Model (dia-core). Same messages/temperature/max_tokens as before; transport centralized.
+    let result;
+    try {
+      result = await callModel({
+        capability: CAPABILITY,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           { role: 'user', content: text.slice(0, MAX_CHARS) },
         ],
         temperature: 0.1, // extraction, not creativity
-        max_tokens: 300,
-      }),
-    });
-
-    if (!aiResp.ok) {
-      console.error('dia-compose-read: gateway', aiResp.status, await aiResp.text());
+        maxTokens: 300,
+      });
+    } catch (e) {
+      await writeEvent(admin, {
+        userId, capability: CAPABILITY, surface: 'dia-compose-read',
+        provider: 'gemini', model: modelFor(CAPABILITY), success: false,
+        latencyMs: Date.now() - startTime, errorCode: 'model_unavailable',
+        errorMessage: String((e as Error)?.message ?? e).slice(0, 300),
+      });
       return quiet('model_unavailable'); // degrade, never break the composer
     }
 
-    const ai = await aiResp.json();
-    const raw = ai?.choices?.[0]?.message?.content ?? '';
+    // Audit (dia-core). One event per model call.
+    await writeEvent(admin, {
+      userId, capability: CAPABILITY, surface: 'dia-compose-read',
+      provider: result.provider, model: result.model, success: true,
+      latencyMs: Date.now() - startTime, tokens: result.tokens,
+      meta: { chars: text.length },
+    });
+
+    const raw = result.message?.content ?? '';
 
     // The model is told not to fence, but models fence anyway.
     const cleaned = String(raw).replace(/```json|```/g, '').trim();

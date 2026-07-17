@@ -1,12 +1,15 @@
-// Phase 16 - Cross-thread inbox brief.
+// Phase 16 - Cross-thread inbox brief. Re-pointed through dia-core (DIA2/BD125).
 // Builds a short narrative across the user's most active unread threads.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { requireUser, callModel, writeEvent, modelFor, makeUserClient } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const CAPABILITY = 'inbox_brief' as const;
 
 interface ThreadHighlight {
   threadId: string;
@@ -39,34 +42,16 @@ const empty = (totalUnread: number, unreadThreadCount: number): InboxBriefPayloa
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
+  const startTime = Date.now();
+  const admin = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
+
   try {
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
-    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
-    if (!LOVABLE_API_KEY || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      throw new Error('Required env vars not configured');
-    }
-
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData?.user;
-    if (!user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    // Identity (dia-core). Recreate the RLS-scoped client under the same name.
+    const auth = await requireUser(req);
+    if (!auth.ok) return auth.response;
+    const userId = auth.userId;
+    const user = { id: userId };
+    const supabase = makeUserClient(auth.token);
 
     // Direct conversations the user participates in
     const { data: convs } = await supabase
@@ -197,14 +182,11 @@ Deno.serve(async (req) => {
       })
       .join('\n\n');
 
-    const aiResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-3-flash-preview',
+    // Model (dia-core). Same messages/tools/tool_choice as before; transport centralized.
+    let result;
+    try {
+      result = await callModel({
+        capability: CAPABILITY,
         messages: [
           {
             role: 'system',
@@ -249,27 +231,39 @@ Deno.serve(async (req) => {
             },
           },
         ],
-        tool_choice: { type: 'function', function: { name: 'build_inbox_brief' } },
-      }),
-    });
-
-    if (!aiResp.ok) {
-      if (aiResp.status === 429 || aiResp.status === 402) {
+        toolChoice: { type: 'function', function: { name: 'build_inbox_brief' } },
+      });
+    } catch (e) {
+      await writeEvent(admin, {
+        userId, capability: CAPABILITY, surface: 'dia-inbox-brief',
+        provider: 'gemini', model: modelFor(CAPABILITY), success: false,
+        latencyMs: Date.now() - startTime, errorCode: 'model_unavailable',
+        errorMessage: String((e as Error)?.message ?? e).slice(0, 300),
+        meta: { threads: threadIds.length, unread: totalUnread },
+      });
+      const status = Number(String((e as Error)?.message ?? '').match(/gateway (\d+)/)?.[1]);
+      if (status === 429 || status === 402) {
         return new Response(
-          JSON.stringify({ error: aiResp.status === 429 ? 'Rate limited' : 'Credits exhausted' }),
-          { status: aiResp.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+          JSON.stringify({ error: status === 429 ? 'Rate limited' : 'Credits exhausted' }),
+          { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         );
       }
-      const t = await aiResp.text();
-      console.error('AI error', aiResp.status, t);
+      console.error('AI error', (e as Error)?.message ?? e);
       return new Response(JSON.stringify({ error: 'AI gateway error' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const aiData = await aiResp.json();
-    const toolCall = aiData?.choices?.[0]?.message?.tool_calls?.[0];
+    // Audit (dia-core). One event per model call.
+    await writeEvent(admin, {
+      userId, capability: CAPABILITY, surface: 'dia-inbox-brief',
+      provider: result.provider, model: result.model, success: true,
+      latencyMs: Date.now() - startTime, tokens: result.tokens,
+      meta: { threads: threadIds.length, unread: totalUnread },
+    });
+
+    const toolCall = result.message?.tool_calls?.[0];
     const args = toolCall ? JSON.parse(toolCall.function?.arguments ?? '{}') : {};
 
     const payload: InboxBriefPayload = {

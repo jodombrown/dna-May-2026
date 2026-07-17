@@ -8,7 +8,9 @@ export interface CallModelOpts {
   capability: DiaCapability;
   messages: unknown[];
   tools?: unknown[];
-  toolChoice?: "auto" | "none" | string;
+  // "auto" | "none" | a tool name, or the OpenAI forced-function object
+  // ({ type: "function", function: { name } }) used by the compose/smart lane.
+  toolChoice?: "auto" | "none" | string | Record<string, unknown>;
   temperature?: number;
   maxTokens?: number;
   modelOverride?: string; // escape hatch; caller still holds no literal
@@ -30,9 +32,13 @@ export async function callModel(opts: CallModelOpts): Promise<CallModelResult> {
   const body: Record<string, unknown> = {
     model,
     messages: opts.messages,
-    temperature: opts.temperature ?? 0.2,
-    max_tokens: opts.maxTokens ?? 900,
   };
+  // Only forward sampling params the caller actually set. A caller that omits
+  // temperature / max_tokens gets the gateway's own defaults — this keeps
+  // re-pointed functions transport-identical to their pre-dia-core request,
+  // which did not send these fields at all.
+  if (opts.temperature !== undefined) body.temperature = opts.temperature;
+  if (opts.maxTokens !== undefined) body.max_tokens = opts.maxTokens;
   if (opts.tools) {
     body.tools = opts.tools;
     body.tool_choice = opts.toolChoice ?? "auto";
