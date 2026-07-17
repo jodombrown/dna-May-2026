@@ -356,8 +356,10 @@ const ProfileV2: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            <section>
+            <ProfileSectionNav />
+            <section id="about">
               <ProfileSectionLabel>About</ProfileSectionLabel>
+
               <div className="space-y-4">
                 <ProfileV2About
                   profile={profile}
