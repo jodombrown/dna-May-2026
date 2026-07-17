@@ -31,8 +31,10 @@ import {
   IdentitySheet,
   SettingsGroup,
   SettingsRow,
+  SheetErrorPanel,
   useIdentitySheet,
 } from '@/components/ui/settings-kit';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
