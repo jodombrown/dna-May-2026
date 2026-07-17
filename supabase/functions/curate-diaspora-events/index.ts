@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireInternal } from "../_shared/auth.ts";
+import { PERPLEXITY_URL, PERPLEXITY_MODEL, writeEvent } from '../_shared/dia-core/index.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -49,6 +50,8 @@ Deno.serve(async (req: Request) => {
   const __auth = requireInternal(req);
   if (!__auth.ok) return __auth.response;
 
+  const startTime = Date.now();
+
   try {
     const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
     if (!PERPLEXITY_API_KEY) {
@@ -66,7 +69,7 @@ Deno.serve(async (req: Request) => {
     // Call Perplexity API
     console.log("Calling Perplexity API for diaspora events...");
     const perplexityResponse = await fetch(
-      "https://api.perplexity.ai/chat/completions",
+      PERPLEXITY_URL,
       {
         method: "POST",
         headers: {
@@ -74,7 +77,7 @@ Deno.serve(async (req: Request) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "sonar",
+          model: PERPLEXITY_MODEL,
           messages: [
             {
               role: "system",
@@ -211,6 +214,13 @@ Deno.serve(async (req: Request) => {
       errors,
     };
 
+    await writeEvent(supabase, {
+      userId: null, principalType: 'service', capability: 'curate',
+      surface: 'curate-diaspora-events', provider: 'perplexity', model: PERPLEXITY_MODEL,
+      success: true, latencyMs: Date.now() - startTime,
+      meta: { total_from_perplexity: events.length, inserted, skipped },
+    });
+
     console.log("Curation complete:", JSON.stringify(summary));
 
     return new Response(JSON.stringify(summary), {
@@ -219,6 +229,15 @@ Deno.serve(async (req: Request) => {
     });
   } catch (error: unknown) {
     console.error("Error in curate-diaspora-events:", error);
+    try {
+      const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+      await writeEvent(admin, {
+        userId: null, principalType: 'service', capability: 'curate',
+        surface: 'curate-diaspora-events', provider: 'perplexity', model: PERPLEXITY_MODEL,
+        success: false, latencyMs: Date.now() - startTime,
+        errorCode: 'curate_failed', errorMessage: (error instanceof Error ? error.message : String(error)).slice(0, 300),
+      });
+    } catch { /* never mask the original error */ }
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
