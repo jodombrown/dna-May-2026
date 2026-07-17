@@ -358,10 +358,10 @@ const UnifiedHeader = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => navigate('/dna/feedback')}
+                      onClick={() => window.dispatchEvent(new CustomEvent('dna:open-feedback'))}
                       className={cn(
                         "hidden md:flex",
-                        location.pathname === '/dna/feedback' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+                        "text-muted-foreground hover:text-primary"
                       )}
                     >
                       <MessageSquarePlus className="w-5 h-5" />

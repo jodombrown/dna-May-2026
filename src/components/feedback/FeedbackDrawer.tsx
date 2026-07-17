@@ -127,28 +127,26 @@ export function FeedbackDrawer({ isOpen, onClose }: FeedbackDrawerProps) {
             <ChevronRight className="h-5 w-5 md:h-6 md:w-6 text-foreground" />
           </button>
 
-          {/* Branded Header */}
-          <div className="relative px-4 py-3 border-b bg-gradient-to-r from-primary/5 via-transparent to-primary/10 shrink-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 shrink-0">
-                  <MessageSquareHeart className="h-[18px] w-[18px] text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-base font-bold text-foreground leading-tight tracking-tight">Feedback Hub</h2>
-                  <p className="text-xs text-muted-foreground">Help shape DNA</p>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowHelpTour(true)}
-                className="h-8 w-8 shrink-0"
-              >
-                <HelpCircle className="h-4 w-4" />
-              </Button>
+          {/* Header — Identity Sheet language */}
+          <div className="relative flex items-center gap-3 border-b border-border/40 px-4 py-3 shrink-0 bg-background">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted shrink-0">
+              <MessageSquareHeart className="h-5 w-5 text-dna-copper" />
             </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-title font-display text-foreground leading-tight">Feedback Hub</h2>
+              <p className="text-caption text-muted-foreground">Help shape DNA</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowHelpTour(true)}
+              className="h-9 w-9 shrink-0 rounded-full text-foreground/70 hover:bg-muted"
+              aria-label="How the Feedback Hub works"
+            >
+              <HelpCircle className="h-4 w-4" />
+            </Button>
           </div>
+
 
           {/* Auth Loading State */}
           {authLoading ? (
