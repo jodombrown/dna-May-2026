@@ -129,7 +129,8 @@ function SettingsSheetBody({
       .join('');
   }, [profile?.full_name, user?.email]);
 
-  const openProfile = () => push(SUBPAGES.profile);
+  const openProfile = () =>
+    push({ id: SUBPAGES.profile.id, title: SUBPAGES.profile.title, node: SUBPAGES.profile.content });
 
   return (
     <>
