@@ -1,382 +1,393 @@
-import React, { useState } from 'react';
+import React, { Suspense, lazy, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, Share2, FileText, Bookmark, Users, Calendar, Settings, HelpCircle, LogOut, Copy, MessageSquare, Linkedin, Twitter, Download, Loader2, ClipboardCheck } from 'lucide-react';
-import { useTourProgress } from '@/hooks/useTourProgress';
-import OnboardingTour from '@/components/onboarding/OnboardingTour';
-import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
-import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { MateMasie } from '@/components/icons/adinkra';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  User,
+  Edit,
+  Share2,
+  FileText,
+  Bookmark,
+  Users,
+  Calendar,
+  Settings,
+  HelpCircle,
+  LogOut,
+  Copy,
+  MessageSquare,
+  Linkedin,
+  Twitter,
+  Download,
+  Loader2,
+  ClipboardCheck,
+  Shield,
+  Bell,
+  Hash,
+  UserX,
+  Flag,
+  MapPin,
+} from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  IdentitySheet,
+  SettingsGroup,
+  SettingsRow,
+  useIdentitySheet,
+} from '@/components/ui/settings-kit';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
 import { toast } from 'sonner';
 import { profileRoute } from '@/lib/profileRoute';
 import { generateProfilePDF } from '@/lib/generateProfilePDF';
+import { useTourProgress } from '@/hooks/useTourProgress';
+import OnboardingTour from '@/components/onboarding/OnboardingTour';
+import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
+import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
+import AfricaSpinner from '@/components/ui/AfricaSpinner';
 
-export const AccountDrawer: React.FC = () => {
-  const { isOpen, close } = useAccountDrawer();
+const AccountSettings = lazy(() => import('@/pages/dna/settings/AccountSettings'));
+const PrivacySettings = lazy(() => import('@/pages/dna/settings/PrivacySettings'));
+const NotificationSettings = lazy(() => import('@/pages/dna/settings/NotificationSettings'));
+const PreferencesSettings = lazy(() => import('@/pages/dna/settings/PreferencesSettings'));
+const BlockedUsersSettings = lazy(() => import('@/pages/dna/settings/BlockedUsersSettings'));
+const MyReportsSettings = lazy(() => import('@/pages/dna/settings/MyReportsSettings'));
+const MyHashtagsSettings = lazy(() => import('@/pages/dna/settings/MyHashtagsSettings'));
+const ProfileEdit = lazy(() => import('@/pages/ProfileEdit'));
+
+const SubpageFallback = () => (
+  <div className="flex items-center justify-center py-12">
+    <AfricaSpinner size="md" />
+  </div>
+);
+
+const Subpage: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="p-4">
+    <Suspense fallback={<SubpageFallback />}>{children}</Suspense>
+  </div>
+);
+
+/* ---------------------------- Root list ---------------------------- */
+
+interface RootProps {
+  onCloseSheet: () => void;
+  onOpenTour: () => void;
+  onOpenTestGuide: () => void;
+  onOpenFeedback: () => void;
+}
+
+const AccountRoot: React.FC<RootProps> = ({
+  onCloseSheet,
+  onOpenTour,
+  onOpenTestGuide,
+  onOpenFeedback,
+}) => {
   const { user, signOut } = useAuth();
   const { data: profile } = useProfile();
   const navigate = useNavigate();
+  const sheet = useIdentitySheet();
   const [isDownloading, setIsDownloading] = useState(false);
-  const [showTour, setShowTour] = useState(false);
-  const [showTestGuide, setShowTestGuide] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const { isCompleted: tourCompleted, resetTour } = useTourProgress();
 
-  const handleTakeTour = () => {
-    if (tourCompleted) {
-      resetTour();
-    }
-    setShowTour(true);
-    close();
+  if (!user || !profile) return null;
+
+  const publicUrl = profile.username
+    ? `${window.location.origin}/u/${profile.username}`
+    : '';
+
+  const navExternal = (path: string) => {
+    navigate(path);
+    onCloseSheet();
   };
 
-  const handleViewProfile = () => {
-    if (profile?.username) {
-      navigate(profileRoute(profile));
-      close();
-    }
-  };
+  const pushProfileEdit = () =>
+    sheet.push({
+      key: 'profile-edit',
+      title: 'Edit profile',
+      node: (
+        <Subpage>
+          <ProfileEdit />
+        </Subpage>
+      ),
+    });
 
-  const handleEditProfile = () => {
-    navigate('/dna/profile/edit');
-    close();
-  };
+  const pushSettings = () =>
+    sheet.push({
+      key: 'settings',
+      title: 'Settings',
+      node: <SettingsList />,
+    });
 
-  const getPublicProfileUrl = () => {
-    if (profile?.username) {
-      return `${window.location.origin}/u/${profile.username}`;
-    }
-    return '';
-  };
-
-  const handleCopyLink = () => {
-    const url = getPublicProfileUrl();
-    if (url) {
-      navigator.clipboard.writeText(url);
-      toast.success('Profile link copied to clipboard');
-    }
-  };
-
-  const handleShareWhatsApp = () => {
-    const url = getPublicProfileUrl();
-    const text = `Check out ${profile?.display_name || profile?.username}'s profile on DNA - Diaspora Network of Africa`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank');
-  };
-
-  const handleShareLinkedIn = () => {
-    const url = getPublicProfileUrl();
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
-  };
-
-  const handleShareTwitter = () => {
-    const url = getPublicProfileUrl();
-    const text = `Check out ${profile?.display_name || profile?.username}'s profile on DNA - Diaspora Network of Africa`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-  };
-
-  const handleNativeShare = async () => {
-    const url = getPublicProfileUrl();
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${profile?.display_name || profile?.username}'s Impact Profile`,
-          text: `Check out ${profile?.display_name || profile?.username}'s profile on DNA`,
-          url: url,
-        });
-      } catch (error) {
-        // User cancelled or error
-      }
-    } else {
-      handleCopyLink();
-    }
-  };
+  const pushShare = () =>
+    sheet.push({
+      key: 'share',
+      title: 'Share profile',
+      node: <ShareSubpage url={publicUrl} name={profile.display_name || profile.username || ''} />,
+    });
 
   const handleDownloadPDF = async () => {
-    if (!profile) return;
-    
     setIsDownloading(true);
     try {
       await generateProfilePDF(profile as any, user?.email);
-      toast.success('Profile PDF downloaded successfully');
-    } catch (error) {
+      toast.success('Profile PDF downloaded');
+    } catch {
       toast.error('Failed to generate PDF');
     } finally {
       setIsDownloading(false);
     }
   };
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-    close();
-  };
+  return (
+    <div className="pb-8">
+      {/* Identity card */}
+      <button
+        type="button"
+        onClick={pushProfileEdit}
+        className="w-full flex items-center gap-3 px-4 py-4 hover:bg-muted/40 transition-colors text-left"
+      >
+        <Avatar className="h-12 w-12">
+          <AvatarImage src={profile.avatar_url || ''} />
+          <AvatarFallback>
+            {profile.display_name?.[0] || profile.username?.[0] || 'U'}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold truncate">
+            {profile.display_name || profile.username}
+          </div>
+          <div className="text-xs text-muted-foreground truncate">
+            @{profile.username}
+          </div>
+          {profile.location && (
+            <div className="text-xs text-muted-foreground truncate flex items-center gap-1 mt-0.5">
+              <MapPin className="h-3 w-3" />
+              {profile.location}
+            </div>
+          )}
+        </div>
+      </button>
 
-  const handleSignOut = async () => {
-    await signOut();
-    close();
-    navigate('/');
+      <SettingsGroup label="Profile">
+        <SettingsRow
+          icon={User}
+          label="View public profile"
+          onClick={() => profile.username && navExternal(profileRoute(profile))}
+        />
+        <SettingsRow icon={Edit} label="Edit profile" onClick={pushProfileEdit} />
+        <SettingsRow icon={Share2} label="Share profile" onClick={pushShare} />
+      </SettingsGroup>
+
+      <SettingsGroup label="My activity">
+        <SettingsRow
+          icon={FileText}
+          label="My posts & updates"
+          onClick={() => navExternal('/dna/feed?tab=my_posts')}
+        />
+        <SettingsRow
+          icon={FileText}
+          label="My stories"
+          onClick={() => navExternal('/dna/convey?tab=my_stories')}
+        />
+        <SettingsRow
+          icon={Bookmark}
+          label="Saved items"
+          onClick={() => navExternal('/dna/feed?tab=bookmarks')}
+        />
+      </SettingsGroup>
+
+      <SettingsGroup label="My work">
+        <SettingsRow
+          icon={Users}
+          label="My spaces"
+          onClick={() => navExternal('/dna/collaborate')}
+        />
+        <SettingsRow
+          icon={Calendar}
+          label="My events"
+          onClick={() => navExternal('/dna/convene/events')}
+        />
+      </SettingsGroup>
+
+      <SettingsGroup label="Account">
+        <SettingsRow icon={Settings} label="Settings & preferences" onClick={pushSettings} />
+        <SettingsRow
+          icon={Download}
+          label={isDownloading ? 'Generating profile PDF…' : 'Download profile PDF'}
+          onClick={handleDownloadPDF}
+          right={isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : undefined}
+          chevron={false}
+        />
+        <SettingsRow icon={ClipboardCheck} label="Alpha test guide" onClick={onOpenTestGuide} chevron={false} />
+        <SettingsRow icon={HelpCircle} label="Take platform tour" onClick={onOpenTour} chevron={false} />
+        <SettingsRow icon={MessageSquare} label="Send feedback" onClick={onOpenFeedback} chevron={false} />
+      </SettingsGroup>
+
+      <SettingsGroup>
+        <SettingsRow
+          icon={LogOut}
+          label="Sign out"
+          destructive
+          chevron={false}
+          onClick={async () => {
+            await signOut();
+            onCloseSheet();
+            navigate('/');
+          }}
+        />
+      </SettingsGroup>
+    </div>
+  );
+};
+
+/* ---------------------------- Settings sub-list ---------------------------- */
+
+const SettingsList: React.FC = () => {
+  const sheet = useIdentitySheet();
+
+  const open = (key: string, title: string, node: React.ReactNode) =>
+    sheet.push({ key, title, node: <Subpage>{node}</Subpage> });
+
+  return (
+    <div className="pb-8">
+      <SettingsGroup label="Preferences">
+        <SettingsRow
+          icon={User}
+          label="Account"
+          hint="Email, password, sessions"
+          onClick={() => open('acct', 'Account', <AccountSettings />)}
+        />
+        <SettingsRow
+          icon={Shield}
+          label="Privacy"
+          hint="Who can see your profile"
+          onClick={() => open('priv', 'Privacy', <PrivacySettings />)}
+        />
+        <SettingsRow
+          icon={Bell}
+          label="Notifications"
+          hint="Email and in-app alerts"
+          onClick={() => open('notif', 'Notifications', <NotificationSettings />)}
+        />
+        <SettingsRow
+          icon={Settings}
+          label="Display"
+          hint="Modules and layout"
+          onClick={() => open('prefs', 'Display', <PreferencesSettings />)}
+        />
+      </SettingsGroup>
+
+      <SettingsGroup label="Community">
+        <SettingsRow
+          icon={Hash}
+          label="My hashtags"
+          onClick={() => open('tags', 'My hashtags', <MyHashtagsSettings />)}
+        />
+        <SettingsRow
+          icon={UserX}
+          label="Blocked users"
+          onClick={() => open('block', 'Blocked users', <BlockedUsersSettings />)}
+        />
+        <SettingsRow
+          icon={Flag}
+          label="My reports"
+          onClick={() => open('reports', 'My reports', <MyReportsSettings />)}
+        />
+      </SettingsGroup>
+    </div>
+  );
+};
+
+/* ---------------------------- Share sub-page ---------------------------- */
+
+const ShareSubpage: React.FC<{ url: string; name: string }> = ({ url, name }) => {
+  const copy = () => {
+    navigator.clipboard.writeText(url);
+    toast.success('Profile link copied');
   };
+  const text = `Check out ${name}'s profile on DNA - Diaspora Network of Africa`;
+  return (
+    <div className="pb-8">
+      <SettingsGroup label="Share via">
+        <SettingsRow icon={Copy} label="Copy link" onClick={copy} chevron={false} />
+        <SettingsRow
+          icon={MessageSquare}
+          label="WhatsApp"
+          chevron={false}
+          onClick={() =>
+            window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank')
+          }
+        />
+        <SettingsRow
+          icon={Linkedin}
+          label="LinkedIn"
+          chevron={false}
+          onClick={() =>
+            window.open(
+              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+              '_blank',
+            )
+          }
+        />
+        <SettingsRow
+          icon={Twitter}
+          label="X (Twitter)"
+          chevron={false}
+          onClick={() =>
+            window.open(
+              `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+              '_blank',
+            )
+          }
+        />
+      </SettingsGroup>
+      <div className="px-4 pt-4 text-xs text-muted-foreground break-all">{url}</div>
+    </div>
+  );
+};
+
+/* ---------------------------- Wrapper ---------------------------- */
+
+export const AccountDrawer: React.FC = () => {
+  const { isOpen, close } = useAccountDrawer();
+  const { user } = useAuth();
+  const { data: profile } = useProfile();
+  const [showTour, setShowTour] = useState(false);
+  const [showTestGuide, setShowTestGuide] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const { isCompleted: tourCompleted, resetTour } = useTourProgress();
 
   if (!user || !profile) return null;
 
   return (
     <>
-    <Sheet open={isOpen} onOpenChange={(open) => !open && close()}>
-      <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-border">
-          <h2 className="text-lg font-semibold">Account</h2>
-        </div>
+      <IdentitySheet open={isOpen} onOpenChange={(o) => !o && close()} rootTitle="Account">
+        <AccountRoot
+          onCloseSheet={close}
+          onOpenTour={() => {
+            if (tourCompleted) resetTour();
+            setShowTour(true);
+            close();
+          }}
+          onOpenTestGuide={() => {
+            close();
+            setShowTestGuide(true);
+          }}
+          onOpenFeedback={() => {
+            close();
+            setShowFeedback(true);
+          }}
+        />
+      </IdentitySheet>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto">
-          {/* Identity Block */}
-          <div className="p-6 space-y-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={profile.avatar_url || ''} />
-              <AvatarFallback className="text-2xl">
-                {profile.display_name?.[0] || profile.username?.[0] || 'U'}
-              </AvatarFallback>
-            </Avatar>
-
-            <div className="space-y-1">
-              <h3 className="text-xl font-semibold">{profile.display_name || profile.username}</h3>
-              <p className="text-sm text-muted-foreground">@{profile.username}</p>
-              
-              {profile.location && (
-                <p className="text-sm text-muted-foreground">
-                  {profile.location}
-                </p>
-              )}
-
-              {profile.bio && (
-                <p className="text-sm text-foreground pt-2 line-clamp-2">
-                  {profile.bio}
-                </p>
-              )}
-            </div>
-
-            {/* Primary Actions */}
-            <div className="space-y-2 pt-2">
-              <Button 
-                onClick={handleViewProfile}
-                className="w-full justify-start"
-                variant="default"
-              >
-                <User className="h-4 w-4 mr-2" />
-                View full profile
-              </Button>
-              
-              <div className="grid grid-cols-2 gap-2">
-                <Button 
-                  onClick={handleEditProfile}
-                  variant="outline"
-                  className="justify-start"
-                >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
-                </Button>
-                <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="outline"
-                      className="justify-start bg-dna-amber text-foreground hover:bg-dna-amber/90"
-                    >
-                      <Share2 className="h-4 w-4 mr-2" />
-                      Share
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    align="end" 
-                    className="w-56 bg-background border border-border" 
-                    sideOffset={5}
-                    style={{ zIndex: 9999 }}
-                  >
-                    <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
-                      <Copy className="h-4 w-4 mr-3" />
-                      Copy link
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareWhatsApp} className="cursor-pointer">
-                      <MessageSquare className="h-4 w-4 mr-3" />
-                      Share via WhatsApp
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareLinkedIn} className="cursor-pointer">
-                      <Linkedin className="h-4 w-4 mr-3" />
-                      Share via LinkedIn
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleShareTwitter} className="cursor-pointer">
-                      <Twitter className="h-4 w-4 mr-3" />
-                      Share via X (Twitter)
-                    </DropdownMenuItem>
-                    {typeof navigator !== 'undefined' && navigator.share && (
-                      <DropdownMenuItem onClick={handleNativeShare} className="cursor-pointer">
-                        <Share2 className="h-4 w-4 mr-3" />
-                        Share via...
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleDownloadPDF} className="cursor-pointer" disabled={isDownloading}>
-                      {isDownloading ? (
-                        <Loader2 className="h-4 w-4 mr-3 animate-spin" />
-                      ) : (
-                        <Download className="h-4 w-4 mr-3" />
-                      )}
-                      {isDownloading ? 'Generating...' : 'Download PDF'}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Activity Shortcuts */}
-          <div className="p-4 space-y-1">
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-3 py-2">
-              My Activity
-            </h4>
-            
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleNavigation('/dna/feed?tab=my_posts')}
-            >
-              <FileText className="h-4 w-4 mr-3" />
-              My posts & updates
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleNavigation('/dna/convey?tab=my_stories')}
-            >
-              <FileText className="h-4 w-4 mr-3" />
-              My stories
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleNavigation('/dna/feed?tab=bookmarks')}
-            >
-              <Bookmark className="h-4 w-4 mr-3" />
-              Saved items
-            </Button>
-          </div>
-
-          <Separator />
-
-          {/* Spaces & Events */}
-          <div className="p-4 space-y-1">
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-3 py-2">
-              Collaborate
-            </h4>
-            
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleNavigation('/dna/collaborate')}
-            >
-              <Users className="h-4 w-4 mr-3" />
-              My spaces
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleNavigation('/dna/convene/events')}
-            >
-              <Calendar className="h-4 w-4 mr-3" />
-              My events
-            </Button>
-          </div>
-
-          <Separator />
-
-          {/* Account Section */}
-          <div className="p-4 space-y-1">
-            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-3 py-2">
-              Account
-            </h4>
-            
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => handleNavigation('/dna/settings')}
-            >
-              <Settings className="h-4 w-4 mr-3" />
-              Settings & preferences
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={handleTakeTour}
-            >
-              <MateMasie className="h-4 w-4 mr-3" />
-              Take Platform Tour
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => { close(); setShowTestGuide(true); }}
-            >
-              <ClipboardCheck className="h-4 w-4 mr-3" />
-              Alpha Test Guide
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start"
-              onClick={() => window.open('mailto:aweh@diasporanetwork.africa', '_blank')}
-            >
-              <HelpCircle className="h-4 w-4 mr-3" />
-              Help & feedback
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-              onClick={handleSignOut}
-            >
-              <LogOut className="h-4 w-4 mr-3" />
-              Sign out
-            </Button>
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
-
-    {/* Platform Tour Dialog */}
-    <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
-
-    {/* Alpha Test Guide */}
-    <AlphaTestGuide
-      isOpen={showTestGuide}
-      onClose={() => setShowTestGuide(false)}
-      onOpenFeedback={() => {
-        setShowTestGuide(false);
-        setShowFeedback(true);
-      }}
-    />
-    <FeedbackDrawer
-      isOpen={showFeedback}
-      onClose={() => setShowFeedback(false)}
-    />
-  </>
+      <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
+      <AlphaTestGuide
+        isOpen={showTestGuide}
+        onClose={() => setShowTestGuide(false)}
+        onOpenFeedback={() => {
+          setShowTestGuide(false);
+          setShowFeedback(true);
+        }}
+      />
+      <FeedbackDrawer isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
+    </>
   );
 };
+
+export default AccountDrawer;
