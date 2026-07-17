@@ -1,94 +1,65 @@
-## Part 2b — Account drawer replaced by IdentitySheet + Part 4 backend consolidation + legacy cleanup
+## What's actually broken
 
-### 1. Rebuild the Account drawer in the new Settings sheet language
+The crash on Settings → Preferences isn't a rendering bug — it's a real runtime error surfaced by the global `ErrorBoundary`:
 
-Screenshot 1 (the old `AccountDrawer` with big "View full profile" pill, Edit / Share buttons, then MY ACTIVITY / COLLABORATE / ACCOUNT lists) becomes the same visual language as Screenshot 2 (the new `SettingsSheet`).
+> tried to subscribe multiple times. 'subscribe' can only be called a single time per channel instance
 
-New file: `src/components/navigation/AccountDrawerV2.tsx`.
+Trace: `PreferencesSettings` → `useFirstRunTour` → two `supabase.channel(...).subscribe()` calls.
 
-Structure inside a shared `IdentitySheet` titled **Account**:
+`useFirstRunTour` (src/hooks/useFirstRunTour.ts:154-182) creates channels named `first-run-tour:conn:<uid>` and `first-run-tour:evt:<uid>` — stable per user. The hook is already mounted elsewhere (the feed's tour panel). When Preferences opens inside the new in-sheet subpage, the hook mounts a second time, Supabase returns the same channel instance for that name, and `.subscribe()` throws.
 
-```
-[avatar] Jaûne Odombrown            >     (tap → pushes Profile edit subpage)
-         @jaunelamarro
-         United States
+`useProfile` already solved this with a ref-counted registry (src/hooks/useProfile.ts:20-60). `useFirstRunTour` needs the same treatment.
 
-MY WORK
-  • My posts & updates    >
-  • My stories            >
-  • My spaces             >
-  • My events             >
-  • Saved items           >
+## Plan
 
-ACCOUNT
-  • Settings & preferences  >   (pushes the full SettingsSheet body inside)
-  • View public profile     >   (navigates to /dna/:username)
-  • Share my profile        >   (opens ProfileShareDropdown)
-  • Take platform tour      >
-  • Alpha test guide        >
-  • Help & feedback         >
+### 1. Fix the subscribe crash (real bug)
 
-Sign out
-```
+`src/hooks/useFirstRunTour.ts` — replace the raw channel effect with the same ref-counted `Map` pattern used in `useProfile`:
 
-Every row is a `SettingsRow` with a chevron. "Settings & preferences" pushes the same subpages the settings sheet uses — no separate stacked sheet, just one identity sheet. This gives the user a single continuous back-stack from `Account → Settings & preferences → Profile → …` without ever leaving the sheet.
+- Module-level `Map<uid, { conn, evt, refs }>`.
+- On mount: if entry exists, `refs++`; else create both channels, subscribe once, store.
+- On unmount: `refs--`; when 0, `removeChannel` both and delete the map entry.
+- Invalidation callback closes over `queryClient` via a `useRef` so a stale QC doesn't leak.
 
-Old `AccountDrawer.tsx` (the 382-line legacy drawer with pill, Edit/Share buttons, dropdown menu) is deleted. `AccountDrawerContext` stays and now drives `AccountDrawerV2`.
+This resolves the Preferences crash and any other place the tour hook is used twice.
 
-### 2. Stop the feed from being disturbed when the sheet opens
+### 2. Redesign the error surface to match the Identity Sheet
 
-Cause: Radix Dialog (used by the desktop path of `IdentitySheet`) locks `<body>` scroll and adds `padding-right` to compensate for the scrollbar. That's the visible "the feed gets removed / shifts" behavior in Screenshot 3.
+Replace `src/components/ErrorBoundary.tsx`'s fallback UI. Current design uses gradient background, dna-terra/emerald/ochre stripe borders, colored dot decoration, and a hero-style layout — none of that matches the new Claude-style Identity Sheet.
 
-Fix in `IdentitySheet.tsx`:
-- Desktop uses a right-anchored panel that does NOT scroll-lock the underlying app. Replace Radix Dialog with a plain portal + fixed panel + focus-trap. Overlay stays as a click-to-close scrim but does not touch `<body>` styles.
-- Result: opening/closing the sheet leaves the feed's scroll position and horizontal layout untouched. The `DnaRightRail` / feed grid does not reflow.
+New design language, matching `IdentitySheet` / `SettingsSheet`:
 
-Mobile behavior (Vaul bottom sheet) is unchanged.
+- Plain `bg-background` page, centered card at `max-w-lg`.
+- Card: `bg-card border border-border rounded-lg` (no gradient stripes, no colored dots, no African-proverb block by default).
+- Header row: small circular `bg-muted` icon tile with `AlertCircle` in `text-dna-copper`, then `text-heading font-display` title "Something went wrong" and a single `text-body text-muted-foreground` line.
+- Primary action: `Try again` (calls a new `handleReset` that clears boundary state — no full page reload).
+- Secondary actions rendered as `SettingsRow`-style rows (chevron-less): "Go back", "Return home", "Copy error details".
+- Technical details in a `<details>` block using `text-caption font-mono` on `bg-muted/40` — closed by default (not `open`).
+- Remove `dna-terra`, `dna-ochre`, gradient stripes, the proverb card, and the four-dot decoration to align with the anti-vibe-coded doctrine (no gradient-heavy hero, no decorative dots).
+- Add a `reset` capability so the boundary can recover without `window.location.reload()` when the underlying error is transient (which this subscribe error is, after the fix).
 
-### 3. Kill all legacy settings routes and the feature flag
+### 3. Also apply inside the sheet
 
-- Delete `src/config/featureFlags.ts` `SETTINGS_SHEET_V2` and every reference. `SettingsSheet` at `/dna/settings` is the standard, unconditionally.
-- Delete `src/pages/dna/settings/SettingsRouteShell.tsx`, `src/components/settings/SettingsLayout.tsx`, `MobileSettingsView`, `MobileSettingsMainContent`.
-- Convert the six standalone settings routes to redirects that keep email deep-links working:
+When an error is thrown by a lazy subpage inside `IdentitySheet`, today the whole app crashes into the global boundary because there's no inner boundary. Add a lightweight `SheetErrorPanel` (same visual language, smaller) wrapping the `Suspense` in `SettingsSheet.tsx` and `AccountDrawer.tsx` subpage renderer so a broken subpage shows a scoped error inside the sheet with Retry / Back, instead of blowing away the whole app.
 
-```
-/dna/settings/account         → /dna/settings?section=account
-/dna/settings/privacy         → /dna/settings?section=privacy
-/dna/settings/blocked         → /dna/settings?section=blocked
-/dna/settings/reports         → /dna/settings?section=reports
-/dna/settings/notifications   → /dna/settings?section=notifications
-/dna/settings/preferences     → /dna/settings?section=preferences
-/dna/settings/hashtags        → /dna/settings?section=hashtags
-```
+### 4. Scope guardrails
 
-The `SettingsSheet` already handles `?section=` on mount, so every legacy URL lands the user on the right subpage inside the new sheet.
+- No schema, RLS, or backend changes.
+- No changes to `useProfile` (already correct).
+- No changes to the feed / preview area — this is purely error UI + one hook fix.
+- Anti-vibe-coded doctrine respected: no gradient text, no pastel decoration, `font-display` only on the heading, semantic tokens only.
 
-### 4. Part 4 — Backend consolidation (additive migration)
+## Files touched
 
-One migration, no schema break, no CASCADE:
+- `src/hooks/useFirstRunTour.ts` — ref-counted channel registry (fix crash).
+- `src/components/ErrorBoundary.tsx` — redesigned fallback + `reset` handler.
+- `src/components/ui/settings-kit/SheetErrorPanel.tsx` — new, scoped in-sheet error card.
+- `src/pages/dna/settings/SettingsSheet.tsx` — wrap subpage `Suspense` in `SheetErrorPanel`.
+- `src/components/navigation/AccountDrawer.tsx` — same wrap around its subpage `Suspense`.
 
-1. `profiles.profile_settings jsonb not null default '{}'` — sheet-scoped prefs (appearance, haptics, digest cadence, mapbox flag). No new table.
-2. Materialized view `public.profile_footprint_counts` (columns: `profile_id`, `connections`, `events_hosted`, `events_attended`, `active_spaces`, `contributions_given`, `stories`). Unique index on `profile_id`. `GRANT SELECT` to `anon, authenticated`, `GRANT ALL` to `service_role`.
-3. `pg_cron` refresh every 15 min via `REFRESH MATERIALIZED VIEW CONCURRENTLY`.
-4. Extend the existing `rpc_get_profile_bundle` to include a `footprint_counts` key from the MV in its JSON payload. No new RPC.
+## Verification
 
-Front-end wiring:
-- New hook `src/hooks/useSettingsPrefs.ts`: reads/writes `profiles.profile_settings` with a 300 ms debounced optimistic update through TanStack Query. No realtime.
-- `useProfileV2` picks up `footprint_counts` automatically once the RPC returns it. `DiasporaFootprint` reads from `bundle.footprint_counts` instead of its per-count queries — one call replaces six.
-
-Everything is additive; existing components keep working until they're switched over.
-
-### 5. Out of scope for this turn
-
-- Notifications center, My reports, Blocked users list conversions (Part 5, one PR each).
-- Composer secondary screens (Part 5).
-- Public profile hero further polish beyond what Part 3 already shipped.
-
-### Acceptance
-
-- Tapping the avatar in the header opens the new IdentitySheet-styled Account view. Screenshot 1's legacy pill/dropdown layout is gone.
-- Opening/closing the sheet does not shift, scroll, or blank the feed grid. The right rail stays put. Content behind is dimmed but layout is untouched.
-- Every legacy `/dna/settings/{section}` URL still lands the user in the correct subpage of the new sheet.
-- `SETTINGS_SHEET_V2` flag and `SettingsRouteShell` are gone from the tree.
-- One RPC call powers the public profile page (verifiable in the Network tab).
-- Migration passes; new column has default; MV is populated on refresh.
+- Open Settings → Preferences: no crash, tour restart button still works.
+- Force-throw inside a settings subpage: scoped `SheetErrorPanel` shows inside the sheet, main app + feed remain interactive.
+- Force-throw at route level: new global error card renders in Identity Sheet visual language, "Try again" recovers without a page reload.
+- Typecheck clean.

@@ -31,8 +31,10 @@ import {
   IdentitySheet,
   SettingsGroup,
   SettingsRow,
+  SheetErrorPanel,
   useIdentitySheet,
 } from '@/components/ui/settings-kit';
+
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -54,9 +56,12 @@ const PanelFallback = () => (
   </div>
 );
 
-const wrap = (node: React.ReactNode) => (
-  <Suspense fallback={<PanelFallback />}>{node}</Suspense>
+const wrap = (node: React.ReactNode, surface = 'This section') => (
+  <SheetErrorPanel surface={surface}>
+    <Suspense fallback={<PanelFallback />}>{node}</Suspense>
+  </SheetErrorPanel>
 );
+
 
 const SUBPAGES: Record<
   string,

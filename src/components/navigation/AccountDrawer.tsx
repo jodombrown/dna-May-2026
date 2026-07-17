@@ -38,8 +38,10 @@ import {
   IdentitySheet,
   SettingsGroup,
   SettingsRow,
+  SheetErrorPanel,
   useIdentitySheet,
 } from '@/components/ui/settings-kit';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -70,7 +72,12 @@ const PanelFallback = () => (
     <Loader2 className="h-5 w-5 animate-spin" />
   </div>
 );
-const wrap = (node: React.ReactNode) => <Suspense fallback={<PanelFallback />}>{node}</Suspense>;
+const wrap = (node: React.ReactNode, surface = 'This section') => (
+  <SheetErrorPanel surface={surface}>
+    <Suspense fallback={<PanelFallback />}>{node}</Suspense>
+  </SheetErrorPanel>
+);
+
 
 interface ActionHandlers {
   onShare: () => void;
