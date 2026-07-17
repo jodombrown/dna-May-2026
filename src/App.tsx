@@ -410,50 +410,22 @@ function App() {
                 </OnboardingGuard>
               } />
               
-              {/* Settings Hub - multiple paths for different sections */}
+              {/* Settings Hub - single sheet at /dna/settings.
+                  All legacy sub-paths redirect into it via ?section=. */}
               <Route path="/dna/settings" element={
                 <OnboardingGuard>
-                  {SETTINGS_SHEET_V2 ? <SettingsSheet /> : <Navigate to="/dna/settings/account" replace />}
+                  <SettingsSheet />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/settings/account" element={
-                <OnboardingGuard>
-                  <SettingsRouteShell title="Account"><AccountSettings /></SettingsRouteShell>
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/privacy" element={
-                <OnboardingGuard>
-                  <SettingsRouteShell title="Privacy"><PrivacySettings /></SettingsRouteShell>
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/blocked" element={
-                <OnboardingGuard>
-                  <SettingsRouteShell title="Blocked users"><BlockedUsersSettings /></SettingsRouteShell>
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/reports" element={
-                <OnboardingGuard>
-                  <SettingsRouteShell title="My reports"><MyReportsSettings /></SettingsRouteShell>
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/notifications" element={
-                <OnboardingGuard>
-                  <SettingsRouteShell title="Notification settings"><NotificationSettings /></SettingsRouteShell>
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/preferences" element={
-                <OnboardingGuard>
-                  <SettingsRouteShell title="Preferences"><PreferencesSettings /></SettingsRouteShell>
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/settings/hashtags" element={
-                <OnboardingGuard>
-                  <SettingsRouteShell title="My hashtags"><MyHashtagsSettings /></SettingsRouteShell>
-                </OnboardingGuard>
-              } />
-              {/* Legacy settings routes - redirect to new hub */}
-              <Route path="/dna/settings/dashboard" element={<Navigate to="/dna/settings/preferences" replace />} />
-              <Route path="/dna/settings/profile" element={<Navigate to="/dna/profile/edit" replace />} />
+              <Route path="/dna/settings/account" element={<Navigate to="/dna/settings?section=account" replace />} />
+              <Route path="/dna/settings/privacy" element={<Navigate to="/dna/settings?section=privacy" replace />} />
+              <Route path="/dna/settings/blocked" element={<Navigate to="/dna/settings?section=blocked" replace />} />
+              <Route path="/dna/settings/reports" element={<Navigate to="/dna/settings?section=reports" replace />} />
+              <Route path="/dna/settings/notifications" element={<Navigate to="/dna/settings?section=notifications" replace />} />
+              <Route path="/dna/settings/preferences" element={<Navigate to="/dna/settings?section=preferences" replace />} />
+              <Route path="/dna/settings/hashtags" element={<Navigate to="/dna/settings?section=hashtags" replace />} />
+              <Route path="/dna/settings/dashboard" element={<Navigate to="/dna/settings?section=preferences" replace />} />
+              <Route path="/dna/settings/profile" element={<Navigate to="/dna/settings?section=profile" replace />} />
               
               {/* DNA Dashboard Routes - Protected with OnboardingGuard */}
               <Route path="/fact-sheet" element={<FactSheetPage />} />
