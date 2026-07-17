@@ -150,15 +150,15 @@ const AccountRoot: React.FC<RootProps> = ({
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold truncate">
-            {profile.display_name || profile.username}
+            {(profile as any).display_name || (profile as any).full_name || profile.username}
           </div>
           <div className="text-xs text-muted-foreground truncate">
             @{profile.username}
           </div>
-          {profile.location && (
+          {(profile as any).current_location && (
             <div className="text-xs text-muted-foreground truncate flex items-center gap-1 mt-0.5">
               <MapPin className="h-3 w-3" />
-              {profile.location}
+              {(profile as any).current_location}
             </div>
           )}
         </div>
