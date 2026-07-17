@@ -33,12 +33,7 @@ interface FootprintCounts {
   posts: number;
 }
 
-  connections: number;
-  events: number;
-  spaces: number;
-  contributions: number;
-  posts: number;
-}
+
 
 type FiveCKey = keyof FootprintCounts;
 
