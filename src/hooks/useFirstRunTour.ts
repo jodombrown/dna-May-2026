@@ -14,11 +14,25 @@
  * the action outside the tour surface.
  */
 
-import { useMemo, useCallback, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo, useCallback, useEffect, useRef } from 'react';
+import { useQuery, useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOnboardingState } from './useOnboardingState';
+
+// Ref-counted channel registry so the hook can be mounted from multiple
+// surfaces (feed tour panel + settings) without calling `.subscribe()` on
+// the same channel instance twice.
+interface TourChannelEntry {
+  connCh: RealtimeChannel;
+  evtCh: RealtimeChannel;
+  refs: number;
+  invalidate: () => void;
+  qcRef: { current: QueryClient };
+}
+const tourChannelRegistry = new Map<string, TourChannelEntry>();
+
 
 export type TourStepId =
   | 'sectors'
