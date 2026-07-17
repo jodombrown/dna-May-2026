@@ -165,35 +165,54 @@ export function useFirstRunTour() {
   // connections or event RSVPs change, so the panel updates without a
   // page refresh. The profile table already has its own realtime
   // subscription in useProfile, which drives satisfiesField steps.
+  const qcRef = useRef(qc);
+  qcRef.current = qc;
   useEffect(() => {
     if (!user?.id) return;
     const uid = user.id;
-    const invalidateSignals = () => {
-      qc.invalidateQueries({ queryKey: ['first-run-tour-signals', uid] });
-    };
-    const connCh = supabase
-      .channel(`first-run-tour:conn:${uid}`)
-      .on('postgres_changes', {
-        event: '*', schema: 'public', table: 'connections',
-        filter: `requester_id=eq.${uid}`,
-      }, invalidateSignals)
-      .on('postgres_changes', {
-        event: '*', schema: 'public', table: 'connections',
-        filter: `recipient_id=eq.${uid}`,
-      }, invalidateSignals)
-      .subscribe();
-    const evtCh = supabase
-      .channel(`first-run-tour:evt:${uid}`)
-      .on('postgres_changes', {
-        event: '*', schema: 'public', table: 'event_attendees',
-        filter: `user_id=eq.${uid}`,
-      }, invalidateSignals)
-      .subscribe();
+
+    let entry = tourChannelRegistry.get(uid);
+    if (!entry) {
+      const qcHolder = { current: qcRef.current };
+      const invalidate = () => {
+        qcHolder.current.invalidateQueries({ queryKey: ['first-run-tour-signals', uid] });
+      };
+      const connCh = supabase
+        .channel(`first-run-tour:conn:${uid}`)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'connections',
+          filter: `requester_id=eq.${uid}`,
+        }, invalidate)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'connections',
+          filter: `recipient_id=eq.${uid}`,
+        }, invalidate)
+        .subscribe();
+      const evtCh = supabase
+        .channel(`first-run-tour:evt:${uid}`)
+        .on('postgres_changes', {
+          event: '*', schema: 'public', table: 'event_attendees',
+          filter: `user_id=eq.${uid}`,
+        }, invalidate)
+        .subscribe();
+      entry = { connCh, evtCh, refs: 0, invalidate, qcRef: qcHolder };
+      tourChannelRegistry.set(uid, entry);
+    }
+    entry.qcRef.current = qcRef.current;
+    entry.refs += 1;
+
     return () => {
-      supabase.removeChannel(connCh);
-      supabase.removeChannel(evtCh);
+      const e = tourChannelRegistry.get(uid);
+      if (!e) return;
+      e.refs -= 1;
+      if (e.refs <= 0) {
+        supabase.removeChannel(e.connCh);
+        supabase.removeChannel(e.evtCh);
+        tourChannelRegistry.delete(uid);
+      }
     };
-  }, [user?.id, qc]);
+  }, [user?.id]);
+
 
   const completedFieldIds = useMemo(
     () => new Set(completed.map((c) => c.field)),
