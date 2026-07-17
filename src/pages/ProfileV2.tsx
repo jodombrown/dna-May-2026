@@ -43,6 +43,8 @@ import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandi
 import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
 import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
 import ProfileSectionLabel from '@/components/profile-v2/ProfileSectionLabel';
+import ProfileSectionNav from '@/components/profile-v2/ProfileSectionNav';
+
 
 // SEO component for public profiles
 import { PublicProfileSEO } from '@/components/public-profile';
