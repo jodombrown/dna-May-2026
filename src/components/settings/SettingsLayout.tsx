@@ -69,8 +69,20 @@ interface SettingsLayoutProps {
 
 export function SettingsLayout({ children, title, description }: SettingsLayoutProps) {
   const location = useLocation();
+  const inSheet = useIdentitySheetSafe();
 
-  return (
+  // Inside IdentitySheet, render bare content — the sheet owns chrome + title.
+  if (inSheet) {
+    return (
+      <div className="px-4 py-4">
+        {description ? (
+          <p className="mb-4 text-caption text-muted-foreground">{description}</p>
+        ) : null}
+        {children}
+      </div>
+    );
+  }
+
     <div className="min-h-screen bg-background">
       <UnifiedHeader />
 
