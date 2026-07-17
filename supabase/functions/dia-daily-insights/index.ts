@@ -4,10 +4,12 @@
 // public.dia_insights (start_date = today, is_active = true).
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { callModel, writeEvent, modelFor } from '../_shared/dia-core/index.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+
+const CAPABILITY = 'daily_insights' as const;
 
 const ALLOWED_CATEGORIES = [
   'fintech', 'energy', 'tech', 'agriculture', 'real-estate',
@@ -26,7 +28,14 @@ interface GeneratedInsight {
   region: string | null;
 }
 
-async function generateTopics(): Promise<GeneratedInsight[]> {
+interface TopicsResult {
+  topics: GeneratedInsight[];
+  provider: string;
+  model: string;
+  tokens: number;
+}
+
+async function generateTopics(): Promise<TopicsResult> {
   const today = new Date().toISOString().slice(0, 10);
   const system = `You curate 6 daily briefing topics for the DNA (Diaspora Network of Africa) platform.
 Each topic must be timely, non-partisan, and directly relevant to progress for the Global African Diaspora AND/OR the African continent.
@@ -45,27 +54,19 @@ Each item shape:
 }
 Return: { "insights": [ ...6 items... ] }`;
 
-  const resp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${LOVABLE_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
-      response_format: { type: 'json_object' },
-    }),
+  // Model (dia-core). responseFormat preserves the structured-output constraint.
+  const result = await callModel({
+    capability: CAPABILITY,
+    messages: [
+      { role: 'system', content: system },
+      { role: 'user', content: user },
+    ],
+    responseFormat: { type: 'json_object' },
   });
-  if (!resp.ok) throw new Error(`AI gateway ${resp.status}: ${await resp.text()}`);
-  const data = await resp.json();
-  const content = data.choices?.[0]?.message?.content ?? '{}';
+  const content = result.message?.content ?? '{}';
   const parsed = JSON.parse(content);
   const items = Array.isArray(parsed.insights) ? parsed.insights : [];
-  return items.slice(0, 6).map((i: GeneratedInsight) => ({
+  const topics = items.slice(0, 6).map((i: GeneratedInsight) => ({
     title: String(i.title || '').replace(/[—–]/g, '-').slice(0, 120),
     description: String(i.description || '').replace(/[—–]/g, '-').slice(0, 260),
     query_prompt: String(i.query_prompt || i.title || '').slice(0, 400),
@@ -74,6 +75,7 @@ Return: { "insights": [ ...6 items... ] }`;
       : 'tech',
     region: i.region && ALLOWED_REGIONS.includes(i.region) ? i.region : null,
   }));
+  return { topics, provider: result.provider, model: result.model, tokens: result.tokens };
 }
 
 Deno.serve(async (req) => {
@@ -95,7 +97,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const topics = await generateTopics();
+    const gen = await generateTopics();
+    const topics = gen.topics;
     if (topics.length === 0) throw new Error('no topics generated');
 
     // Retire prior rows so the sheet only shows today's set.
@@ -115,10 +118,34 @@ Deno.serve(async (req) => {
     const { error: insErr } = await admin.from('dia_insights').insert(rows);
     if (insErr) throw insErr;
 
+    // Audit (dia-core). One service-principal event per generated insight set —
+    // dia-daily-insights is global, not user-scoped.
+    await writeEvent(admin, {
+      userId: null,
+      principalType: 'service',
+      capability: CAPABILITY,
+      surface: 'dia-daily-insights',
+      provider: gen.provider,
+      model: gen.model,
+      success: true,
+      tokens: gen.tokens,
+      meta: { generated: rows.length },
+    });
+
     return new Response(JSON.stringify({ ok: true, generated: true, count: rows.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
+    await writeEvent(admin, {
+      userId: null,
+      principalType: 'service',
+      capability: CAPABILITY,
+      surface: 'dia-daily-insights',
+      model: modelFor(CAPABILITY),
+      success: false,
+      errorCode: 'generation_failed',
+      errorMessage: e instanceof Error ? e.message.slice(0, 300) : String(e).slice(0, 300),
+    });
     return new Response(
       JSON.stringify({ ok: false, error: e instanceof Error ? e.message : String(e) }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },

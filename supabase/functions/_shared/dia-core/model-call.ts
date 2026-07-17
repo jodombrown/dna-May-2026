@@ -14,6 +14,7 @@ export interface CallModelOpts {
   temperature?: number;
   maxTokens?: number;
   modelOverride?: string; // escape hatch; caller still holds no literal
+  responseFormat?: { type: string }; // e.g. { type: "json_object" }
 }
 
 export interface CallModelResult {
@@ -43,6 +44,7 @@ export async function callModel(opts: CallModelOpts): Promise<CallModelResult> {
     body.tools = opts.tools;
     body.tool_choice = opts.toolChoice ?? "auto";
   }
+  if (opts.responseFormat) body.response_format = opts.responseFormat;
 
   const resp = await fetch(GATEWAY_URL, {
     method: "POST",

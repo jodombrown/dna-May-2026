@@ -3,6 +3,7 @@
 // over time (Phase 4 telemetry loop).
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { modelFor } from "../_shared/dia-core/index.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,7 +41,7 @@ serve(async (req) => {
       surface: "dia_search",
       helpful,
       ref_id: String(query_hash),
-      model: "google/gemini-2.5-flash",
+      model: modelFor("reactive_query"),
       variant: variant ?? null,
     });
 
