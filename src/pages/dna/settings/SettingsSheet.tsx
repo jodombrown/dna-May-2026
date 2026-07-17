@@ -54,9 +54,12 @@ const PanelFallback = () => (
   </div>
 );
 
-const wrap = (node: React.ReactNode) => (
-  <Suspense fallback={<PanelFallback />}>{node}</Suspense>
+const wrap = (node: React.ReactNode, surface = 'This section') => (
+  <SheetErrorPanel surface={surface}>
+    <Suspense fallback={<PanelFallback />}>{node}</Suspense>
+  </SheetErrorPanel>
 );
+
 
 const SUBPAGES: Record<
   string,
