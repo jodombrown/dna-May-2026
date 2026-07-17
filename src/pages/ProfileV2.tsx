@@ -432,7 +432,8 @@ const ProfileV2: React.FC = () => {
               </div>
             </section>
 
-            <section>
+            <section id="expertise">
+
               <ProfileSectionLabel>Expertise &amp; interests</ProfileSectionLabel>
               <div className="space-y-4">
                 <ProfileV2Skills
