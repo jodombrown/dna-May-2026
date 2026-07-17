@@ -183,65 +183,19 @@ function AccountDrawerBody({
         />
       </SettingsGroup>
 
-      <SettingsGroup label="Account">
-        <SettingsRow
-          icon={UserCircle}
-          label="Profile"
-          description="Name, headline, avatar, bio"
-          subpage={{ id: 'profile', title: 'Profile', content: wrap(<ProfileEdit />) }}
-        />
-        <SettingsRow
-          icon={UserIcon}
-          label="Account"
-          description="Email, password, delete account"
-          subpage={{ id: 'account', title: 'Account', content: wrap(<AccountSettings />) }}
-        />
-        <SettingsRow
-          icon={Shield}
-          label="Privacy"
-          description="Who can see your profile"
-          subpage={{ id: 'privacy', title: 'Privacy', content: wrap(<PrivacySettings />) }}
-        />
-        <SettingsRow
-          icon={Bell}
-          label="Notifications"
-          description="Push, email, quiet hours"
-          subpage={{ id: 'notifications', title: 'Notifications', content: wrap(<NotificationSettings />) }}
-        />
-        <SettingsRow
-          icon={SettingsIcon}
-          label="Preferences"
-          description="Density, module visibility"
-          subpage={{ id: 'preferences', title: 'Preferences', content: wrap(<PreferencesSettings />) }}
-        />
-      </SettingsGroup>
-
-      <SettingsGroup label="Content & safety">
-        <SettingsRow
-          icon={Hash}
-          label="My hashtags"
-          subpage={{ id: 'hashtags', title: 'My hashtags', content: wrap(<MyHashtagsSettings />) }}
-        />
-        <SettingsRow
-          icon={Flag}
-          label="My reports"
-          subpage={{ id: 'reports', title: 'My reports', content: wrap(<MyReportsSettings />) }}
-        />
-        <SettingsRow
-          icon={UserX}
-          label="Blocked users"
-          subpage={{ id: 'blocked', title: 'Blocked users', content: wrap(<BlockedUsersSettings />) }}
-        />
-      </SettingsGroup>
-
-      <SettingsGroup label="About">
+      <SettingsGroup label="Guides">
         <SettingsRow icon={MateMasie} label="Take platform tour" onClick={handlers.onTour} />
         <SettingsRow icon={ClipboardCheck} label="Alpha test guide" onClick={handlers.onTestGuide} />
         <SettingsRow icon={HelpCircle} label="Help & feedback" onClick={handlers.onFeedback} />
-        <SettingsRow icon={Info} label="About DNA" onClick={() => go(ROUTES.about)} />
       </SettingsGroup>
 
       <SettingsGroup>
+        <SettingsRow
+          icon={SettingsIcon}
+          label="Settings"
+          description="Account, privacy, notifications, safety"
+          onClick={() => go(ROUTES.settings ?? '/dna/settings')}
+        />
         <SettingsRow
           variant="destructive"
           icon={LogOut}
@@ -252,6 +206,7 @@ function AccountDrawerBody({
     </>
   );
 }
+
 
 function ShareSubpage({ handlers }: { handlers: ActionHandlers }) {
   const url = handlers.publicUrl;
