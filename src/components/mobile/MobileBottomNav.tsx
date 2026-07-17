@@ -168,16 +168,6 @@ const MobileBottomNav: React.FC = () => {
               {isActive(item.path) && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-foreground/80 rounded-b-full" />
               )}
-              
-              {/* Notification badge for More menu */}
-              {item.type === 'menu' && unreadCount > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px]"
-                >
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </Badge>
-              )}
             </button>
           ))}
         </div>
