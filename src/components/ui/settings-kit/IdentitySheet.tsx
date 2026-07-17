@@ -167,7 +167,7 @@ export function IdentitySheet({
       <div
         className={cn(
           'pointer-events-auto absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-border bg-background shadow-xl',
-          'motion-safe:animate-slide-in-right',
+          'motion-safe:animate-in motion-safe:slide-in-from-right motion-safe:duration-300',
         )}
       >
         {body}
