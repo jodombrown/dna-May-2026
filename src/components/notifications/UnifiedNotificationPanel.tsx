@@ -36,11 +36,14 @@ import type { UnifiedNotification } from '@/services/unifiedNotificationService'
 interface UnifiedNotificationPanelProps {
   onClose?: () => void;
   variant?: 'dropdown' | 'fullscreen' | 'page';
+  /** Hide the panel's own header (used when hosted inside IdentitySheet which owns chrome). */
+  hideHeader?: boolean;
 }
 
 export function UnifiedNotificationPanel({
   onClose,
   variant = 'dropdown',
+  hideHeader = false,
 }: UnifiedNotificationPanelProps) {
   const navigate = useNavigate();
   const {
@@ -173,40 +176,53 @@ export function UnifiedNotificationPanel({
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <h3 className="font-semibold text-h3">Notifications</h3>
-          {unreadCount > 0 && (
-            <span className="text-micro bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground"
-                aria-label="Notification options"
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" sideOffset={4}>
-              {unreadCount > 0 && (
-                <DropdownMenuItem onClick={() => markAllAsRead()}>
-                  <CheckCheck className="h-4 w-4 mr-2" />
-                  Mark all as read
+      {!hideHeader && (
+        <div className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-h3">Notifications</h3>
+            {unreadCount > 0 && (
+              <span className="text-micro bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-muted-foreground"
+                  aria-label="Notification options"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" sideOffset={4}>
+                {unreadCount > 0 && (
+                  <DropdownMenuItem onClick={() => markAllAsRead()}>
+                    <CheckCheck className="h-4 w-4 mr-2" />
+                    Mark all as read
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleSettings}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Notification settings
                 </DropdownMenuItem>
-              )}
-              <DropdownMenuItem onClick={handleSettings}>
-                <Settings className="h-4 w-4 mr-2" />
-                Notification settings
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
+      )}
+      {hideHeader && unreadCount > 0 && (
+        <div className="flex items-center justify-end px-4 py-2 border-b border-border/40 flex-shrink-0">
+          <button
+            onClick={() => markAllAsRead()}
+            className="inline-flex items-center gap-1.5 text-caption text-muted-foreground hover:text-foreground"
+          >
+            <CheckCheck className="h-3.5 w-3.5" />
+            Mark all as read
+          </button>
+        </div>
+      )}
 
       {/* Filter lanes: All | Unread | DIA */}
       <div className="flex-shrink-0">
