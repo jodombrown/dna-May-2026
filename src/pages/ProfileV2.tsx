@@ -43,6 +43,8 @@ import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandi
 import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
 import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
 import ProfileSectionLabel from '@/components/profile-v2/ProfileSectionLabel';
+import ProfileSectionNav from '@/components/profile-v2/ProfileSectionNav';
+
 
 // SEO component for public profiles
 import { PublicProfileSEO } from '@/components/public-profile';
@@ -356,8 +358,10 @@ const ProfileV2: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            <section>
+            <ProfileSectionNav />
+            <section id="about">
               <ProfileSectionLabel>About</ProfileSectionLabel>
+
               <div className="space-y-4">
                 <ProfileV2About
                   profile={profile}
@@ -382,10 +386,15 @@ const ProfileV2: React.FC = () => {
                 userId={profile.id}
                 isOwner={permissions.is_owner}
                 username={profile.username}
+                counts={(bundle.activity as { counts?: {
+                  connections: number; events: number; spaces: number; contributions: number; posts: number;
+                } })?.counts}
               />
+
             </section>
 
-            <section>
+            <section id="activity">
+
               <ProfileSectionLabel>Activity</ProfileSectionLabel>
               <div className="space-y-4">
                 <ProfileRecentPosts userId={profile.id} username={profile.username} />
@@ -423,7 +432,8 @@ const ProfileV2: React.FC = () => {
               </div>
             </section>
 
-            <section>
+            <section id="expertise">
+
               <ProfileSectionLabel>Expertise &amp; interests</ProfileSectionLabel>
               <div className="space-y-4">
                 <ProfileV2Skills
