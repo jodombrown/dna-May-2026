@@ -382,7 +382,11 @@ const ProfileV2: React.FC = () => {
                 userId={profile.id}
                 isOwner={permissions.is_owner}
                 username={profile.username}
+                counts={(bundle.activity as { counts?: {
+                  connections: number; events: number; spaces: number; contributions: number; posts: number;
+                } })?.counts}
               />
+
             </section>
 
             <section>
