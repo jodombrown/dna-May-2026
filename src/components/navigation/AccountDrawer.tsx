@@ -119,7 +119,7 @@ const AccountRoot: React.FC<RootProps> = ({
     sheet.push({
       key: 'share',
       title: 'Share profile',
-      node: <ShareSubpage url={publicUrl} name={profile.display_name || profile.username || ''} />,
+      node: <ShareSubpage url={publicUrl} name={(profile as any).display_name || (profile as any).full_name || profile.username || ''} />,
     });
 
   const handleDownloadPDF = async () => {
