@@ -42,6 +42,13 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   const [isTestGuideOpen, setIsTestGuideOpen] = useState(false);
   const [isFeedbackDrawerOpen, setIsFeedbackDrawerOpen] = useState(false);
 
+  // Global open-feedback event: header button + legacy /dna/feedback redirect dispatch this.
+  useEffect(() => {
+    const handler = () => setIsFeedbackDrawerOpen(true);
+    window.addEventListener('dna:open-feedback', handler);
+    return () => window.removeEventListener('dna:open-feedback', handler);
+  }, []);
+
   // Phase 20A: silently re-register push subscription if permission already granted
   useAutoRegisterPush();
 
