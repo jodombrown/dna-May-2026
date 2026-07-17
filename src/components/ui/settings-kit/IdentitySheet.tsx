@@ -148,29 +148,30 @@ export function IdentitySheet({
     );
   }
 
+  // Desktop: non-modal side panel — no scroll-lock, no body padding shift.
+  // The underlying app stays fully interactive; only a soft dim marks the panel.
+  if (!open) return null;
+
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
-      <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay
-          className={cn(
-            'fixed inset-0 z-[1050] bg-foreground/40',
-            'data-[state=open]:animate-in data-[state=closed]:animate-out',
-            'data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
-          )}
-        />
-        <DialogPrimitive.Content
-          className={cn(
-            'fixed right-0 top-0 z-[1051] flex h-full w-full max-w-md flex-col border-l border-border bg-background shadow-xl outline-none',
-            'data-[state=open]:animate-in data-[state=closed]:animate-out',
-            'data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right',
-            'duration-300',
-          )}
-          aria-describedby={undefined}
-        >
-          <DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title>
-          {body}
-        </DialogPrimitive.Content>
-      </DialogPrimitive.Portal>
-    </DialogPrimitive.Root>
+    <div
+      className="pointer-events-none fixed inset-0 z-[1050]"
+      role="dialog"
+      aria-modal="false"
+      aria-label={title}
+    >
+      {/* Soft dim only over the far-left gutter; keeps feed interactive */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-foreground/10 motion-safe:animate-fade-in"
+        aria-hidden="true"
+      />
+      <div
+        className={cn(
+          'pointer-events-auto absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-border bg-background shadow-xl',
+          'motion-safe:animate-slide-in-right',
+        )}
+      >
+        {body}
+      </div>
+    </div>
   );
 }
