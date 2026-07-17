@@ -1984,6 +1984,36 @@ export type Database = {
           },
         ]
       }
+      dia_brief_deliveries: {
+        Row: {
+          channel: string
+          id: string
+          local_date: string
+          opened_at: string | null
+          sent_at: string
+          slot: string
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          id?: string
+          local_date: string
+          opened_at?: string | null
+          sent_at?: string
+          slot: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          id?: string
+          local_date?: string
+          opened_at?: string | null
+          sent_at?: string
+          slot?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       dia_brief_interactions: {
         Row: {
           card_id: string
@@ -2102,6 +2132,57 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      dia_events: {
+        Row: {
+          capability: string
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          latency_ms: number | null
+          meta: Json
+          model: string | null
+          principal_type: string
+          provider: string | null
+          success: boolean
+          surface: string | null
+          tokens: number | null
+          user_id: string | null
+        }
+        Insert: {
+          capability: string
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          latency_ms?: number | null
+          meta?: Json
+          model?: string | null
+          principal_type?: string
+          provider?: string | null
+          success?: boolean
+          surface?: string | null
+          tokens?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          capability?: string
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          latency_ms?: number | null
+          meta?: Json
+          model?: string | null
+          principal_type?: string
+          provider?: string | null
+          success?: boolean
+          surface?: string | null
+          tokens?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2230,7 +2311,13 @@ export type Database = {
       }
       dia_messaging_prefs: {
         Row: {
+          brief_afternoon_enabled: boolean
+          brief_email_enabled: boolean
+          brief_evening_enabled: boolean
+          brief_morning_enabled: boolean
+          brief_timezone: string
           created_at: string
+          daily_briefs_enabled: boolean
           email_digest: boolean
           smart_replies_enabled: boolean
           summaries_enabled: boolean
@@ -2238,7 +2325,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          brief_afternoon_enabled?: boolean
+          brief_email_enabled?: boolean
+          brief_evening_enabled?: boolean
+          brief_morning_enabled?: boolean
+          brief_timezone?: string
           created_at?: string
+          daily_briefs_enabled?: boolean
           email_digest?: boolean
           smart_replies_enabled?: boolean
           summaries_enabled?: boolean
@@ -2246,7 +2339,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          brief_afternoon_enabled?: boolean
+          brief_email_enabled?: boolean
+          brief_evening_enabled?: boolean
+          brief_morning_enabled?: boolean
+          brief_timezone?: string
           created_at?: string
+          daily_briefs_enabled?: boolean
           email_digest?: boolean
           smart_replies_enabled?: boolean
           summaries_enabled?: boolean
@@ -2302,13 +2401,13 @@ export type Database = {
           email_messages: boolean | null
           email_reactions: boolean | null
           email_stories: boolean | null
-          global_enabled: boolean | null
+          global_enabled: boolean
           id: string
           in_app_enabled: boolean | null
           notification_frequency: string | null
           nudge_categories: Json | null
-          push_categories: Json | null
-          push_enabled: boolean | null
+          push_categories: Json
+          push_enabled: boolean
           quiet_hours_enabled: boolean | null
           quiet_hours_end: string | null
           quiet_hours_start: string | null
@@ -2327,13 +2426,13 @@ export type Database = {
           email_messages?: boolean | null
           email_reactions?: boolean | null
           email_stories?: boolean | null
-          global_enabled?: boolean | null
+          global_enabled?: boolean
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
           nudge_categories?: Json | null
-          push_categories?: Json | null
-          push_enabled?: boolean | null
+          push_categories?: Json
+          push_enabled?: boolean
           quiet_hours_enabled?: boolean | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
@@ -2352,13 +2451,13 @@ export type Database = {
           email_messages?: boolean | null
           email_reactions?: boolean | null
           email_stories?: boolean | null
-          global_enabled?: boolean | null
+          global_enabled?: boolean
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
           nudge_categories?: Json | null
-          push_categories?: Json | null
-          push_enabled?: boolean | null
+          push_categories?: Json
+          push_enabled?: boolean
           quiet_hours_enabled?: boolean | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
@@ -2590,6 +2689,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dia_tier_limits: {
+        Row: {
+          capability: string
+          monthly_limit: number | null
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          capability: string
+          monthly_limit?: number | null
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          capability?: string
+          monthly_limit?: number | null
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       dia_user_usage: {
         Row: {
@@ -5981,39 +6101,51 @@ export type Database = {
       }
       notifications: {
         Row: {
+          category: string | null
+          channel_sent: Json
           created_at: string
+          group_key: string | null
           id: string
-          is_read: boolean
           link_url: string | null
           message: string
           payload: Json | null
+          priority: string
           read: boolean
+          read_at: string | null
           title: string
           type: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          category?: string | null
+          channel_sent?: Json
           created_at?: string
+          group_key?: string | null
           id?: string
-          is_read?: boolean
           link_url?: string | null
           message: string
           payload?: Json | null
+          priority?: string
           read?: boolean
+          read_at?: string | null
           title: string
           type: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          category?: string | null
+          channel_sent?: Json
           created_at?: string
+          group_key?: string | null
           id?: string
-          is_read?: boolean
           link_url?: string | null
           message?: string
           payload?: Json | null
+          priority?: string
           read?: boolean
+          read_at?: string | null
           title?: string
           type?: string
           updated_at?: string
@@ -11156,63 +11288,6 @@ export type Database = {
           },
         ]
       }
-      user_recommendations: {
-        Row: {
-          created_at: string | null
-          id: string
-          match_reasons: string[] | null
-          match_score: number | null
-          recommendation_type: string
-          status: string | null
-          target_description: string | null
-          target_id: string
-          target_title: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          match_reasons?: string[] | null
-          match_score?: number | null
-          recommendation_type: string
-          status?: string | null
-          target_description?: string | null
-          target_id: string
-          target_title?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          match_reasons?: string[] | null
-          match_score?: number | null
-          recommendation_type?: string
-          status?: string | null
-          target_description?: string | null
-          target_id?: string
-          target_title?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_recommendations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_recommendations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_reports: {
         Row: {
           conversation_id: string | null
@@ -12254,6 +12329,15 @@ export type Database = {
         Args: { p_original_post_id: string; p_user_id: string }
         Returns: undefined
       }
+      dia_check_limit: {
+        Args: { p_capability: string; p_user_id: string }
+        Returns: Json
+      }
+      dia_record_usage: {
+        Args: { p_capability: string; p_tokens?: number; p_user_id: string }
+        Returns: undefined
+      }
+      dia_resolve_tier: { Args: { p_user_id: string }; Returns: string }
       discover_members: {
         Args: {
           p_country_of_origin?: string
@@ -12304,7 +12388,6 @@ export type Database = {
         Returns: undefined
       }
       enqueue_reminders_for_all_users: { Args: never; Returns: number }
-      ensure_connection: { Args: { u1: string; u2: string }; Returns: string }
       ensure_manifest: { Args: never; Returns: string }
       ensure_profile_for_user: {
         Args: { p_email?: string; p_user: string }
@@ -13002,10 +13085,13 @@ export type Database = {
           email_messages: boolean | null
           email_reactions: boolean | null
           email_stories: boolean | null
+          global_enabled: boolean
           id: string
           in_app_enabled: boolean | null
           notification_frequency: string | null
           nudge_categories: Json | null
+          push_categories: Json
+          push_enabled: boolean
           quiet_hours_enabled: boolean | null
           quiet_hours_end: string | null
           quiet_hours_start: string | null
@@ -13878,6 +13964,7 @@ export type Database = {
           is_read: boolean
           message: string
           notification_id: string
+          read: boolean
           read_at: string
           title: string
           type: string
@@ -14096,6 +14183,14 @@ export type Database = {
       mark_notifications_read: {
         Args: { p_notification_ids: string[]; p_user_id: string }
         Returns: undefined
+      }
+      notif_should_push: {
+        Args: { p_category: string; p_type: string; p_user: string }
+        Returns: boolean
+      }
+      notification_category_for_type: {
+        Args: { p_type: string }
+        Returns: string
       }
       notify_window_decay: {
         Args: { p_lead_days?: number }
