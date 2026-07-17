@@ -145,7 +145,7 @@ const AccountRoot: React.FC<RootProps> = ({
         <Avatar className="h-12 w-12">
           <AvatarImage src={profile.avatar_url || ''} />
           <AvatarFallback>
-            {profile.display_name?.[0] || profile.username?.[0] || 'U'}
+            {(profile as any).display_name?.[0] || (profile as any).full_name?.[0] || profile.username?.[0] || 'U'}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
