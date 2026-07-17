@@ -1,7 +1,5 @@
-export {
-  IdentitySheet,
-  SettingsGroup,
-  SettingsRow,
-  useIdentitySheet,
-} from './IdentitySheet';
-export type { IdentitySheetProps, SettingsRowProps } from './IdentitySheet';
+export { IdentitySheet, useIdentitySheet, useIdentitySheetSafe } from './IdentitySheet';
+export type { IdentitySheetProps } from './IdentitySheet';
+export { SettingsGroup } from './SettingsGroup';
+export { SettingsRow } from './SettingsRow';
+export type { SettingsRowProps } from './SettingsRow';

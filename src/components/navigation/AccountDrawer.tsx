@@ -1,379 +1,368 @@
-import React, { Suspense, lazy, useState } from 'react';
+/**
+ * AccountDrawer (v2) — Claude-inspired identity sheet.
+ *
+ * Replaces the legacy Sheet with the same IdentitySheet used by /dna/settings,
+ * so the account entry point and the settings hub share one visual language
+ * and one in-sheet navigation stack. Every row pushes a subpage inside the
+ * sheet or triggers a lightweight action (share / tour / test guide).
+ */
+import React, { Suspense, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  User,
-  Edit,
-  Share2,
+  User as UserIcon,
+  UserCircle,
+  Shield,
+  Bell,
+  Settings as SettingsIcon,
+  Hash,
+  Flag,
+  UserX,
   FileText,
   Bookmark,
   Users,
   Calendar,
-  Settings,
+  Share2,
   HelpCircle,
   LogOut,
+  Info,
+  ClipboardCheck,
   Copy,
-  MessageSquare,
   Linkedin,
   Twitter,
+  MessageSquare,
   Download,
   Loader2,
-  ClipboardCheck,
-  Shield,
-  Bell,
-  Hash,
-  UserX,
-  Flag,
-  MapPin,
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MateMasie } from '@/components/icons/adinkra';
 import {
   IdentitySheet,
   SettingsGroup,
   SettingsRow,
   useIdentitySheet,
 } from '@/components/ui/settings-kit';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
-import { toast } from 'sonner';
-import { profileRoute } from '@/lib/profileRoute';
-import { generateProfilePDF } from '@/lib/generateProfilePDF';
 import { useTourProgress } from '@/hooks/useTourProgress';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
 import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
 import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
-import AfricaSpinner from '@/components/ui/AfricaSpinner';
+import { toast } from 'sonner';
+import { profileRoute } from '@/lib/profileRoute';
+import { generateProfilePDF } from '@/lib/generateProfilePDF';
+import { ROUTES } from '@/config/routes';
+import { ChevronRight } from 'lucide-react';
 
-const AccountSettings = lazy(() => import('@/pages/dna/settings/AccountSettings'));
-const PrivacySettings = lazy(() => import('@/pages/dna/settings/PrivacySettings'));
-const NotificationSettings = lazy(() => import('@/pages/dna/settings/NotificationSettings'));
-const PreferencesSettings = lazy(() => import('@/pages/dna/settings/PreferencesSettings'));
-const BlockedUsersSettings = lazy(() => import('@/pages/dna/settings/BlockedUsersSettings'));
-const MyReportsSettings = lazy(() => import('@/pages/dna/settings/MyReportsSettings'));
-const MyHashtagsSettings = lazy(() => import('@/pages/dna/settings/MyHashtagsSettings'));
-const ProfileEdit = lazy(() => import('@/pages/ProfileEdit'));
+// Lazy subpages — the same panels the /dna/settings sheet uses.
+const AccountSettings = React.lazy(() => import('@/pages/dna/settings/AccountSettings'));
+const PrivacySettings = React.lazy(() => import('@/pages/dna/settings/PrivacySettings'));
+const NotificationSettings = React.lazy(() => import('@/pages/dna/settings/NotificationSettings'));
+const PreferencesSettings = React.lazy(() => import('@/pages/dna/settings/PreferencesSettings'));
+const MyHashtagsSettings = React.lazy(() => import('@/pages/dna/settings/MyHashtagsSettings'));
+const MyReportsSettings = React.lazy(() => import('@/pages/dna/settings/MyReportsSettings'));
+const BlockedUsersSettings = React.lazy(() => import('@/pages/dna/settings/BlockedUsersSettings'));
+const ProfileEdit = React.lazy(() => import('@/pages/ProfileEdit'));
 
-const SubpageFallback = () => (
-  <div className="flex items-center justify-center py-12">
-    <AfricaSpinner size="md" />
+const PanelFallback = () => (
+  <div className="flex items-center justify-center py-16 text-muted-foreground">
+    <Loader2 className="h-5 w-5 animate-spin" />
   </div>
 );
+const wrap = (node: React.ReactNode) => <Suspense fallback={<PanelFallback />}>{node}</Suspense>;
 
-const Subpage: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="p-4">
-    <Suspense fallback={<SubpageFallback />}>{children}</Suspense>
-  </div>
-);
-
-/* ---------------------------- Root list ---------------------------- */
-
-interface RootProps {
-  onCloseSheet: () => void;
-  onOpenTour: () => void;
-  onOpenTestGuide: () => void;
-  onOpenFeedback: () => void;
+interface ActionHandlers {
+  onShare: () => void;
+  onTour: () => void;
+  onTestGuide: () => void;
+  onFeedback: () => void;
+  onSignOut: () => void;
+  publicUrl: string;
+  displayName: string;
+  isDownloading: boolean;
+  onDownloadPDF: () => void;
 }
 
-const AccountRoot: React.FC<RootProps> = ({
-  onCloseSheet,
-  onOpenTour,
-  onOpenTestGuide,
-  onOpenFeedback,
-}) => {
-  const { user, signOut } = useAuth();
+function AccountDrawerBody({
+  handlers,
+}: {
+  handlers: ActionHandlers;
+}) {
+  const { push, close } = useIdentitySheet();
+  const { user } = useAuth();
   const { data: profile } = useProfile();
   const navigate = useNavigate();
-  const sheet = useIdentitySheet();
-  const [isDownloading, setIsDownloading] = useState(false);
 
-  if (!user || !profile) return null;
+  const initials = useMemo(() => {
+    const name = profile?.full_name || profile?.username || user?.email || '';
+    return name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase())
+      .join('');
+  }, [profile?.full_name, profile?.username, user?.email]);
 
-  const publicUrl = profile.username
-    ? `${window.location.origin}/u/${profile.username}`
-    : '';
+  const openProfileEdit = () =>
+    push({ id: 'profile', title: 'Profile', node: wrap(<ProfileEdit />) });
 
-  const navExternal = (path: string) => {
+  const go = (path: string) => {
+    close();
     navigate(path);
-    onCloseSheet();
   };
 
-  const pushProfileEdit = () =>
-    sheet.push({
-      key: 'profile-edit',
-      title: 'Edit profile',
-      node: (
-        <Subpage>
-          <ProfileEdit />
-        </Subpage>
-      ),
-    });
-
-  const pushSettings = () =>
-    sheet.push({
-      key: 'settings',
-      title: 'Settings',
-      node: <SettingsList />,
-    });
-
-  const pushShare = () =>
-    sheet.push({
-      key: 'share',
+  const openShareSheet = () =>
+    push({
+      id: 'share',
       title: 'Share profile',
-      node: <ShareSubpage url={publicUrl} name={(profile as any).display_name || (profile as any).full_name || profile.username || ''} />,
+      node: <ShareSubpage handlers={handlers} />,
     });
-
-  const handleDownloadPDF = async () => {
-    setIsDownloading(true);
-    try {
-      await generateProfilePDF(profile as any, user?.email);
-      toast.success('Profile PDF downloaded');
-    } catch {
-      toast.error('Failed to generate PDF');
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   return (
-    <div className="pb-8">
+    <>
       {/* Identity card */}
       <button
         type="button"
-        onClick={pushProfileEdit}
-        className="w-full flex items-center gap-3 px-4 py-4 hover:bg-muted/40 transition-colors text-left"
+        onClick={openProfileEdit}
+        className="mb-4 flex w-full items-center gap-3 rounded-xl border border-border/40 bg-card p-3 text-left transition-colors hover:bg-muted/50 min-h-touch"
       >
         <Avatar className="h-12 w-12">
-          <AvatarImage src={profile.avatar_url || ''} />
-          <AvatarFallback>
-            {(profile as any).display_name?.[0] || (profile as any).full_name?.[0] || profile.username?.[0] || 'U'}
-          </AvatarFallback>
+          <AvatarImage src={profile?.avatar_url || undefined} alt="" />
+          <AvatarFallback>{initials || 'DNA'}</AvatarFallback>
         </Avatar>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold truncate">
-            {(profile as any).display_name || (profile as any).full_name || profile.username}
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-body font-normal text-foreground">
+            {profile?.full_name || profile?.username || 'Your profile'}
           </div>
-          <div className="text-xs text-muted-foreground truncate">
-            @{profile.username}
+          <div className="truncate text-caption text-muted-foreground">
+            {user?.email || ''}
           </div>
-          {(profile as any).current_location && (
-            <div className="text-xs text-muted-foreground truncate flex items-center gap-1 mt-0.5">
-              <MapPin className="h-3 w-3" />
-              {(profile as any).current_location}
-            </div>
-          )}
         </div>
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
       </button>
 
-      <SettingsGroup label="Profile">
+      <SettingsGroup label="You">
         <SettingsRow
-          icon={User}
+          icon={UserIcon}
           label="View public profile"
-          onClick={() => profile.username && navExternal(profileRoute(profile))}
-        />
-        <SettingsRow icon={Edit} label="Edit profile" onClick={pushProfileEdit} />
-        <SettingsRow icon={Share2} label="Share profile" onClick={pushShare} />
-      </SettingsGroup>
-
-      <SettingsGroup label="My activity">
-        <SettingsRow
-          icon={FileText}
-          label="My posts & updates"
-          onClick={() => navExternal('/dna/feed?tab=my_posts')}
+          onClick={() => profile && go(profileRoute(profile))}
         />
         <SettingsRow
-          icon={FileText}
-          label="My stories"
-          onClick={() => navExternal('/dna/convey?tab=my_stories')}
-        />
-        <SettingsRow
-          icon={Bookmark}
-          label="Saved items"
-          onClick={() => navExternal('/dna/feed?tab=bookmarks')}
+          icon={Share2}
+          label="Share profile"
+          onClick={openShareSheet}
         />
       </SettingsGroup>
 
       <SettingsGroup label="My work">
         <SettingsRow
+          icon={FileText}
+          label="My posts & updates"
+          onClick={() => go('/dna/feed?tab=my_posts')}
+        />
+        <SettingsRow
+          icon={FileText}
+          label="My stories"
+          onClick={() => go('/dna/convey?tab=my_stories')}
+        />
+        <SettingsRow
+          icon={Bookmark}
+          label="Saved items"
+          onClick={() => go('/dna/feed?tab=bookmarks')}
+        />
+        <SettingsRow
           icon={Users}
           label="My spaces"
-          onClick={() => navExternal('/dna/collaborate')}
+          onClick={() => go('/dna/collaborate')}
         />
         <SettingsRow
           icon={Calendar}
           label="My events"
-          onClick={() => navExternal('/dna/convene/events')}
+          onClick={() => go('/dna/convene/events')}
         />
       </SettingsGroup>
 
       <SettingsGroup label="Account">
-        <SettingsRow icon={Settings} label="Settings & preferences" onClick={pushSettings} />
         <SettingsRow
-          icon={Download}
-          label={isDownloading ? 'Generating profile PDF…' : 'Download profile PDF'}
-          onClick={handleDownloadPDF}
-          right={isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : undefined}
-          chevron={false}
+          icon={UserCircle}
+          label="Profile"
+          description="Name, headline, avatar, bio"
+          subpage={{ id: 'profile', title: 'Profile', content: wrap(<ProfileEdit />) }}
         />
-        <SettingsRow icon={ClipboardCheck} label="Alpha test guide" onClick={onOpenTestGuide} chevron={false} />
-        <SettingsRow icon={HelpCircle} label="Take platform tour" onClick={onOpenTour} chevron={false} />
-        <SettingsRow icon={MessageSquare} label="Send feedback" onClick={onOpenFeedback} chevron={false} />
-      </SettingsGroup>
-
-      <SettingsGroup>
         <SettingsRow
-          icon={LogOut}
-          label="Sign out"
-          destructive
-          chevron={false}
-          onClick={async () => {
-            await signOut();
-            onCloseSheet();
-            navigate('/');
-          }}
-        />
-      </SettingsGroup>
-    </div>
-  );
-};
-
-/* ---------------------------- Settings sub-list ---------------------------- */
-
-const SettingsList: React.FC = () => {
-  const sheet = useIdentitySheet();
-
-  const open = (key: string, title: string, node: React.ReactNode) =>
-    sheet.push({ key, title, node: <Subpage>{node}</Subpage> });
-
-  return (
-    <div className="pb-8">
-      <SettingsGroup label="Preferences">
-        <SettingsRow
-          icon={User}
+          icon={UserIcon}
           label="Account"
-          hint="Email, password, sessions"
-          onClick={() => open('acct', 'Account', <AccountSettings />)}
+          description="Email, password, delete account"
+          subpage={{ id: 'account', title: 'Account', content: wrap(<AccountSettings />) }}
         />
         <SettingsRow
           icon={Shield}
           label="Privacy"
-          hint="Who can see your profile"
-          onClick={() => open('priv', 'Privacy', <PrivacySettings />)}
+          description="Who can see your profile"
+          subpage={{ id: 'privacy', title: 'Privacy', content: wrap(<PrivacySettings />) }}
         />
         <SettingsRow
           icon={Bell}
           label="Notifications"
-          hint="Email and in-app alerts"
-          onClick={() => open('notif', 'Notifications', <NotificationSettings />)}
+          description="Push, email, quiet hours"
+          subpage={{ id: 'notifications', title: 'Notifications', content: wrap(<NotificationSettings />) }}
         />
         <SettingsRow
-          icon={Settings}
-          label="Display"
-          hint="Modules and layout"
-          onClick={() => open('prefs', 'Display', <PreferencesSettings />)}
+          icon={SettingsIcon}
+          label="Preferences"
+          description="Density, module visibility"
+          subpage={{ id: 'preferences', title: 'Preferences', content: wrap(<PreferencesSettings />) }}
         />
       </SettingsGroup>
 
-      <SettingsGroup label="Community">
+      <SettingsGroup label="Content & safety">
         <SettingsRow
           icon={Hash}
           label="My hashtags"
-          onClick={() => open('tags', 'My hashtags', <MyHashtagsSettings />)}
-        />
-        <SettingsRow
-          icon={UserX}
-          label="Blocked users"
-          onClick={() => open('block', 'Blocked users', <BlockedUsersSettings />)}
+          subpage={{ id: 'hashtags', title: 'My hashtags', content: wrap(<MyHashtagsSettings />) }}
         />
         <SettingsRow
           icon={Flag}
           label="My reports"
-          onClick={() => open('reports', 'My reports', <MyReportsSettings />)}
+          subpage={{ id: 'reports', title: 'My reports', content: wrap(<MyReportsSettings />) }}
+        />
+        <SettingsRow
+          icon={UserX}
+          label="Blocked users"
+          subpage={{ id: 'blocked', title: 'Blocked users', content: wrap(<BlockedUsersSettings />) }}
         />
       </SettingsGroup>
-    </div>
+
+      <SettingsGroup label="About">
+        <SettingsRow icon={MateMasie} label="Take platform tour" onClick={handlers.onTour} />
+        <SettingsRow icon={ClipboardCheck} label="Alpha test guide" onClick={handlers.onTestGuide} />
+        <SettingsRow icon={HelpCircle} label="Help & feedback" onClick={handlers.onFeedback} />
+        <SettingsRow icon={Info} label="About DNA" onClick={() => go(ROUTES.about)} />
+      </SettingsGroup>
+
+      <SettingsGroup>
+        <SettingsRow
+          variant="destructive"
+          icon={LogOut}
+          label="Sign out"
+          onClick={handlers.onSignOut}
+        />
+      </SettingsGroup>
+    </>
   );
-};
+}
 
-/* ---------------------------- Share sub-page ---------------------------- */
+function ShareSubpage({ handlers }: { handlers: ActionHandlers }) {
+  const url = handlers.publicUrl;
+  const text = `Check out ${handlers.displayName}'s profile on DNA - Diaspora Network of Africa`;
 
-const ShareSubpage: React.FC<{ url: string; name: string }> = ({ url, name }) => {
   const copy = () => {
+    if (!url) return;
     navigator.clipboard.writeText(url);
     toast.success('Profile link copied');
   };
-  const text = `Check out ${name}'s profile on DNA - Diaspora Network of Africa`;
+  const wa = () => window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank');
+  const li = () => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+  const tw = () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+  const nativeShare = async () => {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: `${handlers.displayName} on DNA`, text, url });
+      } catch {
+        // user cancelled
+      }
+    } else {
+      copy();
+    }
+  };
+
   return (
-    <div className="pb-8">
-      <SettingsGroup label="Share via">
-        <SettingsRow icon={Copy} label="Copy link" onClick={copy} chevron={false} />
+    <div className="p-4">
+      <SettingsGroup label="Share">
+        <SettingsRow icon={Copy} label="Copy link" onClick={copy} />
+        <SettingsRow icon={MessageSquare} label="Share via WhatsApp" onClick={wa} />
+        <SettingsRow icon={Linkedin} label="Share via LinkedIn" onClick={li} />
+        <SettingsRow icon={Twitter} label="Share via X" onClick={tw} />
+        {typeof navigator !== 'undefined' && (navigator as Navigator).share ? (
+          <SettingsRow icon={Share2} label="Share via..." onClick={nativeShare} />
+        ) : null}
+      </SettingsGroup>
+      <SettingsGroup label="Export">
         <SettingsRow
-          icon={MessageSquare}
-          label="WhatsApp"
-          chevron={false}
-          onClick={() =>
-            window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank')
-          }
-        />
-        <SettingsRow
-          icon={Linkedin}
-          label="LinkedIn"
-          chevron={false}
-          onClick={() =>
-            window.open(
-              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-              '_blank',
-            )
-          }
-        />
-        <SettingsRow
-          icon={Twitter}
-          label="X (Twitter)"
-          chevron={false}
-          onClick={() =>
-            window.open(
-              `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-              '_blank',
-            )
-          }
+          icon={handlers.isDownloading ? Loader2 : Download}
+          label={handlers.isDownloading ? 'Generating PDF...' : 'Download PDF'}
+          onClick={handlers.onDownloadPDF}
         />
       </SettingsGroup>
-      <div className="px-4 pt-4 text-xs text-muted-foreground break-all">{url}</div>
     </div>
   );
-};
-
-/* ---------------------------- Wrapper ---------------------------- */
+}
 
 export const AccountDrawer: React.FC = () => {
   const { isOpen, close } = useAccountDrawer();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { data: profile } = useProfile();
+  const navigate = useNavigate();
+  const [isDownloading, setIsDownloading] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [showTestGuide, setShowTestGuide] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const { isCompleted: tourCompleted, resetTour } = useTourProgress();
 
+  const publicUrl =
+    typeof window !== 'undefined' && profile?.username
+      ? `${window.location.origin}/u/${profile.username}`
+      : '';
+  const displayName = profile?.full_name || profile?.username || 'DNA member';
+
+  const handlers: ActionHandlers = {
+    publicUrl,
+    displayName,
+    isDownloading,
+    onShare: () => {},
+    onTour: () => {
+      if (tourCompleted) resetTour();
+      setShowTour(true);
+      close();
+    },
+    onTestGuide: () => {
+      setShowTestGuide(true);
+      close();
+    },
+    onFeedback: () => {
+      setShowFeedback(true);
+      close();
+    },
+    onSignOut: async () => {
+      await signOut();
+      close();
+      navigate('/');
+    },
+    onDownloadPDF: async () => {
+      if (!profile) return;
+      setIsDownloading(true);
+      try {
+        await generateProfilePDF(profile as any, user?.email);
+        toast.success('Profile PDF downloaded');
+      } catch {
+        toast.error('Failed to generate PDF');
+      } finally {
+        setIsDownloading(false);
+      }
+    },
+  };
+
   if (!user || !profile) return null;
 
   return (
     <>
-      <IdentitySheet open={isOpen} onOpenChange={(o) => !o && close()} rootTitle="Account">
-        <AccountRoot
-          onCloseSheet={close}
-          onOpenTour={() => {
-            if (tourCompleted) resetTour();
-            setShowTour(true);
-            close();
-          }}
-          onOpenTestGuide={() => {
-            close();
-            setShowTestGuide(true);
-          }}
-          onOpenFeedback={() => {
-            close();
-            setShowFeedback(true);
-          }}
-        />
+      <IdentitySheet
+        open={isOpen}
+        onOpenChange={(o) => !o && close()}
+        title="Account"
+      >
+        <AccountDrawerBody handlers={handlers} />
       </IdentitySheet>
 
       <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
@@ -389,5 +378,3 @@ export const AccountDrawer: React.FC = () => {
     </>
   );
 };
-
-export default AccountDrawer;

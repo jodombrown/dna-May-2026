@@ -214,15 +214,28 @@ const ProfileV2Hero: React.FC<ProfileV2HeroProps> = ({
         {/* User Info Section */}
         <div className="pt-3 sm:pt-4 pb-4 sm:pb-6">
           <div className="flex flex-col gap-2 sm:gap-3">
-            {/* Name & Username */}
+            {/* Name & Username — editorial */}
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground leading-tight tracking-tight">
                   {profile.full_name}
                 </h1>
                 <ProfilePresenceDot lastSeenAt={(profile as unknown as { last_seen_at?: string }).last_seen_at} size="md" />
+                {isVerified(profile.verification_status) && (
+                  <span
+                    className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wide font-medium px-2 py-0.5 rounded-full border"
+                    style={{
+                      color: 'hsl(25 55% 40%)',
+                      borderColor: 'hsl(25 55% 40% / 0.35)',
+                      background: 'hsl(25 55% 40% / 0.06)',
+                    }}
+                  >
+                    <Check className="w-3 h-3" />
+                    {profile.verification_status === 'fully_verified' ? 'Verified' : 'Soft verified'}
+                  </span>
+                )}
               </div>
-              <p className="text-muted-foreground text-sm">@{profile.username}</p>
+              <p className="text-muted-foreground text-sm mt-0.5">@{profile.username}</p>
             </div>
 
             {/* Headline */}
