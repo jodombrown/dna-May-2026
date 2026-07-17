@@ -1921,6 +1921,7 @@ export type Database = {
           id: string
           is_fallback: boolean
           position: number
+          promoted_at: string | null
           reasoning: string
           signal_strength: number
           signal_type: string
@@ -1940,6 +1941,7 @@ export type Database = {
           id?: string
           is_fallback?: boolean
           position: number
+          promoted_at?: string | null
           reasoning: string
           signal_strength: number
           signal_type: string
@@ -1959,6 +1961,7 @@ export type Database = {
           id?: string
           is_fallback?: boolean
           position?: number
+          promoted_at?: string | null
           reasoning?: string
           signal_strength?: number
           signal_type?: string
@@ -12333,6 +12336,7 @@ export type Database = {
         Args: { p_capability: string; p_user_id: string }
         Returns: Json
       }
+      dia_promote_grounded_to_notifications: { Args: never; Returns: number }
       dia_record_usage: {
         Args: { p_capability: string; p_tokens?: number; p_user_id: string }
         Returns: undefined
