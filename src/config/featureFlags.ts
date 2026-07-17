@@ -49,11 +49,3 @@ export const MESSAGING_ENABLED = false;
  */
 export const WAITLIST_MODE = true;
 
-/**
- * Settings Sheet v2 (Claude-inspired identity sheet at /dna/settings).
- *
- * When true: /dna/settings renders SettingsSheet (grouped-list identity sheet).
- * When false: falls back to the legacy Navigate → /dna/settings/account redirect.
- * Reversible in one line. No schema changes are gated by this flag.
- */
-export const SETTINGS_SHEET_V2 = true;
