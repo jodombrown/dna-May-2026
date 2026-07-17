@@ -1,94 +1,130 @@
-## Part 2b — Account drawer replaced by IdentitySheet + Part 4 backend consolidation + legacy cleanup
+## The problem
 
-### 1. Rebuild the Account drawer in the new Settings sheet language
+The Account drawer (opened from the avatar) and the Settings sheet (`/dna/settings`) currently duplicate the entire "Account / Notifications & display / Content & safety / About" stack. Users hit the same rows in two places, and there is no single home for "the stuff about me." At the same time the public profile still pays a per-section RPC/COUNT tax and has no in-page navigation, so scrolling is heavy.
 
-Screenshot 1 (the old `AccountDrawer` with big "View full profile" pill, Edit / Share buttons, then MY ACTIVITY / COLLABORATE / ACCOUNT lists) becomes the same visual language as Screenshot 2 (the new `SettingsSheet`).
+This plan is one turn of work in three parts, all shipped together.
 
-New file: `src/components/navigation/AccountDrawerV2.tsx`.
+---
 
-Structure inside a shared `IdentitySheet` titled **Account**:
+## Part A — Collapse Account drawer + Settings into one IA
 
-```
-[avatar] Jaûne Odombrown            >     (tap → pushes Profile edit subpage)
-         @jaunelamarro
-         United States
+One drawer, one sheet, zero duplicated rows. The drawer opened from the avatar becomes the **You** entry point (identity + my work + share/sign-out + a single "Settings" row). `/dna/settings` becomes the **Settings** entry point (account / privacy / notifications / preferences / safety / about). No row exists in both places.
 
-MY WORK
-  • My posts & updates    >
-  • My stories            >
-  • My spaces             >
-  • My events             >
-  • Saved items           >
+**New drawer (avatar → sheet), top-to-bottom:**
 
-ACCOUNT
-  • Settings & preferences  >   (pushes the full SettingsSheet body inside)
-  • View public profile     >   (navigates to /dna/:username)
-  • Share my profile        >   (opens ProfileShareDropdown)
-  • Take platform tour      >
-  • Alpha test guide        >
-  • Help & feedback         >
-
-Sign out
-```
-
-Every row is a `SettingsRow` with a chevron. "Settings & preferences" pushes the same subpages the settings sheet uses — no separate stacked sheet, just one identity sheet. This gives the user a single continuous back-stack from `Account → Settings & preferences → Profile → …` without ever leaving the sheet.
-
-Old `AccountDrawer.tsx` (the 382-line legacy drawer with pill, Edit/Share buttons, dropdown menu) is deleted. `AccountDrawerContext` stays and now drives `AccountDrawerV2`.
-
-### 2. Stop the feed from being disturbed when the sheet opens
-
-Cause: Radix Dialog (used by the desktop path of `IdentitySheet`) locks `<body>` scroll and adds `padding-right` to compensate for the scrollbar. That's the visible "the feed gets removed / shifts" behavior in Screenshot 3.
-
-Fix in `IdentitySheet.tsx`:
-- Desktop uses a right-anchored panel that does NOT scroll-lock the underlying app. Replace Radix Dialog with a plain portal + fixed panel + focus-trap. Overlay stays as a click-to-close scrim but does not touch `<body>` styles.
-- Result: opening/closing the sheet leaves the feed's scroll position and horizontal layout untouched. The `DnaRightRail` / feed grid does not reflow.
-
-Mobile behavior (Vaul bottom sheet) is unchanged.
-
-### 3. Kill all legacy settings routes and the feature flag
-
-- Delete `src/config/featureFlags.ts` `SETTINGS_SHEET_V2` and every reference. `SettingsSheet` at `/dna/settings` is the standard, unconditionally.
-- Delete `src/pages/dna/settings/SettingsRouteShell.tsx`, `src/components/settings/SettingsLayout.tsx`, `MobileSettingsView`, `MobileSettingsMainContent`.
-- Convert the six standalone settings routes to redirects that keep email deep-links working:
-
-```
-/dna/settings/account         → /dna/settings?section=account
-/dna/settings/privacy         → /dna/settings?section=privacy
-/dna/settings/blocked         → /dna/settings?section=blocked
-/dna/settings/reports         → /dna/settings?section=reports
-/dna/settings/notifications   → /dna/settings?section=notifications
-/dna/settings/preferences     → /dna/settings?section=preferences
-/dna/settings/hashtags        → /dna/settings?section=hashtags
+```text
+[Identity card]  → pushes Profile editor in-sheet
+─────────────────────────────────
+You
+  View public profile
+  Share profile
+─────────────────────────────────
+My work
+  My posts & updates
+  My stories
+  Saved items
+  My spaces
+  My events
+  My contributions        ← currently uncategorized, add
+  My applications         ← currently uncategorized, add
+─────────────────────────────────
+Guides
+  Platform tour
+  Alpha test guide
+  Help & feedback
+─────────────────────────────────
+  Settings                → navigates to /dna/settings (sheet)
+  Sign out
 ```
 
-The `SettingsSheet` already handles `?section=` on mount, so every legacy URL lands the user on the right subpage inside the new sheet.
+**New Settings sheet (`/dna/settings`):**
 
-### 4. Part 4 — Backend consolidation (additive migration)
+```text
+[Identity card]  → pushes Profile editor in-sheet
+─────────────────────────────────
+Account
+  Profile        (name, headline, avatar, bio, heritage)
+  Login & security   (renamed from "Account": email, password, sessions, delete)
+  Privacy & visibility  (merged: who sees what + public-visibility toggles)
+─────────────────────────────────
+Notifications & display
+  Notifications
+  Preferences
+  Appearance         ← new stub row for density/theme (already inside Preferences today, promote label)
+─────────────────────────────────
+Content & safety
+  My hashtags
+  My reports
+  Blocked users
+  Muted authors      ← currently only reachable from post menu, expose here
+─────────────────────────────────
+Connected accounts     ← new: Mapbox token screen we already built lives here
+  Mapbox
+─────────────────────────────────
+About
+  About DNA
+  Terms of service
+  Privacy policy
+  App version
+```
 
-One migration, no schema break, no CASCADE:
+Rules to eliminate future drift:
+- Rows live in exactly one of the two surfaces. The drawer never shows Account/Privacy/Notifications/Preferences/Safety rows.
+- Both surfaces reuse the same lazy subpage registry (single `SETTINGS_SUBPAGES` map re-exported from `settings-kit`) so a subpage cannot exist in one place and not the other.
+- Legacy `?section=` deep-links preserved; add aliases for `muted`, `mapbox`, `visibility`.
 
-1. `profiles.profile_settings jsonb not null default '{}'` — sheet-scoped prefs (appearance, haptics, digest cadence, mapbox flag). No new table.
-2. Materialized view `public.profile_footprint_counts` (columns: `profile_id`, `connections`, `events_hosted`, `events_attended`, `active_spaces`, `contributions_given`, `stories`). Unique index on `profile_id`. `GRANT SELECT` to `anon, authenticated`, `GRANT ALL` to `service_role`.
-3. `pg_cron` refresh every 15 min via `REFRESH MATERIALIZED VIEW CONCURRENTLY`.
-4. Extend the existing `rpc_get_profile_bundle` to include a `footprint_counts` key from the MV in its JSON payload. No new RPC.
+---
 
-Front-end wiring:
-- New hook `src/hooks/useSettingsPrefs.ts`: reads/writes `profiles.profile_settings` with a 300 ms debounced optimistic update through TanStack Query. No realtime.
-- `useProfileV2` picks up `footprint_counts` automatically once the RPC returns it. `DiasporaFootprint` reads from `bundle.footprint_counts` instead of its per-count queries — one call replaces six.
+## Part B — Consolidated profile data flow + MV footprint counts
 
-Everything is additive; existing components keep working until they're switched over.
+Today `DiasporaFootprint` fires five `count: exact` queries against `connections / event_attendees / space_members / contribution_offers / posts` on every profile view. `useProfileV2` already calls `rpc_get_profile_bundle`; we fold the counts into it.
 
-### 5. Out of scope for this turn
+1. **Materialized view** `public.mv_profile_footprint_counts(user_id, connections, events, spaces, contributions, posts, refreshed_at)` — one row per user, refreshed via `pg_cron` every 15 minutes (concurrent refresh, unique index on `user_id`).
+2. **RPC** `rpc_get_profile_bundle_v2(p_username, p_viewer_id)` = existing bundle + `activity.counts` populated from the MV in one round-trip. `get_public_profile` gets the same counts appended for anon viewers.
+3. **`useProfileV2`** switched to v2 RPC; `DiasporaFootprint` reads `bundle.activity.counts` instead of running its own queries (falls back to 0 if MV row missing so a brand-new user still renders).
+4. **`useProfile`** (own profile) already single-RPC via `get_own_profile`; no changes there, just make sure the completion score and footprint use the same bundle so the two hooks stay consistent across pages (hero on ProfileV2 + drawer identity card + right rail).
 
-- Notifications center, My reports, Blocked users list conversions (Part 5, one PR each).
-- Composer secondary screens (Part 5).
-- Public profile hero further polish beyond what Part 3 already shipped.
+Net effect: profile load drops from 1 bundle + 5 counts to 1 bundle.
 
-### Acceptance
+---
 
-- Tapping the avatar in the header opens the new IdentitySheet-styled Account view. Screenshot 1's legacy pill/dropdown layout is gone.
-- Opening/closing the sheet does not shift, scroll, or blank the feed grid. The right rail stays put. Content behind is dimmed but layout is untouched.
-- Every legacy `/dna/settings/{section}` URL still lands the user in the correct subpage of the new sheet.
-- `SETTINGS_SHEET_V2` flag and `SettingsRouteShell` are gone from the tree.
-- One RPC call powers the public profile page (verifiable in the Network tab).
-- Migration passes; new column has default; MV is populated on refresh.
+## Part C — Sticky section navigator + editorial rhythm on the public profile
+
+1. Add `<ProfileSectionNav />` — a sticky sub-header that appears under the hero once the hero scrolls out. Three anchors: **About**, **Activity**, **Expertise**. Uses `IntersectionObserver` to highlight the active section, `scrollIntoView({ block: 'start' })` on click, respects `prefers-reduced-motion`. Hidden on mobile (mobile keeps linear scroll; the nav appears on `md:` and up).
+2. Regroup `ProfileV2.tsx` sections under three anchor IDs (`#about`, `#activity`, `#expertise`) and apply `ProfileSectionLabel` uniformly at the top of each — same copper-accent letter-spaced label already used for "Five C's footprint" so hero → footer reads as one editorial rhythm.
+3. Space rhythm: `Stack gap="xl"` between anchor sections, `Stack gap="lg"` inside them, no bespoke margins.
+
+---
+
+## Technical details
+
+**Files touched**
+- `src/components/navigation/AccountDrawer.tsx` — trim to You / My work / Guides / Settings link / Sign out; delete Account/Privacy/Notifications/Preferences/Safety/About groups.
+- `src/pages/dna/settings/SettingsSheet.tsx` — rename rows, add Appearance / Muted authors / Connected accounts / App version, merge visibility toggles into Privacy subpage.
+- `src/components/ui/settings-kit/index.ts` — export shared `SETTINGS_SUBPAGES` registry.
+- `src/pages/dna/settings/PrivacySettings.tsx` — merge public-visibility toggles inline.
+- `src/pages/dna/settings/MutedAuthorsSettings.tsx` — new subpage (list + unmute), reuses `muted_authors` table.
+- `src/pages/dna/settings/MapboxSettings.tsx` — already exists, re-slotted under Connected accounts.
+- `src/hooks/useProfileV2.ts` — swap RPC to `rpc_get_profile_bundle_v2`.
+- `src/components/profile-v2/DiasporaFootprint.tsx` — read `bundle.activity.counts`, drop the 5 queries.
+- `src/pages/ProfileV2.tsx` — wrap sections in `<section id="…">`, insert `<ProfileSectionNav />`.
+- `src/components/profile-v2/ProfileSectionNav.tsx` — new.
+
+**Migration (single file)**
+- `CREATE MATERIALIZED VIEW public.mv_profile_footprint_counts …` with `CREATE UNIQUE INDEX` on `user_id` (required for concurrent refresh).
+- `GRANT SELECT ON public.mv_profile_footprint_counts TO authenticated, anon, service_role`.
+- `CREATE OR REPLACE FUNCTION public.rpc_get_profile_bundle_v2(...)` returning existing bundle jsonb with `activity.counts` merged. `SECURITY DEFINER`, `SET search_path = public`. Revoke public, grant execute to `authenticated, anon`.
+- `pg_cron` job every 15 min: `REFRESH MATERIALIZED VIEW CONCURRENTLY public.mv_profile_footprint_counts`.
+- Extend `public.get_public_profile` to left-join the MV and include counts.
+
+**Reversibility**
+- Drawer/settings changes are UI-only; a single revert restores the old rows.
+- v2 RPC ships alongside v1; `useProfileV2` can flip back by name if needed.
+- MV can be dropped without touching bundle v1.
+
+---
+
+## Out of scope this turn
+- Actually promoting the "Appearance" subpage to a full theme picker (row exists, opens Preferences for now).
+- Rewriting `ProfileEdit` into an in-sheet stepper (kept as the current single form pushed as a subpage).
+- Moving `My applications` / `My contributions` list pages themselves — we're only adding drawer entries that navigate to them.
