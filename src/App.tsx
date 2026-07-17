@@ -769,11 +769,10 @@ function App() {
               } />
 
               {/* ========== FEEDBACK HUB ========== */}
-              <Route path="/dna/feedback" element={
-                <OnboardingGuard>
-                  <DnaFeedback />
-                </OnboardingGuard>
-              } />
+              {/* Legacy full-page feedback removed — the hub now lives inside the
+                  right-side FeedbackDrawer. Hitting this URL redirects to the feed
+                  and pops the drawer open via a global event. */}
+              <Route path="/dna/feedback" element={<FeedbackRedirect />} />
 
               <Route path="/app/profile/edit" element={
                 <OnboardingGuard>
