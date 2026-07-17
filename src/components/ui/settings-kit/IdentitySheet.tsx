@@ -68,6 +68,16 @@ export function IdentitySheet({
     if (!open) setStack([]);
   }, [open]);
 
+  // Esc closes on desktop (mobile Vaul handles it via swipe).
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onOpenChange(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onOpenChange]);
+
   const ctx = React.useMemo<IdentitySheetContextValue>(
     () => ({
       push: (frame) => setStack((s) => [...s, frame]),
