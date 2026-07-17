@@ -11,7 +11,6 @@
 import * as React from 'react';
 import { ChevronLeft, X } from 'lucide-react';
 import { Drawer as DrawerPrimitive } from 'vaul';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { useIsMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 
