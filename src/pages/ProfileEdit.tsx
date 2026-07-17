@@ -35,6 +35,7 @@ const ProfileEdit = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const inSheet = !!useIdentitySheetSafe();
   const [showTour, setShowTour] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   
