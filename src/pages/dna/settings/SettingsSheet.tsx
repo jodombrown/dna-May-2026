@@ -113,7 +113,8 @@ function SettingsSheetBody({
   // Honor ?section= by pushing the matching subpage once on mount.
   useEffect(() => {
     if (initialSection && SUBPAGES[initialSection]) {
-      push(SUBPAGES[initialSection]);
+      const sp = SUBPAGES[initialSection];
+      push({ id: sp.id, title: sp.title, node: sp.content });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
