@@ -438,20 +438,22 @@ const ProfileEdit = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
-      <div className="container max-w-4xl mx-auto px-4 py-8">
+    <div className={inSheet ? '' : 'min-h-screen bg-background'}>
+      {!inSheet && <UnifiedHeader />}
+
+      <div className={inSheet ? 'px-4 py-4' : 'container max-w-4xl mx-auto px-4 py-8'}>
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/dna/feed')}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Feed
-            </Button>
+            {!inSheet && (
+              <Button
+                variant="ghost"
+                onClick={() => navigate('/dna/feed')}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Feed
+              </Button>
+            )}
             
             {/* Mobile Save Button - top right */}
             <Button
