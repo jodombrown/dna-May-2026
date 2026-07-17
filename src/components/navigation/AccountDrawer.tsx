@@ -194,7 +194,7 @@ function AccountDrawerBody({
           icon={SettingsIcon}
           label="Settings"
           description="Account, privacy, notifications, safety"
-          onClick={() => go(ROUTES.settings ?? '/dna/settings')}
+          onClick={() => go(ROUTES.settings.base)}
         />
         <SettingsRow
           variant="destructive"
