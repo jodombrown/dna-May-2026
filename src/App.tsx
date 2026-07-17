@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useParams } from "react-router-dom";
-import { MESSAGING_ENABLED } from "@/config/featureFlags";
+import { MESSAGING_ENABLED, SETTINGS_SHEET_V2 } from "@/config/featureFlags";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
