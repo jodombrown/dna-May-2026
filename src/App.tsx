@@ -174,6 +174,7 @@ const NotificationSettings = lazy(() => import("./pages/dna/settings/Notificatio
 const PreferencesSettings = lazy(() => import("./pages/dna/settings/PreferencesSettings"));
 const MyHashtagsSettings = lazy(() => import("./pages/dna/settings/MyHashtagsSettings"));
 const SettingsRouteShell = lazy(() => import("./pages/dna/settings/SettingsRouteShell"));
+const SettingsSheet = lazy(() => import("./pages/dna/settings/SettingsSheet"));
 const DiaPreferences = lazy(() => import("./pages/DiaPreferences"));
 
 const DiaAdminPage = lazy(() => import("./pages/admin/DiaAdminPage"));
@@ -412,7 +413,7 @@ function App() {
               {/* Settings Hub - multiple paths for different sections */}
               <Route path="/dna/settings" element={
                 <OnboardingGuard>
-                  <Navigate to="/dna/settings/account" replace />
+                  {SETTINGS_SHEET_V2 ? <SettingsSheet /> : <Navigate to="/dna/settings/account" replace />}
                 </OnboardingGuard>
               } />
               <Route path="/dna/settings/account" element={
