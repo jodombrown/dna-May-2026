@@ -141,7 +141,7 @@ export function IdentitySheet({
         <DrawerPrimitive.Portal>
           <DrawerPrimitive.Overlay className="fixed inset-0 z-[1050] bg-foreground/50" />
           <DrawerPrimitive.Content
-            className="fixed inset-x-0 bottom-0 z-[1051] flex h-[92vh] flex-col rounded-t-2xl border-t border-border bg-background outline-none"
+            className="fixed inset-x-0 bottom-0 z-[1051] flex h-sheet flex-col rounded-t-2xl border-t border-border bg-background outline-none"
             aria-describedby={undefined}
           >
             <DrawerPrimitive.Title className="sr-only">{title}</DrawerPrimitive.Title>

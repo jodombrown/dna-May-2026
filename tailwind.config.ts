@@ -56,6 +56,10 @@ export default {
 			meta: ['0.8125rem', { lineHeight: '1.45', fontWeight: '400' }],     // 13px - captions
 			micro: ['0.6875rem', { lineHeight: '1.4', fontWeight: '600', letterSpacing: '0.05em' }], // 11px eyebrows
 		},
+			height: {
+				// Bottom-sheet height: leaves a strip of the underlying surface visible.
+				sheet: '92vh',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
