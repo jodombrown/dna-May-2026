@@ -147,6 +147,10 @@ export default function AgentIntegrations() {
         <h3 className="font-semibold text-foreground">Available tools</h3>
         <ul className="space-y-2 text-sm">
           <li>
+            <code className="text-xs px-1.5 py-0.5 rounded bg-muted">search_profiles</code>
+            <span className="text-muted-foreground ml-2">Search public member profiles.</span>
+          </li>
+          <li>
             <code className="text-xs px-1.5 py-0.5 rounded bg-muted">get_profile</code>
             <span className="text-muted-foreground ml-2">Fetch a single profile by username.</span>
           </li>
