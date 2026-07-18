@@ -64,7 +64,7 @@ serve(async (req) => {
     console.log('Search intent analyzed:', intent);
 
     // Perform enhanced search based on AI understanding
-    const results = await performEnhancedSearch(intent, userId);
+    const results = await performEnhancedSearch(intent, userClient, userId);
     
     return new Response(JSON.stringify({
       intent,
