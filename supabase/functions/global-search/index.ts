@@ -97,7 +97,7 @@ serve(async (req) => {
   }
 });
 
-async function performDynamicSearch(supabase: any, query: string, searchType: string): Promise<GlobalSearchResult[]> {
+async function performDynamicSearch(supabase: any, userClient: any, query: string, searchType: string): Promise<GlobalSearchResult[]> {
   const results: GlobalSearchResult[] = [];
   const searchTerm = `%${query.toLowerCase()}%`;
   
