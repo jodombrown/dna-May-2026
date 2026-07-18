@@ -14538,6 +14538,32 @@ export type Database = {
         Args: { p_conversation_id: string }
         Returns: undefined
       }
+      list_public_events: {
+        Args: { p_limit?: number; p_query?: string }
+        Returns: {
+          cover_image_url: string
+          date_confirmed: boolean
+          description: string
+          end_time: string
+          event_type: string
+          format: string
+          going_count: number
+          id: string
+          location_city: string
+          location_country: string
+          location_name: string
+          location_state: string
+          organizer_name: string
+          organizer_username: string
+          short_description: string
+          slug: string
+          start_time: string
+          subtitle: string
+          time_confirmed: boolean
+          timezone: string
+          title: string
+        }[]
+      }
       list_sponsor_logo_audit_log: {
         Args: {
           _action?: string
