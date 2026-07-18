@@ -129,6 +129,8 @@ async function performDynamicSearch(supabase: any, userClient: any, query: strin
       .select('id, title, description, location, date_time, type')
       .or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location.ilike.${searchTerm}`)
       .gte('date_time', new Date().toISOString())
+      .eq('status', 'published')
+      .in('visibility', ['public', 'community'])
       .limit(5);
 
     if (events) {
