@@ -62,28 +62,13 @@ describe("DNA MCP server (deployed)", () => {
     // Warm-start: functions cold-start on first hit.
   });
 
-  it("lists all four tools", async () => {
+  it("lists all three tools", async () => {
     const r = await rpc<McpListToolsResult>("tools/list");
     expect(r.result).toBeDefined();
     const names = (r.result?.tools ?? []).map((t) => t.name).sort();
     expect(names).toEqual(
-      ["get_profile", "list_communities", "list_upcoming_events", "search_profiles"].sort(),
+      ["get_profile", "list_communities", "list_upcoming_events"].sort(),
     );
-  }, 30_000);
-
-  it("search_profiles returns a results array", async () => {
-    const res = await callTool("search_profiles", { query: "a", limit: 3 });
-    expect(res.isError).toBeFalsy();
-    expect(res.structuredContent).toBeDefined();
-    expect(Array.isArray((res.structuredContent as { results: unknown[] }).results)).toBe(true);
-  }, 30_000);
-
-  it("search_profiles rejects empty query with typed error", async () => {
-    const res = await callTool("search_profiles", { query: "" });
-    expect(res.isError).toBe(true);
-    // Either SDK-level zod error or wrapHandler invalid_input — both are acceptable typed failures.
-    const errText = (res.content?.[0]?.text ?? "") + JSON.stringify(res.structuredContent ?? {});
-    expect(errText).toMatch(/invalid_input|Input validation|too_small|Too small/i);
   }, 30_000);
 
   it("get_profile returns typed not_found for unknown username", async () => {
