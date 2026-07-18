@@ -50,6 +50,11 @@ serve(async (req) => {
       });
     }
 
+    // User-scoped client so RLS applies for member-visibility queries (community_posts, events)
+    const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
     const { query, userId } = await req.json();
 
     console.log(`AI Search request: ${query} for user: ${userRes.user.id}`);
