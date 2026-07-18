@@ -178,7 +178,7 @@ async function analyzeSearchIntent(query: string): Promise<SearchIntent> {
   }
 }
 
-async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
+async function performEnhancedSearch(intent: SearchIntent, userClient: ReturnType<typeof createClient>, userId?: string) {
   const results: any = {
     profiles: [],
     communities: [],
