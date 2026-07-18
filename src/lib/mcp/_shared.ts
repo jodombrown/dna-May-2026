@@ -83,8 +83,9 @@ async function recordEvent(evt: TelemetryEvent): Promise<void> {
       },
       body: JSON.stringify(evt),
     });
-  } catch {
-    // Swallow — telemetry is best-effort.
+  } catch (err) {
+    // Best-effort telemetry must not throw, but a failure is logged, never silently discarded.
+    console.warn("mcp: telemetry write to mcp_tool_events failed", err);
   }
 }
 

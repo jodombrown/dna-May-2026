@@ -30,15 +30,10 @@ export default defineTool({
   inputSchema: InputSchema.shape,
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: wrapHandler("list_upcoming_events", InputSchema, async ({ query, limit }) => {
-    const nowIso = new Date().toISOString();
     const n = limit ?? 10;
-    let path =
-      `events?select=id,title,description,start_time,end_time,time_confirmed,location_name,location_city,location_country,event_type,slug` +
-      `&start_time=gte.${nowIso}&order=start_time.asc&limit=${n}`;
-    if (query) {
-      const q = encodeURIComponent(query.replace(/[*(),]/g, ""));
-      path += `&or=(title.ilike.*${q}*,description.ilike.*${q}*)`;
-    }
+    // D089: read through the SECURITY DEFINER projection, never the events table directly.
+    let path = `rpc/list_public_events?p_limit=${n}`;
+    if (query) path += `&p_query=${encodeURIComponent(query)}`;
     const rows = (await supabaseRest({ path })) as Array<Record<string, unknown>>;
     const results: EventResult[] = rows.map((r) => ({
       id: r.id as string,
