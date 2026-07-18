@@ -163,20 +163,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const getInitialSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        
+
         if (error) {
           setIsInitialized(true);
           setLoading(false);
           return;
         }
 
+        // Validate the stored JWT against Auth server. A stale token from a
+        // prior signing-key rotation or storageKey change comes back as
+        // "bad_jwt / missing sub claim" and poisons every downstream RPC.
+        // Clear it so the app falls back to the signed-out state instead of
+        // rendering a blank screen behind 401s.
+        if (session) {
+          const { error: userError } = await supabase.auth.getUser();
+          if (userError) {
+            await supabase.auth.signOut();
+            setSession(null);
+            setUser(null);
+            setProfile(null);
+            setIsInitialized(true);
+            setLoading(false);
+            return;
+          }
+        }
+
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           await fetchProfile(session.user.id);
         }
-        
+
         setIsInitialized(true);
         setLoading(false);
       } catch {
@@ -186,6 +204,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     getInitialSession();
+
 
     return () => subscription.unsubscribe();
   }, []);
