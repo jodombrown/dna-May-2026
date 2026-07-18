@@ -307,7 +307,7 @@ async function performEnhancedSearch(intent: SearchIntent, userClient: ReturnTyp
       `title.ilike.%${term}%,content.ilike.%${term}%`
     ).join(',');
 
-    const { data: posts } = await supabase
+    const { data: posts } = await userClient
       .from('community_posts')
       .select('id, title, content, created_at, post_type, author_id, community_id')
       .or(postFilter)
