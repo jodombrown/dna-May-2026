@@ -82,7 +82,7 @@ export const DemoInterconnection = forwardRef<HTMLElement, DemoInterconnectionPr
               transition={{ duration: 0.2, delay: 0.2 } as const}
             >
               DNA's magic is in the connections between the Five C's. Each action in one dimension 
-              creates value in others. This is what makes DNA an operating system, not just an app.
+              creates value in others. This is what makes DNA mobilization infrastructure, not just an app.
             </motion.p>
           </div>
 

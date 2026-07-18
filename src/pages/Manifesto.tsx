@@ -86,7 +86,7 @@ const Manifesto = () => {
       {/* Section VII */}
       <ManifestoSection number="VII">
         <ManifestoLine bold>This is why we built DNA.</ManifestoLine>
-        <ManifestoLine delay={0.1}>Not an app. Not a platform. An operating system for collective power.</ManifestoLine>
+        <ManifestoLine delay={0.1}>Not an app. Not a directory. Infrastructure for collective power.</ManifestoLine>
         <ManifestoLine delay={0.2}>
           A place to <ManifestoLink to="/connect" variant="five-c">CONNECT</ManifestoLink>. To find your people across borders and generations.
         </ManifestoLine>

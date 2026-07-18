@@ -99,7 +99,7 @@ export const DemoOpening = forwardRef<HTMLElement, DemoOpeningProps>(
             animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.7, delay: 0.6 } as const}
           >
-            The Operating System for the Global African Diaspora
+            The Mobilization Infrastructure for the Global African Diaspora
           </motion.p>
         </div>
 

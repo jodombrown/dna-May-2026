@@ -48,7 +48,7 @@ export const ONBOARDING_STEPS: OnboardingStepConfig[] = [
   {
     step: OnboardingStep.WELCOME,
     title: 'Welcome to DNA',
-    subtitle: 'The operating system for the Global African Diaspora',
+    subtitle: 'The mobilization infrastructure for the Global African Diaspora\'s return',
     isRequired: true,
     estimatedSeconds: 30,
   },

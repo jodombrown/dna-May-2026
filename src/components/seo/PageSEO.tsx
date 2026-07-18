@@ -123,7 +123,7 @@ export function getOrganizationSchema() {
     alternateName: 'DNA',
     url: config.APP_URL,
     logo: `${config.APP_URL}/logo.png`,
-    description: 'The operating system for mobilizing the Global African Diaspora toward Africa\'s economic transformation.',
+    description: 'The mobilization infrastructure for the Global African Diaspora\'s return.',
     foundingDate: '2024',
     founder: {
       '@type': 'Person',

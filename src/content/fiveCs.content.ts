@@ -64,7 +64,7 @@ export const FIVE_CS: FiveCEntry[] = [
     adinkra: 'nkonsonkonson',
     colorToken: 'hsl(var(--dna-copper))',
     overview:
-      'Convene is DNA\'s event operating system. It matches Luma and Eventbrite for hosting, ticketing, and check-in, but it is purpose-built for diaspora gatherings - cultural moments, professional summits, investor briefings, and local meetups across every time zone the diaspora lives in.',
+      'Convene is DNA\'s event platform. It matches Luma and Eventbrite for hosting, ticketing, and check-in, but it is purpose-built for diaspora gatherings - cultural moments, professional summits, investor briefings, and local meetups across every time zone the diaspora lives in.',
     whatYouCanDo: [
       'Host free or paid events, online, in-person, or hybrid',
       'Sell tickets with built-in Stripe checkout and on-site check-in',

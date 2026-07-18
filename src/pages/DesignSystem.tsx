@@ -124,7 +124,7 @@ export default function DesignSystem() {
               </div>
               <div>
                 <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Tagline</span>
-                <p className="font-heritage text-lg font-semibold text-primary italic">The Operating System for the Global African Diaspora</p>
+                <p className="font-heritage text-lg font-semibold text-primary italic">The Mobilization Infrastructure for the Global African Diaspora</p>
               </div>
               <div>
                 <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-widest">Mission</span>
@@ -265,7 +265,7 @@ export default function DesignSystem() {
             <div>
               <span className="text-[11px] font-ui text-muted-foreground uppercase tracking-wider">Body Large — Inter 16/17px</span>
               <p className="font-ui text-base md:text-[17px] leading-relaxed text-foreground">
-                DNA is the operating system for mobilizing the Global African Diaspora toward Africa's economic transformation.
+                DNA is the mobilization infrastructure for the Global African Diaspora's return.
               </p>
             </div>
             <div>
