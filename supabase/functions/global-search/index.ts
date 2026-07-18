@@ -46,13 +46,20 @@ serve(async (req) => {
       });
     }
 
+    // User-scoped client so RLS applies for community_posts / events visibility
+    const userClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+
     const { query, searchType = 'web' } = await req.json();
 
     console.log(`Global search request: ${query}, type: ${searchType}`);
 
     // Perform hybrid search: database + real-time web search
     const [databaseResults, webResults] = await Promise.all([
-      performDynamicSearch(supabase, query, searchType),
+      performDynamicSearch(supabase, userClient, query, searchType),
       performWebSearch(query, searchType)
     ]);
     
