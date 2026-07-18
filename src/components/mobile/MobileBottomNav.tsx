@@ -148,7 +148,7 @@ const MobileBottomNav: React.FC = () => {
   return (
     <>
       {/* Fixed bottom navigation bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-50">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-50">
         <div className="flex justify-around items-center h-16 px-2 pb-safe">
           {navItems.map((item) => (
             <button
@@ -167,16 +167,6 @@ const MobileBottomNav: React.FC = () => {
               {/* Active indicator */}
               {isActive(item.path) && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-foreground/80 rounded-b-full" />
-              )}
-              
-              {/* Notification badge for More menu */}
-              {item.type === 'menu' && unreadCount > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center p-0 text-[10px]"
-                >
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </Badge>
               )}
             </button>
           ))}
