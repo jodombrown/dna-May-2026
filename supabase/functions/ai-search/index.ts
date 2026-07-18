@@ -50,6 +50,11 @@ serve(async (req) => {
       });
     }
 
+    // User-scoped client so RLS applies for member-visibility queries (community_posts, events)
+    const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
     const { query, userId } = await req.json();
 
     console.log(`AI Search request: ${query} for user: ${userRes.user.id}`);
@@ -59,7 +64,7 @@ serve(async (req) => {
     console.log('Search intent analyzed:', intent);
 
     // Perform enhanced search based on AI understanding
-    const results = await performEnhancedSearch(intent, userId);
+    const results = await performEnhancedSearch(intent, userClient, userId);
     
     return new Response(JSON.stringify({
       intent,
@@ -173,7 +178,7 @@ async function analyzeSearchIntent(query: string): Promise<SearchIntent> {
   }
 }
 
-async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
+async function performEnhancedSearch(intent: SearchIntent, userClient: ReturnType<typeof createClient>, userId?: string) {
   const results: any = {
     profiles: [],
     communities: [],
@@ -256,6 +261,8 @@ async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
     const eventQuery = supabase
       .from('events')
       .select('id, title, description, location, date_time, image_url, created_at, type')
+      .eq('status', 'published')
+      .in('visibility', ['public', 'community'])
       .limit(10);
 
     const eventFilter = allSearchTerms.map(term => 
@@ -300,7 +307,7 @@ async function performEnhancedSearch(intent: SearchIntent, userId?: string) {
       `title.ilike.%${term}%,content.ilike.%${term}%`
     ).join(',');
 
-    const { data: posts } = await supabase
+    const { data: posts } = await userClient
       .from('community_posts')
       .select('id, title, content, created_at, post_type, author_id, community_id')
       .or(postFilter)

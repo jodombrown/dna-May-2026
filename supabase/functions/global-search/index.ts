@@ -46,13 +46,20 @@ serve(async (req) => {
       });
     }
 
+    // User-scoped client so RLS applies for community_posts / events visibility
+    const userClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: `Bearer ${token}` } } }
+    );
+
     const { query, searchType = 'web' } = await req.json();
 
     console.log(`Global search request: ${query}, type: ${searchType}`);
 
     // Perform hybrid search: database + real-time web search
     const [databaseResults, webResults] = await Promise.all([
-      performDynamicSearch(supabase, query, searchType),
+      performDynamicSearch(supabase, userClient, query, searchType),
       performWebSearch(query, searchType)
     ]);
     
@@ -90,7 +97,7 @@ serve(async (req) => {
   }
 });
 
-async function performDynamicSearch(supabase: any, query: string, searchType: string): Promise<GlobalSearchResult[]> {
+async function performDynamicSearch(supabase: any, userClient: any, query: string, searchType: string): Promise<GlobalSearchResult[]> {
   const results: GlobalSearchResult[] = [];
   const searchTerm = `%${query.toLowerCase()}%`;
   
@@ -122,6 +129,8 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
       .select('id, title, description, location, date_time, type')
       .or(`title.ilike.${searchTerm},description.ilike.${searchTerm},location.ilike.${searchTerm}`)
       .gte('date_time', new Date().toISOString())
+      .eq('status', 'published')
+      .in('visibility', ['public', 'community'])
       .limit(5);
 
     if (events) {
@@ -180,7 +189,7 @@ async function performDynamicSearch(supabase: any, query: string, searchType: st
     }
 
     // Search Posts/News
-    const { data: posts } = await supabase
+    const { data: posts } = await userClient
       .from('community_posts')
       .select('id, title, content, created_at, community_id')
       .or(`title.ilike.${searchTerm},content.ilike.${searchTerm}`)
