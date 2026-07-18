@@ -261,6 +261,8 @@ async function performEnhancedSearch(intent: SearchIntent, userClient: ReturnTyp
     const eventQuery = supabase
       .from('events')
       .select('id, title, description, location, date_time, image_url, created_at, type')
+      .eq('status', 'published')
+      .in('visibility', ['public', 'community'])
       .limit(10);
 
     const eventFilter = allSearchTerms.map(term => 
