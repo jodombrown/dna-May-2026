@@ -178,13 +178,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (session) {
           const { error: userError } = await supabase.auth.getUser();
           if (userError) {
-            await supabase.auth.signOut();
-            setSession(null);
-            setUser(null);
-            setProfile(null);
-            setIsInitialized(true);
-            setLoading(false);
-            return;
+            // Only clear the session for a definitively bad token. A transient
+            // failure (offline, Supabase 5xx/timeout) must NOT sign the user
+            // out — keep the session and let downstream calls retry.
+            const status = userError.status;
+            const isBadToken =
+              status === 401 ||
+              status === 403 ||
+              /bad_jwt|invalid claim|missing sub/i.test(userError.message ?? '');
+            if (isBadToken) {
+              await supabase.auth.signOut();
+              setSession(null);
+              setUser(null);
+              setProfile(null);
+              setIsInitialized(true);
+              setLoading(false);
+              return;
+            }
           }
         }
 
