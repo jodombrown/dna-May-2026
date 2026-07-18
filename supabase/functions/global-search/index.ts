@@ -189,7 +189,7 @@ async function performDynamicSearch(supabase: any, userClient: any, query: strin
     }
 
     // Search Posts/News
-    const { data: posts } = await supabase
+    const { data: posts } = await userClient
       .from('community_posts')
       .select('id, title, content, created_at, community_id')
       .or(`title.ilike.${searchTerm},content.ilike.${searchTerm}`)
