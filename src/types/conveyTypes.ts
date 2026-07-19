@@ -56,6 +56,12 @@ export interface ConveyFilters {
   region?: string;
   focusAreas?: string[];
   onlyMySpaces?: boolean;
+  /**
+   * Restrict to a single author. Added at DR1 step 7 (BD139): three surfaces
+   * promised "My Stories" and none delivered it, because the feed had no way to
+   * filter to the signed-in member.
+   */
+  authorId?: string;
 }
 
 export interface ConveyItemTag {

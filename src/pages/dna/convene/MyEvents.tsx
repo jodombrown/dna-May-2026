@@ -24,8 +24,7 @@ import { useOrganizerStats } from '@/hooks/convene/useOrganizerStats';
 import { EventTime } from '@/components/events/EventTime';
 import { eventStartMs } from '@/lib/events/eventTime';
 import { isEventCompleted } from '@/lib/events/lifecycle';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
@@ -530,17 +529,6 @@ const MyEvents = () => {
       }
       rightColumn={<RightWidgets variant="convene" />}
     >
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
     </LayoutController>
     </ConveneShell>
   );

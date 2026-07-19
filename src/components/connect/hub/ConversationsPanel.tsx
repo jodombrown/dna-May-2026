@@ -31,8 +31,7 @@ import { NetworkActivityFeed } from './NetworkActivityFeed';
 import { logger } from '@/lib/logger';
 import { CulturalPattern } from '@/components/shared/CulturalPattern';
 import { connectionService } from '@/services/connectionService';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 
 interface ConversationsPanelProps {
   onSelectConversation?: (conversationId: string) => void;
@@ -570,17 +569,6 @@ export function ConversationsPanel({
       </div>
 
       {/* Universal Composer */}
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        successData={composer.successData}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
       </ScrollArea>
     </div>
   );

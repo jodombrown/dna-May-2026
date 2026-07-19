@@ -13,8 +13,7 @@ import { eventStartMs } from '@/lib/events/eventTime';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { EventListItem, EventType, EventFormat } from '@/types/events';
 import { ProfileV2Data, ProfileV2Visibility } from '@/types/profileV2';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { GatedActionButton } from '@/components/gating/GatedActionButton';
 import type { FeatureKey } from '@/config/profileGates';
 
@@ -450,17 +449,6 @@ const ProfileV2Events: React.FC<ProfileV2EventsProps> = ({
         </Tabs>
       </CardContent>
     </Card>
-    <UniversalComposer
-      isOpen={composer.isOpen}
-      mode={composer.mode}
-      context={composer.context}
-      isSubmitting={composer.isSubmitting}
-      onClose={composer.close}
-      onModeChange={composer.switchMode}
-      successData={composer.successData}
-      onSubmit={composer.submit}
-      onDismissSuccess={composer.dismissSuccess}
-    />
     </>
   );
 };

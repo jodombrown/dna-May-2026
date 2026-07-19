@@ -124,7 +124,15 @@ export interface ComposerFormData {
   galleryUrls?: string[];
 }
 
-export const useUniversalComposer = (initialContext?: ComposerContext) => {
+/**
+ * DR1 step 5: this is now the INTERNAL state implementation. It is called
+ * exactly once, by `ComposerProvider`. Consumers use `useUniversalComposer()`
+ * from `@/contexts/ComposerContext`, which reads the provider's context.
+ *
+ * Before DR1 this hook was called at twelve separate mount sites, each holding
+ * its own independent open state, so "the composer" was never one thing.
+ */
+export const useComposerState = (initialContext?: ComposerContext) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);

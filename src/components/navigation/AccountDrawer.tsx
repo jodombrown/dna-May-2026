@@ -91,7 +91,7 @@ interface ActionHandlers {
   onDownloadPDF: () => void;
 }
 
-function AccountDrawerBody({
+export function AccountDrawerBody({
   handlers,
 }: {
   handlers: ActionHandlers;
@@ -171,7 +171,7 @@ function AccountDrawerBody({
         <SettingsRow
           icon={FileText}
           label="My stories"
-          onClick={() => go('/dna/convey?tab=my_stories')}
+          onClick={() => go('/dna/convey/my-stories')}
         />
         <SettingsRow
           icon={Bookmark}
@@ -306,82 +306,14 @@ function ShareSubpage({ handlers }: { handlers: ActionHandlers }) {
   );
 }
 
-export const AccountDrawer: React.FC = () => {
-  const { isOpen, close } = useAccountDrawer();
-  const { user, signOut } = useAuth();
-  const { data: profile } = useProfile();
-  const navigate = useNavigate();
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [showTour, setShowTour] = useState(false);
-  const [showTestGuide, setShowTestGuide] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const { isCompleted: tourCompleted, resetTour } = useTourProgress();
-
-  const publicUrl =
-    typeof window !== 'undefined' && profile?.username
-      ? `${window.location.origin}/u/${profile.username}`
-      : '';
-  const displayName = profile?.full_name || profile?.username || 'DNA member';
-
-  const handlers: ActionHandlers = {
-    publicUrl,
-    displayName,
-    isDownloading,
-    onShare: () => {},
-    onTour: () => {
-      if (tourCompleted) resetTour();
-      setShowTour(true);
-      close();
-    },
-    onTestGuide: () => {
-      setShowTestGuide(true);
-      close();
-    },
-    onFeedback: () => {
-      setShowFeedback(true);
-      close();
-    },
-    onSignOut: async () => {
-      await signOut();
-      close();
-      navigate('/');
-    },
-    onDownloadPDF: async () => {
-      if (!profile) return;
-      setIsDownloading(true);
-      try {
-        await generateProfilePDF(profile as any, user?.email);
-        toast.success('Profile PDF downloaded');
-      } catch {
-        toast.error('Failed to generate PDF');
-      } finally {
-        setIsDownloading(false);
-      }
-    },
-  };
-
-  if (!user || !profile) return null;
-
-  return (
-    <>
-      <IdentitySheet
-        open={isOpen}
-        onOpenChange={(o) => !o && close()}
-        title="Account"
-      >
-        <AccountDrawerBody handlers={handlers} />
-      </IdentitySheet>
-
-      <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
-      <AlphaTestGuide
-        isOpen={showTestGuide}
-        onClose={() => setShowTestGuide(false)}
-        onOpenFeedback={() => {
-          setShowTestGuide(false);
-          setShowFeedback(true);
-        }}
-      />
-      <FeedbackDrawer isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
-    </>
-  );
-};
+/**
+ * DR1 step 6: the `AccountDrawer` container is GONE.
+ *
+ * It used to render `<IdentitySheet>` (its own sliding container, scrim, header
+ * and close), mount `FeedbackDrawer` and `AlphaTestGuide` a second time each,
+ * and live at `BaseLayout` scope. All of that now belongs to `AppDrawer` and
+ * `AccountActionsProvider`, both mounted once at app root.
+ *
+ * What remains here is `AccountDrawerBody`: content only, no chrome
+ * (BD135 rule 5). It is rendered by `AccountSurface`.
+ */

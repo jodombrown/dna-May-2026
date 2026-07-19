@@ -24,7 +24,6 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Loader2, Sparkles } from 'lucide-react';
@@ -441,18 +440,16 @@ export const UniversalComposer = ({
     [onClose]
   );
 
+  /**
+   * DR1 step 5 (BD135 rule 5): CONTENT ONLY.
+   *
+   * This component used to render its own <Sheet>, <SheetContent side="right">
+   * and <SheetHeader>. The shell owns all of that now — sliding container,
+   * scrim, header, title, close, focus trap, safe areas, route binding. A
+   * surface that renders its own chrome does not merge.
+   */
   return (
-    <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetContent
-        side="right"
-        className="flex w-[96vw] max-w-[96vw] flex-col gap-0 p-0 sm:w-[860px] sm:max-w-[860px]"
-        style={{ height: '100dvh', maxHeight: '100dvh' }}
-      >
-        <SheetHeader className="flex-shrink-0 border-b bg-background px-4 pb-3 pt-4 text-left sm:px-6">
-          <SheetTitle className="font-serif text-xl font-semibold tracking-tight text-dna-emerald sm:text-2xl">
-            Share something with the diaspora
-          </SheetTitle>
-        </SheetHeader>
+    <>
 
         <div className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-4 py-4 sm:px-6">
           <div className="flex w-full items-start gap-5">
@@ -564,7 +561,6 @@ export const UniversalComposer = ({
             )}
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+    </>
   );
 };

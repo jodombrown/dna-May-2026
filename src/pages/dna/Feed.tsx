@@ -21,8 +21,7 @@ import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
@@ -212,17 +211,6 @@ const DnaFeed = () => {
             )}
           </main>
           <MobileBottomNav />
-          <UniversalComposer
-            isOpen={composer.isOpen}
-            mode={composer.mode}
-            context={composer.context}
-            isSubmitting={composer.isSubmitting}
-            onClose={composer.close}
-            onModeChange={composer.switchMode}
-            successData={composer.successData}
-            onSubmit={composer.submit}
-            onDismissSuccess={composer.dismissSuccess}
-          />
           <SearchDialog
             isOpen={showSearchDialog}
             onClose={() => setShowSearchDialog(false)}
@@ -445,17 +433,6 @@ const DnaFeed = () => {
         </aside>
       </div>
 
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        onSubmit={composer.submit}
-        successData={composer.successData}
-        onDismissSuccess={composer.dismissSuccess}
-      />
       <SearchDialog
         isOpen={showSearchDialog}
         onClose={() => setShowSearchDialog(false)}

@@ -12,8 +12,7 @@ import { EVENT_PLACE_COLUMNS } from '@/lib/events/formatPlace';
 import { isEventCompleted } from '@/lib/events/lifecycle';
 import { ConveneEventCard } from '@/components/convene/ConveneEventCard';
 import { ConveneShell } from '@/components/convene/ConveneShell';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 
 const EventsIndex = () => {
   const navigate = useNavigate();
@@ -298,17 +297,6 @@ const EventsIndex = () => {
             </div>
           </>
         )}
-        <UniversalComposer
-          isOpen={composer.isOpen}
-          mode={composer.mode}
-          context={composer.context}
-          isSubmitting={composer.isSubmitting}
-          onClose={composer.close}
-          onModeChange={composer.switchMode}
-          successData={composer.successData}
-          onSubmit={composer.submit}
-          onDismissSuccess={composer.dismissSuccess}
-        />
       </div>
     </div>
     </ConveneShell>

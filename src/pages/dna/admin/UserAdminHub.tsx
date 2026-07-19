@@ -78,7 +78,7 @@ const UserAdminHub: React.FC = () => {
       pillar: 'convey',
       color: 'text-amber-600 bg-amber-100',
       items: [
-        { label: 'My Stories', path: '/dna/convey' },
+        { label: 'My Stories', path: '/dna/convey/my-stories' },
         { label: 'Create Story', path: '/dna/convey/new' },
       ]
     },

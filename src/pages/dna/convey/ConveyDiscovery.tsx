@@ -113,7 +113,10 @@ export function ConveyDiscovery() {
       label: 'My Stories',
       value: stats?.myStories || 0,
       icon: PenLine,
-      onClick: () => navigate('/dna/me'),
+      // BD139: this card displays a live count of the member's stories and used
+      // to navigate to /dna/me, which redirects to the feed. A displayed count
+      // is a promise of reachability.
+      onClick: () => navigate('/dna/convey/my-stories'),
     },
     {
       label: 'Total Reach',
@@ -142,12 +145,17 @@ export function ConveyDiscovery() {
       icon: BookOpen,
       onClick: () => navigate('/dna/feed'),
     },
-    {
-      label: 'My Drafts',
-      description: 'Continue writing',
-      icon: PenLine,
-      onClick: () => navigate('/dna/me'),
-    },
+    /*
+      BD139: 'My Drafts' also pointed at /dna/me (-> feed). It is REMOVED rather
+      than repointed at /dna/convey/my-stories, which shows published stories.
+      Sending a member looking for drafts to a list of published work would be a
+      new false promise, not a fix.
+
+      Drafts exist as a type (ConveyItemStatus) but useConveyFeed hardcodes every
+      item to 'published' and the posts query never selects a status, so whether
+      draft stories exist in the data is unverified. That is a DR2 question:
+      build the drafts destination, or drop the concept.
+    */
     {
       label: 'View Analytics',
       description: 'Track engagement',
@@ -199,7 +207,7 @@ export function ConveyDiscovery() {
   const subNavTabs: SubNavTab[] = [
     { label: 'All Stories', path: '/dna/feed' },
     { label: 'Following', path: '/dna/feed?filter=following' },
-    { label: 'My Stories', path: '/dna/me' },
+    { label: 'My Stories', path: '/dna/convey/my-stories' },
   ];
 
   return (
