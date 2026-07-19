@@ -114,8 +114,24 @@ export function AccountDrawerBody({
   const openProfileEdit = () =>
     push({ id: 'profile', title: 'Profile', node: wrap(<ProfileEdit />) });
 
+  /**
+   * Navigate away from the drawer.
+   *
+   * This used to be `close(); navigate(path);` and that broke every navigating
+   * row in DR1. The drawer is URL-bound now, so `close()` is `navigate(-depth)`
+   * — a history POP. Firing a pop and a push in the same tick races: the push
+   * lands, the pop then unwinds it, and the member taps a row and watches
+   * nothing happen.
+   *
+   * The fix is to delete the close, not to sequence it. Because the drawer's
+   * open state IS the `?drawer=` param, navigating to a path without that param
+   * closes the drawer as a consequence rather than as a second action. One
+   * navigation, no race, and the drawer cannot end up open over the new page.
+   *
+   * Found by founder QA on a real device (BD142): the rows rendered, the
+   * handlers fired, every test passed, and the app did nothing.
+   */
   const go = (path: string) => {
-    close();
     navigate(path);
   };
 
