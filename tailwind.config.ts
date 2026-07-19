@@ -36,6 +36,13 @@ export default {
 			'2xl': '1536px',
 		},
 		extend: {
+		maxWidth: {
+			// Drawer surface widths. A surface declares which it needs; the shell
+			// applies it. DR1 shipped a single width for every surface and crushed
+			// the composer from 860px to 448px.
+			drawer: '28rem',        /* 448px — settings, account, nav-style surfaces */
+			'drawer-wide': '860px', /* composing surfaces that need room to write */
+		},
 		fontFamily: {
 			body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
 			sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],

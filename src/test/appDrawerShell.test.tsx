@@ -12,6 +12,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { click, tab, pressEscape } from '@/test/helpers/interact';
 import { MemoryRouter, useLocation } from 'react-router-dom';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { AppDrawer } from '@/components/drawer/AppDrawer';
 import { DrawerProvider, useDrawer, type DrawerResolvers } from '@/contexts/DrawerContext';
 import { parseStack, serializeStack, stackDepth } from '@/components/drawer/stackUrl';
@@ -216,5 +218,60 @@ describe('route binding — the capability that did not exist before DR1', () =>
 
     await waitFor(() => expect(url()).not.toContain('drawer='));
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
+/**
+ * Per-surface width (DR1 hotfix).
+ *
+ * Founder QA caught this, not the suite: the composer set its own 860px before
+ * DR1, that width lived in the chrome the shell correctly took over, and the
+ * shell then imposed one 448px on everything. The composer lost 48% of its
+ * writing surface and became unusable for its actual purpose.
+ *
+ * A behavioural test could not have caught it — every assertion passed, the
+ * drawer opened, the composer rendered, the post would have published. It was
+ * only wrong to a human trying to write in it.
+ */
+describe('per-surface width', () => {
+  beforeEach(forceDesktopViewport);
+
+  const widthResolvers: DrawerResolvers = {
+    surface: (id) => {
+      if (id === 'wide') return { title: 'Wide', node: <p>wide-surface</p>, width: 'wide' };
+      if (id === 'standard') return { title: 'Standard', node: <p>standard-surface</p> };
+      return null;
+    },
+    panel: () => null,
+  };
+
+  function widthHarness(entry: string) {
+    return (
+      <MemoryRouter initialEntries={[entry]}>
+        <DrawerProvider resolvers={widthResolvers}>
+          <AppDrawer />
+        </DrawerProvider>
+      </MemoryRouter>
+    );
+  }
+
+  it('a composing surface gets the wide token', async () => {
+    render(widthHarness('/dna/feed?drawer=wide'));
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog.className).toContain('max-w-drawer-wide');
+    expect(dialog.className).not.toContain('max-w-drawer ');
+  });
+
+  it('a surface that asks for nothing gets the standard token', async () => {
+    render(widthHarness('/dna/feed?drawer=standard'));
+    const dialog = await screen.findByRole('dialog');
+    expect(dialog.className).toContain('max-w-drawer');
+    expect(dialog.className).not.toContain('max-w-drawer-wide');
+  });
+
+  it('both widths are real tokens in tailwind.config.ts, not arbitrary values', () => {
+    const config = readFileSync(resolve(__dirname, '../../tailwind.config.ts'), 'utf8');
+    expect(config).toMatch(/drawer:\s*'28rem'/);
+    expect(config).toMatch(/'drawer-wide':\s*'860px'/);
   });
 });

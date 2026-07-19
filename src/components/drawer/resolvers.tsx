@@ -30,6 +30,9 @@ const SURFACE_RENDERERS: Record<string, SurfaceRenderer> = {
   [COMPOSER_SURFACE_ID]: () => ({
     title: 'Share something with the diaspora',
     node: <ComposerSurface />,
+    // Restores the 860px the composer set for itself before DR1 stripped its
+    // chrome. Writing needs room; a 448px column is not a composing surface.
+    width: 'wide',
   }),
   [ACCOUNT_SURFACE_ID]: () => ({ title: 'Account', node: <AccountSurface /> }),
 };

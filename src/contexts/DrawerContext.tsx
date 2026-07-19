@@ -36,6 +36,15 @@ import {
 export interface ResolvedFrame {
   title: string;
   node: React.ReactNode;
+  /**
+   * How much room this surface needs on desktop. Defaults to 'standard'.
+   *
+   * The shell owns the sliding container (BD135), but HOW WIDE is a property of
+   * the content, not of the container. DR1 got this wrong: it imposed one width
+   * on everything and the composer, which had carried its own 860px, was
+   * crushed to 448px when its chrome was stripped.
+   */
+  width?: 'standard' | 'wide';
 }
 
 export interface DrawerResolvers {
