@@ -109,8 +109,10 @@ export function AppDrawer() {
               // offending value is not repeated in this comment, because the
               // gate greps source text and would flag the comment too.
               'inset-x-0 bottom-0 h-sheet rounded-t-2xl border-t border-border',
-            anchor === 'right' && 'inset-y-0 right-0 h-full w-full max-w-md border-l border-border',
-            anchor === 'left' && 'inset-y-0 left-0 h-full w-full max-w-md border-r border-border',
+            anchor === 'right' && 'inset-y-0 right-0 h-full w-full border-l border-border',
+            anchor === 'left' && 'inset-y-0 left-0 h-full w-full border-r border-border',
+            anchor !== 'bottom' &&
+              (currentFrame.width === 'wide' ? 'max-w-drawer-wide' : 'max-w-drawer'),
           )}
         >
           {/* Drag handle: bottom anchor only. */}
