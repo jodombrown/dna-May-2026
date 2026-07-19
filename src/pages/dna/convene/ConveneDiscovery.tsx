@@ -33,8 +33,7 @@ import {
   useDiasporaEvents,
   useUndatedEvents,
 } from '@/hooks/convene/useConveneDiscoveryLanes';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { ConveneSearchOverlay } from '@/components/convene/ConveneSearchOverlay';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -575,17 +574,6 @@ export function ConveneDiscovery() {
         onClose={() => setIsSearchOpen(false)}
       />
 
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
     </div>
     </ConveneShell>
   );

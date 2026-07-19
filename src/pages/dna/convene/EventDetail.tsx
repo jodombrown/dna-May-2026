@@ -59,8 +59,6 @@ import { isEventCompleted } from '@/lib/events/lifecycle';
 import { eventStateWrite } from '@/lib/events/state';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { EventCountdown } from '@/components/convene/EventCountdown';
 import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
@@ -246,7 +244,6 @@ const EventDetail = () => {
   // so a cached load can't race ahead of it.
   const eventId = (event?.id as string | undefined) ?? null;
 
-  const composer = useUniversalComposer({ eventId: eventId ?? undefined });
 
   // Fetch user's RSVP status
   const { data: userRsvp, error: rsvpError } = useQuery({
@@ -963,11 +960,6 @@ const EventDetail = () => {
       )}
 
       {/* Universal Composer */}
-      <UniversalComposer
-        isOpen={composer.isOpen} mode={composer.mode} context={composer.context}
-        isSubmitting={composer.isSubmitting} onClose={composer.close} onModeChange={composer.switchMode}
-        successData={composer.successData} onSubmit={composer.submit} onDismissSuccess={composer.dismissSuccess}
-      />
 
       {/* Cancel Dialog */}
       <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>

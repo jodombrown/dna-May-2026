@@ -1,4 +1,4 @@
-export { IdentitySheet, useIdentitySheet, useIdentitySheetSafe } from './IdentitySheet';
+export { IdentitySheet, IdentitySheetContext, useIdentitySheet, useIdentitySheetSafe } from './IdentitySheet';
 export type { IdentitySheetProps } from './IdentitySheet';
 export { SettingsGroup } from './SettingsGroup';
 export { SettingsRow } from './SettingsRow';

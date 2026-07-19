@@ -5,8 +5,7 @@ import LayoutController from '@/components/LayoutController';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Heart, Lightbulb, PenSquare, Camera, Megaphone, Target, Flame, Star, Filter, Compass, Users, Mic, Bookmark } from 'lucide-react';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { Mpatapo } from '@/components/icons/adinkra';
 
 import { useMobile } from '@/hooks/useMobile';
@@ -618,17 +617,6 @@ export default function ConveyStoryHub() {
       {/* Mobile: Floating DIA button */}
       {isMobile && <DiaContextual pillar="convey" floatingButton />}
 
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
     </>
   );
 }

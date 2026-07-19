@@ -18,8 +18,7 @@ import { CalendarDays, MapPin, Clock, Globe, Ticket, Users } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { haptic } from '@/utils/haptics';
 import { DnaMobileHubShell } from '@/components/mobile/DnaMobileHubShell';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 
 const HUB_PATH = '/dna/convene';
 
@@ -117,17 +116,6 @@ export function ConveneShell({
         {children}
       </DnaMobileHubShell>
 
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
     </>
   );
 }

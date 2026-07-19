@@ -36,9 +36,8 @@ import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 // useUnreadNotificationCount removed — UnifiedNotificationBell handles its own count
 import { useMobile } from '@/hooks/useMobile';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const UnifiedHeader = () => {
   const { user, profile: authProfile, signOut, loading } = useAuth();
@@ -602,17 +601,6 @@ const UnifiedHeader = () => {
       />
 
       {/* Universal Composer - Global Create */}
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
     </>
   );
 };
