@@ -109,3 +109,41 @@ describe('account surface — single mount', () => {
     expect(mountsOf('AppDrawer')).toEqual(['src/App.tsx']);
   });
 });
+
+/**
+ * Navigating rows actually navigate (DR1 hotfix 2).
+ *
+ * Founder QA on a real iPhone: tapping "About DNA" did nothing. Six rows were
+ * affected — every row that leaves the drawer.
+ *
+ * Cause: `go()` was `close(); navigate(path)`. Once the drawer became URL-bound,
+ * `close()` became `navigate(-depth)` — a history POP — so a pop and a push
+ * fired in the same tick and the pop unwound the push.
+ *
+ * No test caught it. Every handler fired, every assertion passed, and the app
+ * did nothing. This one is structural rather than behavioural because the race
+ * needs a real history stack, but it fails loudly if anyone reintroduces the
+ * pattern.
+ */
+describe('navigating rows leave the drawer without racing history', () => {
+  const source = readFileSync(
+    resolve(repoRoot, 'src/components/navigation/AccountDrawer.tsx'),
+    'utf8',
+  );
+
+  const code = source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
+  it('go() does not call close() — the drawer closes because the URL changed', () => {
+    const goBody = code.match(/const go = \(path: string\) => \{([\s\S]*?)\};/)?.[1] ?? '';
+    expect(goBody, 'go() must exist and be matchable').toContain('navigate(path)');
+    expect(goBody, 'close() inside go() races the navigation and cancels it').not.toMatch(
+      /close\(\)/,
+    );
+  });
+
+  it('the rows that leave the drawer all route through go()', () => {
+    // Guards against someone "fixing" a row by inlining close() + navigate().
+    const inlined = code.match(/close\(\);\s*navigate\(/g) ?? [];
+    expect(inlined).toEqual([]);
+  });
+});
