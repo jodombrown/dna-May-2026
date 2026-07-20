@@ -184,7 +184,7 @@ export function ConveneEventCard({
         <div className="p-4 flex items-start gap-3">
           {/* Date box */}
           <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
-            <span className="text-[10px] font-semibold text-module-convene uppercase leading-none">
+            <span className="text-micro text-dna-convene uppercase leading-none">
               {monthAbbrev}
             </span>
             <span className="text-lg font-bold leading-none mt-0.5">
@@ -206,8 +206,8 @@ export function ConveneEventCard({
                     'text-xs border-0',
                     urgency.variant === 'today' && 'bg-destructive text-destructive-foreground',
                     urgency.variant === 'tomorrow' && 'bg-destructive/80 text-destructive-foreground',
-                    urgency.variant === 'urgent' && 'bg-module-convene text-white',
-                    urgency.variant === 'soon' && 'bg-module-convene/20 text-module-convene-dark',
+                    urgency.variant === 'urgent' && 'bg-dna-convene text-white',
+                    urgency.variant === 'soon' && 'bg-dna-convene/20 text-dna-convene-dark',
                   )}
                 >
                   {urgency.pulse && <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse mr-1" />}
@@ -362,8 +362,8 @@ export function ConveneEventCard({
                 'px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 backdrop-blur-sm shadow-lg',
                 urgency.variant === 'today' && 'bg-destructive text-white',
                 urgency.variant === 'tomorrow' && 'bg-destructive/90 text-white',
-                urgency.variant === 'urgent' && 'bg-module-convene text-white',
-                urgency.variant === 'soon' && 'bg-module-convene text-white',
+                urgency.variant === 'urgent' && 'bg-dna-convene text-white',
+                urgency.variant === 'soon' && 'bg-dna-convene text-white',
               )}
               style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}
             >
@@ -385,7 +385,7 @@ export function ConveneEventCard({
       {/* Card Body */}
       <div className="p-4 sm:p-5 flex flex-col gap-2.5">
         {/* Title — editorial typography */}
-        <h3 className="font-bold text-lg leading-snug line-clamp-2 text-dna-forest group-hover:text-module-convene transition-colors">
+        <h3 className="font-bold text-h3 leading-snug line-clamp-2 text-dna-forest group-hover:text-dna-convene transition-colors">
           {event.title}
         </h3>
 
@@ -406,10 +406,10 @@ export function ConveneEventCard({
         {startDate ? (
           <div className="flex items-center gap-2.5">
             <div className="flex-shrink-0 w-10 h-10 border border-module-convene/30 rounded-lg bg-module-convene-light flex flex-col items-center justify-center">
-              <span className="text-[9px] font-bold text-module-convene uppercase leading-none">
+              <span className="text-micro text-dna-convene uppercase leading-none">
                 {monthAbbrev}
               </span>
-              <span className="text-base font-bold leading-none mt-0.5 text-module-convene-dark">
+              <span className="text-h3 font-bold leading-none mt-0.5 text-dna-convene-dark">
                 {dayNumber}
               </span>
             </div>

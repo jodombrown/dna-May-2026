@@ -122,13 +122,13 @@ export default function EngagementDashboard() {
                 <p className="text-sm text-muted-foreground">Low (&lt;30%)</p>
               </div>
               <div className="text-center p-4 rounded-lg bg-warning/10">
-                <div className="text-3xl font-bold text-warning">
+                <div className="text-display font-bold text-dna-warning">
                   {metrics?.completenessDistribution.medium || 0}
                 </div>
                 <p className="text-sm text-muted-foreground">Medium (30-70%)</p>
               </div>
               <div className="text-center p-4 rounded-lg bg-success/10">
-                <div className="text-3xl font-bold text-success">
+                <div className="text-display font-bold text-dna-success">
                   {metrics?.completenessDistribution.high || 0}
                 </div>
                 <p className="text-sm text-muted-foreground">High (&gt;70%)</p>

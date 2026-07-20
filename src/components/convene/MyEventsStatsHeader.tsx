@@ -73,7 +73,7 @@ export function MyEventsStatsHeader({ stats, isLoading }: MyEventsStatsHeaderPro
             key={m.key}
             className="rounded-xl bg-module-convene/5 border border-module-convene/10 p-4 text-center"
           >
-            <Icon className="h-4 w-4 text-module-convene mx-auto mb-1" />
+            <Icon className="h-4 w-4 text-dna-convene mx-auto mb-1" />
             <p className="text-2xl font-bold text-foreground">
               <AnimatedCount target={stats[m.key]} />
             </p>

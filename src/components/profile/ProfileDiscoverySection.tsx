@@ -45,7 +45,7 @@ export const ProfileDiscoverySection: React.FC<ProfileDiscoverySectionProps> = (
         options={REGIONAL_EXPERTISE}
         selected={regionalExpertise}
         onChange={onRegionalExpertiseChange}
-        colorClass="bg-cultural-terra/10 text-cultural-terra border-cultural-terra/20"
+        colorClass="bg-dna-terra/10 text-dna-terra border-dna-terra/20"
         placeholder="Select regions where you have expertise (minimum 1)"
       />
 
@@ -54,7 +54,7 @@ export const ProfileDiscoverySection: React.FC<ProfileDiscoverySectionProps> = (
         options={INDUSTRIES}
         selected={industries}
         onChange={onIndustriesChange}
-        colorClass="bg-cultural-ochre/10 text-cultural-ochre border-cultural-ochre/20"
+        colorClass="bg-dna-ochre/10 text-dna-ochre border-dna-ochre/20"
         placeholder="Select your industries (minimum 2)"
       />
 

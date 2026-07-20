@@ -1,0 +1,48 @@
+name: Type Scale
+
+# No phantom font-size tokens.
+#
+# An unknown Tailwind class is not an error: it compiles, ships, and renders
+# nothing. `text-caption` was live at six sites and `text-title` at three, none
+# of them defined, because CLAUDE.md documented a scale that did not match
+# tailwind.config.ts. The doc is fixed; this gate is what makes the fix hold.
+#
+# Repo-wide rather than added-lines. Unlike the design-system gate, this one has
+# no burndown behind it: the tree is at zero violations, so whole-repo scoping
+# costs nothing and catches a token that MOVES as well as one that is written.
+#
+# CI only for now, same call as the panel-chrome gate: a new gate goes in front
+# of PRs before it goes in front of deploys. It can move into `prebuild` once it
+# has been green for a cycle, and it is cheap enough to belong there.
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tailwind.config.ts'
+      - 'scripts/check-type-scale.ts'
+      - '.github/workflows/type-scale.yml'
+  push:
+    branches: [main]
+
+jobs:
+  type-scale:
+    name: Every text-* token resolves
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Logic lives in the script so it can be run and tested as itself. One
+      # command, no shell branching, so there is no errexit trap to get wrong.
+      - name: Run type-scale check
+        run: npm run lint:scale

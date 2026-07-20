@@ -15,6 +15,7 @@
     "lint:icons": "tsx scripts/check-icon-duplicates.ts",
     "lint:links": "tsx scripts/check-external-links.ts",
     "lint:panels": "tsx scripts/check-panel-chrome.ts",
+    "lint:scale": "tsx scripts/check-type-scale.ts",
     "prebuild": "tsx scripts/check-forbidden-classes.ts && tsx scripts/check-icon-duplicates.ts",
     "preview": "vite preview"
   },

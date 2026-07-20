@@ -112,7 +112,7 @@ const DiscoveryStep: React.FC<DiscoveryStepProps> = ({ data, onUpdate }) => {
             selected={data.regional_expertise}
             onChange={(value) => onUpdate('regional_expertise', value)}
             placeholder="Select regions (recommended: 1+)"
-            colorClass="bg-cultural-terra/10 text-cultural-terra border-cultural-terra/20"
+            colorClass="bg-dna-terra/10 text-dna-terra border-dna-terra/20"
           />
 
           {/* Industries */}
