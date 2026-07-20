@@ -436,39 +436,37 @@ const ProfileEdit = () => {
   }
 
   return (
-    <PageFrame>
-      
-      <div className="container max-w-4xl mx-auto px-4 py-8">
+    <PageFrame
+      contained
+      pageNav={
+        <Button variant="ghost" onClick={() => navigate('/dna/feed')}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Feed
+        </Button>
+      }
+      actions={
+        <Button
+          type="button"
+          onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
+          disabled={updateMutation.isPending}
+          className="md:hidden"
+          size="sm"
+        >
+          {updateMutation.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-1" />
+              Save
+            </>
+          )}
+        </Button>
+      }
+    >
+      <div>
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/dna/feed')}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Feed
-            </Button>
-            
-            {/* Mobile Save Button - top right */}
-            <Button
-              type="button"
-              onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
-              disabled={updateMutation.isPending}
-              className="md:hidden"
-              size="sm"
-            >
-              {updateMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-1" />
-                  Save
-                </>
-              )}
-            </Button>
-          </div>
-          <h1 className="text-3xl font-bold">Edit Profile</h1>
+          <h1 className="text-display font-bold">Edit Profile</h1>
           <p className="text-muted-foreground mt-2">
             Complete your profile to unlock all DNA features and connect with the diaspora community
           </p>
