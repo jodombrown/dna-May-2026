@@ -80,7 +80,7 @@ export function IntentionsSection({
           selected={formData.available_for || []}
           onChange={(values) => onUpdate('available_for', values)}
           placeholder="What opportunities are you open to?"
-          colorClass="bg-cultural-terra/10 text-cultural-terra border-cultural-terra/20"
+          colorClass="bg-dna-terra/10 text-dna-terra border-dna-terra/20"
           disabled={disabled}
         />
 
@@ -91,7 +91,7 @@ export function IntentionsSection({
           selected={formData.mentorship_areas || []}
           onChange={(values) => onUpdate('mentorship_areas', values)}
           placeholder="Select areas you can mentor in or want mentoring"
-          colorClass="bg-cultural-ochre/10 text-cultural-ochre border-cultural-ochre/20"
+          colorClass="bg-dna-ochre/10 text-dna-ochre border-dna-ochre/20"
           disabled={disabled}
         />
       </CardContent>

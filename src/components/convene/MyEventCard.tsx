@@ -96,7 +96,7 @@ export function MyEventCard({ event, isPast = false, className }: MyEventCardPro
         <div className="p-4 flex items-start gap-3">
           {/* Date box */}
           <div className="flex-shrink-0 w-11 h-11 border border-border rounded-lg bg-background flex flex-col items-center justify-center">
-            <span className="text-[10px] font-semibold text-module-convene uppercase leading-none">
+            <span className="text-micro text-dna-convene uppercase leading-none">
               {monthAbbrev}
             </span>
             <span className="text-lg font-bold leading-none mt-0.5">{dayNumber}</span>

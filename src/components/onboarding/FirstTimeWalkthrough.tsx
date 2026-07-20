@@ -259,7 +259,7 @@ export function FirstTimeWalkthrough() {
                 </div>
                 
                 <div>
-                  <p className="text-xs font-medium text-dna-amber uppercase tracking-wider mb-1">
+                  <p className="text-micro text-dna-gold uppercase mb-1">
                     {step.highlight}
                   </p>
                   <h2 className="text-2xl font-bold text-foreground">

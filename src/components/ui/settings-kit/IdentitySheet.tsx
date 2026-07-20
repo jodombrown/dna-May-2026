@@ -111,7 +111,7 @@ export function IdentitySheet({
               <ChevronLeft className="h-5 w-5" />
             </button>
           ) : null}
-          <h2 className="text-title font-display">{currentTitle}</h2>
+          <h2 className="text-h2 font-display">{currentTitle}</h2>
           <button
             type="button"
             onClick={ctx.close}

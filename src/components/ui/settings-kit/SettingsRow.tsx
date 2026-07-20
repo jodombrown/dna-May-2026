@@ -71,7 +71,7 @@ export function SettingsRow(props: SettingsRowProps) {
         {label}
       </div>
       {description ? (
-        <div className="mt-0.5 text-caption text-muted-foreground">{description}</div>
+        <div className="mt-0.5 text-meta text-muted-foreground">{description}</div>
       ) : null}
     </div>
   );
@@ -102,7 +102,7 @@ export function SettingsRow(props: SettingsRowProps) {
       <div className={rowClass}>
         {iconEl}
         {labelEl}
-        <div className="shrink-0 text-caption text-muted-foreground">{props.value}</div>
+        <div className="shrink-0 text-meta text-muted-foreground">{props.value}</div>
       </div>
     );
   }
@@ -147,7 +147,7 @@ function NavRow({
       {iconEl}
       {labelEl}
       {value ? (
-        <span className="shrink-0 text-caption text-muted-foreground">{value}</span>
+        <span className="shrink-0 text-meta text-muted-foreground">{value}</span>
       ) : null}
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
     </button>

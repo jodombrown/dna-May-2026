@@ -158,7 +158,7 @@ export function AccountDrawerBody({
           <div className="truncate text-body font-normal text-foreground">
             {profile?.full_name || profile?.username || 'Your profile'}
           </div>
-          <div className="truncate text-caption text-muted-foreground">
+          <div className="truncate text-meta text-muted-foreground">
             {user?.email || ''}
           </div>
         </div>

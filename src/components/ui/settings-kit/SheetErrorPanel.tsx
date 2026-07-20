@@ -49,10 +49,10 @@ export class SheetErrorPanel extends Component<Props, State> {
               <AlertCircle className="w-4 h-4 text-dna-copper" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-title font-display text-foreground">
+              <h2 className="text-h2 font-display text-foreground">
                 {this.props.surface} hit a snag
               </h2>
-              <p className="text-caption text-muted-foreground mt-1">
+              <p className="text-meta text-muted-foreground mt-1">
                 This section couldn't load. The rest of the app is unaffected.
               </p>
             </div>
@@ -64,7 +64,7 @@ export class SheetErrorPanel extends Component<Props, State> {
           </Button>
 
           <details>
-            <summary className="cursor-pointer text-caption text-muted-foreground hover:text-foreground">
+            <summary className="cursor-pointer text-meta text-muted-foreground hover:text-foreground">
               Technical details
             </summary>
             <div className="mt-2 bg-muted/40 rounded-md p-3 overflow-auto max-h-56">

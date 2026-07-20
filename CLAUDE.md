@@ -14,7 +14,7 @@ Violating any of these is a bug. There are no exceptions for "just this once," a
 
 1. **No raw color values.** No hex, no `rgb()`, no `hsl()` literals in any component, page, or style. Use the semantic tokens: `text-foreground`, `bg-card`, `border-border`, `text-accent`.
 2. **No arbitrary values.** No `text-[17px]`, no `p-[13px]`, no `bg-[#1a1b1e]`, no `w-[347px]`, no `top-[3px]`. Bracket syntax is banned in `src/`. It is the single clearest fingerprint of generated code and it is where drift lives.
-3. **No font sizes outside the scale.** The scale is: `caption small body lead title heading display`. `text-3xl` does not exist in this config and will silently render nothing.
+3. **No font sizes outside the scale.** The scale is: `hero display h1 h2 h3 body meta micro`. Anything else — `text-3xl`, or an invented token like `text-caption` — does not exist in this config and will silently render at the inherited size. `scripts/check-type-scale.ts` enforces this by reading `tailwind.config.ts` at run time, so the config is the source of truth and this line is only a summary of it. *(Corrected 2026-07-19: this rule previously listed `caption small body lead title heading display`, five of which have never existed. `text-caption` was live at six sites and `text-title` at three, all rendering nothing, because authors correctly followed the doc. The gate exists so a doc can never be load-bearing here again.)*
 4. **No new fonts.** Two families, declared in tokens. Adding a third requires an explicit decision, not a component.
 5. **No page-level layout values.** A file in `src/pages` may not contain `max-w-`, `px-`, `py-`, `mt-`, `mb-`, or `container`. Those belong to `Section` and `Container`. This rule is what makes pages feel identical.
 6. **No `className` overrides that change appearance.** If you are passing `className="bg-accent text-white rounded-full"` to `<Button>`, you have found a missing variant. Add it to the component's `cva` definition and use it by name. `className` on a design-system component is for layout positioning only (e.g. `w-full`), never for restyling.
@@ -78,7 +78,7 @@ Never solve a styling problem at the call site. That is how this codebase got in
 ## Verification before you claim done
 
 - `npm run lint` passes, including the no-arbitrary-values rule.
-- `npm run guard:tokens` passes (grep guard for raw hex and bracket syntax).
+- `npm run lint:tokens` passes (forbidden palette families) and `npm run lint:scale` passes (every `text-*` token resolves against the config). Raw hex and bracket syntax are enforced on changed lines by the design-system CI gate, not by a local script. *(Corrected 2026-07-19: this line previously named `npm run guard:tokens`, which has never existed in `package.json`. Third documented guarantee in this file found with no live enforcer behind it.)*
 - The page renders correctly at 360px, 768px, and 1440px.
 - Keyboard focus is visible on every interactive element.
 - No new font, color, size, or spacing value entered the codebase.
