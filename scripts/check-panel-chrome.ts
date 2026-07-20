@@ -57,12 +57,39 @@ const ROOT = process.cwd();
  * Two vocabularies, because they are two different violations.
  *
  * FRAME chrome is page furniture: an app header, a bottom nav, a full-viewport
- * frame. A panel is not a page, so a panel must never render these. This was
- * one blunt list on the gate's first run and it over-fired: it flagged a
- * hashtag panel for opening a confirm dialog, which is not the disease.
+ * frame, a page-width container. A panel is not a page, so a panel must never
+ * render these. This was one blunt list on the gate's first run and it
+ * over-fired: it flagged a hashtag panel for opening a confirm dialog, which is
+ * not the disease.
+ *
+ * `container` joined the list after founder QA. `ProfileEdit` was fixed for the
+ * header and still shipped a `container max-w-4xl mx-auto px-4 py-8` inside a
+ * 448px panel, fighting the shell for width and stacking its padding on top of
+ * the shell's.
+ */
+/**
+ * What this gate CANNOT see, stated plainly because the docstring above once
+ * implied otherwise.
+ *
+ * The `ProfileEdit` defect included a Back-to-Feed button, and this gate never
+ * detected it. It matches component mounts and class names; a route-navigation
+ * control is an ordinary `<Button>` with an onClick and a text node, and any
+ * pattern loose enough to catch it would catch every button in the codebase.
+ * The gate went green while the panel still carried a second navigation row
+ * under the shell's own header, and founder QA found it, not CI.
+ *
+ * A doc that claims coverage the implementation lacks is the precise failure
+ * this build cycle spent itself on, and it recurred here in the artifact
+ * written to prevent it. The claim is now removed rather than softened.
+ *
+ * The replacement is architectural, not detective: `PageFrame` owns the slots.
+ * Route-only navigation goes in `pageNav` and is dropped in a panel by the
+ * frame itself; surface actions go in `actions` and always render. A page can
+ * no longer hand-roll a nav row without deliberately routing around the API,
+ * which is a different and much louder mistake than forgetting a rule.
  */
 const FRAME_COMPONENTS = ['UnifiedHeader', 'DnaMobileHeader', 'MobileBottomNav'];
-const FRAME_CLASSES = ['min-h-screen'];
+const FRAME_CLASSES = ['min-h-screen', 'container'];
 
 /**
  * CONTAINER primitives are the sliding containers themselves. A drawer surface
