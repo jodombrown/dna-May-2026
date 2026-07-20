@@ -24,8 +24,15 @@ type NavProps = BaseProps & {
   variant?: 'nav';
   value?: React.ReactNode;
   onClick?: () => void;
-  /** If provided, pushes this content as a subpage inside the IdentitySheet. */
-  subpage?: { id: string; title: string; content: React.ReactNode };
+  /**
+   * If provided, pushes a subpage inside the sheet.
+   *
+   * `content` is optional and, under the drawer shell, unused: `DrawerIdentityShim`
+   * resolves the panel from its id, which is the id in the URL. Passing content
+   * here would be a second definition of a panel the shell already owns — the
+   * duplication DR2 step 2 removed.
+   */
+  subpage?: { id: string; title: string; content?: React.ReactNode };
 };
 
 type ToggleProps = BaseProps & {
@@ -136,7 +143,7 @@ function NavRow({
 
   const handleClick = () => {
     if (subpage && sheet) {
-      sheet.push({ id: subpage.id, title: subpage.title, node: subpage.content });
+      sheet.push({ id: subpage.id, title: subpage.title, node: subpage.content ?? null });
     } else if (onClick) {
       onClick();
     }
