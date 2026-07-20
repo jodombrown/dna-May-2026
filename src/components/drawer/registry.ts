@@ -78,7 +78,7 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       id: 'identity-card',
       label: 'Identity card',
       group: 'you',
-      behaviour: { kind: 'push', panelId: 'profile-edit' },
+      behaviour: { kind: 'push', panelId: 'profile' },
     },
     {
       id: 'view-public-profile',
@@ -146,7 +146,7 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       label: 'Profile',
       sublabel: 'Name, headline, avatar, bio',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'profile-edit' },
+      behaviour: { kind: 'push', panelId: 'profile' },
     },
     {
       id: 'sign-in-and-security',
@@ -154,43 +154,43 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       // confusingly adjacent to `Profile` and to the surface's own title.
       label: 'Sign-in and security',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'account-settings' },
+      behaviour: { kind: 'push', panelId: 'account' },
     },
     {
       id: 'privacy',
       label: 'Privacy',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'privacy-settings' },
+      behaviour: { kind: 'push', panelId: 'privacy' },
     },
     {
       id: 'notifications',
       label: 'Notifications',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'notification-settings' },
+      behaviour: { kind: 'push', panelId: 'notifications' },
     },
     {
       id: 'preferences',
       label: 'Preferences',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'preferences-settings' },
+      behaviour: { kind: 'push', panelId: 'preferences' },
     },
     {
       id: 'my-hashtags',
       label: 'My hashtags',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'my-hashtags' },
+      behaviour: { kind: 'push', panelId: 'hashtags' },
     },
     {
       id: 'my-reports',
       label: 'My reports',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'my-reports' },
+      behaviour: { kind: 'push', panelId: 'reports' },
     },
     {
       id: 'blocked-users',
       label: 'Blocked users',
       group: 'account',
-      behaviour: { kind: 'push', panelId: 'blocked-users' },
+      behaviour: { kind: 'push', panelId: 'blocked' },
     },
 
     // ── SUPPORT ──────────────────────────────────────────────────────────
@@ -247,4 +247,57 @@ export const DRAWER_SURFACES: DrawerSurface[] = [ACCOUNT_SURFACE];
 
 export function getSurface(surfaceId: string): DrawerSurface | undefined {
   return DRAWER_SURFACES.find((s) => s.surfaceId === surfaceId);
+}
+
+/**
+ * ── DR2 step 2: the registry became the source of row copy and panel ids ─────
+ *
+ * Until now this file was data that did not drive rendering: `AccountDrawerBody`
+ * declared the same rows again as hardcoded JSX, and the two drifted where a
+ * member could see it — `Sign-in and security` in the registry and in the panel
+ * header, `Account` on the row that opened it.
+ *
+ * The `panelId`s here were also wrong in a quieter way. They read
+ * `account-settings`, `privacy-settings`, `my-hashtags` and so on, while the
+ * ids the shell actually resolves — and the ids that appear in `?drawer=` — are
+ * `account`, `privacy`, `hashtags`. Nothing consumed the registry, so nothing
+ * failed. They are corrected to the URL contract, never the other way round: a
+ * panel id is a shared link.
+ *
+ * Row BEHAVIOUR is still wired in the surface, not read from here. See the note
+ * at the top of `AccountDrawer.tsx`: three rows declare `swap` and no swap
+ * target is registered yet.
+ */
+export function accountRow(rowId: string): DrawerRow {
+  const row = ACCOUNT_SURFACE.rows.find((r) => r.id === rowId);
+  // Loud, not silent. An unknown row id is a wiring error at author time, and a
+  // row that renders with a blank label is the failure BD111 refuses.
+  if (!row) throw new Error(`accountRow: no row '${rowId}' in ACCOUNT_SURFACE`);
+  return row;
+}
+
+/**
+ * The route a `navigate` row goes to. Throws on any other behaviour.
+ *
+ * This matters more than it looks. `registry.test.ts` verifies these routes and
+ * their `paramContract`s against the destination's source — that gate is what
+ * caught `My stories` pointing at a param nothing read. Until now the surface
+ * hardcoded its own copies of the same strings, so the gate was guarding a
+ * parallel list rather than the one members tap.
+ */
+export function accountRoute(rowId: string): string {
+  const row = accountRow(rowId);
+  if (row.behaviour.kind !== 'navigate') {
+    throw new Error(`accountRoute: row '${rowId}' is '${row.behaviour.kind}', not 'navigate'`);
+  }
+  return row.behaviour.route;
+}
+
+/** The panel id a `push` row opens. Throws on any other behaviour. */
+export function accountPanelId(rowId: string): string {
+  const row = accountRow(rowId);
+  if (row.behaviour.kind !== 'push') {
+    throw new Error(`accountPanelId: row '${rowId}' is '${row.behaviour.kind}', not 'push'`);
+  }
+  return row.behaviour.panelId;
 }

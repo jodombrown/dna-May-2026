@@ -16,6 +16,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { ACCOUNT_PANELS } from '@/components/drawer/surfaces/AccountSurface';
+import { ACCOUNT_SURFACE } from '@/components/drawer/registry';
 
 const repoRoot = resolve(__dirname, '../..');
 const accountSource = readFileSync(
@@ -23,29 +24,84 @@ const accountSource = readFileSync(
   'utf8',
 );
 
-/** Every id pushed via `push({ id: ... })` or `subpage={{ id: ... }}`. */
-function pushedIds(src: string): string[] {
-  const ids = new Set<string>();
-  for (const m of src.matchAll(/(?:push\(\{|subpage=\{\{)\s*id:\s*'([^']+)'/g)) ids.add(m[1]);
-  return [...ids];
-}
+/**
+ * DR2 step 2 moved the ids out of this file and into the registry, so the old
+ * source-grep for `push({ id: '...' })` literals now finds nothing and its own
+ * self-check fired — which is what a self-check is for.
+ *
+ * The replacement is stronger than what it replaces: it reads every `push` row
+ * in `ACCOUNT_SURFACE` rather than the id literals someone happened to write,
+ * so a row added to the registry with no panel behind it fails here instead of
+ * opening a blank drawer.
+ */
+const pushRows = ACCOUNT_SURFACE.rows.filter((r) => r.behaviour.kind === 'push');
+
+/**
+ * `share` is the one panel rendered inline by the surface rather than
+ * registered in `ACCOUNT_PANELS`, because its content is built from the live
+ * action handlers. Named here so the exemption is deliberate and visible.
+ */
+const INLINE_PANEL_IDS = new Set(['share']);
+
+/**
+ * `identity-card` is the avatar-and-name card at the top of the surface, not a
+ * labelled row. Its registry `label` names the control for the inventory; the
+ * member sees their own name there, so it has no copy to keep in step with the
+ * panel it opens. Every other push row does.
+ */
+const NON_ROW_IDS = new Set(['identity-card']);
 
 describe('account surface panels', () => {
-  it('finds the ids the surface actually pushes (guards the matcher itself)', () => {
-    // A matcher that found nothing would make the next test pass vacuously.
-    expect(pushedIds(accountSource).length).toBeGreaterThan(3);
+  it('finds the push rows (guards the matcher itself)', () => {
+    // A selector that found nothing would make every assertion below vacuous.
+    expect(pushRows.length).toBeGreaterThan(5);
   });
 
-  it('every pushed panel id resolves to registered content', () => {
-    const unregistered = pushedIds(accountSource).filter(
-      (id) => !(id in ACCOUNT_PANELS) && id !== 'share',
-    );
+  it('every registry push row resolves to registered content', () => {
+    const unregistered = pushRows
+      .map((r) => (r.behaviour as { panelId: string }).panelId)
+      .filter((id) => !(id in ACCOUNT_PANELS) && !INLINE_PANEL_IDS.has(id));
     expect(unregistered).toEqual([]);
+  });
+
+  /**
+   * The assertion that would have caught the live defect.
+   *
+   * On main before this cycle, `registry.ts` and `ACCOUNT_PANELS.account` both
+   * read "Sign-in and security" while `AccountDrawer.tsx` still rendered a row
+   * labelled "Account". The panel header and the row that opened it disagreed,
+   * in production, because the copy lived in two places and only one was
+   * updated. Now there is one place, and this checks the other end of it.
+   */
+  it('a panel title equals the label of the row that opens it', () => {
+    const mismatched = pushRows
+      .filter((r) => !NON_ROW_IDS.has(r.id))
+      .map((r) => ({ row: r, panelId: (r.behaviour as { panelId: string }).panelId }))
+      .filter(({ panelId }) => panelId in ACCOUNT_PANELS)
+      .map(({ row, panelId }) => ({
+        row: row.id,
+        rowLabel: row.label,
+        panelTitle: ACCOUNT_PANELS[panelId]().title,
+      }))
+      .filter((x) => x.rowLabel !== x.panelTitle);
+    expect(mismatched).toEqual([]);
   });
 
   it('panel titles carry the founder-approved copy lock', () => {
     // `Account` sat confusingly adjacent to both `Profile` and the surface title.
     expect(ACCOUNT_PANELS.account().title).toBe('Sign-in and security');
+  });
+
+  /**
+   * The surface no longer defines panels of its own. Two definitions of one
+   * list is the drift vector BD137 exists to close, and it had already drifted.
+   */
+  it('the surface declares no panel content — the shell owns it', () => {
+    const code = accountSource
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/^\s*\/\/.*$/gm, '');
+    expect(code).not.toMatch(/React\.lazy\(/);
+    expect(code).not.toMatch(/content:\s*wrap\(/);
   });
 });
 

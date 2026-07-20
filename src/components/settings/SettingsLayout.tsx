@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
+import { useIdentitySheetSafe } from '@/components/ui/settings-kit';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, User, Shield, Bell, Settings, ChevronRight, Hash, UserX, Flag } from 'lucide-react';
@@ -68,6 +69,42 @@ interface SettingsLayoutProps {
 
 export function SettingsLayout({ children, title, description }: SettingsLayoutProps) {
   const location = useLocation();
+
+  /**
+   * Panel awareness (DR2 step 1) — BD135 rule 5, satisfied in one place.
+   *
+   * Seven settings pages wrap themselves in this layout, and seven of the eight
+   * Account drawer panels render one of them. So inside a 448px panel this
+   * layout was rendering `<UnifiedHeader />`, a `min-h-screen` container, a
+   * Back-to-Feed button and a seven-item sidebar nav: an entire page, chrome
+   * and all, inside a drawer that already has a header, a back control and a
+   * close. That is the exact inverse of BD142 — there a surface carried too
+   * little chrome after the shell absorbed it, here it carries too much.
+   *
+   * The fix lives here rather than in the seven pages because the pages wrap at
+   * two to four separate sites each (loading, error and main states wrap
+   * independently), so splitting content from chrome page-by-page means ~15
+   * edit sites plus seven new routed wrappers. One shared layout, one detector.
+   *
+   * `useIdentitySheetSafe()` is that detector and it was already built and
+   * already correct: it returns null outside a sheet, and the only live provider
+   * of that context is `DrawerIdentityShim`, which wraps panels and nothing else
+   * (`IdentitySheet` itself is rendered nowhere — asserted in
+   * `accountSurface.test.tsx`). In panel context the layout renders content
+   * only; on `/dna/settings/*` it renders exactly as before.
+   */
+  const inPanel = useIdentitySheetSafe() !== null;
+
+  if (inPanel) {
+    return (
+      <div className="p-4">
+        {description ? (
+          <p className="mb-4 text-meta text-muted-foreground">{description}</p>
+        ) : null}
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
