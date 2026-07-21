@@ -14,6 +14,7 @@ import { drawerResolvers } from '@/components/drawer/resolvers';
 import { ComposerProvider } from '@/contexts/ComposerContext';
 import { AccountActionsProvider } from '@/contexts/AccountActionsContext';
 import { AppDrawer } from '@/components/drawer/AppDrawer';
+import { LandscapeGate } from '@/components/mobile/LandscapeGate';
 import { AccountDrawerProvider } from "@/contexts/AccountDrawerContext";
 import { DiaSheetProvider } from "@/contexts/DiaSheetContext";
 import DiaSheetMount from "@/components/dia/DiaSheetMount";
@@ -375,6 +376,8 @@ function App() {
                 <ComposerProvider>
                 <AccountDrawerProvider>
                   <AppDrawer />
+                  {/* BD158: mounted once at app root, above every band. */}
+                  <LandscapeGate />
                   <ViewStateProvider>
                     <MessageProvider>
                       <DiaSheetProvider>
