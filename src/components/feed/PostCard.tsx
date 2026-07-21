@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { CommentSection } from './CommentSection';
 import { ReshareDialog } from './ReshareDialog';
-import { EditPostDialog } from './EditPostDialog';
 import { createResharePost } from '@/lib/feedWriter';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { usePostReactions } from '@/hooks/usePostReactions';
@@ -55,7 +54,6 @@ export function PostCard({ post }: PostCardProps) {
   const queryClient = useQueryClient();
   const [showComments, setShowComments] = useState(false);
   const [showReshareDialog, setShowReshareDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
 
   // Report action reuses the existing working report path (see PostMenuOthers).
@@ -189,14 +187,22 @@ export function PostCard({ post }: PostCardProps) {
     },
   });
 
-  // Delete post
+  // Delete post (soft delete via SECURITY DEFINER RPC; previously a hard
+  // row delete, which RLS could not scope to a single column).
   const deletePostMutation = useMutation({
     mutationFn: async () => {
-      await supabase.from('posts').delete().eq('id', post.id);
+      const { error } = await supabase.rpc('rpc_soft_delete_post' as any, {
+        p_post_id: post.id,
+      });
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success('Post deleted');
+    },
+    onError: () => {
+      toast.error('Failed to delete post. Please try again.');
     },
   });
 
@@ -226,19 +232,23 @@ export function PostCard({ post }: PostCardProps) {
     await reshareMutation.mutateAsync(commentary);
   };
 
-  // Edit post
+  // Edit post via the column-allowlisted SECURITY DEFINER RPC. updated_at is
+  // owned by a database trigger, so we never write it; we pass the post's
+  // current updated_at for optimistic concurrency (40001 on mismatch).
   const editPostMutation = useMutation({
     mutationFn: async (content: string) => {
       if (!user) throw new Error('Not authenticated');
 
-      // Direct update instead of RPC (update_post RPC not yet implemented)
-      const { data, error } = await supabase
-        .from('posts')
-        .update({ content, updated_at: new Date().toISOString() })
-        .eq('id', post.id)
-        .eq('author_id', user.id);
+      const { data, error } = await supabase.rpc('rpc_update_post' as any, {
+        p_post_id: post.id,
+        p_expected_updated_at: post.updated_at,
+        p_patch: { content },
+      });
 
-      if (error) throw error;
+      if (error) {
+        if ((error as any).code === '40001') throw new Error('POST_STALE');
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -247,7 +257,11 @@ export function PostCard({ post }: PostCardProps) {
       toast.success('Post updated successfully!');
     },
     onError: (error) => {
-      toast.error('Failed to update post. Please try again.');
+      if (error instanceof Error && error.message === 'POST_STALE') {
+        toast.error('This post changed since you opened it. Reload before saving.');
+      } else {
+        toast.error('Failed to update post. Please try again.');
+      }
     },
   });
 
@@ -302,7 +316,10 @@ export function PostCard({ post }: PostCardProps) {
                       navigate(`/dna/convene/events/${post.event_id}/edit`);
                       return;
                     }
-                    setShowEditDialog(true);
+                    // TODO: wire to the unified post edit surface. The inline
+                    // EditPostDialog was retired in the rpc_update_post
+                    // migration; editPostMutation above is the RPC-backed save
+                    // path that surface will call.
                   }}
                 >
                   <Edit3 className="h-4 w-4 mr-2" />
@@ -407,14 +424,6 @@ export function PostCard({ post }: PostCardProps) {
           content: post.content,
           media_url: post.media_urls?.[0] || null,
         }}
-      />
-
-      {/* Edit Post Dialog */}
-      <EditPostDialog
-        isOpen={showEditDialog}
-        onClose={() => setShowEditDialog(false)}
-        onSave={handleEdit}
-        initialContent={post.content}
       />
 
       {/* Report Dialog */}

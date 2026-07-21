@@ -205,10 +205,9 @@ export function PostCard({
     if (!confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      const { error } = await supabase
-        .from('posts')
-        .update({ is_deleted: true })
-        .eq('id', post.post_id);
+      const { error } = await supabase.rpc('rpc_soft_delete_post' as any, {
+        p_post_id: post.post_id,
+      });
 
       if (error) throw error;
 
