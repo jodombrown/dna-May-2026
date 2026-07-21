@@ -67,13 +67,38 @@ export function AppDrawer() {
   const anchor = anchorFor(handedness, isMobile);
   const canGoBack = depth > 1;
 
-  // Per-panel scroll memory. Restore on frame change, persist on unmount.
+  /**
+   * Scroll position (DR3).
+   *
+   * The defect: opening a second panel left the member part-way down it,
+   * inheriting the previous panel's offset. Two causes compounded.
+   *
+   * One, the scroll container was a SINGLE reused element across every frame,
+   * so a frame change never reset the browser's own scrollTop. Two, the reset
+   * that was written could not take effect: panel content is `React.lazy`
+   * behind Suspense, so at the moment the effect ran the container had no
+   * scrollable height and writing `scrollTop` was a silent no-op. The retained
+   * offset then reappeared once the chunk resolved.
+   *
+   * `key={currentKey}` on the container fixes the reset structurally rather
+   * than by timing: every frame mounts a FRESH element, and a fresh element
+   * starts at zero with no write required and nothing to race.
+   *
+   * Memory is kept for SURFACE ROOTS only, and deliberately dropped for panels
+   * (founder call, DR3). A surface root renders eagerly, so restoring into it
+   * is reliable; a panel is lazy, so a restore would be the same no-op that
+   * caused this defect, and returning a member mid-list in a settings panel
+   * they had already backed out of is not behaviour anyone asked for. Best-effort
+   * restore into lazy content is exactly the half-working half this cycle refuses.
+   */
+  const isSurfaceRoot = !!currentKey && !currentKey.includes('.');
+
   React.useEffect(() => {
-    if (!currentKey || !scrollRef.current) return;
+    if (!currentKey || !isSurfaceRoot || !scrollRef.current) return;
     const el = scrollRef.current;
     el.scrollTop = getScroll(currentKey);
     return () => setScroll(currentKey, el.scrollTop);
-  }, [currentKey, getScroll, setScroll]);
+  }, [currentKey, isSurfaceRoot, getScroll, setScroll]);
 
   // The shell renders nothing at all when no surface is active.
   if (!isOpen || !currentFrame) return null;
@@ -170,6 +195,9 @@ export function AppDrawer() {
             height without an inset nobody owned.
           */}
           <div
+            // A fresh element per frame. See the scroll note above: this is the
+            // reset, and it is structural rather than timed.
+            key={currentKey ?? 'empty'}
             ref={scrollRef}
             className="flex-1 overflow-y-auto overscroll-contain"
             style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
