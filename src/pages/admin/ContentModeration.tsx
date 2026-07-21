@@ -182,21 +182,19 @@ const ContentModeration = () => {
 
       const post = selectedPost;
 
-      const { data: updated, error } = await supabase
-        .from('posts')
-        .update({
-          moderation_status: status,
-          moderated_by: user.user.id,
-          moderated_at: new Date().toISOString(),
-          moderation_notes: reviewNotes || undefined
-        })
-        .eq('id', postId)
-        .select('id');
+      // moderated_by / moderated_at / moderation_status are set inside the
+      // SECURITY DEFINER RPC; the client may only supply the status and notes.
+      // p_notes null (never undefined) leaves any existing notes untouched.
+      const { data: updated, error } = await supabase.rpc('rpc_moderate_posts' as any, {
+        p_post_ids: [postId],
+        p_status: status,
+        p_notes: reviewNotes || null,
+      });
 
       if (error) throw error;
 
-      // Fail loud on a no-op: a zero-row update means the post was not moderated.
-      const affected = updated?.length ?? 0;
+      // Fail loud on a no-op: an empty result means the post was not moderated.
+      const affected = (updated as string[] | null)?.length ?? 0;
       if (affected === 0) {
         toast({
           title: "No changes",
@@ -235,21 +233,19 @@ const ContentModeration = () => {
 
       const comment = selectedComment;
 
-      const { data: updated, error } = await supabase
-        .from('post_comments')
-        .update({
-          moderation_status: status,
-          moderated_by: user.user.id,
-          moderated_at: new Date().toISOString(),
-          moderation_notes: reviewNotes || undefined
-        })
-        .eq('id', commentId)
-        .select('id');
+      // moderated_by / moderated_at / moderation_status are set inside the
+      // SECURITY DEFINER RPC; the client may only supply the status and notes.
+      // p_notes null (never undefined) leaves any existing notes untouched.
+      const { data: updated, error } = await supabase.rpc('rpc_moderate_comments' as any, {
+        p_comment_ids: [commentId],
+        p_status: status,
+        p_notes: reviewNotes || null,
+      });
 
       if (error) throw error;
 
-      // Fail loud on a no-op: a zero-row update means the comment was not moderated.
-      const affected = updated?.length ?? 0;
+      // Fail loud on a no-op: an empty result means the comment was not moderated.
+      const affected = (updated as string[] | null)?.length ?? 0;
       if (affected === 0) {
         toast({
           title: "No changes",
@@ -292,20 +288,18 @@ const ContentModeration = () => {
 
       const ids = Array.from(selectedPostIds);
 
-      const { data: updated, error } = await supabase
-        .from('posts')
-        .update({
-          moderation_status: status,
-          moderated_by: user.user.id,
-          moderated_at: new Date().toISOString(),
-        })
-        .in('id', ids)
-        .select('id');
+      // Bulk moderation carries no notes; pass null so the RPC leaves any
+      // existing notes untouched. The RPC returns the ids it actually moderated.
+      const { data: updated, error } = await supabase.rpc('rpc_moderate_posts' as any, {
+        p_post_ids: ids,
+        p_status: status,
+        p_notes: null,
+      });
 
       if (error) throw error;
 
       // Report the real affected-row count, not the client-side selection size.
-      const affectedIds = new Set((updated ?? []).map(r => r.id));
+      const affectedIds = new Set((updated as string[] | null) ?? []);
       const affected = affectedIds.size;
 
       if (affected === 0) {
@@ -356,20 +350,18 @@ const ContentModeration = () => {
 
       const ids = Array.from(selectedCommentIds);
 
-      const { data: updated, error } = await supabase
-        .from('post_comments')
-        .update({
-          moderation_status: status,
-          moderated_by: user.user.id,
-          moderated_at: new Date().toISOString(),
-        })
-        .in('id', ids)
-        .select('id');
+      // Bulk moderation carries no notes; pass null so the RPC leaves any
+      // existing notes untouched. The RPC returns the ids it actually moderated.
+      const { data: updated, error } = await supabase.rpc('rpc_moderate_comments' as any, {
+        p_comment_ids: ids,
+        p_status: status,
+        p_notes: null,
+      });
 
       if (error) throw error;
 
       // Report the real affected-row count, not the client-side selection size.
-      const affectedIds = new Set((updated ?? []).map(r => r.id));
+      const affectedIds = new Set((updated as string[] | null) ?? []);
       const affected = affectedIds.size;
 
       if (affected === 0) {

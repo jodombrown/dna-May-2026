@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MoreHorizontal, Edit2, Trash2, Pin, MessageSquareOff, Link, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { usePostActions } from '@/hooks/usePostActions';
-import { EditPostDialog } from './EditPostDialog';
 
 interface PostMenuOwnProps {
   postId: string;
@@ -40,7 +38,6 @@ export function PostMenuOwn({
   onUpdate,
   editHref,
 }: PostMenuOwnProps) {
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const navigate = useNavigate();
   
   const {
@@ -73,7 +70,9 @@ export function PostMenuOwn({
                 navigate(editHref);
                 return;
               }
-              setShowEditDialog(true);
+              // TODO: wire to the unified post edit surface. The inline
+              // EditPostDialog was retired in the rpc_update_post migration;
+              // plain-text post editing has no host until that surface lands.
             }}
           >
             <Edit2 className="h-4 w-4 mr-2" />
@@ -115,14 +114,6 @@ export function PostMenuOwn({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <EditPostDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        postId={postId}
-        initialContent={content}
-        onSuccess={onUpdate}
-      />
     </>
   );
 }
