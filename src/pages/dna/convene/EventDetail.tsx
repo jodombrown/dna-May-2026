@@ -601,6 +601,8 @@ const EventDetail = () => {
         animate={{ y: showStickyHeader ? 0 : -60, opacity: showStickyHeader ? 1 : 0 }}
         transition={{ duration: 0.2 }}
         className="hidden md:block fixed top-0 inset-x-0 z-50 bg-background/95 backdrop-blur-md border-b border-border"
+        /* BD157 */
+        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
         <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">

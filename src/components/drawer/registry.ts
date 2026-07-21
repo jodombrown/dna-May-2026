@@ -87,12 +87,6 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       // Resolved per-member at the call site from profileRoute(profile).
       behaviour: { kind: 'navigate', route: '/dna/:username' },
     },
-    {
-      id: 'share-profile',
-      label: 'Share profile',
-      group: 'you',
-      behaviour: { kind: 'push', panelId: 'share' },
-    },
 
     // ── MY WORK ──────────────────────────────────────────────────────────
     // All five are `navigate`, as BD135 predicted and DR0 confirmed by live read.
@@ -126,7 +120,16 @@ export const ACCOUNT_SURFACE: DrawerSurface = {
       id: 'my-events',
       label: 'My events',
       group: 'my-work',
-      behaviour: { kind: 'navigate', route: '/dna/convene/events' },
+      // DR3: was `/dna/convene/events`, the GLOBAL events index. The row
+      // promised the member's own events and delivered everybody's.
+      //
+      // The registry gate did not catch it and could not have: check 1 only
+      // asks whether the path is declared in App.tsx, and `/dna/convene/events`
+      // is a real route. A route string cannot express whose rows it returns.
+      // Same defect class as BD139's `My stories`, which pointed at the
+      // unfiltered Convey hub. The durable fix is a member-filter contract on
+      // the `my-work` group; proposed separately, not smuggled in here.
+      behaviour: { kind: 'navigate', route: '/dna/convene/my-events' },
     },
     {
       id: 'my-stories',

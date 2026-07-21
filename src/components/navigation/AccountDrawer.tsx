@@ -41,17 +41,10 @@ import {
   Bookmark,
   Users,
   Calendar,
-  Share2,
   HelpCircle,
   LogOut,
   Info,
   ClipboardCheck,
-  Copy,
-  Linkedin,
-  Twitter,
-  MessageSquare,
-  Download,
-  Loader2,
 } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
 import { SettingsGroup, SettingsRow, useIdentitySheet } from '@/components/ui/settings-kit';
@@ -60,7 +53,6 @@ import { accountRow, accountPanelId, accountRoute } from '@/components/drawer/re
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { toast } from 'sonner';
 import { profileRoute } from '@/lib/profileRoute';
 import { ChevronRight } from 'lucide-react';
 
@@ -81,16 +73,17 @@ const panelRow = (rowId: string) => {
   };
 };
 
+/**
+ * DR3 / BD152: narrowed. The share and PDF-export handles left with
+ * `ShareSubpage`. `AccountActionsContext` still provides them and
+ * `ProfileShareDropdown` on the profile hero still consumes them, so nothing
+ * is orphaned upstream; this surface simply no longer claims them.
+ */
 interface ActionHandlers {
-  onShare: () => void;
   onTour: () => void;
   onTestGuide: () => void;
   onFeedback: () => void;
   onSignOut: () => void;
-  publicUrl: string;
-  displayName: string;
-  isDownloading: boolean;
-  onDownloadPDF: () => void;
 }
 
 export function AccountDrawerBody({
@@ -159,13 +152,6 @@ export function AccountDrawerBody({
     };
   };
 
-  const openShareSheet = () =>
-    push({
-      id: 'share',
-      title: 'Share profile',
-      node: <ShareSubpage handlers={handlers} />,
-    });
-
   return (
     <>
       {/* Identity card */}
@@ -196,11 +182,6 @@ export function AccountDrawerBody({
           // The only row whose destination is per-member, so it resolves from
           // the profile rather than from the registry's `/dna/:username`.
           onClick={() => profile && go(profileRoute(profile))}
-        />
-        <SettingsRow
-          icon={Share2}
-          label={accountRow('share-profile').label}
-          onClick={openShareSheet}
         />
       </SettingsGroup>
 
@@ -262,52 +243,6 @@ export function AccountDrawerBody({
         />
       </SettingsGroup>
     </>
-  );
-}
-
-function ShareSubpage({ handlers }: { handlers: ActionHandlers }) {
-  const url = handlers.publicUrl;
-  const text = `Check out ${handlers.displayName}'s profile on DNA - Diaspora Network of Africa`;
-
-  const copy = () => {
-    if (!url) return;
-    navigator.clipboard.writeText(url);
-    toast.success('Profile link copied');
-  };
-  const wa = () => window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank');
-  const li = () => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
-  const tw = () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-  const nativeShare = async () => {
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({ title: `${handlers.displayName} on DNA`, text, url });
-      } catch {
-        // user cancelled
-      }
-    } else {
-      copy();
-    }
-  };
-
-  return (
-    <div className="p-4">
-      <SettingsGroup label="Share">
-        <SettingsRow icon={Copy} label="Copy link" onClick={copy} />
-        <SettingsRow icon={MessageSquare} label="Share via WhatsApp" onClick={wa} />
-        <SettingsRow icon={Linkedin} label="Share via LinkedIn" onClick={li} />
-        <SettingsRow icon={Twitter} label="Share via X" onClick={tw} />
-        {typeof navigator !== 'undefined' && (navigator as Navigator).share ? (
-          <SettingsRow icon={Share2} label="Share via..." onClick={nativeShare} />
-        ) : null}
-      </SettingsGroup>
-      <SettingsGroup label="Export">
-        <SettingsRow
-          icon={handlers.isDownloading ? Loader2 : Download}
-          label={handlers.isDownloading ? 'Generating PDF...' : 'Download PDF'}
-          onClick={handlers.onDownloadPDF}
-        />
-      </SettingsGroup>
-    </div>
   );
 }
 

@@ -37,11 +37,19 @@ const accountSource = readFileSync(
 const pushRows = ACCOUNT_SURFACE.rows.filter((r) => r.behaviour.kind === 'push');
 
 /**
- * `share` is the one panel rendered inline by the surface rather than
- * registered in `ACCOUNT_PANELS`, because its content is built from the live
- * action handlers. Named here so the exemption is deliberate and visible.
+ * DR3: the `INLINE_PANEL_IDS` exemption is GONE, and its removal is the point.
+ *
+ * It exempted `share` on the stated grounds that the surface rendered that
+ * panel inline from the live action handlers. That was false the day it was
+ * written. `DrawerIdentityShim` ignores the `node` argument and resolves panels
+ * BY ID, and `share` was never in `ACCOUNT_PANELS` — so tapping Share profile
+ * pushed `?drawer=account.share`, resolved to null, and made the whole drawer
+ * vanish. The exemption is why a dead row passed a gate built to catch dead rows.
+ *
+ * There is no allowlist now. Every push row resolves to registered content or
+ * the gate fails. An exemption written in prose is a claim, not a fact
+ * (BD111, BD145: read the config, not the doc).
  */
-const INLINE_PANEL_IDS = new Set(['share']);
 
 /**
  * `identity-card` is the avatar-and-name card at the top of the surface, not a
@@ -50,6 +58,24 @@ const INLINE_PANEL_IDS = new Set(['share']);
  * panel it opens. Every other push row does.
  */
 const NON_ROW_IDS = new Set(['identity-card']);
+
+/**
+ * DIRTY INPUT (BD121). The gate above is only certified if it REJECTS the row
+ * that shipped. This is `share-profile` exactly as it sat in the registry
+ * before DR3 cut it: a push row naming a panel id that no resolver registers.
+ * If this test ever goes green, the exemption has come back in another form.
+ */
+describe('account surface panels — the gate rejects the DR3 defect', () => {
+  it('a push row naming an unregistered panel is a violation', () => {
+    const shareAsShipped = { id: 'share-profile', panelId: 'share' };
+    expect(shareAsShipped.panelId in ACCOUNT_PANELS).toBe(false);
+  });
+
+  it('no live registry row still points at it', () => {
+    const ids = ACCOUNT_SURFACE.rows.map((r) => r.id);
+    expect(ids).not.toContain('share-profile');
+  });
+});
 
 describe('account surface panels', () => {
   it('finds the push rows (guards the matcher itself)', () => {
@@ -60,7 +86,7 @@ describe('account surface panels', () => {
   it('every registry push row resolves to registered content', () => {
     const unregistered = pushRows
       .map((r) => (r.behaviour as { panelId: string }).panelId)
-      .filter((id) => !(id in ACCOUNT_PANELS) && !INLINE_PANEL_IDS.has(id));
+      .filter((id) => !(id in ACCOUNT_PANELS));
     expect(unregistered).toEqual([]);
   });
 
