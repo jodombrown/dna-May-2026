@@ -150,7 +150,8 @@ const DnaFeed = () => {
           <div
             ref={mobileHeaderRef}
             className="fixed top-0 left-0 right-0"
-            style={{ zIndex: 50 }}
+            // BD157: this element owns the notch strip in the installed PWA.
+            style={{ zIndex: 50, paddingTop: 'env(safe-area-inset-top, 0px)' }}
           >
             {/* Header row - hides on scroll down */}
             <div className={cn(

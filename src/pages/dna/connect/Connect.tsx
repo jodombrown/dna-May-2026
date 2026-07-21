@@ -167,7 +167,8 @@ const Connect = () => {
         <div
           ref={connectHeaderRef}
           className="fixed top-0 left-0 right-0"
-          style={{ zIndex: 50 }}
+          // BD157
+          style={{ zIndex: 50, paddingTop: 'env(safe-area-inset-top, 0px)' }}
         >
           <div className={cn(
             "bg-background transition-all duration-300 overflow-hidden",

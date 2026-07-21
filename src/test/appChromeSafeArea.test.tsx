@@ -1,92 +1,133 @@
 /**
  * App-chrome safe-area gate (BD157, extending BD110).
  *
- * BD110 already requires every route to render the standard chrome. This adds
- * the clause the founder's device found the hard way: the chrome must apply the
- * TOP safe-area inset.
+ * ── Why this ENUMERATES rather than names ─────────────────────────────────
+ * The first version of this gate asserted one file, `DnaMobileHubShell`, and
+ * went green while the defect stayed live on the Feed, which is the busiest
+ * surface in the app and the one the founder photographed. A gate that names
+ * its subject can only ever certify the site someone already found.
  *
- * ── Why this needs a gate rather than a fix ────────────────────────────────
- * The defect is invisible in every environment a developer works in. It only
- * appears in the INSTALLED PWA, where `display: standalone` removes the browser
- * chrome and `viewport-fit=cover` hands the notch strip to the page. In a
- * Safari tab the browser's own UI occupies that strip, so the header looks
- * correct and the avatar is reachable. It survived DR0, DR1 and DR2 for exactly
- * that reason, and it will regress the same way unless something checks.
+ * So this walks `src/` instead. It finds every fixed chrome container and
+ * requires each to declare the inset for the edge it is pinned to. When a
+ * twelfth container is added next month it fails on arrival rather than
+ * shipping a strip of unreachable controls to whoever installs the PWA.
  *
- * ── Why a source read and not a render ────────────────────────────────────
- * jsdom has no notion of `env(safe-area-inset-top)` and no viewport insets to
- * resolve it against, so a rendered assertion would pass on an empty string and
- * certify nothing — the vacuous-green failure mode BD141 names. Reading the
- * source for the declaration is the honest instrument at this layer. The real
- * certification is founder QA in the installed PWA in portrait, named as a step
- * inside the cycle.
+ * The first run of this scan found ELEVEN containers. Two had an inset.
+ *
+ * ── Why the defect is invisible without it ────────────────────────────────
+ * `index.html` sets `viewport-fit=cover` and `manifest.json` sets
+ * `display: standalone`, so in the INSTALLED PWA these containers own the strip
+ * under the notch and the strip above the home indicator. In a browser tab the
+ * browser's own UI occupies both, so everything looks correct. No developer
+ * environment reproduces it. That is why it survived DR0, DR1 and DR2.
+ *
+ * ── Why a source read ─────────────────────────────────────────────────────
+ * jsdom has no viewport insets and cannot resolve `env()`, so a rendered
+ * assertion would pass on an empty string and certify nothing (BD141's vacuous
+ * green). Reading source is the honest instrument at this layer. The real
+ * certification is founder QA in the installed PWA, in portrait, named as a
+ * step inside the cycle.
  */
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { resolve, join } from 'node:path';
 
 const repoRoot = resolve(__dirname, '../..');
 const read = (rel: string) => readFileSync(resolve(repoRoot, rel), 'utf8');
 
-/** Comments are prose, not code. Four times this cycle a matcher matched prose. */
+/** Comments are prose, not code. Prose has matched code patterns repeatedly in this series. */
 const strip = (s: string) =>
   s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 
-const TOP_INSET = 'env(safe-area-inset-top';
+/**
+ * The safe-area classes `index.css` ACTUALLY defines.
+ *
+ * Read from the stylesheet, never hardcoded. `pb-safe`, `pb-bottom-nav` and
+ * `min-h-touch` were all live in this codebase and all rendered nothing,
+ * because `tailwind.config.ts` declares no spacing, padding, minHeight or
+ * zIndex scale. A class name is a claim; the stylesheet is the fact (BD145).
+ */
+const definedSafeAreaClasses = new Set(
+  Array.from(read('src/index.css').matchAll(/\.(safe-area-[a-z-]+)\s*\{/g)).map((m) => m[1]),
+);
 
-describe('BD157 — the shared mobile chrome applies the top safe-area inset', () => {
-  const shell = strip(read('src/components/mobile/DnaMobileHubShell.tsx'));
+function walk(dir: string, out: string[] = []): string[] {
+  for (const entry of readdirSync(join(repoRoot, dir))) {
+    if (entry === '_archived' || entry === '__snapshots__' || entry === 'node_modules') continue;
+    const rel = join(dir, entry);
+    if (statSync(join(repoRoot, rel)).isDirectory()) walk(rel, out);
+    else if (entry.endsWith('.tsx') && !entry.endsWith('.test.tsx') && !rel.includes('/test/')) {
+      out.push(rel);
+    }
+  }
+  return out;
+}
 
-  it('the fixed header container declares the inset', () => {
-    expect(shell).toContain(TOP_INSET);
+interface Container {
+  file: string;
+  edges: Array<'top' | 'bottom'>;
+  body: string;
+}
+
+function findChromeContainers(): Container[] {
+  const out: Container[] = [];
+  for (const file of walk('src')) {
+    const body = strip(read(file));
+    const edges: Array<'top' | 'bottom'> = [];
+    if (body.includes('fixed top-0')) edges.push('top');
+    if (body.includes('fixed bottom-0')) edges.push('bottom');
+    if (edges.length) out.push({ file, edges, body });
+  }
+  return out;
+}
+
+/** Does this file declare the inset for that edge, by any mechanism that exists? */
+function declaresInset(body: string, edge: 'top' | 'bottom'): boolean {
+  if (body.includes(`env(safe-area-inset-${edge}`)) return true;
+  for (const cls of definedSafeAreaClasses) {
+    if (cls.includes(edge) && body.includes(cls)) return true;
+  }
+  return false;
+}
+
+describe('BD157 — every fixed chrome container declares its safe-area inset', () => {
+  const containers = findChromeContainers();
+
+  it('the scan finds containers at all (guards the matcher)', () => {
+    // A walk that returned nothing would make every assertion below vacuous.
+    expect(containers.length).toBeGreaterThan(8);
   });
 
-  it('the pre-measurement fallback carries it too', () => {
-    // The frame before ResizeObserver reports is still a frame a member sees.
-    expect(shell).toMatch(/paddingTop:\s*headerPadding\s*\|\|[^,\n]*env\(safe-area-inset-top/);
+  it('no container is pinned to an edge it does not inset', () => {
+    const violations = containers.flatMap((c) =>
+      c.edges
+        .filter((edge) => !declaresInset(c.body, edge))
+        .map((edge) => `${c.file} is fixed to ${edge} with no ${edge} inset`),
+    );
+    expect(violations).toEqual([]);
   });
 
   /**
    * DIRTY INPUT (BD121). A gate observed only against clean input can be
-   * inverted and still look correct. This is the shell exactly as it stood on
-   * main before DR3: a fixed top-0 container with no inset.
+   * inverted and still look correct. This is `Feed.tsx` exactly as it stood
+   * before DR3: the container in the founder's screenshot.
    */
-  it('REJECTS a chrome container with no inset (main before DR3)', () => {
-    const asShipped = `<div ref={headerRef} className="fixed top-0 left-0 right-0 z-50 bg-background">`;
-    expect(asShipped).not.toContain(TOP_INSET);
+  it('REJECTS a top-pinned container with no inset (Feed before DR3)', () => {
+    const asShipped = `<div ref={mobileHeaderRef} className="fixed top-0 left-0 right-0" style={{ zIndex: 50 }}>`;
+    expect(declaresInset(asShipped, 'top')).toBe(false);
   });
 
-  it('guards the matcher itself', () => {
-    // A read that returned nothing would make every assertion above vacuous.
-    expect(shell.length).toBeGreaterThan(500);
+  it('REJECTS a bottom-pinned container relying on a phantom class', () => {
+    // `pb-safe` looks like it handles this. It is not defined anywhere.
+    const asShipped = `<div className="flex justify-around items-center h-16 px-2 pb-safe">`;
+    expect(declaresInset(asShipped, 'bottom')).toBe(false);
   });
-});
 
-/**
- * BD145 one layer over: a CSS class existing is not evidence anything uses it.
- *
- * `.safe-area-pt` sat in `index.css` with ZERO consumers while the defect it
- * was written to prevent was live in production. This asserts the shape of that
- * lesson: if the class is going to exist, something has to consume it, or the
- * inset has to be declared directly where it is needed. Either satisfies the
- * member; neither is satisfied by a definition alone.
- */
-describe('BD157 — the top inset reaches the DOM, not just the stylesheet', () => {
-  it('the inset is declared somewhere the chrome actually renders', () => {
-    const shell = strip(read('src/components/mobile/DnaMobileHubShell.tsx'));
-    const css = read('src/index.css');
-
-    const definedInCss = css.includes('.safe-area-pt');
-    const appliedInChrome = shell.includes(TOP_INSET) || shell.includes('safe-area-pt');
-
-    // The definition may or may not survive. The application must.
-    expect(
-      appliedInChrome,
-      definedInCss
-        ? '.safe-area-pt is defined in index.css but the chrome applies no top inset — the DR3 defect, exactly'
-        : 'the chrome applies no top inset',
-    ).toBe(true);
+  it('ACCEPTS a container using a class index.css actually defines', () => {
+    const [anyDefined] = [...definedSafeAreaClasses].filter((c) => c.includes('bottom'));
+    expect(anyDefined, 'index.css defines no bottom safe-area class').toBeTruthy();
+    expect(declaresInset(`<nav className="fixed bottom-0 ${anyDefined}">`, 'bottom')).toBe(true);
   });
 });
 
@@ -105,8 +146,10 @@ describe('BD158 — the landscape gate is scoped to phones', () => {
   });
 
   it('never queries orientation alone', () => {
-    const bare = gate.match(/'\(orientation:\s*landscape\)'/);
-    expect(bare, 'an unscoped orientation query would blur the app for every desktop member').toBeNull();
+    expect(
+      gate.match(/'\(orientation:\s*landscape\)'/),
+      'an unscoped orientation query would blur the app for every desktop member',
+    ).toBeNull();
   });
 
   it('is dismissible (WCAG 2.1 SC 1.3.4)', () => {

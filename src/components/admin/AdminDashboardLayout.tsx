@@ -314,7 +314,11 @@ export const AdminDashboardLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200 px-4 py-3">
+      <header
+        className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200 px-4 py-3"
+        /* BD157 */
+        style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.75rem)' }}
+      >
         <div className="flex items-center justify-between">
           <button
             onClick={() => setIsSidebarOpen(true)}
@@ -360,6 +364,8 @@ export const AdminDashboardLayout: React.FC = () => {
       <aside
         className={cn(
           'fixed top-0 left-0 bottom-0 w-64 bg-white border-r border-neutral-200 z-50 transition-transform duration-300',
+          // BD157: spans both insets.
+          '[padding-top:env(safe-area-inset-top,0px)] [padding-bottom:env(safe-area-inset-bottom,0px)]',
           'lg:translate-x-0',
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
