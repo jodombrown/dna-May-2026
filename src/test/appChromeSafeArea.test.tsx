@@ -83,6 +83,45 @@ function findChromeContainers(): Container[] {
 }
 
 /** Does this file declare the inset for that edge, by any mechanism that exists? */
+/**
+ * The DECLARED chrome list (BD159).
+ *
+ * DR3's enumerator inferred chrome from `fixed top-0`. That matched a class
+ * STRING rather than the property, and missed `UnifiedHeader`, which pins with
+ * `fixed left-0 right-0` plus a `top` in a style object. The landing page — the
+ * first thing any visitor sees — kept rendering under the status bar.
+ *
+ * The obvious repair, matching the property instead, was BUILT AND REJECTED ON
+ * EVIDENCE. A property scan flags 35 files, and applying the inset to them
+ * would be actively wrong:
+ *
+ *   · `sticky top-0` is ambiguous. Inside a scroll container it sticks to that
+ *     container, nowhere near the notch. `ConversationsPanel`, `NetworkPanel`
+ *     and `DiscoveryFeed` are section headers, not chrome, and static analysis
+ *     cannot tell them apart from a real top bar.
+ *   · `MobileHeader` is `sticky top-0` INSIDE Feed's fixed container, which
+ *     already carries the inset. Adding a second would DOUBLE-PAD the Feed.
+ *
+ * So chrome is DECLARED here, not inferred. Adding a file to this list is a
+ * decision someone makes and defends, which is the honest shape for a boundary
+ * a scan cannot draw. The durable answer is a single `<AppChrome>` primitive
+ * that owns edge-pinning and insets, deferred to the chrome-consolidation cycle.
+ */
+const DECLARED_CHROME: Array<{ file: string; edges: Array<'top' | 'bottom'> }> = [
+  { file: 'src/components/UnifiedHeader.tsx', edges: ['top'] },
+  { file: 'src/components/mobile/DnaMobileHubShell.tsx', edges: ['top'] },
+  { file: 'src/pages/dna/Feed.tsx', edges: ['top'] },
+  { file: 'src/pages/dna/connect/Connect.tsx', edges: ['top'] },
+  { file: 'src/pages/dna/convey/ConveyStoryHub.tsx', edges: ['top'] },
+  { file: 'src/pages/dna/convene/EventDetail.tsx', edges: ['top'] },
+  { file: 'src/components/admin/AdminDashboardLayout.tsx', edges: ['top'] },
+  { file: 'src/components/ui/toast.tsx', edges: ['top', 'bottom'] },
+  { file: 'src/components/mobile/MobileBottomNav.tsx', edges: ['bottom'] },
+  { file: 'src/components/pulse/PulseDock.tsx', edges: ['bottom'] },
+  { file: 'src/components/pulse/PulseDockTray.tsx', edges: ['bottom'] },
+  { file: 'src/components/convene/StickyRSVPBar.tsx', edges: ['bottom'] },
+];
+
 function declaresInset(body: string, edge: 'top' | 'bottom'): boolean {
   if (body.includes(`env(safe-area-inset-${edge}`)) return true;
   for (const cls of definedSafeAreaClasses) {
@@ -91,7 +130,7 @@ function declaresInset(body: string, edge: 'top' | 'bottom'): boolean {
   return false;
 }
 
-describe('BD157 — every fixed chrome container declares its safe-area inset', () => {
+describe('BD157 / BD159 — every declared chrome surface insets its edges', () => {
   const containers = findChromeContainers();
 
   it('the scan finds containers at all (guards the matcher)', () => {
@@ -99,7 +138,29 @@ describe('BD157 — every fixed chrome container declares its safe-area inset', 
     expect(containers.length).toBeGreaterThan(8);
   });
 
-  it('no container is pinned to an edge it does not inset', () => {
+  it('every DECLARED chrome surface insets the edge it is pinned to', () => {
+    const violations = DECLARED_CHROME.flatMap(({ file, edges }) => {
+      const body = strip(read(file));
+      return edges
+        .filter((edge) => !declaresInset(body, edge))
+        .map((edge) => `${file} is chrome pinned to ${edge} with no ${edge} inset`);
+    });
+    expect(violations).toEqual([]);
+  });
+
+  /**
+   * The declared list must stay honest. A file listed here that no longer pins
+   * to an edge is stale, and a stale entry silently reduces coverage.
+   */
+  it('every declared file is still actually pinned to an edge', () => {
+    const stale = DECLARED_CHROME.filter(({ file }) => {
+      const body = strip(read(file));
+      return !/\b(fixed|sticky)\b/.test(body);
+    }).map((c) => c.file);
+    expect(stale).toEqual([]);
+  });
+
+  it('no inferred container is pinned to an edge it does not inset', () => {
     const violations = containers.flatMap((c) =>
       c.edges
         .filter((edge) => !declaresInset(c.body, edge))
