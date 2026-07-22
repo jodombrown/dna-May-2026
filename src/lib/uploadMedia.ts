@@ -46,11 +46,12 @@ export const uploadMedia = async (
     bucket, filePath, !!s.session, s.session?.access_token?.length ?? 0,
     s.session?.user?.id ?? 'NONE');
 
-  const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
+  const { data, error } = await supabase.storage.from(bucket).upload(filePath, uploadFile, {
     cacheControl: '3600',
     upsert: true,
-    contentType: file.type || undefined,
+    contentType: uploadFile.type || file.type || undefined,
   });
+
 
   if (error) {
     console.error('[uploadMedia] upload FAILED bucket=%s path=%s hasSession=%s tokenLen=%s sub=%s error=%o',
