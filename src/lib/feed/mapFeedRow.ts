@@ -43,6 +43,8 @@ export interface FeedRpcRow {
   event_title?: string | null;
   created_at: string;
   updated_at?: string | null;
+  edited_at?: string | null;
+  edit_count?: number | null;
   likes_count?: number | string | null;
   comments_count?: number | string | null;
   share_count?: number | string | null;
@@ -119,6 +121,8 @@ export const mapFeedRow = (row: FeedRpcRow): UniversalFeedItem => {
     event_title: row.event_title ?? null,
     created_at: row.created_at,
     updated_at: row.updated_at ?? row.created_at,
+    edited_at: row.edited_at ?? null,
+    edit_count: row.edit_count ?? null,
     slug: row.slug ?? null,
     like_count: toNumber(row.likes_count),
     comment_count: toNumber(row.comments_count),
