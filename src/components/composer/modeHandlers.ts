@@ -45,6 +45,58 @@ export interface ComposerSubmitContext {
   resharedContentId?: string;
 }
 
+// ============================================================
+// Edit hydration — the INVERSE of buildFormData/submit (BD159)
+// ============================================================
+
+/**
+ * The seed a fetched source record produces for the composer to edit it.
+ * The exact inverse of the forward path: `submit`/`buildFormData` turn composer
+ * state into a DB record; `hydrate` turns that record back into the state the
+ * field components already consume. These mappers are PURE and FETCH-FREE — the
+ * caller fetches the record (and, for spaces, the roles) and hands them in.
+ */
+export interface ComposerEditSeed {
+  body: string;                        // -> the composer Textarea
+  fields: Record<string, string>;      // -> ComposerFields `values` bag
+  mediaUrl?: string;
+  galleryUrls: string[];
+  roles: string[];                     // space only; [] otherwise
+  // Passthrough for posts.metadata. The field UI exposes only some keys
+  // (intent, where) but the blob can carry others (e.g. sector) and future
+  // keys. The mapper MUST carry the whole object through untouched so an
+  // edit cannot drop a key it doesn't render. Never flatten metadata into
+  // `fields` — fields is Record<string,string> and metadata is arbitrary.
+  metadataPassthrough?: Record<string, unknown> | null;
+}
+
+/**
+ * Minimal hydration source shapes. These are NOT the generated Supabase row
+ * types on purpose — the mappers take the smallest shape they read, so tests
+ * can construct fixtures by hand and the mappers stay decoupled from schema.
+ */
+export interface PostsRecord {
+  content: string; title?: string | null; subtitle?: string | null;
+  image_url?: string | null; gallery_urls?: string[] | null;
+  metadata?: Record<string, unknown> | null;
+  link_url?: string | null; link_title?: string | null;
+  link_description?: string | null; link_metadata?: Record<string, unknown> | null;
+  share_commentary?: string | null;
+}
+export interface SpacesRecord {
+  name: string; description?: string | null; space_type?: string | null;
+  cover_image_url?: string | null;
+}
+export interface OpportunitiesRecord {
+  description?: string | null; direction?: string | null;
+  category?: string | null; give_what?: string | null;
+  give_to?: string | null; intended_impact?: string | null;
+  image_url?: string | null;
+}
+
+/** metadata values are `unknown`; the fields bag is Record<string,string>. */
+const str = (x: unknown): string => (typeof x === 'string' ? x : '');
+
 export interface ModeHandler {
   label: string;
   shortLabel: string;
@@ -60,6 +112,13 @@ export interface ModeHandler {
   getDefaultValues: () => Partial<ComposerFormData>;
   successMessage: string;
   errorMessage: string;
+  /**
+   * INVERSE of submit: turn a fetched source record into an edit seed. Pure and
+   * fetch-free. `extra.roles` supplies space_roles titles the caller fetched
+   * separately (spaces only). Undefined where an edit path doesn't exist yet
+   * (event seeds EventForm through its own schema in a later phase).
+   */
+  hydrate?: (record: unknown, extra?: { roles?: string[] }) => ComposerEditSeed;
 }
 
 // ============================================================
@@ -295,6 +354,21 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     }),
     successMessage: 'Shared!',
     errorMessage: "We couldn't publish this. Your text is safe\u2014please try again.",
+    // INVERSE of submit: metadata {intent, where, sector} -> fields; the WHOLE
+    // metadata blob rides through in metadataPassthrough so an edit cannot drop
+    // a key the field UI never renders. Reused for post/status (same posts row).
+    hydrate: (record) => {
+      const r = record as PostsRecord;
+      const m = r.metadata ?? {};
+      return {
+        body: r.content,
+        fields: { intent: str(m.intent), where: str(m.where), sector: str(m.sector) },
+        mediaUrl: r.image_url ?? undefined,
+        galleryUrls: r.gallery_urls ?? [],
+        roles: [],
+        metadataPassthrough: r.metadata ?? null,
+      };
+    },
   },
 
   story: {
@@ -338,6 +412,20 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     getDefaultValues: () => ({ title: '', content: '', subtitle: '', heroImage: undefined, storyType: undefined, galleryUrls: [] }),
     successMessage: 'Story published!',
     errorMessage: "We couldn't publish this Story. Your content is safe\u2014please try again.",
+    // INVERSE of submit: the story headline is the only field the composer
+    // renders (subtitle/story_type are not composer inputs, so they are not
+    // seeded back). Body <- content, hero <- image_url, gallery <- gallery_urls.
+    hydrate: (record) => {
+      const r = record as PostsRecord;
+      return {
+        body: r.content,
+        fields: { title: r.title ?? '' },
+        mediaUrl: r.image_url ?? undefined,
+        galleryUrls: r.gallery_urls ?? [],
+        roles: [],
+        metadataPassthrough: r.metadata ?? null,
+      };
+    },
   },
 
   event: {
@@ -433,6 +521,19 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     }),
     successMessage: 'Space created and shared to your feed.',
     errorMessage: "We couldn't create this Space. Your details are safe\u2014please try again.",
+    // INVERSE of submit: hydrate from the SPACES row, never the envelope post.
+    // Roles come from space_roles (fetched by the caller, passed as extra.roles).
+    hydrate: (record, extra) => {
+      const r = record as SpacesRecord;
+      return {
+        body: r.description ?? '',
+        fields: { title: r.name, type: r.space_type ?? '' },
+        mediaUrl: r.cover_image_url ?? undefined,
+        galleryUrls: r.cover_image_url ? [r.cover_image_url] : [],
+        roles: extra?.roles ?? [],
+        metadataPassthrough: null,
+      };
+    },
   },
 
   need: {
@@ -509,6 +610,26 @@ export const MODE_HANDLERS: Record<ComposerMode, ModeHandler> = {
     }),
     successMessage: 'Opportunity posted!',
     errorMessage: "We couldn't post this. Your details are safe\u2014please try again.",
+    // INVERSE of submit: hydrate from the OPPORTUNITIES row. The give -> to ->
+    // impact triple maps back to the give/to/impact field keys; direction
+    // defaults to 'offer' when the row didn't record one.
+    hydrate: (record) => {
+      const r = record as OpportunitiesRecord;
+      return {
+        body: r.description ?? '',
+        fields: {
+          direction: r.direction ?? 'offer',
+          kind: r.category ?? '',
+          give: r.give_what ?? '',
+          to: r.give_to ?? '',
+          impact: r.intended_impact ?? '',
+        },
+        mediaUrl: r.image_url ?? undefined,
+        galleryUrls: [],
+        roles: [],
+        metadataPassthrough: null,
+      };
+    },
   },
 };
 
