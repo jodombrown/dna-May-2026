@@ -525,7 +525,7 @@ export function PostCard({
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-between gap-2 pt-3 border-t [&>button]:min-h-[44px]">
+      <div className="flex items-center justify-between gap-1 pt-3 border-t overflow-hidden [&>button]:min-h-[44px] [&>button]:min-w-0">
         {/* Simple Like Button */}
         <Button
           variant="ghost"
