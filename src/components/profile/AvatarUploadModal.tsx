@@ -175,7 +175,7 @@ export function AvatarUploadModal({
               <div className="text-center">
                 <p className="font-medium">Click to upload</p>
                 <p className="text-sm text-warm-neutral-600 mt-1">
-                  Min 200×200px • Max 5MB • JPG, PNG, WebP
+                  Min 200×200px • Max 25MB • JPG, PNG, WebP
                 </p>
               </div>
             </label>
