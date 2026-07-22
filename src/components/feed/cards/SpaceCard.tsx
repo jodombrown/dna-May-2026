@@ -148,6 +148,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = ({
             currentUserId={currentUserId}
             content={item.content || ''}
             onUpdate={onUpdate}
+            item={item}
           />
         ) : (
           <PostMenuOthers

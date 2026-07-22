@@ -24,7 +24,6 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Loader2, Sparkles } from 'lucide-react';
@@ -35,6 +34,7 @@ import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniv
 import type { ComposerSuccessData } from '@/hooks/useUniversalComposer';
 import { DEFAULT_MODE, modeConfig } from '@/config/composerModes';
 import { MODE_HANDLERS } from './modeHandlers';
+import { seedToFormData } from './composerFormData';
 import { ComposerVerbRail } from './ComposerVerbRail';
 import { ComposerFields } from './ComposerFields';
 import { ComposerCardPreview } from './ComposerCardPreview';
@@ -318,46 +318,13 @@ export const UniversalComposer = ({
   }, [userId, clearAll, onClose]);
 
   // ---- Submit: route by verb to the substrate ------------------------------
-  const buildFormData = useCallback((): ComposerFormData | null => {
-    const cleanedGallery = galleryUrls.filter((u) => typeof u === 'string' && u.length > 0);
-    const base: ComposerFormData = { content: body, mediaUrl, galleryUrls: cleanedGallery };
-
-    switch (mode) {
-      case 'story':
-        // Hero → posts.image_url, gallery → posts.gallery_urls.
-        return { ...base, title: fields.title?.trim() || undefined, heroImage: mediaUrl };
-
-      case 'connect':
-        return {
-          ...base,
-          intent: fields.intent?.trim() || undefined,
-          where: fields.where?.trim() || undefined,
-        };
-
-      case 'need':
-        return {
-          ...base,
-          direction: fields.direction === 'need' ? 'need' : 'offer',
-          category: fields.kind || undefined,
-          giveWhat: fields.give || undefined,
-          giveTo: fields.to || undefined,
-          intendedImpact: fields.impact || undefined,
-        };
-
-      case 'space':
-        // roles[] → space_roles rows (handler inserts them after createSpace).
-        return {
-          ...base,
-          title: fields.title?.trim() || undefined,
-          spaceCategory: fields.type || undefined,
-          skillsNeeded: roles,
-        };
-
-      case 'event':
-        // Events submit through EventForm/useEventForm — never through here.
-        return null;
-    }
-  }, [mode, body, fields, mediaUrl, galleryUrls, roles]);
+  // The verb→ComposerFormData mapping lives in seedToFormData (shared with the
+  // edit round-trip tests) so there is exactly ONE forward implementation.
+  const buildFormData = useCallback(
+    (): ComposerFormData | null =>
+      seedToFormData(mode, { body, fields, mediaUrl, galleryUrls, roles }),
+    [mode, body, fields, mediaUrl, galleryUrls, roles]
+  );
 
   const handleSubmit = useCallback(() => {
     const formData = buildFormData();
@@ -441,18 +408,16 @@ export const UniversalComposer = ({
     [onClose]
   );
 
+  /**
+   * DR1 step 5 (BD135 rule 5): CONTENT ONLY.
+   *
+   * This component used to render its own <Sheet>, <SheetContent side="right">
+   * and <SheetHeader>. The shell owns all of that now — sliding container,
+   * scrim, header, title, close, focus trap, safe areas, route binding. A
+   * surface that renders its own chrome does not merge.
+   */
   return (
-    <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetContent
-        side="right"
-        className="flex w-[96vw] max-w-[96vw] flex-col gap-0 p-0 sm:w-[860px] sm:max-w-[860px]"
-        style={{ height: '100dvh', maxHeight: '100dvh' }}
-      >
-        <SheetHeader className="flex-shrink-0 border-b bg-background px-4 pb-3 pt-4 text-left sm:px-6">
-          <SheetTitle className="font-serif text-xl font-semibold tracking-tight text-dna-emerald sm:text-2xl">
-            Share something with the diaspora
-          </SheetTitle>
-        </SheetHeader>
+    <>
 
         <div className="min-h-0 w-full flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-4 py-4 sm:px-6">
           <div className="flex w-full items-start gap-5">
@@ -564,7 +529,6 @@ export const UniversalComposer = ({
             )}
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+    </>
   );
 };

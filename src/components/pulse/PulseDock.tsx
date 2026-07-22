@@ -121,9 +121,12 @@ export function PulseDock() {
             'bg-background/95 backdrop-blur-md',
             'border-t border-border',
             'shadow-[0_-4px_20px_hsl(var(--foreground)/0.08)]',
-            'pb-safe',
+            // `pb-safe` was here and was a phantom (BD157): no spacing scale in
+            // tailwind.config.ts, so it rendered nothing and the dock sat in the
+            // home-indicator strip. Replaced by the inset itself, below.
             'lg:hidden'
           )}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         <div className="flex items-center justify-around h-16 px-2">
           {PRIMARY_ITEMS.map((item) => (

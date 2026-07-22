@@ -1,12 +1,32 @@
 /**
- * AccountDrawer (v2) — Claude-inspired identity sheet.
+ * AccountDrawerBody — the Account surface's CONTENT. No chrome (BD135 rule 5).
  *
- * Replaces the legacy Sheet with the same IdentitySheet used by /dna/settings,
- * so the account entry point and the settings hub share one visual language
- * and one in-sheet navigation stack. Every row pushes a subpage inside the
- * sheet or triggers a lightweight action (share / tour / test guide).
+ * ── DR2 step 2: one definition of the Account panels, and one source of copy ──
+ *
+ * This file used to declare its own eight `React.lazy` panel imports and pass
+ * `subpage={{ id, title, content }}` on every row. `AccountSurface.tsx` declared
+ * the SAME eight in `ACCOUNT_PANELS`, and `DrawerIdentityShim` deliberately
+ * ignores the passed node and resolves by id — so this copy was dead as content
+ * and still constructed on every render.
+ *
+ * Two definitions of one list is the drift vector BD137 exists to close, and it
+ * had already drifted where a member could see it: the panel header read
+ * "Sign-in and security" while the row that opened it read "Account".
+ *
+ * So rows now take their label, sublabel and panel id from `ACCOUNT_SURFACE` in
+ * the registry, and pass no content at all. The shell resolves the panel from
+ * the id, which is the id in the URL. `drawerRegistry.test.tsx` asserts every
+ * push row's panel exists and that its title equals the row's label, which is
+ * the assertion that would have caught the half-applied copy lock.
+ *
+ * Row BEHAVIOUR is still wired here rather than read from the registry. Three
+ * registry rows declare `swap`, and no swap target is registered in the
+ * resolvers yet (tour, alpha guide and feedback are still legacy overlays
+ * opened through `AccountActionsContext`). Driving behaviour off the registry
+ * before those surfaces exist would break three working rows, so full
+ * registry-driven rendering — behaviour and grouping included — is DR3's.
  */
-import React, { Suspense, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   User as UserIcon,
@@ -21,82 +41,60 @@ import {
   Bookmark,
   Users,
   Calendar,
-  Share2,
   HelpCircle,
   LogOut,
   Info,
   ClipboardCheck,
-  Copy,
-  Linkedin,
-  Twitter,
-  MessageSquare,
-  Download,
-  Loader2,
 } from 'lucide-react';
 import { MateMasie } from '@/components/icons/adinkra';
-import {
-  IdentitySheet,
-  SettingsGroup,
-  SettingsRow,
-  SheetErrorPanel,
-  useIdentitySheet,
-} from '@/components/ui/settings-kit';
+import { SettingsGroup, SettingsRow, useIdentitySheet } from '@/components/ui/settings-kit';
+import { accountRow, accountPanelId, accountRoute } from '@/components/drawer/registry';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
-import { useAccountDrawer } from '@/contexts/AccountDrawerContext';
-import { useTourProgress } from '@/hooks/useTourProgress';
-import OnboardingTour from '@/components/onboarding/OnboardingTour';
-import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
-import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
-import { toast } from 'sonner';
 import { profileRoute } from '@/lib/profileRoute';
-import { generateProfilePDF } from '@/lib/generateProfilePDF';
-import { ROUTES } from '@/config/routes';
 import { ChevronRight } from 'lucide-react';
 
-// Lazy subpages — the same panels the /dna/settings sheet uses.
-const AccountSettings = React.lazy(() => import('@/pages/dna/settings/AccountSettings'));
-const PrivacySettings = React.lazy(() => import('@/pages/dna/settings/PrivacySettings'));
-const NotificationSettings = React.lazy(() => import('@/pages/dna/settings/NotificationSettings'));
-const PreferencesSettings = React.lazy(() => import('@/pages/dna/settings/PreferencesSettings'));
-const MyHashtagsSettings = React.lazy(() => import('@/pages/dna/settings/MyHashtagsSettings'));
-const MyReportsSettings = React.lazy(() => import('@/pages/dna/settings/MyReportsSettings'));
-const BlockedUsersSettings = React.lazy(() => import('@/pages/dna/settings/BlockedUsersSettings'));
-const ProfileEdit = React.lazy(() => import('@/pages/ProfileEdit'));
+/**
+ * A row's copy and its panel id, both from the registry.
+ *
+ * `content` is deliberately omitted. The shell resolves a panel from its id
+ * (`ACCOUNT_PANELS` in `AccountSurface.tsx`), so passing a node here would be a
+ * second definition of the same panel that nothing renders — which is exactly
+ * what this step deleted.
+ */
+const panelRow = (rowId: string) => {
+  const row = accountRow(rowId);
+  return {
+    label: row.label,
+    description: row.sublabel,
+    subpage: { id: accountPanelId(rowId), title: row.label },
+  };
+};
 
-const PanelFallback = () => (
-  <div className="flex items-center justify-center py-16 text-muted-foreground">
-    <Loader2 className="h-5 w-5 animate-spin" />
-  </div>
-);
-const wrap = (node: React.ReactNode, surface = 'This section') => (
-  <SheetErrorPanel surface={surface}>
-    <Suspense fallback={<PanelFallback />}>{node}</Suspense>
-  </SheetErrorPanel>
-);
-
-
+/**
+ * DR3 / BD152: narrowed. The share and PDF-export handles left with
+ * `ShareSubpage`. `AccountActionsContext` still provides them and
+ * `ProfileShareDropdown` on the profile hero still consumes them, so nothing
+ * is orphaned upstream; this surface simply no longer claims them.
+ */
 interface ActionHandlers {
-  onShare: () => void;
   onTour: () => void;
   onTestGuide: () => void;
   onFeedback: () => void;
   onSignOut: () => void;
-  publicUrl: string;
-  displayName: string;
-  isDownloading: boolean;
-  onDownloadPDF: () => void;
 }
 
-function AccountDrawerBody({
+export function AccountDrawerBody({
   handlers,
 }: {
   handlers: ActionHandlers;
 }) {
-  const { push, close } = useIdentitySheet();
+  // `close` is deliberately NOT taken. It was unused after the DR1 navigate-row
+  // hotfix deleted the close from `go()`, and an unused handle to a history pop
+  // is an invitation to reintroduce the race that broke six rows.
+  const { push } = useIdentitySheet();
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const navigate = useNavigate();
@@ -111,20 +109,48 @@ function AccountDrawerBody({
       .join('');
   }, [profile?.full_name, profile?.username, user?.email]);
 
-  const openProfileEdit = () =>
-    push({ id: 'profile', title: 'Profile', node: wrap(<ProfileEdit />) });
+  const openProfileEdit = () => {
+    const { subpage } = panelRow('profile');
+    push({ id: subpage.id, title: subpage.title });
+  };
 
+  /**
+   * Navigate away from the drawer.
+   *
+   * This used to be `close(); navigate(path);` and that broke every navigating
+   * row in DR1. The drawer is URL-bound now, so `close()` is `navigate(-depth)`
+   * — a history POP. Firing a pop and a push in the same tick races: the push
+   * lands, the pop then unwinds it, and the member taps a row and watches
+   * nothing happen.
+   *
+   * The fix is to delete the close, not to sequence it. Because the drawer's
+   * open state IS the `?drawer=` param, navigating to a path without that param
+   * closes the drawer as a consequence rather than as a second action. One
+   * navigation, no race, and the drawer cannot end up open over the new page.
+   *
+   * Found by founder QA on a real device (BD142): the rows rendered, the
+   * handlers fired, every test passed, and the app did nothing.
+   */
   const go = (path: string) => {
-    close();
     navigate(path);
   };
 
-  const openShareSheet = () =>
-    push({
-      id: 'share',
-      title: 'Share profile',
-      node: <ShareSubpage handlers={handlers} />,
-    });
+  /**
+   * A `navigate` row: copy and destination both from the registry.
+   *
+   * The route matters as much as the label. `registry.test.ts` checks each
+   * route (and its `paramContract`) against the destination's source; while the
+   * surface kept its own copies of those strings, that gate was guarding a
+   * parallel list rather than the one members actually tap.
+   */
+  const goRow = (rowId: string) => {
+    const row = accountRow(rowId);
+    return {
+      label: row.label,
+      description: row.sublabel,
+      onClick: () => go(accountRoute(rowId)),
+    };
+  };
 
   return (
     <>
@@ -142,7 +168,7 @@ function AccountDrawerBody({
           <div className="truncate text-body font-normal text-foreground">
             {profile?.full_name || profile?.username || 'Your profile'}
           </div>
-          <div className="truncate text-caption text-muted-foreground">
+          <div className="truncate text-meta text-muted-foreground">
             {user?.email || ''}
           </div>
         </div>
@@ -152,107 +178,67 @@ function AccountDrawerBody({
       <SettingsGroup label="You">
         <SettingsRow
           icon={UserIcon}
-          label="View public profile"
+          label={accountRow('view-public-profile').label}
+          // The only row whose destination is per-member, so it resolves from
+          // the profile rather than from the registry's `/dna/:username`.
           onClick={() => profile && go(profileRoute(profile))}
-        />
-        <SettingsRow
-          icon={Share2}
-          label="Share profile"
-          onClick={openShareSheet}
         />
       </SettingsGroup>
 
       <SettingsGroup label="My work">
-        <SettingsRow
-          icon={FileText}
-          label="My posts & updates"
-          onClick={() => go('/dna/feed?tab=my_posts')}
-        />
-        <SettingsRow
-          icon={FileText}
-          label="My stories"
-          onClick={() => go('/dna/convey?tab=my_stories')}
-        />
-        <SettingsRow
-          icon={Bookmark}
-          label="Saved items"
-          onClick={() => go('/dna/feed?tab=bookmarks')}
-        />
-        <SettingsRow
-          icon={Users}
-          label="My spaces"
-          onClick={() => go('/dna/collaborate')}
-        />
-        <SettingsRow
-          icon={Calendar}
-          label="My events"
-          onClick={() => go('/dna/convene/events')}
-        />
+        <SettingsRow icon={FileText} {...goRow('my-posts')} />
+        <SettingsRow icon={FileText} {...goRow('my-stories')} />
+        <SettingsRow icon={Bookmark} {...goRow('saved-items')} />
+        <SettingsRow icon={Users} {...goRow('my-spaces')} />
+        <SettingsRow icon={Calendar} {...goRow('my-events')} />
       </SettingsGroup>
 
       <SettingsGroup label="Account">
-        <SettingsRow
-          icon={UserCircle}
-          label="Profile"
-          description="Name, headline, avatar, bio"
-          subpage={{ id: 'profile', title: 'Profile', content: wrap(<ProfileEdit />) }}
-        />
-        <SettingsRow
-          icon={UserIcon}
-          label="Account"
-          description="Email, password, delete account"
-          subpage={{ id: 'account', title: 'Account', content: wrap(<AccountSettings />) }}
-        />
-        <SettingsRow
-          icon={Shield}
-          label="Privacy"
-          description="Who can see your profile"
-          subpage={{ id: 'privacy', title: 'Privacy', content: wrap(<PrivacySettings />) }}
-        />
-        <SettingsRow
-          icon={Bell}
-          label="Notifications"
-          description="Push, email, quiet hours"
-          subpage={{ id: 'notifications', title: 'Notifications', content: wrap(<NotificationSettings />) }}
-        />
-        <SettingsRow
-          icon={SettingsIcon}
-          label="Preferences"
-          description="Density, module visibility"
-          subpage={{ id: 'preferences', title: 'Preferences', content: wrap(<PreferencesSettings />) }}
-        />
+        <SettingsRow icon={UserCircle} {...panelRow('profile')} />
+        <SettingsRow icon={UserIcon} {...panelRow('sign-in-and-security')} />
+        <SettingsRow icon={Shield} {...panelRow('privacy')} />
+        <SettingsRow icon={Bell} {...panelRow('notifications')} />
+        <SettingsRow icon={SettingsIcon} {...panelRow('preferences')} />
       </SettingsGroup>
 
       <SettingsGroup label="Content & safety">
-        <SettingsRow
-          icon={Hash}
-          label="My hashtags"
-          subpage={{ id: 'hashtags', title: 'My hashtags', content: wrap(<MyHashtagsSettings />) }}
-        />
-        <SettingsRow
-          icon={Flag}
-          label="My reports"
-          subpage={{ id: 'reports', title: 'My reports', content: wrap(<MyReportsSettings />) }}
-        />
-        <SettingsRow
-          icon={UserX}
-          label="Blocked users"
-          subpage={{ id: 'blocked', title: 'Blocked users', content: wrap(<BlockedUsersSettings />) }}
-        />
+        <SettingsRow icon={Hash} {...panelRow('my-hashtags')} />
+        <SettingsRow icon={Flag} {...panelRow('my-reports')} />
+        <SettingsRow icon={UserX} {...panelRow('blocked-users')} />
       </SettingsGroup>
 
       <SettingsGroup label="About">
-        <SettingsRow icon={MateMasie} label="Take platform tour" onClick={handlers.onTour} />
-        <SettingsRow icon={ClipboardCheck} label="Alpha test guide" onClick={handlers.onTestGuide} />
-        <SettingsRow icon={HelpCircle} label="Help & feedback" onClick={handlers.onFeedback} />
-        <SettingsRow icon={Info} label="About DNA" onClick={() => go(ROUTES.about)} />
+        {/*
+          Three `swap` rows. The registry says they suspend Account and open a
+          sibling surface with Back returning here; today they open legacy
+          overlays through `AccountActionsContext`, because no swap target is
+          registered in the resolvers yet. Labels come from the registry so the
+          copy cannot drift; the behaviour is DR3's, and until then the gap is
+          named here rather than papered over.
+        */}
+        <SettingsRow
+          icon={MateMasie}
+          label={accountRow('platform-tour').label}
+          onClick={handlers.onTour}
+        />
+        <SettingsRow
+          icon={ClipboardCheck}
+          label={accountRow('alpha-test-guide').label}
+          onClick={handlers.onTestGuide}
+        />
+        <SettingsRow
+          icon={HelpCircle}
+          label={accountRow('help-and-feedback').label}
+          onClick={handlers.onFeedback}
+        />
+        <SettingsRow icon={Info} {...goRow('about-dna')} />
       </SettingsGroup>
 
       <SettingsGroup>
         <SettingsRow
           variant="destructive"
           icon={LogOut}
-          label="Sign out"
+          label={accountRow('sign-out').label}
           onClick={handlers.onSignOut}
         />
       </SettingsGroup>
@@ -260,128 +246,14 @@ function AccountDrawerBody({
   );
 }
 
-function ShareSubpage({ handlers }: { handlers: ActionHandlers }) {
-  const url = handlers.publicUrl;
-  const text = `Check out ${handlers.displayName}'s profile on DNA - Diaspora Network of Africa`;
-
-  const copy = () => {
-    if (!url) return;
-    navigator.clipboard.writeText(url);
-    toast.success('Profile link copied');
-  };
-  const wa = () => window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, '_blank');
-  const li = () => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
-  const tw = () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-  const nativeShare = async () => {
-    if (typeof navigator !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({ title: `${handlers.displayName} on DNA`, text, url });
-      } catch {
-        // user cancelled
-      }
-    } else {
-      copy();
-    }
-  };
-
-  return (
-    <div className="p-4">
-      <SettingsGroup label="Share">
-        <SettingsRow icon={Copy} label="Copy link" onClick={copy} />
-        <SettingsRow icon={MessageSquare} label="Share via WhatsApp" onClick={wa} />
-        <SettingsRow icon={Linkedin} label="Share via LinkedIn" onClick={li} />
-        <SettingsRow icon={Twitter} label="Share via X" onClick={tw} />
-        {typeof navigator !== 'undefined' && (navigator as Navigator).share ? (
-          <SettingsRow icon={Share2} label="Share via..." onClick={nativeShare} />
-        ) : null}
-      </SettingsGroup>
-      <SettingsGroup label="Export">
-        <SettingsRow
-          icon={handlers.isDownloading ? Loader2 : Download}
-          label={handlers.isDownloading ? 'Generating PDF...' : 'Download PDF'}
-          onClick={handlers.onDownloadPDF}
-        />
-      </SettingsGroup>
-    </div>
-  );
-}
-
-export const AccountDrawer: React.FC = () => {
-  const { isOpen, close } = useAccountDrawer();
-  const { user, signOut } = useAuth();
-  const { data: profile } = useProfile();
-  const navigate = useNavigate();
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [showTour, setShowTour] = useState(false);
-  const [showTestGuide, setShowTestGuide] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const { isCompleted: tourCompleted, resetTour } = useTourProgress();
-
-  const publicUrl =
-    typeof window !== 'undefined' && profile?.username
-      ? `${window.location.origin}/u/${profile.username}`
-      : '';
-  const displayName = profile?.full_name || profile?.username || 'DNA member';
-
-  const handlers: ActionHandlers = {
-    publicUrl,
-    displayName,
-    isDownloading,
-    onShare: () => {},
-    onTour: () => {
-      if (tourCompleted) resetTour();
-      setShowTour(true);
-      close();
-    },
-    onTestGuide: () => {
-      setShowTestGuide(true);
-      close();
-    },
-    onFeedback: () => {
-      setShowFeedback(true);
-      close();
-    },
-    onSignOut: async () => {
-      await signOut();
-      close();
-      navigate('/');
-    },
-    onDownloadPDF: async () => {
-      if (!profile) return;
-      setIsDownloading(true);
-      try {
-        await generateProfilePDF(profile as any, user?.email);
-        toast.success('Profile PDF downloaded');
-      } catch {
-        toast.error('Failed to generate PDF');
-      } finally {
-        setIsDownloading(false);
-      }
-    },
-  };
-
-  if (!user || !profile) return null;
-
-  return (
-    <>
-      <IdentitySheet
-        open={isOpen}
-        onOpenChange={(o) => !o && close()}
-        title="Account"
-      >
-        <AccountDrawerBody handlers={handlers} />
-      </IdentitySheet>
-
-      <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
-      <AlphaTestGuide
-        isOpen={showTestGuide}
-        onClose={() => setShowTestGuide(false)}
-        onOpenFeedback={() => {
-          setShowTestGuide(false);
-          setShowFeedback(true);
-        }}
-      />
-      <FeedbackDrawer isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
-    </>
-  );
-};
+/**
+ * DR1 step 6: the `AccountDrawer` container is GONE.
+ *
+ * It used to render `<IdentitySheet>` (its own sliding container, scrim, header
+ * and close), mount `FeedbackDrawer` and `AlphaTestGuide` a second time each,
+ * and live at `BaseLayout` scope. All of that now belongs to `AppDrawer` and
+ * `AccountActionsProvider`, both mounted once at app root.
+ *
+ * What remains here is `AccountDrawerBody`: content only, no chrome
+ * (BD135 rule 5). It is rendered by `AccountSurface`.
+ */

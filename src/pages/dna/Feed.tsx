@@ -21,8 +21,7 @@ import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
 import { FeedTab, RankingMode } from '@/types/feed';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
@@ -151,7 +150,8 @@ const DnaFeed = () => {
           <div
             ref={mobileHeaderRef}
             className="fixed top-0 left-0 right-0"
-            style={{ zIndex: 50 }}
+            // BD157: this element owns the notch strip in the installed PWA.
+            style={{ zIndex: 50, paddingTop: 'env(safe-area-inset-top, 0px)' }}
           >
             {/* Header row - hides on scroll down */}
             <div className={cn(
@@ -212,17 +212,6 @@ const DnaFeed = () => {
             )}
           </main>
           <MobileBottomNav />
-          <UniversalComposer
-            isOpen={composer.isOpen}
-            mode={composer.mode}
-            context={composer.context}
-            isSubmitting={composer.isSubmitting}
-            onClose={composer.close}
-            onModeChange={composer.switchMode}
-            successData={composer.successData}
-            onSubmit={composer.submit}
-            onDismissSuccess={composer.dismissSuccess}
-          />
           <SearchDialog
             isOpen={showSearchDialog}
             onClose={() => setShowSearchDialog(false)}
@@ -445,17 +434,6 @@ const DnaFeed = () => {
         </aside>
       </div>
 
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        onSubmit={composer.submit}
-        successData={composer.successData}
-        onDismissSuccess={composer.dismissSuccess}
-      />
       <SearchDialog
         isOpen={showSearchDialog}
         onClose={() => setShowSearchDialog(false)}

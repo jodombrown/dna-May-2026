@@ -32,6 +32,7 @@ export interface PostWithAuthor {
   link_title?: string;
   link_description?: string;
   created_at: string;
+  edited_at?: string | null;
   likes_count: number;
   comments_count: number;
   user_has_liked: boolean;

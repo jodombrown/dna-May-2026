@@ -105,7 +105,7 @@ const ProfileEditInterests: React.FC<ProfileEditInterestsProps> = ({
           selected={interests}
           onChange={onInterestsChange}
           placeholder="Select your interests..."
-          colorClass="bg-dna-teal/10 text-dna-teal border-dna-teal/20"
+          colorClass="bg-dna-ocean/10 text-dna-ocean border-dna-ocean/20"
           allowCustom={true}
         />
 

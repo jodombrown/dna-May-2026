@@ -24,8 +24,15 @@ type NavProps = BaseProps & {
   variant?: 'nav';
   value?: React.ReactNode;
   onClick?: () => void;
-  /** If provided, pushes this content as a subpage inside the IdentitySheet. */
-  subpage?: { id: string; title: string; content: React.ReactNode };
+  /**
+   * If provided, pushes a subpage inside the sheet.
+   *
+   * `content` is optional and, under the drawer shell, unused: `DrawerIdentityShim`
+   * resolves the panel from its id, which is the id in the URL. Passing content
+   * here would be a second definition of a panel the shell already owns — the
+   * duplication DR2 step 2 removed.
+   */
+  subpage?: { id: string; title: string; content?: React.ReactNode };
 };
 
 type ToggleProps = BaseProps & {
@@ -71,7 +78,7 @@ export function SettingsRow(props: SettingsRowProps) {
         {label}
       </div>
       {description ? (
-        <div className="mt-0.5 text-caption text-muted-foreground">{description}</div>
+        <div className="mt-0.5 text-meta text-muted-foreground">{description}</div>
       ) : null}
     </div>
   );
@@ -102,7 +109,7 @@ export function SettingsRow(props: SettingsRowProps) {
       <div className={rowClass}>
         {iconEl}
         {labelEl}
-        <div className="shrink-0 text-caption text-muted-foreground">{props.value}</div>
+        <div className="shrink-0 text-meta text-muted-foreground">{props.value}</div>
       </div>
     );
   }
@@ -136,7 +143,7 @@ function NavRow({
 
   const handleClick = () => {
     if (subpage && sheet) {
-      sheet.push({ id: subpage.id, title: subpage.title, node: subpage.content });
+      sheet.push({ id: subpage.id, title: subpage.title, node: subpage.content ?? null });
     } else if (onClick) {
       onClick();
     }
@@ -147,7 +154,7 @@ function NavRow({
       {iconEl}
       {labelEl}
       {value ? (
-        <span className="shrink-0 text-caption text-muted-foreground">{value}</span>
+        <span className="shrink-0 text-meta text-muted-foreground">{value}</span>
       ) : null}
       <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
     </button>

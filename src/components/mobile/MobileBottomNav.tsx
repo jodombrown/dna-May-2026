@@ -15,8 +15,6 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -31,7 +29,6 @@ const MobileBottomNav: React.FC = () => {
   const { user, profile, signOut } = useAuth();
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const { data: unreadCountFromRPC = 0 } = useUnreadNotificationCount();
-  const composer = useUniversalComposer();
   const { isAdmin } = useIsAdmin();
   
   // Use the RPC count directly - it's the source of truth for unread notifications
@@ -149,7 +146,14 @@ const MobileBottomNav: React.FC = () => {
     <>
       {/* Fixed bottom navigation bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-50">
-        <div className="flex justify-around items-center h-16 px-2 pb-safe">
+        {/*
+          BD157: `pb-safe` was a phantom — tailwind.config.ts declares no
+          spacing/padding scale, so it rendered NOTHING and the nav sat in the
+          iPhone home-indicator strip. Replaced with the inset itself rather
+          than by defining the token, so 1b can define spacing deliberately
+          without this site double-padding.
+        */}
+        <div className="flex justify-around items-center h-16 px-2" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
           {navItems.map((item) => (
             <button
               key={item.label}
@@ -184,17 +188,6 @@ const MobileBottomNav: React.FC = () => {
       </nav>
 
       {/* Universal Composer */}
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
 
       {/* More Menu Sheet */}
       <Sheet open={showMoreMenu} onOpenChange={setShowMoreMenu}>

@@ -15,45 +15,98 @@ jobs:
       - name: Install ripgrep
         run: sudo apt-get update && sudo apt-get install -y ripgrep
 
-      - name: Gate changed files
+      - name: Gate added lines
         shell: bash
         run: |
+          #
+          # Design-system gate, scoped to ADDED LINES.
+          #
+          # Why this changed (DR1):
+          #   The previous gate checked whole changed FILES. That meant any cross-cutting
+          #   refactor inherited every pre-existing violation in every file it touched.
+          #   DR1 deletes a <UniversalComposer> mount from 15 legacy files and adds not
+          #   one violating line to them, and the gate failed on 121 lines of unrelated
+          #   pre-existing debt.
+          #
+          #   The stated purpose of this gate is to stop NEW violations without requiring
+          #   a burndown. Whole-file scoping is a burndown requirement wearing a
+          #   no-burndown gate's clothing, and it gets worse as consolidation work touches
+          #   more files.
+          #
+          #   Scoping to added lines keeps every tooth that matters: a newly written
+          #   violating line still fails, on any file, new or legacy.
+          #
+          # Known limitation, accepted deliberately:
+          #   A pre-existing violation that is MOVED or reindented reads as an added line
+          #   and will now fail. That is the safe direction. A pre-existing violation left
+          #   untouched will not be caught, which is the whole point.
+          #
+
+          # NO errexit, deliberately and explicitly.
+          #
+          # GitHub injects -e into `shell: bash`, and a grep that legitimately returns 1
+          # ("ran, found nothing") is a PASS here, not an error. Under errexit that pass
+          # kills the step silently. The first draft of this script toggled `set +e` /
+          # `set -e` around each check, which turned errexit ON globally after the first
+          # check and made the script behave differently locally than in CI — it exited
+          # mid-run with no error printed, and a gate that dies silently is indisputably
+          # worse than one that fails.
+          #
+          # So: errexit off, every return code checked explicitly, every failure an
+          # explicit `exit 1`. Fail-closed is preserved by handling rc > 1 as a failure,
+          # not by relying on the shell's ambient mode.
+          set +e
           set -uo pipefail
 
           BASE_REF="${{ github.base_ref }}"
           git fetch --no-tags origin "$BASE_REF"
           BASE="origin/$BASE_REF"
 
-          mapfile -t FILES < <(
-            git diff --name-only --diff-filter=d "$BASE"...HEAD -- src \
-              | grep -E '\.(ts|tsx)$' || true
-          )
+          # Added lines only, as "path:newlineno:content".
+          # -U0 means no context lines, so only '+' lines advance the new-file counter.
+          ADDED="$(
+            git diff -U0 --diff-filter=d "$BASE"...HEAD -- 'src/*.ts' 'src/*.tsx' | awk '
+              /^\+\+\+ b\// { file = substr($0, 7); next }
+              /^\+\+\+ \/dev\/null/ { file = ""; next }
+              /^@@/ {
+                # @@ -a,b +c,d @@   ->  c
+                match($0, /\+[0-9]+/)
+                n = substr($0, RSTART + 1, RLENGTH - 1) + 0
+                next
+              }
+              /^\+/ { if (file != "") { print file ":" n ":" substr($0, 2) } ; n++ ; next }
+            '
+          )"
+          DIFF_RC=$?
+          if [ "$DIFF_RC" -ne 0 ]; then
+            echo "::error::git diff failed (exit $DIFF_RC). Failing closed."
+            exit 1
+          fi
 
-          if [ "${#FILES[@]}" -eq 0 ]; then
-            echo "No changed src TS files. Gate passes trivially."
+          if [ -z "$ADDED" ]; then
+            echo "No added src TS lines. Gate passes trivially."
             exit 0
           fi
 
-          echo "Gating ${#FILES[@]} changed file(s):"
-          printf '  %s\n' "${FILES[@]}"
+          echo "Gating $(printf '%s\n' "$ADDED" | wc -l) added line(s) across \
+          $(printf '%s\n' "$ADDED" | cut -d: -f1 | sort -u | wc -l) file(s)."
+
           FAILED=0
 
-          # rc 0 = matches found (FAIL). rc 1 = ran, none found (PASS).
-          # rc >1 = errored. An errored guard is a FAILED guard, never a pass.
+          # grep rc 0 = matched (FAIL). rc 1 = ran, no match (PASS).
+          # rc > 1 = errored, and an errored guard is a FAILED guard, never a pass.
           check () {
             local label="$1"; shift
             local pattern="$1"; shift
             local out rc
-            set +e
-            out="$(rg -n --no-heading -e "$pattern" "${FILES[@]}")"
+            out="$(printf '%s\n' "$ADDED" | grep -nE "$pattern")"
             rc=$?
-            set -e
             if [ "$rc" -eq 0 ]; then
               echo "::error::${label}"
-              echo "$out"
+              printf '%s\n' "$out"
               FAILED=1
             elif [ "$rc" -gt 1 ]; then
-              echo "::error::rg errored (exit $rc) on check: ${label}. Failing closed."
+              echo "::error::grep errored (exit $rc) on check: ${label}. Failing closed."
               FAILED=1
             fi
           }
@@ -67,38 +120,33 @@ jobs:
           check "Legacy font alias. Use font-display or font-body." \
                 '\bfont-(sans|ui|serif|heritage)\b'
 
-          # Arbitrary values. Two-step so we can allow the hsl(var(--x)) escape
-          # without needing PCRE lookaheads.
+          # Arbitrary values, with the hsl(var(--x)) escape allowed.
           ARB='\b(text|bg|p|px|py|pt|pb|pl|pr|m|mx|my|mt|mb|ml|mr|w|h|min-w|min-h|max-w|max-h|gap|top|left|right|bottom|rounded|border|leading|tracking)-\['
-          set +e
-          raw="$(rg -n --no-heading -e "$ARB" "${FILES[@]}")"
+          raw="$(printf '%s\n' "$ADDED" | grep -E "$ARB")"
           rc=$?
-          set -e
           if [ "$rc" -gt 1 ]; then
-            echo "::error::rg errored (exit $rc) on arbitrary-value check. Failing closed."
+            echo "::error::grep errored (exit $rc) on arbitrary-value check. Failing closed."
             FAILED=1
           elif [ "$rc" -eq 0 ]; then
-            filtered="$(printf '%s\n' "$raw" | grep -v 'hsl(var(' || true)"
+            filtered="$(printf '%s\n' "$raw" | grep -v 'hsl(var(')"
             if [ -n "$filtered" ]; then
               echo "::error::Arbitrary Tailwind value. Only bg-[hsl(var(--token))] is permitted."
-              echo "$filtered"
+              printf '%s\n' "$filtered"
               FAILED=1
             fi
           fi
 
-          # Page-level layout values, only under src/pages
-          mapfile -t PAGES < <(printf '%s\n' "${FILES[@]}" | grep '^src/pages/' || true)
-          if [ "${#PAGES[@]}" -gt 0 ]; then
-            set +e
-            out="$(rg -n --no-heading -e '\b(max-w-|container|px-|py-|mt-|mb-)' "${PAGES[@]}")"
+          # Page-level layout values, only for added lines under src/pages.
+          PAGE_ADDED="$(printf '%s\n' "$ADDED" | grep '^src/pages/')"
+          if [ -n "$PAGE_ADDED" ]; then
+            out="$(printf '%s\n' "$PAGE_ADDED" | grep -E '\b(max-w-|container|px-|py-|mt-|mb-)')"
             rc=$?
-            set -e
             if [ "$rc" -eq 0 ]; then
               echo "::error::Page-level layout value. Section owns rhythm, Container owns width."
-              echo "$out"
+              printf '%s\n' "$out"
               FAILED=1
             elif [ "$rc" -gt 1 ]; then
-              echo "::error::rg errored (exit $rc) on page-layout check. Failing closed."
+              echo "::error::grep errored (exit $rc) on page-layout check. Failing closed."
               FAILED=1
             fi
           fi

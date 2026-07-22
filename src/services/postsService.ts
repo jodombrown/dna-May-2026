@@ -221,11 +221,9 @@ export async function deletePost(postId: string): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  const { error } = await supabase
-    .from('posts')
-    .update({ is_deleted: true })
-    .eq('id', postId)
-    .eq('author_id', user.id);
+  const { error } = await supabase.rpc('rpc_soft_delete_post' as any, {
+    p_post_id: postId,
+  });
 
   if (error) {
     throw error;

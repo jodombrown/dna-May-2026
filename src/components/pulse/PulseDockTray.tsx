@@ -122,7 +122,8 @@ export function PulseDockTray({ open, onClose, pulseNav }: PulseDockTrayProps) {
           'fixed bottom-16 left-0 right-0 z-40',
           'bg-white rounded-t-2xl',
           'shadow-2xl',
-          'pb-safe',
+          // `pb-safe` removed (BD157): phantom token, no spacing scale in config.
+          '[padding-bottom:env(safe-area-inset-bottom,0px)]',
           'lg:hidden',
           'animate-slide-up'
         )}

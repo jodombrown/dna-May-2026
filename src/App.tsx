@@ -9,6 +9,13 @@ import { MESSAGING_ENABLED } from "@/config/featureFlags";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ViewStateProvider } from "@/contexts/ViewStateContext";
 import { MessageProvider } from "@/contexts/MessageContext";
+import { DrawerProvider } from '@/contexts/DrawerContext';
+import { drawerResolvers } from '@/components/drawer/resolvers';
+import { ComposerProvider } from '@/contexts/ComposerContext';
+import { EditProvider } from '@/contexts/EditContext';
+import { AccountActionsProvider } from '@/contexts/AccountActionsContext';
+import { AppDrawer } from '@/components/drawer/AppDrawer';
+import { LandscapeGate } from '@/components/mobile/LandscapeGate';
 import { AccountDrawerProvider } from "@/contexts/AccountDrawerContext";
 import { DiaSheetProvider } from "@/contexts/DiaSheetContext";
 import DiaSheetMount from "@/components/dia/DiaSheetMount";
@@ -156,6 +163,7 @@ const ConveyHub = lazy(() => import("./pages/dna/convey/ConveyHub"));
 const StoryDetail = lazy(() => import("./pages/dna/convey/StoryDetail"));
 const FeedStoryDetail = lazy(() => import("./pages/dna/FeedStoryDetail"));
 const CreateStory = lazy(() => import("./pages/dna/convey/CreateStory"));
+const MyStories = lazy(() => import("./pages/dna/convey/MyStories"));
 const ConveyAnalytics = lazy(() => import("./pages/dna/admin/ConveyAnalytics"));
 const UserAdminHub = lazy(() => import("./pages/dna/admin/UserAdminHub"));
 
@@ -355,7 +363,23 @@ function App() {
               <RecoveryRedirectListener />
               <AuthProvider>
                 <PresenceHeartbeat />
+                {/*
+                  DR1 step 6 provider order, and the order matters:
+                  DrawerProvider owns the URL-bound stack, so everything that
+                  reads or drives it sits inside. AccountDrawerProvider is now a
+                  shim over the shell rather than its own state, and the shell
+                  renders Account, so AccountActionsProvider must be above it.
+                  AppDrawer is mounted ONCE, here at app root and never in a
+                  layout — that is DR0 defect 7.
+                */}
+                <DrawerProvider resolvers={drawerResolvers}>
+                <AccountActionsProvider>
+                <ComposerProvider>
+                <EditProvider>
                 <AccountDrawerProvider>
+                  <AppDrawer />
+                  {/* BD158: mounted once at app root, above every band. */}
+                  <LandscapeGate />
                   <ViewStateProvider>
                     <MessageProvider>
                       <DiaSheetProvider>
@@ -731,6 +755,12 @@ function App() {
                   session resolves, signed-out visitors go to /post/:postId */}
               <Route path="/dna/story/:slug" element={<FeedStoryDetail />} />
               {/* Convey Items - legacy slug-based detail view (public, no auth required) */}
+              {/* BD139: the destination three surfaces had been promising. */}
+              <Route path="/dna/convey/my-stories" element={
+                <OnboardingGuard>
+                  <MyStories />
+                </OnboardingGuard>
+              } />
               <Route path="/dna/convey/stories/:slug" element={<StoryDetail />} />
               {/* Legacy post detail redirect - for emails already sent with old URL format */}
               <Route path="/dna/convey/post/:id" element={<ConveyPostRedirect />} />
@@ -919,6 +949,10 @@ function App() {
                 </MessageProvider>
               </ViewStateProvider>
               </AccountDrawerProvider>
+              </EditProvider>
+              </ComposerProvider>
+              </AccountActionsProvider>
+              </DrawerProvider>
             </AuthProvider>
           </BrowserRouter>
         </TooltipProvider>

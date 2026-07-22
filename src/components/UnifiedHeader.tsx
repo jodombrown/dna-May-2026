@@ -36,9 +36,8 @@ import { useUnreadMessageCount } from '@/hooks/useUnreadMessageCount';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 // useUnreadNotificationCount removed — UnifiedNotificationBell handles its own count
 import { useMobile } from '@/hooks/useMobile';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useHeaderVisibility } from '@/hooks/useHeaderVisibility';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
 
 const UnifiedHeader = () => {
   const { user, profile: authProfile, signOut, loading } = useAuth();
@@ -120,7 +119,24 @@ const UnifiedHeader = () => {
     return (
       <header
         className="bg-background border-b border-border fixed left-0 right-0 z-50 shadow-sm motion-safe:transition-[top] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ top: 0 }}
+        /*
+          BD157 / BD159: the top safe-area inset on the SIGNED-OUT and public
+          chrome.
+
+          This header is pinned to the top edge by `fixed left-0 right-0` plus a
+          `top` in a style object, NOT by a `top-0` class. The DR3 enumerator
+          matched the literal string `fixed top-0`, so it never saw this file —
+          which is why signed-in was fixed and the landing page, the first thing
+          any visitor sees, still rendered under the iOS status bar.
+
+          It is also the double header on Notifications, Account and Profile:
+          this header renders alongside `DnaMobileHubShell`'s, one with an inset
+          and one without.
+
+          Padding rather than a `top` offset, so the bar's background still
+          covers the strip instead of leaving a transparent gap above it.
+        */
+        style={{ top: 0, paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -248,7 +264,24 @@ const UnifiedHeader = () => {
         ref={headerRef}
         data-unified-header
         className="bg-background border-b border-border fixed left-0 right-0 z-50 shadow-sm motion-safe:transition-[top] motion-safe:duration-300 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ top: 0 }}
+        /*
+          BD157 / BD159: the top safe-area inset on the SIGNED-OUT and public
+          chrome.
+
+          This header is pinned to the top edge by `fixed left-0 right-0` plus a
+          `top` in a style object, NOT by a `top-0` class. The DR3 enumerator
+          matched the literal string `fixed top-0`, so it never saw this file —
+          which is why signed-in was fixed and the landing page, the first thing
+          any visitor sees, still rendered under the iOS status bar.
+
+          It is also the double header on Notifications, Account and Profile:
+          this header renders alongside `DnaMobileHubShell`'s, one with an inset
+          and one without.
+
+          Padding rather than a `top` offset, so the bar's background still
+          covers the strip instead of leaving a transparent gap above it.
+        */
+        style={{ top: 0, paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -550,23 +583,13 @@ const UnifiedHeader = () => {
                               </div>
                             )}
 
-                            {/* The 5 C's Section */}
-                            <div className="border-b pb-4 mb-4">
-                              <p className="text-sm text-neutral-600 mb-2 font-medium px-4">The 5 C's</p>
-                              {filteredNavItems.filter((i) => !i.featured).map((item) => (
-                                <Button
-                                  key={item.name}
-                                  variant="ghost"
-                                  className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                  onClick={() => handleNavClick(item)}
-                                >
-                                  {item.name}
-                                </Button>
-                              ))}
-                            </div>
-                            
-                            
-                            
+                            {/* DR3: 'The 5 C's' section removed from the
+                                signed-out nav on founder call. The public Five
+                                C's live on their own pages (D089); a menu list
+                                duplicated them. filteredNavItems is still used
+                                by the Featured block above. */}
+
+
                             <Button
                               variant="default"
                               className="justify-start text-left bg-dna-emerald hover:bg-dna-forest text-white transition-all duration-200 focus:ring-0 focus:ring-offset-0"
@@ -602,17 +625,6 @@ const UnifiedHeader = () => {
       />
 
       {/* Universal Composer - Global Create */}
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
     </>
   );
 };

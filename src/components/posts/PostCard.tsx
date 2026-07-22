@@ -32,6 +32,8 @@ import { PostAnalytics } from './PostAnalytics';
 import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { logHighError } from '@/lib/errorLogger';
+import { EditedMarker } from './EditedMarker';
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -205,10 +207,9 @@ export function PostCard({
     if (!confirm('Are you sure you want to delete this post?')) return;
 
     try {
-      const { error } = await supabase
-        .from('posts')
-        .update({ is_deleted: true })
-        .eq('id', post.post_id);
+      const { error } = await supabase.rpc('rpc_soft_delete_post' as any, {
+        p_post_id: post.post_id,
+      });
 
       if (error) throw error;
 
@@ -219,6 +220,7 @@ export function PostCard({
 
       onUpdate?.();
     } catch (error) {
+      logHighError(error, 'database', 'rpc_soft_delete_post failed', { postId: post.post_id });
       toast({
         title: 'Error',
         description: 'Failed to delete post',
@@ -277,6 +279,16 @@ export function PostCard({
 
           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
             <span>{timeAgo}</span>
+            {post.edited_at && (
+              <>
+                <span>•</span>
+                <EditedMarker
+                  editedAt={post.edited_at}
+                  postId={post.post_id}
+                  isOwn={isOwnPost}
+                />
+              </>
+            )}
             {postTypeDisplay && (
               <>
                 <span>•</span>
@@ -309,6 +321,7 @@ export function PostCard({
             isPinned={!!post.pinned_at}
             commentsDisabled={!!post.comments_disabled}
             onUpdate={onUpdate}
+            item={post}
           />
         ) : (
           <PostMenuOthers

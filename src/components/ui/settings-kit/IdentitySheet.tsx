@@ -26,7 +26,12 @@ interface IdentitySheetContextValue {
   close: () => void;
 }
 
-const IdentitySheetContext = React.createContext<IdentitySheetContextValue | null>(null);
+/**
+ * Exported so the drawer shell can supply this contract (DR1 step 6). Surfaces
+ * keep calling `useIdentitySheet()` unchanged while the shell, not IdentitySheet,
+ * actually owns the stack.
+ */
+export const IdentitySheetContext = React.createContext<IdentitySheetContextValue | null>(null);
 
 export function useIdentitySheet() {
   const ctx = React.useContext(IdentitySheetContext);
@@ -106,7 +111,7 @@ export function IdentitySheet({
               <ChevronLeft className="h-5 w-5" />
             </button>
           ) : null}
-          <h2 className="text-title font-display">{currentTitle}</h2>
+          <h2 className="text-h2 font-display">{currentTitle}</h2>
           <button
             type="button"
             onClick={ctx.close}

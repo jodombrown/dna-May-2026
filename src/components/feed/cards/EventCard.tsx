@@ -157,11 +157,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             currentUserId={currentUserId}
             content={item.content || ''}
             onUpdate={onUpdate}
-            editHref={
-              item.event_id
-                ? `/dna/convene/events/${eventDetails?.slug || item.event_id}/edit`
-                : undefined
-            }
+            item={item}
           />
         ) : (
           <PostMenuOthers

@@ -1,0 +1,44 @@
+name: Panel Chrome
+
+# The chrome-in-panel gate (BD135 rule 5, BD110 one layer down).
+#
+# Ships WITH the DR2 migration, not before it. Against main before DR2 this gate
+# failed most of the tree on day one, and a gate that has to be muted to merge
+# is not a gate.
+#
+# CI only, deliberately. It is not in `prebuild` yet: prebuild runs in Lovable's
+# build lane too, and putting a day-old gate in front of deploys is how a gate
+# gets muted. It moves to prebuild once it has been green for a cycle.
+
+on:
+  pull_request:
+    paths:
+      - 'src/**/*.tsx'
+      - 'src/**/*.ts'
+      - 'scripts/check-panel-chrome.ts'
+      - '.github/workflows/panel-chrome.yml'
+  push:
+    branches: [main]
+
+jobs:
+  panel-chrome:
+    name: No chrome inside a drawer surface or panel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # The logic lives in the script, not in this YAML, so it can be run
+      # locally and tested as itself. The step is one command with no shell
+      # branching, so there is no errexit trap to get wrong (BD141).
+      - name: Run chrome-in-panel check
+        run: npm run lint:panels

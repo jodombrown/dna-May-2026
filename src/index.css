@@ -29,7 +29,7 @@ html {
    these are CSS-only fallbacks for first paint */
 :root {
   --bottom-nav-height: 4rem;
-  --unified-header-height: 56px;   /* mobile: h-14=56px, desktop: h-16=64px */
+  --unified-header-height: calc(56px + env(safe-area-inset-top, 0px));   /* base h-14=56px + notch inset (BD159). ResizeObserver overwrites with the measured px, which already includes paddingTop. */
   --pulse-bar-height: 56px;        /* sensible desktop default; PulseBar measures actual; mobile sets 0 */
   --total-header-height: calc(var(--unified-header-height) + var(--pulse-bar-height));
 }

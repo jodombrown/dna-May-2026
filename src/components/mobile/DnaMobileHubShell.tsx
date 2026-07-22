@@ -57,6 +57,31 @@ export function DnaMobileHubShell({
       <div
         ref={headerRef}
         className="fixed top-0 left-0 right-0 z-50 bg-background"
+        /*
+          BD157: the top safe-area inset, applied at the SHARED chrome and
+          nowhere else (BD110).
+
+          `index.html` sets `viewport-fit=cover` and `manifest.json` sets
+          `display: standalone`, so in the INSTALLED PWA this container owns the
+          strip under the notch — the strip iOS draws the clock, wifi and battery
+          into. Without this padding the header renders beneath the status bar
+          and its top-right control, the avatar, is physically unreachable in
+          portrait. Not disabled, not covered by an overlay: the taps belong to
+          the system layer and never reach the page.
+
+          A Safari TAB cannot reproduce this, because Safari's own chrome
+          occupies the same strip. That is why it survived DR0, DR1 and DR2.
+
+          `.safe-area-pt` has existed in `index.css` since before this cycle with
+          ZERO consumers. The class was written and never applied. Grep for
+          consumers, never for the definition (BD145, one layer over).
+
+          Padding rather than offset ON PURPOSE: `headerRef` is measured by
+          ResizeObserver in `useMobileHeaderHeight`, so growing this element
+          grows the measured height, and the content offset below corrects
+          itself with no second source of truth to drift.
+        */
+        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
         <div
           className={cn(
@@ -71,7 +96,12 @@ export function DnaMobileHubShell({
 
       <div
         className={cn('transition-[padding] duration-200', contentClassName)}
-        style={{ paddingTop: headerPadding || 56 }}
+        /*
+          The fallback runs only for the frame before ResizeObserver reports.
+          It has to carry the inset too, or that frame renders content under the
+          header on exactly the devices this fix is for.
+        */
+        style={{ paddingTop: headerPadding || 'calc(env(safe-area-inset-top, 0px) + 56px)' }}
       >
         {children}
       </div>

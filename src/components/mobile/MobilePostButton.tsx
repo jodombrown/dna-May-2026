@@ -8,8 +8,7 @@
 
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useUniversalComposer } from '@/hooks/useUniversalComposer';
-import { UniversalComposer } from '@/components/composer/UniversalComposer';
+import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useMobile } from '@/hooks/useMobile';
 import { cn } from '@/lib/utils';
 import { haptic } from '@/utils/haptics';
@@ -37,17 +36,6 @@ const MobilePostButton = () => {
       </Button>
 
       {/* UniversalComposer renders as bottom sheet on mobile */}
-      <UniversalComposer
-        isOpen={composer.isOpen}
-        mode={composer.mode}
-        context={composer.context}
-        isSubmitting={composer.isSubmitting}
-        onClose={composer.close}
-        onModeChange={composer.switchMode}
-        successData={composer.successData}
-        onSubmit={composer.submit}
-        onDismissSuccess={composer.dismissSuccess}
-      />
     </>
   );
 };

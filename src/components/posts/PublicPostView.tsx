@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { EditedMarker } from '@/components/posts/EditedMarker';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
 import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
@@ -39,6 +40,7 @@ export interface PublicPostViewPost {
   link_metadata: unknown;
   created_at: string;
   updated_at: string | null;
+  edited_at?: string | null;
   author: PublicPostAuthor | null;
   likes_count: number;
   comments_count: number;
@@ -222,6 +224,15 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
                   )}
                   <p className="text-meta text-muted-foreground mt-0.5">
                     {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                    {post.edited_at && (
+                      <>
+                        {' · '}
+                        {/* Anon / public view: isOwn is false, so the marker is
+                            the non-interactive "Edited …" text. This is the
+                            BD160 signed-out honesty guarantee. */}
+                        <EditedMarker editedAt={post.edited_at} postId={postId} isOwn={false} />
+                      </>
+                    )}
                   </p>
                 </div>
 

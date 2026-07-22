@@ -51,6 +51,7 @@ import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
 import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
+import { EditedMarker } from '@/components/posts/EditedMarker';
 
 interface ConnectCardProps {
   item: UniversalFeedItem;
@@ -162,6 +163,12 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
             {isSeeking ? 'Seeking' : 'Offering'}
             {' · '}
             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
+            {item.edited_at && (
+              <>
+                {' · '}
+                <EditedMarker editedAt={item.edited_at} postId={item.post_id} isOwn={isOwner} />
+              </>
+            )}
           </p>
         </div>
 
@@ -172,6 +179,7 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
             currentUserId={currentUserId}
             content={item.content || ''}
             onUpdate={onUpdate}
+            item={item}
           />
         ) : (
           <PostMenuOthers

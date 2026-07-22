@@ -4,15 +4,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import UnifiedHeader from '@/components/UnifiedHeader';
-import { AccountDrawer } from '@/components/navigation/AccountDrawer';
 import { PulseBar, PulseDock } from '@/components/pulse';
 import { initDIAPeriodicChecks } from '@/services/dia/diaPeriodicCheck';
 import { FEATURE_FLAGS } from '@/config/featureFlags';
 import { AlphaWelcomeBanner } from '@/components/alpha/AlphaWelcomeBanner';
-import { AlphaTestGuide } from '@/components/alpha/AlphaTestGuide';
 import { ProfileCompletionGuide } from '@/components/onboarding/ProfileCompletionGuide';
 import { FeedbackFAB } from '@/components/feedback/FeedbackFAB';
-import { FeedbackDrawer } from '@/components/feedback/FeedbackDrawer';
+import { useAccountActions } from '@/contexts/AccountActionsContext';
 import { useAutoRegisterPush } from '@/hooks/messaging/useAutoRegisterPush';
 
 // Phase 16 - lazy global: morning brief banner only on /dna/feed for authed users.
@@ -36,11 +34,10 @@ interface BaseLayoutProps {
  * - Preserves context across view state changes
  */
 const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
+  const accountActions = useAccountActions();
   const { viewState, layoutConfig } = useViewState();
   const { user, profile } = useAuth();
   const location = useLocation();
-  const [isTestGuideOpen, setIsTestGuideOpen] = useState(false);
-  const [isFeedbackDrawerOpen, setIsFeedbackDrawerOpen] = useState(false);
 
   // Phase 20A: silently re-register push subscription if permission already granted
   useAutoRegisterPush();
@@ -112,7 +109,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
   return (
     <>
       <UnifiedHeader />
-      <AccountDrawer />
       <PulseBar />
       <div
         className={cn(
@@ -149,7 +145,7 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
         {children}
       </div>
       {/* Feedback FAB - side chevron on all /dna routes */}
-      <FeedbackFAB onOpen={() => setIsFeedbackDrawerOpen(true)} />
+      <FeedbackFAB onOpen={accountActions.onFeedback} />
       <PulseDock />
 
       {/* Phase 16 - DIA Morning brief (gated to /dna/feed inside the component) */}
@@ -162,25 +158,13 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ children }) => {
       {/* Profile Completion Guide - Sprint 12B */}
       {user && <ProfileCompletionGuide />}
 
-      {/* Feedback Drawer - accessible from banner, test guide, and chevron FAB */}
-      <FeedbackDrawer
-        isOpen={isFeedbackDrawerOpen}
-        onClose={() => setIsFeedbackDrawerOpen(false)}
-      />
-
-      {/* Alpha Testing Infrastructure */}
-      {FEATURE_FLAGS.isAlphaTest && user && (
-        <>
-          <AlphaTestGuide
-            isOpen={isTestGuideOpen}
-            onClose={() => setIsTestGuideOpen(false)}
-            onOpenFeedback={() => {
-              setIsTestGuideOpen(false);
-              setIsFeedbackDrawerOpen(true);
-            }}
-          />
-        </>
-      )}
+      {/*
+        DR1 step 6 (DR0 defects 5 and 6): FeedbackDrawer and AlphaTestGuide are
+        mounted ONCE, by AccountActionsProvider at app root. They used to be
+        mounted here AND inside AccountDrawer, each with its own isOpen, and the
+        Account-side AlphaTestGuide bypassed the alpha flag. Triggers on this
+        layout now route to the single owner.
+      */}
     </>
   );
 };

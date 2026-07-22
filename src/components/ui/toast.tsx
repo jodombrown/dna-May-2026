@@ -17,6 +17,16 @@ const ToastViewport = React.forwardRef<
       "fixed top-0 z-[99999] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
       className
     )}
+    /*
+      BD157. A toast is not app chrome, but it is fixed to the same edges and
+      renders under the status bar in the installed PWA exactly as the header
+      did. `calc` rather than a bare inset, because `p-4` is already set and a
+      plain `paddingTop` would replace it.
+    */
+    style={{
+      paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1rem)',
+      paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)',
+    }}
     {...props}
   />
 ))

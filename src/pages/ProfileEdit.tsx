@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Loader2, LogOut } from 'lucide-react';
-import UnifiedHeader from '@/components/UnifiedHeader';
+import { PageFrame } from '@/components/layout/PageFrame';
 import ProfileCompletionBar, { calculateProfileCompletionPts } from '@/components/profile/ProfileCompletionBar';
 import TourResumeBanner from '@/components/onboarding/TourResumeBanner';
 import OnboardingTour from '@/components/onboarding/OnboardingTour';
@@ -364,16 +364,16 @@ const ProfileEdit = () => {
 
   if (isLoading || (!profile && user && retryCount < 3)) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <PageFrame centered>
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <p className="text-sm text-muted-foreground">Loading your profile...</p>
-      </div>
+      </PageFrame>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <PageFrame centered>
         <div className="text-center">
           <h2 className="text-xl font-semibold text-destructive">Failed to load profile</h2>
           <p className="text-muted-foreground mt-2">
@@ -391,13 +391,13 @@ const ProfileEdit = () => {
             Try Again
           </Button>
         </div>
-      </div>
+      </PageFrame>
     );
   }
 
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <PageFrame centered>
         <div className="text-center">
           <h2 className="text-xl font-semibold">Not signed in</h2>
           <p className="text-muted-foreground mt-2">
@@ -407,13 +407,13 @@ const ProfileEdit = () => {
         <Button onClick={() => navigate('/auth')}>
           Sign In
         </Button>
-      </div>
+      </PageFrame>
     );
   }
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <PageFrame centered>
         <div className="text-center">
           <h2 className="text-xl font-semibold">Profile not found</h2>
           <p className="text-muted-foreground mt-2">
@@ -431,45 +431,42 @@ const ProfileEdit = () => {
             Reload Profile
           </Button>
         </div>
-      </div>
+      </PageFrame>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <UnifiedHeader />
-      
-      <div className="container max-w-4xl mx-auto px-4 py-8">
+    <PageFrame
+      contained
+      pageNav={
+        <Button variant="ghost" onClick={() => navigate('/dna/feed')}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Feed
+        </Button>
+      }
+      actions={
+        <Button
+          type="button"
+          onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
+          disabled={updateMutation.isPending}
+          className="md:hidden"
+          size="sm"
+        >
+          {updateMutation.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-1" />
+              Save
+            </>
+          )}
+        </Button>
+      }
+    >
+      <div>
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/dna/feed')}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Feed
-            </Button>
-            
-            {/* Mobile Save Button - top right */}
-            <Button
-              type="button"
-              onClick={(e) => handleSubmit(e as unknown as React.FormEvent)}
-              disabled={updateMutation.isPending}
-              className="md:hidden"
-              size="sm"
-            >
-              {updateMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-1" />
-                  Save
-                </>
-              )}
-            </Button>
-          </div>
-          <h1 className="text-3xl font-bold">Edit Profile</h1>
+          <h1 className="text-display font-bold">Edit Profile</h1>
           <p className="text-muted-foreground mt-2">
             Complete your profile to unlock all DNA features and connect with the diaspora community
           </p>
@@ -700,7 +697,7 @@ const ProfileEdit = () => {
 
       {/* Platform Tour Dialog */}
       <OnboardingTour open={showTour} onClose={() => setShowTour(false)} />
-    </div>
+    </PageFrame>
   );
 };
 

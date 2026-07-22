@@ -17,12 +17,13 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
     region,
     focusAreas,
     onlyMySpaces = false,
+    authorId,
     page = 1,
     pageSize = 20,
   } = options;
 
   return useQuery({
-    queryKey: ['convey-feed', { type, region, focusAreas, onlyMySpaces, page, pageSize }],
+    queryKey: ['convey-feed', { type, region, focusAreas, onlyMySpaces, authorId, page, pageSize }],
     queryFn: async () => {
       // Build base query for posts
       let query = supabase
@@ -51,6 +52,11 @@ export function useConveyFeed(options: UseConveyFeedOptions = {}) {
       // Apply type filter
       if (type) {
         query = query.eq('post_type', type);
+      }
+
+      // Restrict to one author (BD139: the filter that "My Stories" needed).
+      if (authorId) {
+        query = query.eq('author_id', authorId);
       }
 
       // Apply "only my spaces" filter

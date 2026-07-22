@@ -39,6 +39,7 @@ vi.mock('@/contexts/AuthContext', () => ({
 
 import { supabase } from '@/integrations/supabase/client';
 import { UniversalFeedItemComponent } from '@/components/feed/UniversalFeedItem';
+import { EditProvider } from '@/contexts/EditContext';
 
 const VIEWER_ID = 'viewer-1';
 
@@ -87,7 +88,9 @@ const renderItem = (row: FeedRpcRow) => {
   const utils = render(
     <QueryClientProvider client={client}>
       <MemoryRouter>
-        <UniversalFeedItemComponent item={item} currentUserId={VIEWER_ID} onUpdate={() => {}} />
+        <EditProvider>
+          <UniversalFeedItemComponent item={item} currentUserId={VIEWER_ID} onUpdate={() => {}} />
+        </EditProvider>
       </MemoryRouter>
     </QueryClientProvider>
   );

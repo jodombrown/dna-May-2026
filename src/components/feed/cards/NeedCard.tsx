@@ -45,7 +45,7 @@ export const NeedCard: React.FC<NeedCardProps> = ({ item, currentUserId, onUpdat
       {/* Need Content */}
       <div className="space-y-4">
         <div className="flex items-start gap-3">
-          <HandHeart className="h-6 w-6 text-dna-orange flex-shrink-0 mt-1" />
+          <HandHeart className="h-6 w-6 text-dna-sunset flex-shrink-0 mt-1" />
           <div>
             <p className="font-medium text-lg mb-2">{linkifyContent(item.content)}</p>
             {item.space_title && (

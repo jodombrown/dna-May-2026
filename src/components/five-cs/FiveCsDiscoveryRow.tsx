@@ -27,7 +27,7 @@ export const FiveCsDiscoveryRow: React.FC<FiveCsDiscoveryRowProps> = ({ onOpen }
       className="max-w-6xl mx-auto mb-12"
     >
       <div className="text-center mb-6">
-        <h2 className="text-lg sm:text-title font-display text-foreground mb-1">
+        <h2 className="text-h3 sm:text-h2 font-display text-foreground mb-1">
           {"\n"}
         </h2>
         <p className="text-sm text-muted-foreground">

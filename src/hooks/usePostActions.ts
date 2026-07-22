@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logHighError } from '@/lib/errorLogger';
 
 export function usePostActions(postId: string, authorId: string, currentUserId?: string) {
   const queryClient = useQueryClient();
@@ -25,34 +26,52 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     enabled: !!currentUserId && !isOwnPost,
   });
 
-  // Edit post
+  // Edit post via the column-allowlisted SECURITY DEFINER RPC. updated_at is
+  // owned by a database trigger; the caller passes the row's current
+  // updated_at for optimistic concurrency (40001 raised on mismatch).
   const editPost = useMutation({
-    mutationFn: async (content: string) => {
+    mutationFn: async ({
+      content,
+      expectedUpdatedAt,
+    }: {
+      content: string;
+      expectedUpdatedAt: string;
+    }) => {
       if (!currentUserId || !isOwnPost) throw new Error('Not authorized');
 
-      const { error } = await supabase
-        .from('posts')
-        .update({ content, updated_at: new Date().toISOString() })
-        .eq('id', postId);
+      const { error } = await supabase.rpc('rpc_update_post' as any, {
+        p_post_id: postId,
+        p_expected_updated_at: expectedUpdatedAt,
+        p_patch: { content },
+      });
 
-      if (error) throw error;
+      if (error) {
+        if ((error as any).code === '40001') throw new Error('POST_STALE');
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success('Post updated');
     },
-    onError: () => toast.error('Failed to update post'),
+    onError: (error) => {
+      if (error instanceof Error && error.message === 'POST_STALE') {
+        toast.error('This post changed since you opened it. Reload before saving.');
+      } else {
+        logHighError(error, 'database', 'rpc_update_post failed', { postId });
+        toast.error('Failed to update post');
+      }
+    },
   });
 
-  // Delete post
+  // Delete post (soft delete via SECURITY DEFINER RPC)
   const deletePost = useMutation({
     mutationFn: async () => {
       if (!currentUserId || !isOwnPost) throw new Error('Not authorized');
 
-      const { error } = await supabase
-        .from('posts')
-        .update({ is_deleted: true })
-        .eq('id', postId);
+      const { error } = await supabase.rpc('rpc_soft_delete_post' as any, {
+        p_post_id: postId,
+      });
 
       if (error) throw error;
     },
@@ -60,7 +79,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success('Post deleted');
     },
-    onError: () => toast.error('Failed to delete post'),
+    onError: (error) => {
+      logHighError(error, 'database', 'rpc_soft_delete_post failed', { postId });
+      toast.error('Failed to delete post');
+    },
   });
 
   // Pin/unpin post to profile
@@ -68,10 +90,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     mutationFn: async (isPinned: boolean) => {
       if (!currentUserId || !isOwnPost) throw new Error('Not authorized');
 
-      const { error } = await supabase
-        .from('posts')
-        .update({ pinned_at: isPinned ? new Date().toISOString() : null })
-        .eq('id', postId);
+      const { error } = await supabase.rpc('rpc_set_post_pinned' as any, {
+        p_post_id: postId,
+        p_pinned: isPinned,
+      });
 
       if (error) throw error;
     },
@@ -79,7 +101,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success(isPinned ? 'Post pinned to profile' : 'Post unpinned');
     },
-    onError: () => toast.error('Failed to update pin status'),
+    onError: (error) => {
+      logHighError(error, 'database', 'rpc_set_post_pinned failed', { postId });
+      toast.error('Failed to update pin status');
+    },
   });
 
   // Toggle comments
@@ -87,10 +112,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
     mutationFn: async (disabled: boolean) => {
       if (!currentUserId || !isOwnPost) throw new Error('Not authorized');
 
-      const { error } = await supabase
-        .from('posts')
-        .update({ comments_disabled: disabled })
-        .eq('id', postId);
+      const { error } = await supabase.rpc('rpc_set_post_comments_disabled' as any, {
+        p_post_id: postId,
+        p_disabled: disabled,
+      });
 
       if (error) throw error;
     },
@@ -98,7 +123,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success(disabled ? 'Comments turned off' : 'Comments turned on');
     },
-    onError: () => toast.error('Failed to update comment settings'),
+    onError: (error) => {
+      logHighError(error, 'database', 'rpc_set_post_comments_disabled failed', { postId });
+      toast.error('Failed to update comment settings');
+    },
   });
 
   // Report post

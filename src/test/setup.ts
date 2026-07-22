@@ -32,3 +32,22 @@ class ResizeObserverMock {
   disconnect() {}
 }
 (globalThis as unknown as { ResizeObserver: typeof ResizeObserverMock }).ResizeObserver = ResizeObserverMock;
+
+/**
+ * jsdom implements no Pointer Capture API, and vaul's drag handlers call it on
+ * every pointerdown. Without these the drawer suites still PASS every assertion
+ * while the process exits 1 on 16 unhandled errors — a summary line that says
+ * "167 passed" over a non-zero exit is exactly the pass-signal that cannot
+ * distinguish ran-clean from errored.
+ */
+if (!Element.prototype.setPointerCapture) {
+  Element.prototype.setPointerCapture = function setPointerCapture() {};
+}
+if (!Element.prototype.releasePointerCapture) {
+  Element.prototype.releasePointerCapture = function releasePointerCapture() {};
+}
+if (!Element.prototype.hasPointerCapture) {
+  Element.prototype.hasPointerCapture = function hasPointerCapture() {
+    return false;
+  };
+}
