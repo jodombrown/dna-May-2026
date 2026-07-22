@@ -172,6 +172,7 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
             currentUserId={currentUserId}
             content={item.content || ''}
             onUpdate={onUpdate}
+            item={item}
           />
         ) : (
           <PostMenuOthers

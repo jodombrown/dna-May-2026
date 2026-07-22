@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, Flag, Eye, Clock, MessageSquare, FileText, Loader
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createNotification } from '@/services/notificationService';
+import { logHighError } from '@/lib/errorLogger';
 
 interface FlaggedPost {
   id: string;
@@ -218,6 +219,7 @@ const ContentModeration = () => {
       setSelectedPost(null);
       setReviewNotes('');
     } catch (error) {
+      logHighError(error, 'database', 'rpc_moderate_posts failed', { postId });
       toast({
         title: "Error",
         description: "Failed to moderate post",
@@ -269,6 +271,7 @@ const ContentModeration = () => {
       setSelectedComment(null);
       setReviewNotes('');
     } catch (error) {
+      logHighError(error, 'database', 'rpc_moderate_comments failed', { commentId });
       toast({
         title: "Error",
         description: "Failed to moderate comment",
@@ -330,6 +333,9 @@ const ContentModeration = () => {
       setSelectedPostIds(new Set());
       fetchFlaggedContent();
     } catch (error) {
+      logHighError(error, 'database', 'rpc_moderate_posts (bulk) failed', {
+        count: selectedPostIds.size,
+      });
       toast({
         title: "Error",
         description: "Failed to process bulk moderation",
@@ -392,6 +398,9 @@ const ContentModeration = () => {
       setSelectedCommentIds(new Set());
       fetchFlaggedContent();
     } catch (error) {
+      logHighError(error, 'database', 'rpc_moderate_comments (bulk) failed', {
+        count: selectedCommentIds.size,
+      });
       toast({
         title: "Error",
         description: "Failed to process bulk moderation",

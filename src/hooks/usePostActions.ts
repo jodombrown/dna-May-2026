@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { logHighError } from '@/lib/errorLogger';
 
 export function usePostActions(postId: string, authorId: string, currentUserId?: string) {
   const queryClient = useQueryClient();
@@ -57,6 +58,7 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       if (error instanceof Error && error.message === 'POST_STALE') {
         toast.error('This post changed since you opened it. Reload before saving.');
       } else {
+        logHighError(error, 'database', 'rpc_update_post failed', { postId });
         toast.error('Failed to update post');
       }
     },
@@ -77,7 +79,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success('Post deleted');
     },
-    onError: () => toast.error('Failed to delete post'),
+    onError: (error) => {
+      logHighError(error, 'database', 'rpc_soft_delete_post failed', { postId });
+      toast.error('Failed to delete post');
+    },
   });
 
   // Pin/unpin post to profile
@@ -96,7 +101,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success(isPinned ? 'Post pinned to profile' : 'Post unpinned');
     },
-    onError: () => toast.error('Failed to update pin status'),
+    onError: (error) => {
+      logHighError(error, 'database', 'rpc_set_post_pinned failed', { postId });
+      toast.error('Failed to update pin status');
+    },
   });
 
   // Toggle comments
@@ -115,7 +123,10 @@ export function usePostActions(postId: string, authorId: string, currentUserId?:
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success(disabled ? 'Comments turned off' : 'Comments turned on');
     },
-    onError: () => toast.error('Failed to update comment settings'),
+    onError: (error) => {
+      logHighError(error, 'database', 'rpc_set_post_comments_disabled failed', { postId });
+      toast.error('Failed to update comment settings');
+    },
   });
 
   // Report post

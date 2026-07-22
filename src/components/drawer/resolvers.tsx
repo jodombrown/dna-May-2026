@@ -15,6 +15,7 @@
 
 import type { DrawerResolvers, ResolvedFrame } from '@/contexts/DrawerContext';
 import { ComposerSurface, COMPOSER_SURFACE_ID } from '@/components/drawer/surfaces/ComposerSurface';
+import { EditSurface, EDIT_SURFACE_ID } from '@/components/drawer/surfaces/EditSurface';
 import {
   AccountSurface,
   AccountPanel,
@@ -32,6 +33,13 @@ const SURFACE_RENDERERS: Record<string, SurfaceRenderer> = {
     node: <ComposerSurface />,
     // Restores the 860px the composer set for itself before DR1 stripped its
     // chrome. Writing needs room; a 448px column is not a composing surface.
+    width: 'wide',
+  }),
+  [EDIT_SURFACE_ID]: () => ({
+    title: 'Edit',
+    node: <EditSurface />,
+    // Editing renders the same field bag the composer does; it needs the same
+    // room.
     width: 'wide',
   }),
   [ACCOUNT_SURFACE_ID]: () => ({ title: 'Account', node: <AccountSurface /> }),

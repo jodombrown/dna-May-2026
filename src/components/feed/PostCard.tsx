@@ -23,6 +23,7 @@ import { createResharePost } from '@/lib/feedWriter';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { usePostReactions } from '@/hooks/usePostReactions';
 import { usePostActions } from '@/hooks/usePostActions';
+import { logHighError } from '@/lib/errorLogger';
 import { usePostBookmark } from '@/hooks/usePostBookmark';
 import { ReactionPicker } from '@/components/posts/ReactionPicker';
 import { ReactionSummary } from '@/components/posts/ReactionSummary';
@@ -201,7 +202,8 @@ export function PostCard({ post }: PostCardProps) {
       queryClient.invalidateQueries({ queryKey: ['universal-feed'] });
       toast.success('Post deleted');
     },
-    onError: () => {
+    onError: (error) => {
+      logHighError(error, 'database', 'rpc_soft_delete_post failed', { postId: post.id });
       toast.error('Failed to delete post. Please try again.');
     },
   });
@@ -260,6 +262,7 @@ export function PostCard({ post }: PostCardProps) {
       if (error instanceof Error && error.message === 'POST_STALE') {
         toast.error('This post changed since you opened it. Reload before saving.');
       } else {
+        logHighError(error, 'database', 'rpc_update_post failed', { postId: post.id });
         toast.error('Failed to update post. Please try again.');
       }
     },

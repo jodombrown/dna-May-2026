@@ -54,6 +54,7 @@ vi.mock('@/hooks/useEventRsvpFromFeed', () => ({
 
 import { useEventDetailsForFeed } from '@/hooks/useEventDetailsForFeed';
 import { EventCard } from '@/components/feed/cards/EventCard';
+import { EditProvider } from '@/contexts/EditContext';
 
 const VIEWER_ID = 'viewer-1';
 
@@ -90,7 +91,9 @@ const renderCard = (feedItem: UniversalFeedItem) => {
   return render(
     <QueryClientProvider client={client}>
       <MemoryRouter>
-        <EventCard item={feedItem} currentUserId={VIEWER_ID} onUpdate={() => {}} />
+        <EditProvider>
+          <EventCard item={feedItem} currentUserId={VIEWER_ID} onUpdate={() => {}} />
+        </EditProvider>
       </MemoryRouter>
     </QueryClientProvider>
   );

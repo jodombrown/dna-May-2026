@@ -139,6 +139,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             currentUserId={currentUserId}
             content={item.content}
             onUpdate={onUpdate}
+            item={item}
           />
         ) : (
           <PostMenuOthers

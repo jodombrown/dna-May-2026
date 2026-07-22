@@ -12,6 +12,7 @@ import { MessageProvider } from "@/contexts/MessageContext";
 import { DrawerProvider } from '@/contexts/DrawerContext';
 import { drawerResolvers } from '@/components/drawer/resolvers';
 import { ComposerProvider } from '@/contexts/ComposerContext';
+import { EditProvider } from '@/contexts/EditContext';
 import { AccountActionsProvider } from '@/contexts/AccountActionsContext';
 import { AppDrawer } from '@/components/drawer/AppDrawer';
 import { LandscapeGate } from '@/components/mobile/LandscapeGate';
@@ -374,6 +375,7 @@ function App() {
                 <DrawerProvider resolvers={drawerResolvers}>
                 <AccountActionsProvider>
                 <ComposerProvider>
+                <EditProvider>
                 <AccountDrawerProvider>
                   <AppDrawer />
                   {/* BD158: mounted once at app root, above every band. */}
@@ -947,6 +949,7 @@ function App() {
                 </MessageProvider>
               </ViewStateProvider>
               </AccountDrawerProvider>
+              </EditProvider>
               </ComposerProvider>
               </AccountActionsProvider>
               </DrawerProvider>
