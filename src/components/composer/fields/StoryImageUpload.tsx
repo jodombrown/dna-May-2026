@@ -58,9 +58,15 @@ export function StoryImageUpload({ currentImageUrl, onUpload, onRemove }: StoryI
           : '';
       toast({ description: `Hero image uploaded successfully.${savedPct}` });
     } catch (error) {
+      const msg =
+        error && typeof error === 'object' && 'message' in error && typeof (error as { message: unknown }).message === 'string'
+          ? (error as { message: string }).message
+          : "We couldn't upload that image. Try a smaller JPG or PNG.";
+      console.error('[StoryImageUpload] upload failed:', error);
       toast({
         title: 'Upload failed',
-        description: "We couldn't upload that image. Try a smaller JPG or PNG.",
+        description: msg,
+        variant: 'destructive',
       });
     } finally {
       setIsUploading(false);
