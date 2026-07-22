@@ -34,6 +34,7 @@ import { ComposerMode, ComposerContext, ComposerFormData } from '@/hooks/useUniv
 import type { ComposerSuccessData } from '@/hooks/useUniversalComposer';
 import { DEFAULT_MODE, modeConfig } from '@/config/composerModes';
 import { MODE_HANDLERS } from './modeHandlers';
+import { seedToFormData } from './composerFormData';
 import { ComposerVerbRail } from './ComposerVerbRail';
 import { ComposerFields } from './ComposerFields';
 import { ComposerCardPreview } from './ComposerCardPreview';
@@ -317,46 +318,13 @@ export const UniversalComposer = ({
   }, [userId, clearAll, onClose]);
 
   // ---- Submit: route by verb to the substrate ------------------------------
-  const buildFormData = useCallback((): ComposerFormData | null => {
-    const cleanedGallery = galleryUrls.filter((u) => typeof u === 'string' && u.length > 0);
-    const base: ComposerFormData = { content: body, mediaUrl, galleryUrls: cleanedGallery };
-
-    switch (mode) {
-      case 'story':
-        // Hero → posts.image_url, gallery → posts.gallery_urls.
-        return { ...base, title: fields.title?.trim() || undefined, heroImage: mediaUrl };
-
-      case 'connect':
-        return {
-          ...base,
-          intent: fields.intent?.trim() || undefined,
-          where: fields.where?.trim() || undefined,
-        };
-
-      case 'need':
-        return {
-          ...base,
-          direction: fields.direction === 'need' ? 'need' : 'offer',
-          category: fields.kind || undefined,
-          giveWhat: fields.give || undefined,
-          giveTo: fields.to || undefined,
-          intendedImpact: fields.impact || undefined,
-        };
-
-      case 'space':
-        // roles[] → space_roles rows (handler inserts them after createSpace).
-        return {
-          ...base,
-          title: fields.title?.trim() || undefined,
-          spaceCategory: fields.type || undefined,
-          skillsNeeded: roles,
-        };
-
-      case 'event':
-        // Events submit through EventForm/useEventForm — never through here.
-        return null;
-    }
-  }, [mode, body, fields, mediaUrl, galleryUrls, roles]);
+  // The verb→ComposerFormData mapping lives in seedToFormData (shared with the
+  // edit round-trip tests) so there is exactly ONE forward implementation.
+  const buildFormData = useCallback(
+    (): ComposerFormData | null =>
+      seedToFormData(mode, { body, fields, mediaUrl, galleryUrls, roles }),
+    [mode, body, fields, mediaUrl, galleryUrls, roles]
+  );
 
   const handleSubmit = useCallback(() => {
     const formData = buildFormData();
