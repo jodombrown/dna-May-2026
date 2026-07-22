@@ -525,7 +525,7 @@ export function PostCard({
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-between gap-2 pt-3 border-t [&>button]:min-h-[44px]">
+      <div className="flex items-center justify-between gap-1 pt-3 border-t overflow-hidden [&>button]:min-h-[44px] [&>button]:min-w-0">
         {/* Simple Like Button */}
         <Button
           variant="ghost"
@@ -609,7 +609,7 @@ export function PostCard({
           size="sm"
           onClick={() => toggleBookmark()}
           disabled={isBookmarking}
-          className={cn('gap-1.5 px-2', isBookmarked && 'text-primary')}
+          className={cn('flex-1 gap-1.5 px-2', isBookmarked && 'text-primary')}
         >
           <Bookmark className={cn('h-4 w-4', isBookmarked && 'fill-current')} />
           <span className="hidden sm:inline">{isBookmarked ? 'Saved' : 'Save'}</span>
