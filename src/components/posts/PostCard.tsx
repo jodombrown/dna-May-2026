@@ -32,6 +32,8 @@ import { PostAnalytics } from './PostAnalytics';
 import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { RenderProse } from '@/utils/renderProse';
+
 import { logHighError } from '@/lib/errorLogger';
 import { EditedMarker } from './EditedMarker';
 
