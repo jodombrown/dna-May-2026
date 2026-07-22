@@ -8,7 +8,7 @@ interface AvatarUploaderProps {
   onUploaded: (url: string) => void;
 }
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_SIZE = 25 * 1024 * 1024; // 25MB (large images are auto-compressed)
 
 const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) => {
   const [uploading, setUploading] = useState(false);
