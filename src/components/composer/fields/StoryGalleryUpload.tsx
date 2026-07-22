@@ -34,7 +34,7 @@ export function StoryGalleryUpload({ galleryUrls, onChange }: StoryGalleryUpload
           continue;
         }
         if (file.size > maxSize) {
-          toast({ title: 'File too large', description: `${file.name} is larger than 5MB`, variant: 'destructive' });
+          toast({ title: 'File too large', description: `${file.name} is larger than 25MB`, variant: 'destructive' });
           continue;
         }
 
