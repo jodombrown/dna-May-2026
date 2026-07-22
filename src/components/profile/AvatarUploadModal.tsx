@@ -48,10 +48,11 @@ export function AvatarUploadModal({
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: "Error", description: "Max 5MB", variant: "destructive" });
+    if (file.size > 25 * 1024 * 1024) {
+      toast({ title: "Error", description: "Max 25MB", variant: "destructive" });
       return;
     }
+
 
     const reader = new FileReader();
     reader.onload = () => {
