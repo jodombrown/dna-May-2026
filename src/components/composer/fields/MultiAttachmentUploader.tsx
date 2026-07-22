@@ -631,7 +631,7 @@ export const MultiAttachmentUploader = forwardRef<
       )}
 
       <p className="text-[11px] text-muted-foreground">
-        Up to {maxFiles} files. Images &lt;= 5 MB, videos &lt;= 50 MB. Drag tiles or use Alt + arrow keys to reorder.
+        Up to {maxFiles} files. Images auto-optimize up to 25 MB, videos &lt;= 50 MB. Drag tiles or use Alt + arrow keys to reorder.
       </p>
     </div>
   );
