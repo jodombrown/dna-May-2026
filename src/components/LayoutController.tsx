@@ -4,7 +4,7 @@ import ThreeColumnLayout from '@/layouts/ThreeColumnLayout';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import FullCanvasLayout from '@/layouts/FullCanvasLayout';
 import DetailViewLayout from '@/layouts/DetailViewLayout';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+// MobileBottomNav removed: PulseDock (mounted in BaseLayout) is the sole mobile bottom nav.
 import SkipLink from '@/components/shared/SkipLink';
 
 interface LayoutControllerProps {
