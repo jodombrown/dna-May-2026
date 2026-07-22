@@ -292,7 +292,7 @@ export async function createStandardPost(params: {
     // Insert the post with correct post_type value
     const insertPayload = {
       author_id: authorId,
-      content: content.trim(),
+      content: normalizeProseContent(content),
       post_type: 'post', // Valid post_type per database constraint
       image_url: mediaUrl || null,
       gallery_urls: cleanedGallery.length ? cleanedGallery : null,
