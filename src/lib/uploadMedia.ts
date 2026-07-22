@@ -23,6 +23,19 @@ export const uploadMedia = async (
   const safeExt = ['jpg','jpeg','png','webp','gif','mp4','webm'].includes(ext) ? ext : 'bin';
   const safeName = `${base}.${safeExt}`;
 
+  // Auto-compress large images before upload so modern phone photos (6–12MB)
+  // don't hit storage/pre-flight caps. Videos and GIFs pass through untouched.
+  let uploadFile = file;
+  if (file.type.startsWith('image/') && file.type !== 'image/gif') {
+    try {
+      uploadFile = await compressAndTinify(file, { maxDimension: 1920, maxSizeBytes: 5 * 1024 * 1024 });
+    } catch {
+      uploadFile = file;
+    }
+  }
+
+
+
   const filePath = `${userId}/${Date.now()}-${safeName}`;
 
   // Diagnostics: is there a session at the moment of upload, and is the
