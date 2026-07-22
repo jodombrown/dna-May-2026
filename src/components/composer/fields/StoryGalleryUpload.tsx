@@ -22,7 +22,7 @@ export function StoryGalleryUpload({ galleryUrls, onChange }: StoryGalleryUpload
     if (!files || files.length === 0 || !user) return;
 
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 25 * 1024 * 1024;
 
     setIsUploading(true);
     const newUrls: string[] = [];
@@ -34,7 +34,7 @@ export function StoryGalleryUpload({ galleryUrls, onChange }: StoryGalleryUpload
           continue;
         }
         if (file.size > maxSize) {
-          toast({ title: 'File too large', description: `${file.name} is larger than 5MB`, variant: 'destructive' });
+          toast({ title: 'File too large', description: `${file.name} is larger than 25MB`, variant: 'destructive' });
           continue;
         }
 

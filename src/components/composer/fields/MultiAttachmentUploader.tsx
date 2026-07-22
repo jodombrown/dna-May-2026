@@ -41,7 +41,7 @@ import {
 } from '@/lib/composerAttachmentStore';
 
 const BUCKET = 'post-media';
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/mov'];
@@ -278,7 +278,7 @@ export const MultiAttachmentUploader = forwardRef<
         ok: false,
         reason: kind === 'video'
           ? `Video is ${formatBytes(file.size)} - max 50 MB.`
-          : `Image is ${formatBytes(file.size)} - max 5 MB.`,
+          : `Image is ${formatBytes(file.size)} - max 25 MB.`,
       };
     }
     return { ok: true, kind };
@@ -631,7 +631,7 @@ export const MultiAttachmentUploader = forwardRef<
       )}
 
       <p className="text-[11px] text-muted-foreground">
-        Up to {maxFiles} files. Images &lt;= 5 MB, videos &lt;= 50 MB. Drag tiles or use Alt + arrow keys to reorder.
+        Up to {maxFiles} files. Images auto-optimize up to 25 MB, videos &lt;= 50 MB. Drag tiles or use Alt + arrow keys to reorder.
       </p>
     </div>
   );

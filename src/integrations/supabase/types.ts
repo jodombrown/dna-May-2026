@@ -110,6 +110,13 @@ export type Database = {
             foreignKeyName: "affirmations_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "affirmations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -119,6 +126,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affirmations_witness_id_fkey"
+            columns: ["witness_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "affirmations_witness_id_fkey"
@@ -237,6 +251,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opportunities"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "applications_user_id_fkey"
@@ -778,6 +799,13 @@ export type Database = {
             foreignKeyName: "community_posts_author_id_fkey"
             columns: ["author_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "community_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -830,6 +858,13 @@ export type Database = {
             foreignKeyName: "connections_recipient_id_fkey"
             columns: ["recipient_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "connections_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -839,6 +874,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connections_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "connections_requester_id_fkey"
@@ -895,6 +937,13 @@ export type Database = {
             foreignKeyName: "content_flags_flagged_by_fkey"
             columns: ["flagged_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "content_flags_flagged_by_fkey"
+            columns: ["flagged_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -904,6 +953,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_flags_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "content_flags_resolved_by_fkey"
@@ -956,6 +1012,13 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "content_moderation_moderator_id_fkey"
+            columns: ["moderator_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "content_moderation_moderator_id_fkey"
             columns: ["moderator_id"]
@@ -1032,6 +1095,13 @@ export type Database = {
             foreignKeyName: "contribution_acknowledgments_from_profile_id_fkey"
             columns: ["from_profile_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contribution_acknowledgments_from_profile_id_fkey"
+            columns: ["from_profile_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1048,6 +1118,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "need_fulfillments"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_acknowledgments_to_profile_id_fkey"
+            columns: ["to_profile_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "contribution_acknowledgments_to_profile_id_fkey"
@@ -1119,6 +1196,13 @@ export type Database = {
             foreignKeyName: "contribution_cards_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contribution_cards_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1179,6 +1263,13 @@ export type Database = {
             foreignKeyName: "contribution_fulfillments_contributor_id_fkey"
             columns: ["contributor_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "contribution_fulfillments_contributor_id_fkey"
+            columns: ["contributor_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1195,6 +1286,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opportunities"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contribution_fulfillments_poster_id_fkey"
+            columns: ["poster_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "contribution_fulfillments_poster_id_fkey"
@@ -1519,6 +1617,13 @@ export type Database = {
             foreignKeyName: "conversations_new_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "conversations_new_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1732,6 +1837,13 @@ export type Database = {
             foreignKeyName: "curated_source_checks_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "curated_source_checks_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1785,6 +1897,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "events"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "curated_source_reviews_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "curated_source_reviews_resolved_by_fkey"
@@ -1897,6 +2016,13 @@ export type Database = {
             foreignKeyName: "dashboard_analytics_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dashboard_analytics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1921,6 +2047,7 @@ export type Database = {
           id: string
           is_fallback: boolean
           position: number
+          promoted_at: string | null
           reasoning: string
           signal_strength: number
           signal_type: string
@@ -1940,6 +2067,7 @@ export type Database = {
           id?: string
           is_fallback?: boolean
           position: number
+          promoted_at?: string | null
           reasoning: string
           signal_strength: number
           signal_type: string
@@ -1959,6 +2087,7 @@ export type Database = {
           id?: string
           is_fallback?: boolean
           position?: number
+          promoted_at?: string | null
           reasoning?: string
           signal_strength?: number
           signal_type?: string
@@ -1968,6 +2097,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "dia_brief_cards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "dia_brief_cards_user_id_fkey"
             columns: ["user_id"]
@@ -1983,6 +2119,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dia_brief_deliveries: {
+        Row: {
+          channel: string
+          id: string
+          local_date: string
+          opened_at: string | null
+          sent_at: string
+          slot: string
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          id?: string
+          local_date: string
+          opened_at?: string | null
+          sent_at?: string
+          slot: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          id?: string
+          local_date?: string
+          opened_at?: string | null
+          sent_at?: string
+          slot?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       dia_brief_interactions: {
         Row: {
@@ -2013,6 +2179,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "dia_brief_cards"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dia_brief_interactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "dia_brief_interactions_user_id_fkey"
@@ -2102,6 +2275,57 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      dia_events: {
+        Row: {
+          capability: string
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          latency_ms: number | null
+          meta: Json
+          model: string | null
+          principal_type: string
+          provider: string | null
+          success: boolean
+          surface: string | null
+          tokens: number | null
+          user_id: string | null
+        }
+        Insert: {
+          capability: string
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          latency_ms?: number | null
+          meta?: Json
+          model?: string | null
+          principal_type?: string
+          provider?: string | null
+          success?: boolean
+          surface?: string | null
+          tokens?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          capability?: string
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          latency_ms?: number | null
+          meta?: Json
+          model?: string | null
+          principal_type?: string
+          provider?: string | null
+          success?: boolean
+          surface?: string | null
+          tokens?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -2230,7 +2454,13 @@ export type Database = {
       }
       dia_messaging_prefs: {
         Row: {
+          brief_afternoon_enabled: boolean
+          brief_email_enabled: boolean
+          brief_evening_enabled: boolean
+          brief_morning_enabled: boolean
+          brief_timezone: string
           created_at: string
+          daily_briefs_enabled: boolean
           email_digest: boolean
           smart_replies_enabled: boolean
           summaries_enabled: boolean
@@ -2238,7 +2468,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          brief_afternoon_enabled?: boolean
+          brief_email_enabled?: boolean
+          brief_evening_enabled?: boolean
+          brief_morning_enabled?: boolean
+          brief_timezone?: string
           created_at?: string
+          daily_briefs_enabled?: boolean
           email_digest?: boolean
           smart_replies_enabled?: boolean
           summaries_enabled?: boolean
@@ -2246,7 +2482,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          brief_afternoon_enabled?: boolean
+          brief_email_enabled?: boolean
+          brief_evening_enabled?: boolean
+          brief_morning_enabled?: boolean
+          brief_timezone?: string
           created_at?: string
+          daily_briefs_enabled?: boolean
           email_digest?: boolean
           smart_replies_enabled?: boolean
           summaries_enabled?: boolean
@@ -2302,13 +2544,13 @@ export type Database = {
           email_messages: boolean | null
           email_reactions: boolean | null
           email_stories: boolean | null
-          global_enabled: boolean | null
+          global_enabled: boolean
           id: string
           in_app_enabled: boolean | null
           notification_frequency: string | null
           nudge_categories: Json | null
-          push_categories: Json | null
-          push_enabled: boolean | null
+          push_categories: Json
+          push_enabled: boolean
           quiet_hours_enabled: boolean | null
           quiet_hours_end: string | null
           quiet_hours_start: string | null
@@ -2327,13 +2569,13 @@ export type Database = {
           email_messages?: boolean | null
           email_reactions?: boolean | null
           email_stories?: boolean | null
-          global_enabled?: boolean | null
+          global_enabled?: boolean
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
           nudge_categories?: Json | null
-          push_categories?: Json | null
-          push_enabled?: boolean | null
+          push_categories?: Json
+          push_enabled?: boolean
           quiet_hours_enabled?: boolean | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
@@ -2352,13 +2594,13 @@ export type Database = {
           email_messages?: boolean | null
           email_reactions?: boolean | null
           email_stories?: boolean | null
-          global_enabled?: boolean | null
+          global_enabled?: boolean
           id?: string
           in_app_enabled?: boolean | null
           notification_frequency?: string | null
           nudge_categories?: Json | null
-          push_categories?: Json | null
-          push_enabled?: boolean | null
+          push_categories?: Json
+          push_enabled?: boolean
           quiet_hours_enabled?: boolean | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
@@ -2579,6 +2821,13 @@ export type Database = {
             foreignKeyName: "dia_signals_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dia_signals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -2590,6 +2839,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dia_tier_limits: {
+        Row: {
+          capability: string
+          monthly_limit: number | null
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          capability: string
+          monthly_limit?: number | null
+          tier: string
+          updated_at?: string
+        }
+        Update: {
+          capability?: string
+          monthly_limit?: number | null
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       dia_user_usage: {
         Row: {
@@ -3298,6 +3568,13 @@ export type Database = {
             foreignKeyName: "event_reports_reported_by_fkey"
             columns: ["reported_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "event_reports_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -3307,6 +3584,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_reports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "event_reports_reviewed_by_fkey"
@@ -3404,6 +3688,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "event_ticket_types"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_ticket_holds_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "event_ticket_holds_user_id_fkey"
@@ -3542,6 +3833,7 @@ export type Database = {
           location_city: string | null
           location_country: string | null
           location_country_code: string | null
+          location_geog: unknown
           location_lat: number | null
           location_lng: number | null
           location_name: string | null
@@ -3597,6 +3889,7 @@ export type Database = {
           location_city?: string | null
           location_country?: string | null
           location_country_code?: string | null
+          location_geog?: unknown
           location_lat?: number | null
           location_lng?: number | null
           location_name?: string | null
@@ -3652,6 +3945,7 @@ export type Database = {
           location_city?: string | null
           location_country?: string | null
           location_country_code?: string | null
+          location_geog?: unknown
           location_lat?: number | null
           location_lng?: number | null
           location_name?: string | null
@@ -3834,6 +4128,13 @@ export type Database = {
           wants_early_access?: boolean | null
         }
         Relationships: [
+          {
+            foreignKeyName: "feed_research_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "feed_research_responses_user_id_fkey"
             columns: ["user_id"]
@@ -4099,6 +4400,90 @@ export type Database = {
           },
         ]
       }
+      fn_retirement_archive_bd148: {
+        Row: {
+          archived_at: string
+          definition: string
+          grants: Json
+          identity_args: string
+          proname: string
+        }
+        Insert: {
+          archived_at?: string
+          definition: string
+          grants: Json
+          identity_args: string
+          proname: string
+        }
+        Update: {
+          archived_at?: string
+          definition?: string
+          grants?: Json
+          identity_args?: string
+          proname?: string
+        }
+        Relationships: []
+      }
+      geo_places: {
+        Row: {
+          admin_code: string | null
+          boundary: unknown
+          centroid: unknown
+          content_region_id: string | null
+          country_code_alpha3: string | null
+          created_at: string
+          id: string
+          level: string
+          name: string
+          parent_id: string | null
+          source: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_code?: string | null
+          boundary?: unknown
+          centroid: unknown
+          content_region_id?: string | null
+          country_code_alpha3?: string | null
+          created_at?: string
+          id?: string
+          level: string
+          name: string
+          parent_id?: string | null
+          source?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_code?: string | null
+          boundary?: unknown
+          centroid?: unknown
+          content_region_id?: string | null
+          country_code_alpha3?: string | null
+          created_at?: string
+          id?: string
+          level?: string
+          name?: string
+          parent_id?: string | null
+          source?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "geo_places_content_region_id_fkey"
+            columns: ["content_region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "geo_places_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "geo_places"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       geocode_cache: {
         Row: {
           city: string | null
@@ -4348,6 +4733,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "group_conversations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "group_messages_sender_id_fkey"
@@ -4649,6 +5041,13 @@ export type Database = {
             foreignKeyName: "hashtag_followers_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "hashtag_followers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -4707,6 +5106,13 @@ export type Database = {
             foreignKeyName: "hashtag_usage_requests_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "hashtag_usage_requests_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -4723,6 +5129,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hashtag_usage_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "hashtag_usage_requests_requester_id_fkey"
@@ -4796,6 +5209,13 @@ export type Database = {
           usage_count?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "hashtags_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "hashtags_owner_id_fkey"
             columns: ["owner_id"]
@@ -5207,6 +5627,13 @@ export type Database = {
             foreignKeyName: "introductions_introducer_id_fkey"
             columns: ["introducer_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "introductions_introducer_id_fkey"
+            columns: ["introducer_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -5221,6 +5648,13 @@ export type Database = {
             foreignKeyName: "introductions_person_a_id_fkey"
             columns: ["person_a_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "introductions_person_a_id_fkey"
+            columns: ["person_a_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -5230,6 +5664,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "introductions_person_b_id_fkey"
+            columns: ["person_b_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "introductions_person_b_id_fkey"
@@ -5283,6 +5724,27 @@ export type Database = {
           role?: string | null
           used_at?: string | null
           used_by_id?: string | null
+        }
+        Relationships: []
+      }
+      is_public_backfill_20260720: {
+        Row: {
+          captured_at: string
+          profile_id: string
+          username: string | null
+          was_public: boolean
+        }
+        Insert: {
+          captured_at?: string
+          profile_id: string
+          username?: string | null
+          was_public: boolean
+        }
+        Update: {
+          captured_at?: string
+          profile_id?: string
+          username?: string | null
+          was_public?: boolean
         }
         Relationships: []
       }
@@ -5360,6 +5822,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "member_heritage_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "member_heritage_profile_id_fkey"
             columns: ["profile_id"]
@@ -5986,38 +6455,46 @@ export type Database = {
           created_at: string
           group_key: string | null
           id: string
-          is_read: boolean
           link_url: string | null
           message: string
           payload: Json | null
           priority: string
           read: boolean
+          read_at: string | null
           title: string
           type: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          category?: string | null
+          channel_sent?: Json
           created_at?: string
+          group_key?: string | null
           id?: string
-          is_read?: boolean
           link_url?: string | null
           message: string
           payload?: Json | null
+          priority?: string
           read?: boolean
+          read_at?: string | null
           title: string
           type: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          category?: string | null
+          channel_sent?: Json
           created_at?: string
+          group_key?: string | null
           id?: string
-          is_read?: boolean
           link_url?: string | null
           message?: string
           payload?: Json | null
+          priority?: string
           read?: boolean
+          read_at?: string | null
           title?: string
           type?: string
           updated_at?: string
@@ -6180,6 +6657,13 @@ export type Database = {
             foreignKeyName: "opportunities_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "opportunities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -6256,6 +6740,13 @@ export type Database = {
             foreignKeyName: "opportunity_applications_applicant_id_fkey"
             columns: ["applicant_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "opportunity_applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -6272,6 +6763,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opportunities"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_applications_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "opportunity_applications_reviewed_by_fkey"
@@ -6315,6 +6813,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opportunities"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_bookmarks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "opportunity_bookmarks_user_id_fkey"
@@ -6393,6 +6898,13 @@ export type Database = {
             foreignKeyName: "opportunity_contributions_contributor_id_fkey"
             columns: ["contributor_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_contributor_id_fkey"
+            columns: ["contributor_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -6409,6 +6921,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "opportunities"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunity_contributions_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "opportunity_contributions_verified_by_fkey"
@@ -6546,6 +7065,13 @@ export type Database = {
             foreignKeyName: "organization_verification_requests_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "organization_verification_requests_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -6659,6 +7185,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "countries"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "organizations_owner_user_id_fkey"
@@ -6850,6 +7383,13 @@ export type Database = {
             foreignKeyName: "post_bookmarks_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "post_bookmarks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -6928,6 +7468,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "posts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "post_comments_user_id_fkey"
@@ -7029,6 +7576,13 @@ export type Database = {
             foreignKeyName: "post_reactions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "post_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -7085,6 +7639,44 @@ export type Database = {
           },
         ]
       }
+      post_revisions: {
+        Row: {
+          changed_keys: string[]
+          created_at: string
+          edited_by: string
+          id: string
+          post_id: string
+          prior: Json
+          revision_number: number
+        }
+        Insert: {
+          changed_keys: string[]
+          created_at?: string
+          edited_by: string
+          id?: string
+          post_id: string
+          prior: Json
+          revision_number: number
+        }
+        Update: {
+          changed_keys?: string[]
+          created_at?: string
+          edited_by?: string
+          id?: string
+          post_id?: string
+          prior?: Json
+          revision_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_revisions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_shares: {
         Row: {
           created_at: string
@@ -7133,6 +7725,13 @@ export type Database = {
             foreignKeyName: "post_views_viewer_id_fkey"
             columns: ["viewer_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "post_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -7151,6 +7750,8 @@ export type Database = {
           comments_disabled: boolean
           content: string
           created_at: string
+          edit_count: number
+          edited_at: string | null
           event_id: string | null
           flag_reason: string | null
           flagged_at: string | null
@@ -7191,6 +7792,8 @@ export type Database = {
           comments_disabled?: boolean
           content: string
           created_at?: string
+          edit_count?: number
+          edited_at?: string | null
           event_id?: string | null
           flag_reason?: string | null
           flagged_at?: string | null
@@ -7231,6 +7834,8 @@ export type Database = {
           comments_disabled?: boolean
           content?: string
           created_at?: string
+          edit_count?: number
+          edited_at?: string | null
           event_id?: string | null
           flag_reason?: string | null
           flagged_at?: string | null
@@ -7285,6 +7890,13 @@ export type Database = {
             foreignKeyName: "posts_shared_by_fkey"
             columns: ["shared_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "posts_shared_by_fkey"
+            columns: ["shared_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -7327,6 +7939,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "causes"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_causes_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "profile_causes_profile_id_fkey"
@@ -7388,6 +8007,13 @@ export type Database = {
           skill_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "profile_skills_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "profile_skills_profile_id_fkey"
             columns: ["profile_id"]
@@ -7489,6 +8115,7 @@ export type Database = {
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
+          current_geog: unknown
           current_lat: number | null
           current_lng: number | null
           current_location: string | null
@@ -7697,6 +8324,7 @@ export type Database = {
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
+          current_geog?: unknown
           current_lat?: number | null
           current_lng?: number | null
           current_location?: string | null
@@ -7905,6 +8533,7 @@ export type Database = {
           current_city?: string | null
           current_country?: string | null
           current_country_code?: string | null
+          current_geog?: unknown
           current_lat?: number | null
           current_lng?: number | null
           current_location?: string | null
@@ -8064,6 +8693,13 @@ export type Database = {
           years_of_experience?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "profiles_referrer_id_fkey"
             columns: ["referrer_id"]
@@ -10066,7 +10702,7 @@ export type Database = {
       }
       space_members: {
         Row: {
-          id: string | null
+          id: string
           invited_by: string | null
           joined_at: string
           role: string
@@ -10076,7 +10712,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          id?: string | null
+          id?: string
           invited_by?: string | null
           joined_at?: string
           role?: string
@@ -10086,7 +10722,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          id?: string | null
+          id?: string
           invited_by?: string | null
           joined_at?: string
           role?: string
@@ -10724,6 +11360,13 @@ export type Database = {
             foreignKeyName: "trend_follows_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "trend_follows_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -10874,6 +11517,13 @@ export type Database = {
           visible_modules?: Json
         }
         Relationships: [
+          {
+            foreignKeyName: "user_dashboard_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "user_dashboard_preferences_user_id_fkey"
             columns: ["user_id"]
@@ -11103,6 +11753,13 @@ export type Database = {
             foreignKeyName: "user_last_view_state_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_last_view_state_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -11148,68 +11805,18 @@ export type Database = {
             foreignKeyName: "user_onboarding_selections_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "user_onboarding_selections_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_recommendations: {
-        Row: {
-          created_at: string | null
-          id: string
-          match_reasons: string[] | null
-          match_score: number | null
-          recommendation_type: string
-          status: string | null
-          target_description: string | null
-          target_id: string
-          target_title: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          match_reasons?: string[] | null
-          match_score?: number | null
-          recommendation_type: string
-          status?: string | null
-          target_description?: string | null
-          target_id: string
-          target_title?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          match_reasons?: string[] | null
-          match_score?: number | null
-          recommendation_type?: string
-          status?: string | null
-          target_description?: string | null
-          target_id?: string
-          target_title?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_recommendations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "user_recommendations_user_id_fkey"
+            foreignKeyName: "user_onboarding_selections_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "public_profiles"
@@ -11283,6 +11890,13 @@ export type Database = {
             foreignKeyName: "user_roles_granted_by_fkey"
             columns: ["granted_by"]
             isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "user_roles_granted_by_fkey"
+            columns: ["granted_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -11292,6 +11906,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "public_profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "user_roles_user_id_fkey"
@@ -11359,6 +11980,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "username_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "username_history_user_id_fkey"
             columns: ["user_id"]
@@ -11452,6 +12080,13 @@ export type Database = {
           verified_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "verified_contributors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "mv_profile_footprint_counts"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "verified_contributors_user_id_fkey"
             columns: ["user_id"]
@@ -11566,6 +12201,18 @@ export type Database = {
           query_count: number | null
           query_text: string | null
           unique_users: number | null
+        }
+        Relationships: []
+      }
+      mv_profile_footprint_counts: {
+        Row: {
+          connections: number | null
+          contributions: number | null
+          events: number | null
+          posts: number | null
+          refreshed_at: string | null
+          spaces: number | null
+          user_id: string | null
         }
         Relationships: []
       }
@@ -11815,6 +12462,7 @@ export type Database = {
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
+          current_geog: unknown
           current_lat: number | null
           current_lng: number | null
           current_location: string | null
@@ -12258,6 +12906,16 @@ export type Database = {
         Args: { p_original_post_id: string; p_user_id: string }
         Returns: undefined
       }
+      dia_check_limit: {
+        Args: { p_capability: string; p_user_id: string }
+        Returns: Json
+      }
+      dia_promote_grounded_to_notifications: { Args: never; Returns: number }
+      dia_record_usage: {
+        Args: { p_capability: string; p_tokens?: number; p_user_id: string }
+        Returns: undefined
+      }
+      dia_resolve_tier: { Args: { p_user_id: string }; Returns: string }
       discover_members: {
         Args: {
           p_country_of_origin?: string
@@ -12308,7 +12966,6 @@ export type Database = {
         Returns: undefined
       }
       enqueue_reminders_for_all_users: { Args: never; Returns: number }
-      ensure_connection: { Args: { u1: string; u2: string }; Returns: string }
       ensure_manifest: { Args: never; Returns: string }
       ensure_profile_for_user: {
         Args: { p_email?: string; p_user: string }
@@ -13006,10 +13663,13 @@ export type Database = {
           email_messages: boolean | null
           email_reactions: boolean | null
           email_stories: boolean | null
+          global_enabled: boolean
           id: string
           in_app_enabled: boolean | null
           notification_frequency: string | null
           nudge_categories: Json | null
+          push_categories: Json
+          push_enabled: boolean
           quiet_hours_enabled: boolean | null
           quiet_hours_end: string | null
           quiet_hours_start: string | null
@@ -13096,6 +13756,7 @@ export type Database = {
           current_city: string | null
           current_country: string | null
           current_country_code: string | null
+          current_geog: unknown
           current_lat: number | null
           current_lng: number | null
           current_location: string | null
@@ -13755,6 +14416,8 @@ export type Database = {
           content: string
           country_count: number
           created_at: string
+          edit_count: number
+          edited_at: string
           event_id: string
           gallery_urls: string[]
           has_reshared: boolean
@@ -13882,6 +14545,7 @@ export type Database = {
           is_read: boolean
           message: string
           notification_id: string
+          read: boolean
           read_at: string
           title: string
           type: string
@@ -14033,6 +14697,32 @@ export type Database = {
         Args: { p_conversation_id: string }
         Returns: undefined
       }
+      list_public_events: {
+        Args: { p_limit?: number; p_query?: string }
+        Returns: {
+          cover_image_url: string
+          date_confirmed: boolean
+          description: string
+          end_time: string
+          event_type: string
+          format: string
+          going_count: number
+          id: string
+          location_city: string
+          location_country: string
+          location_name: string
+          location_state: string
+          organizer_name: string
+          organizer_username: string
+          short_description: string
+          slug: string
+          start_time: string
+          subtitle: string
+          time_confirmed: boolean
+          timezone: string
+          title: string
+        }[]
+      }
       list_sponsor_logo_audit_log: {
         Args: {
           _action?: string
@@ -14100,6 +14790,14 @@ export type Database = {
       mark_notifications_read: {
         Args: { p_notification_ids: string[]; p_user_id: string }
         Returns: undefined
+      }
+      notif_should_push: {
+        Args: { p_category: string; p_type: string; p_user: string }
+        Returns: boolean
+      }
+      notification_category_for_type: {
+        Args: { p_type: string }
+        Returns: string
       }
       notify_window_decay: {
         Args: { p_lead_days?: number }
@@ -14293,6 +14991,31 @@ export type Database = {
           username: string
         }[]
       }
+      rpc_diaspora_density_admin: {
+        Args: never
+        Returns: {
+          consented_count: number
+          country_code: string
+          lat: number
+          level: string
+          lng: number
+          member_count: number
+          place_id: string
+          place_name: string
+        }[]
+      }
+      rpc_diaspora_density_public: {
+        Args: never
+        Returns: {
+          country_code: string
+          lat: number
+          level: string
+          lng: number
+          member_count: number
+          place_id: string
+          place_name: string
+        }[]
+      }
       rpc_event_approve: {
         Args: { p_registration: string }
         Returns: undefined
@@ -14341,6 +15064,10 @@ export type Database = {
         Args: { p_username: string; p_viewer_id?: string }
         Returns: Json
       }
+      rpc_get_profile_bundle_v2: {
+        Args: { p_username: string; p_viewer_id?: string }
+        Returns: Json
+      }
       rpc_health_snapshot: { Args: never; Returns: Json }
       rpc_list_eligible_witnesses: {
         Args: {
@@ -14375,6 +15102,14 @@ export type Database = {
       rpc_membership_reject: {
         Args: { p_space: string; p_user: string }
         Returns: undefined
+      }
+      rpc_moderate_comments: {
+        Args: { p_comment_ids: string[]; p_notes?: string; p_status: string }
+        Returns: string[]
+      }
+      rpc_moderate_posts: {
+        Args: { p_notes?: string; p_post_ids: string[]; p_status: string }
+        Returns: string[]
       }
       rpc_notifications_list: {
         Args: { p_limit?: number; p_offset?: number }
@@ -14438,9 +15173,73 @@ export type Database = {
       rpc_run_cron_overdue_task_reminders: { Args: never; Returns: undefined }
       rpc_save_opportunity: { Args: { p_op: string }; Returns: undefined }
       rpc_seed_verified_contributor: { Args: never; Returns: undefined }
+      rpc_set_post_comments_disabled: {
+        Args: { p_disabled: boolean; p_post_id: string }
+        Returns: boolean
+      }
+      rpc_set_post_pinned: {
+        Args: { p_pinned: boolean; p_post_id: string }
+        Returns: string
+      }
+      rpc_soft_delete_post: { Args: { p_post_id: string }; Returns: boolean }
       rpc_toggle_spotlight: {
         Args: { p_post: string; p_value: boolean }
         Returns: undefined
+      }
+      rpc_update_post: {
+        Args: {
+          p_expected_updated_at: string
+          p_patch: Json
+          p_post_id: string
+        }
+        Returns: {
+          author_id: string
+          comments_disabled: boolean
+          content: string
+          created_at: string
+          edit_count: number
+          edited_at: string | null
+          event_id: string | null
+          flag_reason: string | null
+          flagged_at: string | null
+          flagged_by: string | null
+          gallery_urls: string[] | null
+          id: string
+          image_url: string | null
+          is_deleted: boolean
+          is_featured: boolean | null
+          link_description: string | null
+          link_metadata: Json | null
+          link_title: string | null
+          link_url: string | null
+          linked_entity_id: string | null
+          linked_entity_type: string | null
+          metadata: Json | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_notes: string | null
+          moderation_status: string | null
+          original_post_id: string | null
+          pinned_at: string | null
+          post_type: string
+          privacy_level: string
+          share_commentary: string | null
+          shared_by: string | null
+          slug: string | null
+          space_id: string | null
+          story_type: string | null
+          subtitle: string | null
+          tags: string[] | null
+          title: string | null
+          updated_at: string
+          view_count: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "posts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       search_hashtags: {
         Args: { p_limit?: number; p_query: string }

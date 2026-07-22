@@ -10,6 +10,8 @@ import { supabase } from '@/integrations/supabase/client';
 import type { FeedItemType, LinkedEntityType } from '@/types/feed';
 import type { PostWithAuthor } from '@/types/posts';
 import { logHighError } from '@/lib/errorLogger';
+import { normalizeProseContent } from '@/utils/renderProse';
+
 
 interface CreateFeedPostOptions {
   authorId: string;
@@ -144,7 +146,7 @@ export async function createStoryPost(params: {
       author_id: authorId,
       title: storyTitle,
       subtitle: storySubtitle || null,
-      content: storyBody,
+      content: normalizeProseContent(storyBody),
       post_type: 'story',
       story_type: storyType || 'update',
       image_url: imageUrl || null,
@@ -290,7 +292,7 @@ export async function createStandardPost(params: {
     // Insert the post with correct post_type value
     const insertPayload = {
       author_id: authorId,
-      content: content.trim(),
+      content: normalizeProseContent(content),
       post_type: 'post', // Valid post_type per database constraint
       image_url: mediaUrl || null,
       gallery_urls: cleanedGallery.length ? cleanedGallery : null,

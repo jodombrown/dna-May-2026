@@ -1,4 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
+import { compressAndTinify } from "@/lib/compressImage";
+
 
 export const uploadMedia = async (
   file: File, 
@@ -21,6 +23,19 @@ export const uploadMedia = async (
   const safeExt = ['jpg','jpeg','png','webp','gif','mp4','webm'].includes(ext) ? ext : 'bin';
   const safeName = `${base}.${safeExt}`;
 
+  // Auto-compress large images before upload so modern phone photos (6–12MB)
+  // don't hit storage/pre-flight caps. Videos and GIFs pass through untouched.
+  let uploadFile = file;
+  if (file.type.startsWith('image/') && file.type !== 'image/gif') {
+    try {
+      uploadFile = await compressAndTinify(file, { maxDimension: 1920, maxSizeBytes: 5 * 1024 * 1024 });
+    } catch {
+      uploadFile = file;
+    }
+  }
+
+
+
   const filePath = `${userId}/${Date.now()}-${safeName}`;
 
   // Diagnostics: is there a session at the moment of upload, and is the
@@ -31,11 +46,12 @@ export const uploadMedia = async (
     bucket, filePath, !!s.session, s.session?.access_token?.length ?? 0,
     s.session?.user?.id ?? 'NONE');
 
-  const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {
+  const { data, error } = await supabase.storage.from(bucket).upload(filePath, uploadFile, {
     cacheControl: '3600',
     upsert: true,
-    contentType: file.type || undefined,
+    contentType: uploadFile.type || file.type || undefined,
   });
+
 
   if (error) {
     console.error('[uploadMedia] upload FAILED bucket=%s path=%s hasSession=%s tokenLen=%s sub=%s error=%o',
