@@ -245,10 +245,9 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
 
               {/* Post Content */}
               <div className="mb-4">
-                <p className="whitespace-pre-wrap break-words text-foreground leading-relaxed">
-                  {linkifyContent(post.content)}
-                </p>
+                <RenderProse content={post.content} className="text-foreground leading-relaxed" />
               </div>
+
 
               {/* Post Image */}
               {post.image_url && (
