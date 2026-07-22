@@ -10,6 +10,8 @@ import { supabase } from '@/integrations/supabase/client';
 import type { FeedItemType, LinkedEntityType } from '@/types/feed';
 import type { PostWithAuthor } from '@/types/posts';
 import { logHighError } from '@/lib/errorLogger';
+import { normalizeProseContent } from '@/utils/renderProse';
+
 
 interface CreateFeedPostOptions {
   authorId: string;
