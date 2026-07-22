@@ -339,9 +339,10 @@ export function PostCard({
       {/* Share Commentary (if this is a repost with commentary) */}
       {isRepost && post.share_commentary && (
         <div className="mb-4">
-          <div className="whitespace-pre-wrap break-words">{linkifyContent(post.share_commentary)}</div>
+          <RenderProse content={post.share_commentary} />
         </div>
       )}
+
 
       {/* Original Post Content (if repost) */}
       {isRepost ? (
