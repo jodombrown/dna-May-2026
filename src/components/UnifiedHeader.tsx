@@ -583,23 +583,13 @@ const UnifiedHeader = () => {
                               </div>
                             )}
 
-                            {/* The 5 C's Section */}
-                            <div className="border-b pb-4 mb-4">
-                              <p className="text-sm text-neutral-600 mb-2 font-medium px-4">The 5 C's</p>
-                              {filteredNavItems.filter((i) => !i.featured).map((item) => (
-                                <Button
-                                  key={item.name}
-                                  variant="ghost"
-                                  className="justify-start text-left w-full hover:bg-dna-mint/20 hover:text-dna-forest transition-all duration-200 focus:ring-0 focus:ring-offset-0"
-                                  onClick={() => handleNavClick(item)}
-                                >
-                                  {item.name}
-                                </Button>
-                              ))}
-                            </div>
-                            
-                            
-                            
+                            {/* DR3: 'The 5 C's' section removed from the
+                                signed-out nav on founder call. The public Five
+                                C's live on their own pages (D089); a menu list
+                                duplicated them. filteredNavItems is still used
+                                by the Featured block above. */}
+
+
                             <Button
                               variant="default"
                               className="justify-start text-left bg-dna-emerald hover:bg-dna-forest text-white transition-all duration-200 focus:ring-0 focus:ring-offset-0"
