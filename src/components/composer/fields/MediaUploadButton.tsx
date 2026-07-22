@@ -42,15 +42,16 @@ export function MediaUploadButton({
       return;
     }
 
-    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 25 * 1024 * 1024;
     if (file.size > maxSize) {
       toast({
         title: 'File too large',
-        description: isVideo ? 'Please upload a video smaller than 50MB.' : 'Please upload an image smaller than 5MB.',
+        description: isVideo ? 'Please upload a video smaller than 50MB.' : 'Please upload an image smaller than 25MB.',
         variant: 'destructive',
       });
       return;
     }
+
 
     setIsUploading(true);
     try {

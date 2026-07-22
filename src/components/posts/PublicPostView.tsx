@@ -17,6 +17,8 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { RenderProse } from '@/utils/renderProse';
+
 import { EditedMarker } from '@/components/posts/EditedMarker';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
@@ -243,10 +245,9 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
 
               {/* Post Content */}
               <div className="mb-4">
-                <p className="whitespace-pre-wrap break-words text-foreground leading-relaxed">
-                  {linkifyContent(post.content)}
-                </p>
+                <RenderProse content={post.content} className="text-foreground leading-relaxed" />
               </div>
+
 
               {/* Post Image */}
               {post.image_url && (

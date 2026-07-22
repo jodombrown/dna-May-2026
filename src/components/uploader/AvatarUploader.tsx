@@ -8,7 +8,7 @@ interface AvatarUploaderProps {
   onUploaded: (url: string) => void;
 }
 
-const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_SIZE = 25 * 1024 * 1024; // 25MB (large images are auto-compressed)
 
 const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) => {
   const [uploading, setUploading] = useState(false);
@@ -33,7 +33,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ value, onUploaded }) =>
       const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
       toast({ 
         title: "Image too large", 
-        description: `This image is ${sizeMB}MB. Please upload a JPG or PNG under 5MB.`, 
+        description: `This image is ${sizeMB}MB. Please upload a JPG or PNG under 25MB.`, 
         variant: "destructive" 
       });
       return;

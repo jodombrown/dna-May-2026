@@ -32,15 +32,16 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ currentAvatarUrl, onAvatarC
       return;
     }
 
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (25MB limit - larger images are auto-compressed)
+    if (file.size > 25 * 1024 * 1024) {
       toast({
         title: "File too large", 
-        description: "Please upload an image smaller than 5MB.",
+        description: "Please upload an image smaller than 25MB.",
         variant: "destructive"
       });
       return;
     }
+
 
     setUploading(true);
     

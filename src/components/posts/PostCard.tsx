@@ -32,6 +32,8 @@ import { PostAnalytics } from './PostAnalytics';
 import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { RenderProse } from '@/utils/renderProse';
+
 import { logHighError } from '@/lib/errorLogger';
 import { EditedMarker } from './EditedMarker';
 
@@ -337,9 +339,10 @@ export function PostCard({
       {/* Share Commentary (if this is a repost with commentary) */}
       {isRepost && post.share_commentary && (
         <div className="mb-4">
-          <div className="whitespace-pre-wrap break-words">{linkifyContent(post.share_commentary)}</div>
+          <RenderProse content={post.share_commentary} />
         </div>
       )}
+
 
       {/* Original Post Content (if repost) */}
       {isRepost ? (
@@ -348,11 +351,12 @@ export function PostCard({
         <>
           {/* Content with Read More */}
           <div className="mb-4">
-            <div className="whitespace-pre-wrap break-words">
-              {linkifyContent(isContentExpanded ? post.content : contentPreview)}
-              {needsContentExpansion && !isContentExpanded && '...'}
-            </div>
+            <RenderProse content={isContentExpanded ? post.content : contentPreview} />
+            {needsContentExpansion && !isContentExpanded && (
+              <span className="text-muted-foreground">...</span>
+            )}
             {needsContentExpansion && (
+
               <button
                 onClick={() => setIsContentExpanded(!isContentExpanded)}
                 className="text-primary text-sm font-medium mt-1 hover:underline"

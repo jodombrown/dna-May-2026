@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 interface StackFrame {
   id: string;
   title: string;
-  node: React.ReactNode;
+  node?: React.ReactNode;
 }
 
 interface IdentitySheetContextValue {
