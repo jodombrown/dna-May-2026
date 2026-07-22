@@ -33,6 +33,7 @@ import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { logHighError } from '@/lib/errorLogger';
+import { EditedMarker } from './EditedMarker';
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -278,6 +279,16 @@ export function PostCard({
 
           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
             <span>{timeAgo}</span>
+            {post.edited_at && (
+              <>
+                <span>•</span>
+                <EditedMarker
+                  editedAt={post.edited_at}
+                  postId={post.post_id}
+                  isOwn={isOwnPost}
+                />
+              </>
+            )}
             {postTypeDisplay && (
               <>
                 <span>•</span>

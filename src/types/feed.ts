@@ -50,6 +50,8 @@ export interface UniversalFeedItem {
   event_title: string | null;
   created_at: string;
   updated_at: string;
+  edited_at?: string | null;
+  edit_count?: number | null;
   slug: string | null;
   like_count: number;
   comment_count: number;

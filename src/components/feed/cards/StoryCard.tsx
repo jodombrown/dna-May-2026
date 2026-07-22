@@ -44,6 +44,7 @@ import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { ThreadedComments } from '@/components/posts/ThreadedComments';
 import { PostMenuOwn } from '@/components/posts/PostMenuOwn';
 import { PostMenuOthers } from '@/components/posts/PostMenuOthers';
+import { EditedMarker } from '@/components/posts/EditedMarker';
 
 interface StoryCardProps {
   item: UniversalFeedItem;
@@ -129,6 +130,12 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             {kickerLabel(item.story_type)}
             {' · '}
             {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
+            {item.edited_at && (
+              <>
+                {' · '}
+                <EditedMarker editedAt={item.edited_at} postId={item.post_id} isOwn={isOwner} />
+              </>
+            )}
           </p>
         </div>
 
