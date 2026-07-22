@@ -351,11 +351,12 @@ export function PostCard({
         <>
           {/* Content with Read More */}
           <div className="mb-4">
-            <div className="whitespace-pre-wrap break-words">
-              {linkifyContent(isContentExpanded ? post.content : contentPreview)}
-              {needsContentExpansion && !isContentExpanded && '...'}
-            </div>
+            <RenderProse content={isContentExpanded ? post.content : contentPreview} />
+            {needsContentExpansion && !isContentExpanded && (
+              <span className="text-muted-foreground">...</span>
+            )}
             {needsContentExpansion && (
+
               <button
                 onClick={() => setIsContentExpanded(!isContentExpanded)}
                 className="text-primary text-sm font-medium mt-1 hover:underline"
