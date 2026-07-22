@@ -62,12 +62,11 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
 }) => {
   const { viewState, layoutConfig } = useViewState();
 
-  // Helper to wrap layout with SkipLink + MobileBottomNav
+  // Helper to wrap layout with SkipLink (bottom nav is global via PulseDock)
   const withMobileNav = (layout: React.ReactNode) => (
     <>
       <SkipLink />
       {layout}
-      <MobileBottomNav />
     </>
   );
 
