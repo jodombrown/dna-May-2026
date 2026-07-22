@@ -146,7 +146,7 @@ export async function createStoryPost(params: {
       author_id: authorId,
       title: storyTitle,
       subtitle: storySubtitle || null,
-      content: storyBody,
+      content: normalizeProseContent(storyBody),
       post_type: 'story',
       story_type: storyType || 'update',
       image_url: imageUrl || null,
