@@ -44,6 +44,7 @@ export const pillarNavigation = {
     icon: 'Users',
     items: [
       { name: 'Network', path: '/dna/connect/network' },
+      { name: 'Diaspora Map', path: '/dna/connect/map' },
       { name: 'Feed', path: '/dna/feed' },
       // BD063 hide-and-freeze: Messages hidden while DM/group messaging is OUT at v0.0.
       ...(MESSAGING_ENABLED ? [{ name: 'Messages', path: '/dna/messages' }] : []),

@@ -66,6 +66,9 @@ export default {
 			height: {
 				// Bottom-sheet height: leaves a strip of the underlying surface visible.
 				sheet: '92vh',
+				// Map surfaces (Convene discovery map, Diaspora density map).
+				map: '31.25rem',      // 500px — mobile map viewport
+				'map-lg': '37.5rem',  // 600px — desktop map viewport
 			},
 			colors: {
 				border: 'hsl(var(--border))',
