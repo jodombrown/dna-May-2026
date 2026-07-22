@@ -10,7 +10,7 @@
  */
 import React, { useRef, type ReactNode } from 'react';
 import { DnaMobileHeader, type DnaMobileHeaderBubble } from '@/components/mobile/DnaMobileHeader';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 import { useMobile } from '@/hooks/useMobile';
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
