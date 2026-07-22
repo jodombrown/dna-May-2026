@@ -1,4 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
+import { compressAndTinify } from "@/lib/compressImage";
+
 
 export const uploadMedia = async (
   file: File, 
