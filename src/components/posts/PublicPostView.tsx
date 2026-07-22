@@ -17,6 +17,8 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { RenderProse } from '@/utils/renderProse';
+
 import { EditedMarker } from '@/components/posts/EditedMarker';
 import UnifiedHeader from '@/components/UnifiedHeader';
 import Footer from '@/components/Footer';
