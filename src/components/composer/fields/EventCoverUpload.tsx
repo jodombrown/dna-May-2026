@@ -61,10 +61,11 @@ export function EventCoverUpload({ currentImageUrl, onUpload, onRemove }: EventC
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: 'File too large', description: 'Image must be under 5MB', variant: 'destructive' });
+    if (file.size > 25 * 1024 * 1024) {
+      toast({ title: 'File too large', description: 'Image must be under 25MB', variant: 'destructive' });
       return;
     }
+
 
     setIsUploading(true);
     try {
