@@ -106,7 +106,7 @@ export function DnaMobileHubShell({
         {children}
       </div>
 
-      {showBottomNav && <MobileBottomNav />}
+      {/* PulseDock (mounted globally in BaseLayout) is the sole mobile bottom nav. */}
     </div>
   );
 }
