@@ -39,7 +39,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { EVENT_PLACE_SELECT, pickEventPlace } from '@/lib/events/formatPlace';
 import { EVENT_TIME_SELECT } from '@/lib/events/eventTime';
-import type { MapEventData } from '@/components/convene/ConveneEventPin';
+import type { MapEventData } from '@/components/convene/mapEventData';
 
 const LazyMapView = lazy(() => import('@/components/convene/ConveneMapView'));
 

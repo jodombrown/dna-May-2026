@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { MemberCard } from '@/components/connect/MemberCard';
@@ -8,7 +8,7 @@ import { DiscoverSearchHeader } from '@/components/connect/DiscoverSearchHeader'
 import { DiscoverFilterPills } from '@/components/connect/DiscoverFilterPills';
 import { DiscoverFilterSheet } from '@/components/connect/DiscoverFilterSheet';
 import { MemberCardSkeletonGrid } from '@/components/connect/MemberCardSkeleton';
-import { Loader2, Users, AlertCircle } from 'lucide-react';
+import { Loader2, Users, AlertCircle, Globe, ChevronRight } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ProfileCompletionNudge } from '@/components/profile/ProfileCompletionNudge';
@@ -254,6 +254,19 @@ export default function Discover() {
     <div className="space-y-1 md:space-y-4 overflow-x-hidden">
       {/* Profile Completion Nudge */}
       <ProfileCompletionNudge variant="compact" threshold={40} showMissingFields={true} />
+
+      {/* Diaspora Map entry point — reachable from the Connect surface on mobile */}
+      <Link
+        to="/dna/connect/map"
+        className="md:hidden flex items-center gap-2.5 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+      >
+        <Globe className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+        <div className="flex flex-col min-w-0">
+          <span className="text-body font-medium text-foreground">Diaspora Map</span>
+          <span className="text-meta text-muted-foreground truncate">See where the diaspora gathers</span>
+        </div>
+        <ChevronRight className="h-4 w-4 text-muted-foreground ml-auto shrink-0" aria-hidden="true" />
+      </Link>
 
       {/* iOS-Style Sticky Search Header - Desktop only */}
       <div className="hidden md:block">

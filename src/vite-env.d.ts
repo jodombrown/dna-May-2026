@@ -2,6 +2,12 @@
 // Extend the global window object to include grecaptcha for TypeScript
 /// <reference types="vite/client" />
 
+interface ImportMetaEnv {
+  // Public Mapbox token injected by the Lovable connector. Optional: absent in
+  // some environments, so consumers must handle the undefined case.
+  readonly VITE_LOVABLE_CONNECTOR_MAPBOX_PUBLIC_TOKEN?: string;
+}
+
 interface Grecaptcha {
   ready(cb: () => void): void;
   render(

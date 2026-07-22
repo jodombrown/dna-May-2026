@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
@@ -215,6 +216,19 @@ export function NetworkPanel({
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
+        {/* Diaspora Map entry point */}
+        <Link
+          to="/dna/connect/map"
+          className="flex items-center gap-2.5 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+        >
+          <Globe className="h-4 w-4 text-primary" aria-hidden="true" />
+          <div className="flex flex-col min-w-0">
+            <span className="text-body font-medium text-foreground">Diaspora Map</span>
+            <span className="text-meta text-muted-foreground truncate">See where the diaspora gathers</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground ml-auto shrink-0" aria-hidden="true" />
+        </Link>
+
         {/* Filter by Engagement - Collapsible */}
         <Collapsible defaultOpen>
           <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg hover:bg-muted/50 transition-colors group">

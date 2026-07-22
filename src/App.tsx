@@ -200,6 +200,7 @@ const GroupSettingsPage = lazy(() => import("./pages/GroupSettingsPage"));
 const Connect = lazy(() => import("./pages/dna/connect/Connect"));
 const ConnectDiscover = lazy(() => import("./pages/dna/connect/Discover"));
 const ConnectNetwork = lazy(() => import("./pages/dna/connect/Network"));
+const DiasporaDensityMap = lazy(() => import("./pages/dna/connect/DiasporaDensityMap"));
 // Legacy connect messages pages removed - using canonical /dna/messages route
 
 // Phase pages
@@ -528,7 +529,15 @@ function App() {
                 <Route path="messages" element={<Navigate to="/dna/messages" replace />} />
                 <Route path="messages/:conversationId" element={<Navigate to="/dna/messages" replace />} />
               </Route>
-              
+
+              {/* Diaspora Density Map — standalone under BaseLayout (BD110), not the
+                  three-column Connect hub. Public, consent-safe density view. */}
+              <Route path="/dna/connect/map" element={
+                <OnboardingGuard>
+                  <DiasporaDensityMap />
+                </OnboardingGuard>
+              } />
+
               {/* ========== LEGACY CONNECT & DISCOVER ROUTES - Redirects ========== */}
               <Route path="/dna/discover/members" element={<Navigate to="/dna/connect/discover" replace />} />
               <Route path="/dna/discover" element={<Navigate to="/dna/connect/discover" replace />} />
