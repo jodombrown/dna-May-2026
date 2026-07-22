@@ -73,26 +73,26 @@ export function PostRevisionHistory({ postId, open, onOpenChange }: PostRevision
 
       <div className="max-h-96 overflow-y-auto px-4 pb-4">
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
+          <p className="text-body text-muted-foreground">Loading…</p>
         ) : revisions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No earlier versions to show.</p>
+          <p className="text-body text-muted-foreground">No earlier versions to show.</p>
         ) : (
           <ul className="space-y-4">
             {revisions.map((rev) => {
               const prior = priorContent(rev.prior);
               return (
                 <li key={rev.revision_number} className="border-b pb-4 last:border-b-0">
-                  <p className="text-xs font-medium text-muted-foreground">
+                  <p className="text-meta font-medium text-muted-foreground">
                     Revision {rev.revision_number}
                     {' · '}
                     {formatDistanceToNow(new Date(rev.created_at), { addSuffix: true })}
                   </p>
                   {prior ? (
-                    <p className="mt-1.5 whitespace-pre-wrap break-words text-sm text-foreground">
+                    <p className="mt-1.5 whitespace-pre-wrap break-words text-body text-foreground">
                       {prior}
                     </p>
                   ) : (
-                    <p className="mt-1.5 text-sm italic text-muted-foreground">
+                    <p className="mt-1.5 text-body italic text-muted-foreground">
                       No previous text recorded for this change.
                     </p>
                   )}
