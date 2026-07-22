@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { MoreHorizontal, Edit2, Trash2, Pin, MessageSquareOff, Link, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +8,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { usePostActions } from '@/hooks/usePostActions';
+import { resolvePostForEdit } from '@/lib/postEditResolver';
+import { useEdit } from '@/contexts/EditContext';
+
+/** The fields resolvePostForEdit reads. The card already holds all of them. */
+type EditableItem = Parameters<typeof resolvePostForEdit>[0];
 
 interface PostMenuOwnProps {
   postId: string;
@@ -19,13 +23,12 @@ interface PostMenuOwnProps {
   commentsDisabled?: boolean;
   onUpdate?: () => void;
   /**
-   * When the post is a canonical announcement for a linked entity
-   * (event, space, opportunity, story...), Edit must route to that
-   * entity's editor instead of the plain-text post editor. Otherwise
-   * the owner can only rewrite the auto-generated announcement copy
-   * and never fix the underlying event details.
+   * The full feed item (or at least the fields resolvePostForEdit needs). The
+   * menu resolves the edit target itself and opens the edit surface for
+   * posts-backed verbs; for deferred targets (space/need/event) and refusals
+   * the Edit item is HIDDEN, never shown-then-refused (BD165).
    */
-  editHref?: string;
+  item: EditableItem;
 }
 
 export function PostMenuOwn({
@@ -36,16 +39,20 @@ export function PostMenuOwn({
   isPinned = false,
   commentsDisabled = false,
   onUpdate,
-  editHref,
+  item,
 }: PostMenuOwnProps) {
-  const navigate = useNavigate();
-  
+  const { openEdit } = useEdit();
   const {
     deletePost,
     togglePin,
     toggleComments,
     copyLink,
   } = usePostActions(postId, authorId, currentUserId);
+
+  // Only posts-backed verbs and reshare commentary have a landing surface. Every
+  // other target is deferred, so its Edit affordance is not rendered at all.
+  const plan = resolvePostForEdit(item);
+  const canEdit = plan.target === 'posts' || plan.target === 'commentary';
 
   const handleDelete = () => {
     if (confirm('Are you sure you want to delete this post? This cannot be undone.')) {
@@ -64,26 +71,18 @@ export function PostMenuOwn({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem
-            onClick={() => {
-              if (editHref) {
-                navigate(editHref);
-                return;
-              }
-              // TODO: wire to the unified post edit surface. The inline
-              // EditPostDialog was retired in the rpc_update_post migration;
-              // plain-text post editing has no host until that surface lands.
-            }}
-          >
-            <Edit2 className="h-4 w-4 mr-2" />
-            Edit post
-          </DropdownMenuItem>
-          
+          {canEdit && (
+            <DropdownMenuItem onClick={() => openEdit(item)}>
+              <Edit2 className="h-4 w-4 mr-2" />
+              Edit post
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem onClick={() => togglePin.mutate(!isPinned)}>
             <Pin className="h-4 w-4 mr-2" />
             {isPinned ? 'Unpin from profile' : 'Pin to profile'}
           </DropdownMenuItem>
-          
+
           <DropdownMenuItem onClick={() => toggleComments.mutate(!commentsDisabled)}>
             {commentsDisabled ? (
               <>
@@ -97,15 +96,15 @@ export function PostMenuOwn({
               </>
             )}
           </DropdownMenuItem>
-          
+
           <DropdownMenuItem onClick={copyLink}>
             <Link className="h-4 w-4 mr-2" />
             Copy link
           </DropdownMenuItem>
-          
+
           <DropdownMenuSeparator />
-          
-          <DropdownMenuItem 
+
+          <DropdownMenuItem
             onClick={handleDelete}
             className="text-destructive focus:text-destructive"
           >

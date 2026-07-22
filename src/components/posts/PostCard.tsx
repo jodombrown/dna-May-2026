@@ -32,6 +32,7 @@ import { PostAnalytics } from './PostAnalytics';
 import { feedAnalytics } from '@/lib/feedAnalytics';
 import { MediaLightbox } from '@/components/feed/MediaLightbox';
 import { linkifyContent } from '@/utils/linkifyContent';
+import { logHighError } from '@/lib/errorLogger';
 
 interface PostCardProps {
   post: PostWithAuthor;
@@ -218,6 +219,7 @@ export function PostCard({
 
       onUpdate?.();
     } catch (error) {
+      logHighError(error, 'database', 'rpc_soft_delete_post failed', { postId: post.post_id });
       toast({
         title: 'Error',
         description: 'Failed to delete post',
@@ -308,6 +310,7 @@ export function PostCard({
             isPinned={!!post.pinned_at}
             commentsDisabled={!!post.comments_disabled}
             onUpdate={onUpdate}
+            item={post}
           />
         ) : (
           <PostMenuOthers

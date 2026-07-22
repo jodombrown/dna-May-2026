@@ -154,6 +154,7 @@ export const OpportunityFeedCard: React.FC<OpportunityFeedCardProps> = ({
             currentUserId={currentUserId}
             content={item.content || ''}
             onUpdate={onUpdate}
+            item={item}
           />
         ) : (
           <PostMenuOthers
