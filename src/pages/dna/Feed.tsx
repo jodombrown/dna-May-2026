@@ -19,7 +19,6 @@ import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
 import { FeedLeftPanel } from '@/components/feed/FeedLeftPanel';
 import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
 import { FeedTab, RankingMode } from '@/types/feed';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useMobile } from '@/hooks/useMobile';
@@ -211,7 +210,6 @@ const DnaFeed = () => {
               />
             )}
           </main>
-          <MobileBottomNav />
           <SearchDialog
             isOpen={showSearchDialog}
             onClose={() => setShowSearchDialog(false)}
