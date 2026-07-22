@@ -278,7 +278,7 @@ export const MultiAttachmentUploader = forwardRef<
         ok: false,
         reason: kind === 'video'
           ? `Video is ${formatBytes(file.size)} - max 50 MB.`
-          : `Image is ${formatBytes(file.size)} - max 5 MB.`,
+          : `Image is ${formatBytes(file.size)} - max 25 MB.`,
       };
     }
     return { ok: true, kind };
