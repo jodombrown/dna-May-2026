@@ -37,6 +37,7 @@ import { curatedHostName, curatedSourceDomain, realCuratedCover } from '@/lib/ev
 import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
 import { ROUTES } from '@/config/routes';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
+import { LocationMap } from '@/components/maps/LocationMap';
 
 interface CuratedEventPreviewProps {
   event: Record<string, unknown>;
@@ -70,6 +71,9 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
   const sourceDomain = curatedSourceDomain(curatedSourceUrl);
   const cover = realCuratedCover({ cover_image_url: event.cover_image_url as string | null });
   const cityLine = formatEventPlace(pickEventPlace(event), 'compact');
+  // The full block feeds <LocationMap>; the BD186 gate inside it decides
+  // whether coordinates earn a pin — no branch on is_curated here.
+  const place = formatEventPlace(pickEventPlace(event), 'full');
 
   const dateConfirmed = (event.date_confirmed as boolean | null | undefined) ?? null;
   const timeInput = {
@@ -196,6 +200,17 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
           {cityLine && <p className="text-sm text-muted-foreground">{cityLine}</p>}
         </div>
       </div>
+
+      {/* Where it sits — one template, no is_curated branch. The BD186 gate in
+          LocationMap draws a pin only when coordinates carry a real venue;
+          otherwise it shows the deep links and no map. */}
+      <LocationMap
+        locationName={place.venue}
+        locationAddress={place.street}
+        locality={place.locality}
+        lat={event.location_lat as number}
+        lng={event.location_lng as number}
+      />
 
       {/* 2 — Register at source: the terminal CTA. Clean handoff. */}
       {curatedSourceUrl && !isPast && (
