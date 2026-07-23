@@ -20,7 +20,6 @@ import { FeedLeftPanel } from '@/components/feed/FeedLeftPanel';
 import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
 import { FeedColumn } from '@/components/feed/FeedColumn';
 import { FeedTab, RankingMode } from '@/types/feed';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
 import { useMobile } from '@/hooks/useMobile';
@@ -212,7 +211,6 @@ const DnaFeed = () => {
               />
             )}
           </main>
-          <MobileBottomNav />
           <SearchDialog
             isOpen={showSearchDialog}
             onClose={() => setShowSearchDialog(false)}

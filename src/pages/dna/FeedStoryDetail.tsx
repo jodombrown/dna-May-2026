@@ -18,7 +18,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Loader2, BookOpen, Share2, X, MessageCircle, Bookmark, ArrowRight, Images } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
 import { HashtagText } from '@/components/feed/HashtagText';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
@@ -145,7 +144,6 @@ export default function FeedStoryDetail() {
         <div className="min-h-screen flex items-center justify-center pb-16 md:pb-0">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-        <MobileBottomNav />
       </>
     );
   }
@@ -167,7 +165,6 @@ export default function FeedStoryDetail() {
             </Button>
           </div>
         </div>
-        <MobileBottomNav />
       </>
     );
   }
@@ -382,7 +379,6 @@ export default function FeedStoryDetail() {
         </div>
       )}
 
-      <MobileBottomNav />
     </div>
   );
 }

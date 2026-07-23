@@ -4,7 +4,7 @@ import ThreeColumnLayout from '@/layouts/ThreeColumnLayout';
 import TwoColumnLayout from '@/layouts/TwoColumnLayout';
 import FullCanvasLayout from '@/layouts/FullCanvasLayout';
 import DetailViewLayout from '@/layouts/DetailViewLayout';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+// MobileBottomNav removed: PulseDock (mounted in BaseLayout) is the sole mobile bottom nav.
 import SkipLink from '@/components/shared/SkipLink';
 
 interface LayoutControllerProps {
@@ -62,12 +62,11 @@ const LayoutController: React.FC<LayoutControllerProps> = ({
 }) => {
   const { viewState, layoutConfig } = useViewState();
 
-  // Helper to wrap layout with SkipLink + MobileBottomNav
+  // Helper to wrap layout with SkipLink (bottom nav is global via PulseDock)
   const withMobileNav = (layout: React.ReactNode) => (
     <>
       <SkipLink />
       {layout}
-      <MobileBottomNav />
     </>
   );
 

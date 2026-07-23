@@ -10,7 +10,7 @@
  */
 import React, { useRef, type ReactNode } from 'react';
 import { DnaMobileHeader, type DnaMobileHeaderBubble } from '@/components/mobile/DnaMobileHeader';
-import MobileBottomNav from '@/components/mobile/MobileBottomNav';
+
 import { useMobile } from '@/hooks/useMobile';
 import { useMobileHeaderHeight } from '@/hooks/useMobileHeaderHeight';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
@@ -106,7 +106,7 @@ export function DnaMobileHubShell({
         {children}
       </div>
 
-      {showBottomNav && <MobileBottomNav />}
+      {/* PulseDock (mounted globally in BaseLayout) is the sole mobile bottom nav. */}
     </div>
   );
 }
