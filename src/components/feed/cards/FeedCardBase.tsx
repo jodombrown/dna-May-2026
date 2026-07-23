@@ -3,9 +3,9 @@
  *
  * DNA card chassis:
  * - 12px border radius
- * - 4px full-frame bevel in the card's C color (BD083 locked palette)
- * - Shadow with hover lift
- * - Consistent padding
+ * - Full-frame bevel at --bevel-width in the card's C color (BD083 locked palette)
+ * - Hover lift, no resting shadow
+ * - Padding driven by --card-padding (steps with viewport)
  *
  * The bevel is the single point where a card's C identity is applied.
  * Changing a color here changes it on every surface that renders the card.
@@ -61,15 +61,15 @@ export const FeedCardBase: React.FC<FeedCardBaseProps> = ({
   return (
     <div
       onClick={onClick}
-      style={{ borderColor: bevelColors[bevelType] }}
+      style={{
+        borderColor: bevelColors[bevelType],
+        padding: 'var(--card-padding)',
+      }}
       className={cn(
         'bg-card rounded-xl',
-        // 4px full-frame bevel (color applied via inline style)
-        'border-4',
-        'px-4 py-3 sm:p-5',
-        'shadow-[0_1px_3px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.05)]',
+        // Full-frame bevel at --bevel-width (color applied via inline style)
+        'border-bevel',
         'transition-all duration-200',
-        'hover:shadow-[0_2px_8px_rgba(0,0,0,0.10),0_8px_24px_rgba(0,0,0,0.08)]',
         'hover:-translate-y-0.5',
         onClick && 'cursor-pointer',
         className
