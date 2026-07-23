@@ -1,4 +1,6 @@
-import { MoreHorizontal, Edit2, Trash2, Pin, MessageSquareOff, Link, MessageSquare } from 'lucide-react';
+import { useState } from 'react';
+import { MoreHorizontal, Edit2, Trash2, Pin, MessageSquareOff, Link, MessageSquare, History } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,6 +12,7 @@ import {
 import { usePostActions } from '@/hooks/usePostActions';
 import { resolvePostForEdit } from '@/lib/postEditResolver';
 import { useEdit } from '@/contexts/EditContext';
+import { PostRevisionHistory } from './PostRevisionHistory';
 
 /** The fields resolvePostForEdit reads. The card already holds all of them. */
 type EditableItem = Parameters<typeof resolvePostForEdit>[0];
@@ -22,6 +25,12 @@ interface PostMenuOwnProps {
   isPinned?: boolean;
   commentsDisabled?: boolean;
   onUpdate?: () => void;
+  /**
+   * When set, an "Edited …" item appears in the overflow and opens the author's
+   * revision history (BD177 relocates the author's on-surface edit marker here).
+   * Non-authors keep the inline, always-visible EditedMarker per BD160.
+   */
+  editedAt?: string | null;
   /**
    * The full feed item (or at least the fields resolvePostForEdit needs). The
    * menu resolves the edit target itself and opens the edit surface for
@@ -40,8 +49,10 @@ export function PostMenuOwn({
   commentsDisabled = false,
   onUpdate,
   item,
+  editedAt,
 }: PostMenuOwnProps) {
   const { openEdit } = useEdit();
+  const [historyOpen, setHistoryOpen] = useState(false);
   const {
     deletePost,
     togglePin,
@@ -75,6 +86,13 @@ export function PostMenuOwn({
             <DropdownMenuItem onClick={() => openEdit(item)}>
               <Edit2 className="h-4 w-4 mr-2" />
               Edit post
+            </DropdownMenuItem>
+          )}
+
+          {editedAt && (
+            <DropdownMenuItem onClick={() => setHistoryOpen(true)}>
+              <History className="h-4 w-4 mr-2" />
+              Edited {formatDistanceToNow(new Date(editedAt), { addSuffix: true })}
             </DropdownMenuItem>
           )}
 
@@ -113,6 +131,10 @@ export function PostMenuOwn({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {editedAt && (
+        <PostRevisionHistory postId={postId} open={historyOpen} onOpenChange={setHistoryOpen} />
+      )}
     </>
   );
 }
