@@ -1,7 +1,7 @@
 /**
  * Contribute — Opportunity Card (Universal Feed)
  *
- * Finalized card model (BD083 palette, 4px bevel via FeedCardBase).
+ * Finalized card model (BD083 palette, bevel at --bevel-width via FeedCardBase).
  *
  * CARD STANDARD (BD085): numbers appear only in the proof block. The engagement
  * row is always four verbs (React / Comment / Reshare / Save), no counts.

@@ -1,7 +1,7 @@
 /**
  * Collaborate — Space Card (Universal Feed)
  *
- * Finalized card model (BD083 palette, 4px bevel via FeedCardBase).
+ * Finalized card model (BD083 palette, bevel at --bevel-width via FeedCardBase).
  *
  * This IS the Space surfacing in the feed. There is no separate "Spaces card" —
  * one component, one welding (D084).

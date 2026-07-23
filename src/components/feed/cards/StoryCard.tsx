@@ -1,7 +1,7 @@
 /**
  * Convey — Story Card (Universal Feed)
  *
- * Finalized card model (BD083 palette, 4px full-frame bevel via FeedCardBase):
+ * Finalized card model (BD083 palette, full-frame bevel at --bevel-width via FeedCardBase):
  * - Metadata line: Convey · {story_type} · {age} · {n} min read (BD177 folds
  *   the former kicker pill and read-time badge into one row).
  * - Serif title (whole heading taps through to the story), dek, hero media /
@@ -27,6 +27,7 @@
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
+import { CardMedia } from './CardMedia';
 import { CardActionRow } from './CardActionRow';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -196,10 +197,10 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.subtitle}</p>
       )}
 
-      {/* Media — hero */}
+      {/* Media — hero. Bleeds to the frame (BD178); mid-card, so square corners. */}
       {item.media_url && (
-        <div
-          className="mt-3 h-44 w-full cursor-pointer overflow-hidden rounded-lg sm:h-48"
+        <CardMedia
+          className="mt-3 h-44 cursor-pointer sm:h-48"
           onClick={() => navigate(storyHref)}
         >
           <img
@@ -208,7 +209,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
             loading="lazy"
           />
-        </div>
+        </CardMedia>
       )}
 
       {/* Media — gallery (carousel with peek, BD074) */}
