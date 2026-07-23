@@ -26,15 +26,23 @@ const MAP_STYLE = 'mapbox://styles/mapbox/streets-v12';
 /**
  * LocationMap — the unified event location card.
  *
- * WITH coordinates: renders a Mapbox GL map (CDN-loaded, no npm dependency; see
- * src/lib/mapbox/loadMapbox.ts) centred on lat/lng at zoom 15 with a single
- * marker, following the established DiasporaDensityMap pattern.
+ * WITH coordinates AND a known venue: renders a Mapbox GL map (CDN-loaded, no
+ * npm dependency; see src/lib/mapbox/loadMapbox.ts) centred on lat/lng at zoom
+ * 15 with a single marker, following the established DiasporaDensityMap pattern.
  *
  * WITHOUT coordinates (or without a Mapbox token, or on a map load failure):
  * renders the text lines and the Google/Apple Maps deep links ONLY — no map, no
  * placeholder, no default center, no stock image. This is the BD111
  * no-fabrication gate: an event with no real location must never show a map that
  * implies one.
+ *
+ * BD186 precision gate: a pin is a building-level claim. Coordinates with NO
+ * venue name and NO street address are a geocoded city centroid — nobody chose
+ * that point — so pinning them asserts precision the record does not have. The
+ * map renders only when hasCoordinates AND hasVenue (a venue name or a street
+ * address). With coordinates but no venue, the text lines and the deep links
+ * still render — handing off to a maps app is fine — but NO map, and no
+ * lower-zoom / greyed / "approximate" substitute. Nothing.
  */
 export function LocationMap({
   locationName,
@@ -46,6 +54,9 @@ export function LocationMap({
 }: LocationMapProps) {
   const token = getMapboxToken();
   const hasCoordinates = lat !== undefined && lng !== undefined && lat !== null && lng !== null;
+  // BD186: a pin needs a building-level anchor. A venue name or a street
+  // address is that anchor; bare coordinates are a city centroid nobody chose.
+  const hasVenue = Boolean(locationName) || Boolean(locationAddress);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
@@ -74,11 +85,12 @@ export function LocationMap({
     return `https://maps.apple.com/?address=${encodeURIComponent(searchQuery)}`;
   };
 
-  const showMap = hasCoordinates && !!token && !mapFailed;
+  const showMap = hasCoordinates && hasVenue && !!token && !mapFailed;
 
-  // ── Initialise the map once (only with a token and real coordinates) ──────
+  // ── Initialise the map once (only with a token, real coordinates AND a
+  //    known venue — BD186; without a venue no container is rendered) ────────
   useEffect(() => {
-    if (!token || !hasCoordinates || !containerRef.current) return;
+    if (!token || !hasCoordinates || !hasVenue || !containerRef.current) return;
     let cancelled = false;
 
     loadMapbox()
@@ -108,7 +120,7 @@ export function LocationMap({
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [token, hasCoordinates, lat, lng]);
+  }, [token, hasCoordinates, hasVenue, lat, lng]);
 
   if (!locationName && !locality && !hasCoordinates) {
     return null;
@@ -117,8 +129,9 @@ export function LocationMap({
   return (
     <Card className={className}>
       <CardContent className="p-0">
-        {/* Map Preview — rendered only when there are real coordinates AND a
-            working Mapbox token. Otherwise no map is shown at all (BD111). */}
+        {/* Map Preview — rendered only when there are real coordinates, a known
+            venue (BD186) AND a working Mapbox token. Otherwise no map is shown
+            at all (BD111); the deep links below still hand off to a maps app. */}
         {showMap && (
           <div className="relative w-full h-48 bg-muted rounded-t-lg overflow-hidden">
             <div ref={containerRef} className="w-full h-full" />
