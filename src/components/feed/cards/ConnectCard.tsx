@@ -27,6 +27,7 @@
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
+import { CardActionRow } from './CardActionRow';
 import { ProofSheet } from '@/components/feed/ProofSheet';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -271,69 +272,39 @@ export const ConnectCard: React.FC<ConnectCardProps> = ({
         </div>
       )}
 
-      {/* Engagement — four verbs, no counts (BD085) */}
-      <div className="mt-3 flex items-center justify-between border-t pt-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={() => toggleLike()}
-        >
-          <Smile
-            className={cn(
-              'h-4 w-4',
-              userHasLiked ? 'fill-bevel-connect/20 text-bevel-connect' : 'text-muted-foreground'
-            )}
-          />
-          <span>React</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={handleCommentClick}
-        >
-          <MessageCircle
-            className={cn(
-              'h-4 w-4',
-              commentsVisible ? 'text-bevel-connect' : 'text-muted-foreground'
-            )}
-          />
-          <span>Comment</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          disabled={!onReshare}
-          onClick={() => onReshare?.(item.post_id)}
-        >
-          <Repeat2
-            className={cn(
-              'h-4 w-4',
-              item.has_reshared ? 'text-bevel-connect' : 'text-muted-foreground'
-            )}
-          />
-          <span>Reshare</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={() => toggleBookmark()}
-        >
-          <Bookmark
-            className={cn(
-              'h-4 w-4',
-              userHasBookmarked ? 'fill-current text-bevel-connect' : 'text-muted-foreground'
-            )}
-          />
-          <span>Save</span>
-        </Button>
-      </div>
+      {/* Engagement — four verbs, no counts (BD085). Shared CardActionRow (BD185). */}
+      <CardActionRow
+        accent="text-bevel-connect"
+        actions={[
+          {
+            icon: Smile,
+            label: 'React',
+            onClick: () => toggleLike(),
+            active: userHasLiked,
+            activeClassName: 'fill-bevel-connect/20 text-bevel-connect',
+          },
+          {
+            icon: MessageCircle,
+            label: 'Comment',
+            onClick: handleCommentClick,
+            active: commentsVisible,
+          },
+          {
+            icon: Repeat2,
+            label: 'Reshare',
+            onClick: () => onReshare?.(item.post_id),
+            active: item.has_reshared,
+            disabled: !onReshare,
+          },
+        ]}
+        trailing={{
+          icon: Bookmark,
+          label: 'Save',
+          onClick: () => toggleBookmark(),
+          active: userHasBookmarked,
+          activeClassName: 'fill-current text-bevel-connect',
+        }}
+      />
 
       {commentsVisible && (
         <ThreadedComments

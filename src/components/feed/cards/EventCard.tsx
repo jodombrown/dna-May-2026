@@ -17,6 +17,7 @@
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
+import { CardActionRow } from './CardActionRow';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -307,66 +308,40 @@ export const EventCard: React.FC<EventCardProps> = ({
         </Button>
       </div>
 
-      {/* Engagement row — four verbs, no counts (BD085) */}
-      <div className="mt-3 flex items-center justify-between border-t pt-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={() => toggleLike()}
-        >
-          <Smile
-            className={cn(
-              'h-4 w-4',
-              userHasLiked ? 'fill-bevel-event/20 text-bevel-event' : 'text-muted-foreground'
-            )}
-          />
-          <span>React</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={handleCommentClick}
-        >
-          <MessageCircle
-            className={cn('h-4 w-4', commentsVisible ? 'text-bevel-event' : 'text-muted-foreground')}
-          />
-          <span>Comment</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          disabled={!onReshare}
-          onClick={() => onReshare?.(item.post_id)}
-        >
-          <Repeat2
-            className={cn(
-              'h-4 w-4',
-              item.has_reshared ? 'text-bevel-event' : 'text-muted-foreground'
-            )}
-          />
-          <span>Reshare</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={() => toggleBookmark()}
-        >
-          <Bookmark
-            className={cn(
-              'h-4 w-4',
-              userHasBookmarked ? 'fill-current text-bevel-event' : 'text-muted-foreground'
-            )}
-          />
-          <span>Save</span>
-        </Button>
-      </div>
+      {/* Engagement row — four verbs, no counts (BD085). Shared CardActionRow (BD185);
+          the saved bookmark keeps its soft fill via activeClassName, not a flat tint. */}
+      <CardActionRow
+        accent="text-bevel-event"
+        actions={[
+          {
+            icon: Smile,
+            label: 'React',
+            onClick: () => toggleLike(),
+            active: userHasLiked,
+            activeClassName: 'fill-bevel-event/20 text-bevel-event',
+          },
+          {
+            icon: MessageCircle,
+            label: 'Comment',
+            onClick: handleCommentClick,
+            active: commentsVisible,
+          },
+          {
+            icon: Repeat2,
+            label: 'Reshare',
+            onClick: () => onReshare?.(item.post_id),
+            active: item.has_reshared,
+            disabled: !onReshare,
+          },
+        ]}
+        trailing={{
+          icon: Bookmark,
+          label: 'Save',
+          onClick: () => toggleBookmark(),
+          active: userHasBookmarked,
+          activeClassName: 'fill-current text-bevel-event',
+        }}
+      />
 
       {commentsVisible && (
         <ThreadedComments
