@@ -36,12 +36,33 @@ export default {
 			'2xl': '1536px',
 		},
 		extend: {
+		spacing: {
+			// DNA spacing scale — 4pt base. See BD176.
+			'0.5': '0.125rem',  //  2px  hairline nudge
+			1:  '0.25rem',      //  4px
+			2:  '0.5rem',       //  8px  — within-group gap
+			3:  '0.75rem',      // 12px  — between-group gap, card gap, card pad @320
+			3.5:'0.875rem',     // 14px  — card pad @321–389
+			4:  '1rem',         // 16px  — card pad @>=390
+			6:  '1.5rem',       // 24px
+			8:  '2rem',         // 32px
+			12: '3rem',         // 48px
+		},
+		borderWidth: {
+			// Makes --bevel-width load-bearing for the first time. Before BD176 the
+			// variable was declared in index.css and read by nothing; the frame was a
+			// hardcoded `border-4`.
+			bevel: 'var(--bevel-width)',
+		},
 		maxWidth: {
 			// Drawer surface widths. A surface declares which it needs; the shell
 			// applies it. DR1 shipped a single width for every surface and crushed
 			// the composer from 860px to 448px.
 			drawer: '28rem',        /* 448px — settings, account, nav-style surfaces */
 			'drawer-wide': '860px', /* composing surfaces that need room to write */
+			feed: '35rem',   /* 560px — feed column ceiling. Mobile fills the viewport;
+			                    tablet and desktop cap. This is the lever that prevents
+			                    media elongation on wide viewports, not the aspect ratio. */
 		},
 		fontFamily: {
 			body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
