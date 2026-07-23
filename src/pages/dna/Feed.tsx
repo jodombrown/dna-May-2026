@@ -18,6 +18,7 @@ import { FirstTimeWalkthrough } from '@/components/onboarding/FirstTimeWalkthrou
 import { FeedHeroGreeting } from '@/components/feed/FeedHeroGreeting';
 import { FeedLeftPanel } from '@/components/feed/FeedLeftPanel';
 import { FeedCommunityPulse } from '@/components/feed/FeedCommunityPulse';
+import { FeedColumn } from '@/components/feed/FeedColumn';
 import { FeedTab, RankingMode } from '@/types/feed';
 import { MobileHeader } from '@/components/mobile/MobileHeader';
 import { useUniversalComposer } from '@/contexts/ComposerContext';
@@ -243,11 +244,7 @@ const DnaFeed = () => {
         </aside>
 
         {/* Center Column — Main Feed */}
-        <main
-          ref={mainScrollRef}
-          className="min-w-0 flex-1 overflow-y-auto scrollbar-thin"
-          data-scroll-container="main"
-        >
+        <FeedColumn ref={mainScrollRef}>
           {/* Hero Greeting Zone */}
           <div className="space-y-3 mb-3">
             <FeedHeroGreeting
@@ -421,7 +418,7 @@ const DnaFeed = () => {
               }
             />
           )}
-        </main>
+        </FeedColumn>
 
         {/* Right Sidebar — Community Pulse */}
         <aside

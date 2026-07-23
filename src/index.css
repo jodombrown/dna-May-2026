@@ -241,10 +241,10 @@ html {
 
     /* ── CARD SYSTEM TOKENS ── */
     --card-radius: 12px;
-    --card-padding: 16px;
+    --card-padding: 1rem; /* 16px @>=390 — steps down on narrow viewports below */
     --card-shadow: var(--shadow-level1);
     --card-shadow-hover: var(--shadow-level2);
-    --bevel-width: 4px;
+    --bevel-width: 2px;
 
     /* ── BORDER RADIUS TOKENS ── */
     --radius-sm: 6px;
@@ -373,6 +373,11 @@ html {
     --sidebar-border: 28 10% 89%;
     --sidebar-ring: 153 31% 42%;
   }
+
+  /* Card padding steps down on narrow viewports (BD176). Base 16px lives in
+     :root above; these two overrides tighten the frame on small screens. */
+  @media (max-width: 389px) { :root { --card-padding: 0.875rem; } } /* 14px */
+  @media (max-width: 320px) { :root { --card-padding: 0.75rem; } }  /* 12px */
 
   .dark {
     /* ── PAGE FOUNDATIONS (dark) ── */

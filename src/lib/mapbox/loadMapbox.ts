@@ -1,3 +1,5 @@
+import { config } from '@/lib/config';
+
 /**
  * Mapbox GL JS — runtime CDN loader.
  *
@@ -173,6 +175,6 @@ export function loadMapbox(): Promise<MapboxGL> {
  * "token not configured" state) rather than passing an empty token to Mapbox.
  */
 export function getMapboxToken(): string | null {
-  const token = import.meta.env.VITE_LOVABLE_CONNECTOR_MAPBOX_PUBLIC_TOKEN;
+  const token = config.MAPBOX_PUBLIC_TOKEN;
   return typeof token === 'string' && token.length > 0 ? token : null;
 }
