@@ -1,7 +1,7 @@
 /**
  * Convene — Event Card (Universal Feed)
  *
- * Finalized card model (BD083 palette, 4px bevel via FeedCardBase).
+ * Finalized card model (BD083 palette, bevel at --bevel-width via FeedCardBase).
  *
  * CARD STANDARD (BD085): numbers appear only where they are labelled and where
  * they persuade — the proof block. The engagement row is always four verbs
@@ -17,10 +17,10 @@
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
+import { CardMedia } from './CardMedia';
 import { CardActionRow } from './CardActionRow';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
 import {
   Calendar,
   MapPin,
@@ -80,7 +80,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   const [localShowComments, setLocalShowComments] = useState(showComments);
   const [proofOpen, setProofOpen] = useState(false);
 
-  const { data: eventDetails, isLoading } = useEventDetailsForFeed(item.event_id);
+  const { data: eventDetails } = useEventDetailsForFeed(item.event_id);
   const { data: mutuals = [] } = useMutualAttendees(item.event_id ?? undefined);
 
   const { likeCount, userHasLiked, toggleLike } = usePostLikes(item.post_id, currentUserId);
@@ -171,56 +171,56 @@ export const EventCard: React.FC<EventCardProps> = ({
         )}
       </div>
 
-      {/* Cover — media sits high on a Convene card */}
-      <div
-        className="relative mb-3 h-40 w-full cursor-pointer overflow-hidden rounded-lg bg-bevel-event/90 sm:h-44"
+      {/* Cover — media bleeds to the frame (BD178); mid-card, so square corners.
+          Title and the facts you need to decide ride a scrim on the image itself,
+          collapsing the three trailing-gutter rows BD177 exists to remove. */}
+      <CardMedia
+        className="mb-3 h-40 cursor-pointer bg-bevel-event/90 sm:h-44"
         onClick={() => navigate(eventHref)}
       >
         {coverImage && (
           <img src={coverImage} alt={title} className="h-full w-full object-cover" loading="lazy" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+        {/* Scrim carries white text over a LIGHT cover — from-black/65, not /55.
+            Verify on a real light photo, not the dark placeholder gradient. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
         {formatLabel && (
           <span className="absolute right-3 top-3 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-bevel-event">
             {formatLabel}
           </span>
         )}
-      </div>
-
-      {/* Title + the concrete facts you need to decide */}
-      {isLoading ? (
-        <div className="space-y-2">
-          <Skeleton className="h-5 w-2/3" />
-          <Skeleton className="h-4 w-1/2" />
-        </div>
-      ) : (
-        <>
+        <div className="absolute inset-x-0 bottom-0 p-3">
           <button
             type="button"
             className="block w-full text-left"
-            onClick={() => navigate(eventHref)}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(eventHref);
+            }}
           >
-            <h3 className="text-base font-semibold leading-snug hover:opacity-80 sm:text-lg">
+            <h3 className="font-display text-h3 font-semibold leading-snug text-white transition-opacity hover:opacity-90">
               {title}
             </h3>
           </button>
-
-          <div className="mt-2 flex flex-col gap-1.5 text-sm text-muted-foreground">
-            {whenLine && (
-              <span className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 flex-shrink-0 text-bevel-event" />
-                {whenLine}
-              </span>
-            )}
-            {locationLine && (
-              <span className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 flex-shrink-0 text-bevel-event" />
-                {locationLine}
-              </span>
-            )}
-          </div>
-        </>
-      )}
+          {(whenLine || locationLine) && (
+            <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-body text-white/90">
+              {whenLine && (
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 flex-shrink-0" />
+                  {whenLine}
+                </span>
+              )}
+              {whenLine && locationLine && <span aria-hidden="true">·</span>}
+              {locationLine && (
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 flex-shrink-0" />
+                  {locationLine}
+                </span>
+              )}
+            </p>
+          )}
+        </div>
+      </CardMedia>
 
       {/* PROOF — network momentum. The only place numbers live on this card. */}
       {(mutuals.length > 0 || attendeeCount > 0) && (
