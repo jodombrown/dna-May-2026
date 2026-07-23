@@ -2,13 +2,17 @@
  * Convey — Story Card (Universal Feed)
  *
  * Finalized card model (BD083 palette, 4px full-frame bevel via FeedCardBase):
- * - Kicker pill (story_type) + read time
- * - Serif title, dek, hero media / gallery / link preview (BD074 states)
- * - Reach earns itself: fresh stories show a quiet line; traveled stories
- *   show the full stat block. A story earns its reach.
+ * - Metadata line: Convey · {story_type} · {age} · {n} min read (BD177 folds
+ *   the former kicker pill and read-time badge into one row).
+ * - Serif title (whole heading taps through to the story), dek, hero media /
+ *   gallery / link preview (BD074 states).
+ * - Body with an INLINE expander: title navigates, "…more" expands in place.
+ * - Reach earns itself: traveled stories show the full stat block; a story with
+ *   no traction renders no row at all (BD177 drops the empty-state row).
  * - Convey → Connect hand-off ("Connect with {author}") in Connect green —
  *   the story-recruits-a-member loop.
- * - Engagement row: React / Comment / Reshare / Save.
+ * - Engagement row via shared <CardActionRow>: React / Comment / Reshare, Save
+ *   pushed right.
  * - CARD RULE (all five C's): numbers appear only where they are labelled and
  *   where they persuade — the proof block. The engagement row is always four
  *   verbs, identical on every card. A story with no reach yet shows no numbers
@@ -23,6 +27,7 @@
 import React, { useState } from 'react';
 import { UniversalFeedItem } from '@/types/feed';
 import { FeedCardBase } from './FeedCardBase';
+import { CardActionRow } from './CardActionRow';
 import { linkifyContent } from '@/utils/linkifyContent';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -31,13 +36,9 @@ import {
   Bookmark,
   Repeat2,
   Smile,
-  ArrowRight,
   Images,
-  Eye,
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
 import { usePostLikes } from '@/hooks/usePostLikes';
 import { usePostBookmarks } from '@/hooks/usePostBookmarks';
 import { LinkPreviewCard } from '@/components/feed/LinkPreviewCard';
@@ -61,6 +62,21 @@ const TRAVELED_VIEW_FLOOR = 100;
 const WORDS_PER_MINUTE = 200;
 const readTime = (content: string): number =>
   Math.max(1, Math.round(content.trim().split(/\s+/).length / WORDS_PER_MINUTE));
+
+/** Compact relative age for the metadata line: "3 days ago" → "3d". */
+const abbrevAge = (iso: string): string => {
+  const secs = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+  const mins = Math.floor(secs / 60);
+  if (mins < 1) return 'now';
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d`;
+  if (days < 30) return `${Math.floor(days / 7)}w`;
+  if (days < 365) return `${Math.floor(days / 30)}mo`;
+  return `${Math.floor(days / 365)}y`;
+};
 
 const compact = (n: number): string =>
   n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}K` : `${n}`;
@@ -129,11 +145,15 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             {' · '}
             {kickerLabel(item.story_type)}
             {' · '}
-            {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
-            {item.edited_at && (
+            {abbrevAge(item.created_at)}
+            {' · '}
+            {readTime(item.content)} min read
+            {/* BD160 requires the edit disclosure stay visible to non-authors and
+                anon viewers; the author's marker relocates to the PostMenu overflow. */}
+            {!isOwner && item.edited_at && (
               <>
                 {' · '}
-                <EditedMarker editedAt={item.edited_at} postId={item.post_id} isOwn={isOwner} />
+                <EditedMarker editedAt={item.edited_at} postId={item.post_id} isOwn={false} />
               </>
             )}
           </p>
@@ -147,6 +167,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             content={item.content}
             onUpdate={onUpdate}
             item={item}
+            editedAt={item.edited_at}
           />
         ) : (
           <PostMenuOthers
@@ -159,21 +180,15 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         )}
       </div>
 
-      {/* Kicker + read time */}
-      <span className="mb-2 inline-block rounded-full bg-bevel-story/10 px-2.5 py-0.5 text-[11px] font-semibold text-bevel-story">
-        {kickerLabel(item.story_type)} · {readTime(item.content)} min read
-      </span>
-
-      {/* Title */}
+      {/* Title — whole heading is the tap target; runs full measure (BD177). */}
       <button
         type="button"
-        className="group flex w-full items-start justify-between gap-3 text-left"
+        className="group block w-full text-left"
         onClick={() => navigate(storyHref)}
       >
         <h3 className="font-serif text-lg font-semibold leading-tight transition-opacity group-hover:opacity-80 md:text-xl">
           {item.title || 'Untitled story'}
         </h3>
-        <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-bevel-story transition-transform group-hover:translate-x-1" />
       </button>
 
       {/* Dek */}
@@ -243,36 +258,51 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         </div>
       )}
 
-      {/* Body preview */}
+      {/* Body preview — the expander is INLINE, never its own row. The title
+          navigates; this toggles in place. Two distinct behaviors (BD177). */}
       <div className="mt-3">
         {isExpanded ? (
           <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
-            {item.content.split('\n\n').map((p, idx) => (
-              <p key={idx} className="whitespace-pre-line">
-                {linkifyContent(p)}
-              </p>
-            ))}
+            {(() => {
+              const paragraphs = item.content.split('\n\n');
+              return paragraphs.map((p, idx) => (
+                <p key={idx} className="whitespace-pre-line">
+                  {linkifyContent(p)}
+                  {idx === paragraphs.length - 1 && (
+                    <>
+                      {' '}
+                      <button
+                        type="button"
+                        onClick={() => setIsExpanded((v) => !v)}
+                        className="font-semibold text-bevel-story"
+                      >
+                        Show less
+                      </button>
+                    </>
+                  )}
+                </p>
+              ));
+            })()}
           </div>
         ) : (
           <p className="line-clamp-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
             {linkifyContent(bodyPreview)}
-            {needsExpansion && '…'}
+            {needsExpansion && (
+              <button
+                type="button"
+                onClick={() => setIsExpanded((v) => !v)}
+                className="font-semibold text-bevel-story"
+              >
+                …more
+              </button>
+            )}
           </p>
-        )}
-        {needsExpansion && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="mt-1 px-0 text-bevel-story hover:bg-transparent"
-            onClick={() => setIsExpanded((v) => !v)}
-          >
-            {isExpanded ? 'Show less' : 'Read full story'}
-          </Button>
         )}
       </div>
 
-      {/* Reach — earns itself */}
-      {hasTraveled ? (
+      {/* Reach — earns itself. A story with no traction renders no row at all
+          (BD177): an empty-state row costs layout for near-zero information. */}
+      {hasTraveled && (
         <div className="mt-3 flex justify-between rounded-lg bg-muted/50 px-3 py-2 text-center">
           <div>
             <p className="text-sm font-semibold">{compact(item.view_count)}</p>
@@ -291,13 +321,6 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             <p className="text-[11px] text-muted-foreground">Reshares</p>
           </div>
         </div>
-      ) : (
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Eye className="h-3.5 w-3.5" />
-          {totalReactions > 0 || item.comment_count > 0
-            ? 'Finding its readers'
-            : 'Just posted · be the first to react'}
-        </p>
       )}
 
       {/* Convey → Connect hand-off (loop closes; Connect green, not Convey) */}
@@ -320,66 +343,39 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         </div>
       )}
 
-      {/* Engagement row: React / Comment / Reshare / Save */}
-      <div className="mt-3 flex items-center justify-between border-t pt-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={() => toggleLike()}
-        >
-          <Smile
-            className={cn(
-              'h-4 w-4',
-              userHasLiked ? 'fill-bevel-story/20 text-bevel-story' : 'text-muted-foreground'
-            )}
-          />
-          <span>React</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={handleCommentClick}
-        >
-          <MessageCircle
-            className={cn('h-4 w-4', commentsVisible ? 'text-bevel-story' : 'text-muted-foreground')}
-          />
-          <span>Comment</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          disabled={!onReshare}
-          onClick={() => onReshare?.(item.post_id)}
-        >
-          <Repeat2
-            className={cn(
-              'h-4 w-4',
-              item.has_reshared ? 'text-bevel-story' : 'text-muted-foreground'
-            )}
-          />
-          <span>Reshare</span>
-        </Button>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-1.5 text-xs"
-          onClick={() => toggleBookmark()}
-        >
-          <Bookmark
-            className={cn(
-              'h-4 w-4',
-              userHasBookmarked ? 'fill-current text-bevel-story' : 'text-muted-foreground'
-            )}
-          />
-          <span>Save</span>
-        </Button>
-      </div>
+      {/* Engagement row: React / Comment / Reshare (left-packed) · Save (right) */}
+      <CardActionRow
+        accent="text-bevel-story"
+        actions={[
+          {
+            icon: Smile,
+            label: 'React',
+            onClick: () => toggleLike(),
+            active: userHasLiked,
+            activeClassName: 'fill-bevel-story/20 text-bevel-story',
+          },
+          {
+            icon: MessageCircle,
+            label: 'Comment',
+            onClick: handleCommentClick,
+            active: commentsVisible,
+          },
+          {
+            icon: Repeat2,
+            label: 'Reshare',
+            onClick: () => onReshare?.(item.post_id),
+            active: item.has_reshared,
+            disabled: !onReshare,
+          },
+        ]}
+        trailing={{
+          icon: Bookmark,
+          label: 'Save',
+          onClick: () => toggleBookmark(),
+          active: userHasBookmarked,
+          activeClassName: 'fill-current text-bevel-story',
+        }}
+      />
 
       {commentsVisible && (
         <ThreadedComments
