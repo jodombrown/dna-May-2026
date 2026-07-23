@@ -22,6 +22,12 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJ
 const APP_URL = import.meta.env.VITE_APP_URL || 'https://diasporanetwork.africa';
 const APP_DOMAIN = import.meta.env.VITE_APP_DOMAIN || 'diasporanetwork.africa';
 
+// Mapbox
+// Public token. It ships inside the client bundle by design, exactly like the
+// Supabase anon key above, and is URL-restricted in the Mapbox console to the
+// diasporanetwork.africa and lovable.app origins. Never put an sk. token here.
+const MAPBOX_PUBLIC_TOKEN = import.meta.env.VITE_LOVABLE_CONNECTOR_MAPBOX_PUBLIC_TOKEN || 'pk.eyJ1IjoiamF1bmVsYW1hcnJvIiwiYSI6ImNtcm4xZGRvYzA2ZHMzMG9oejg2ZTFrc2YifQ.mVNVYScrzOYlmKX1FL5n1A';
+
 /**
  * Centralized configuration object
  */
@@ -38,6 +44,9 @@ export const config = {
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   STORAGE_URL: `${SUPABASE_URL}/storage/v1/object/public`,
+
+  // Mapbox
+  MAPBOX_PUBLIC_TOKEN,
 
   // Admin
   ADMIN_EMAIL_DOMAIN: '@diasporanetwork.africa',
