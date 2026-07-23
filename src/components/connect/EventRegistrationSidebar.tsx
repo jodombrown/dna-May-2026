@@ -7,7 +7,7 @@ import EventRegistrationHeader from './sidebar/EventRegistrationHeader';
 import EventTicketSection from './sidebar/EventTicketSection';
 import EventDetailsSection from './sidebar/EventDetailsSection';
 import EventAboutSection from './sidebar/EventAboutSection';
-import EventLocationSection from './sidebar/EventLocationSection';
+import { LocationMap } from '@/components/maps/LocationMap';
 import EventPresenterSection from './sidebar/EventPresenterSection';
 import EventHostSection from './sidebar/EventHostSection';
 import EventActionsSection from './sidebar/EventActionsSection';
@@ -79,7 +79,17 @@ const EventRegistrationSidebar: React.FC<EventRegistrationSidebarProps> = ({
               <EventTicketSection onRegister={handleRegisterClick} />
               <EventDetailsSection event={event} />
               <EventAboutSection event={event} />
-              <EventLocationSection event={event} />
+              <LocationMap
+                locationName={event.location_name ?? undefined}
+                locationAddress={event.location_address ?? undefined}
+                locality={
+                  [event.location_city, event.location_state, event.location_country]
+                    .filter(Boolean)
+                    .join(', ') || event.location || undefined
+                }
+                lat={event.location_lat ?? undefined}
+                lng={event.location_lng ?? undefined}
+              />
               <EventPresenterSection />
               <EventHostSection event={event} onCreatorClick={onCreatorClick} />
               <EventActionsSection 
