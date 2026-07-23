@@ -64,7 +64,7 @@ import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 // STUBBED: Phase 2 teardown. Restore in Phase 3 rebuild.
 // import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
-import { EventLocationMap } from '@/components/convene/EventLocationMap';
+import { LocationMap } from '@/components/maps/LocationMap';
 import EventThreadCTA from '@/components/convene/EventThreadCTA';
 import { diaEventBus } from '@/services/dia/diaEventBus';
 import { platformNotifications } from '@/services/platformNotificationGenerator';
@@ -913,7 +913,7 @@ const EventDetail = () => {
               )}
 
               {(event.format === 'in_person' || event.format === 'hybrid') && (
-                <EventLocationMap
+                <LocationMap
                   locationName={place.venue}
                   locationAddress={place.street}
                   locality={place.locality}
