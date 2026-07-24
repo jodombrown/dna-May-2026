@@ -18,14 +18,29 @@ export function curatedSourceDomain(url?: string | null): string {
 }
 
 /**
- * The name that leads a curated card: the organizer when DNA actually knows
- * one, else the source domain (the place the viewer will register). Never
- * the discovery agent, never a placeholder — '' when nothing is known.
+ * The name that leads an event card's host slot: the organizer when DNA
+ * actually knows one, else the source domain (the place the viewer will
+ * register). Never the discovery agent, never a placeholder — '' when nothing
+ * is known.
+ *
+ * BD214 — the guard is keyed on provenance. `organizer_name` reaches this
+ * helper from the DNA-side profile join on `organizer_id`, and for a CURATED
+ * row that id names whoever created the row inside DNA, not the third party
+ * hosting the event. Printing it would set a DNA Member's name large as the
+ * host of someone else's event — the plate's serif slot, the card's primary
+ * identity line. So for a curated event `organizer_name` is never eligible:
+ * the host is the source domain, full stop, until BD196's curated-only host
+ * column exists. Only a member-hosted event (no curated provenance) may use
+ * the profile join. Provenance is either signal being present — the discovery
+ * agent (`curated_source`) or the source URL (`curated_source_url`).
  */
 export function curatedHostName(e: {
   organizer_name?: string | null;
+  curated_source?: string | null;
   curated_source_url?: string | null;
 }): string {
+  const isCurated = Boolean(e.curated_source || e.curated_source_url);
+  if (isCurated) return curatedSourceDomain(e.curated_source_url);
   return e.organizer_name || curatedSourceDomain(e.curated_source_url);
 }
 
