@@ -198,6 +198,38 @@ export function fnv1a(input: string): number {
   return hash >>> 0;
 }
 
+/**
+ * MurmurHash3 fmix32 — avalanche finalizer.
+ *
+ * FNV-1a multiplies by an odd prime, which preserves the low bit, so hashes of
+ * suffixed variants of one seed share their low bits (BD211). With both array
+ * lengths even, that locked parity(field) to parity(crop) and killed half the
+ * composition space. This finalizer decorrelates the low bits so every axis
+ * derived from the same seed is independent — including any added later.
+ *
+ * `Math.imul` and `>>> 0` at every step are load-bearing: they keep the mix in
+ * true unsigned 32-bit arithmetic. Do not simplify them away.
+ */
+function fmix32(h: number): number {
+  h = (h ^ (h >>> 16)) >>> 0;
+  h = Math.imul(h, 0x85ebca6b) >>> 0;
+  h = (h ^ (h >>> 13)) >>> 0;
+  h = Math.imul(h, 0xc2b2ae35) >>> 0;
+  h = (h ^ (h >>> 16)) >>> 0;
+  return h;
+}
+
+/**
+ * Index into a curated axis from a seed, salted per axis and avalanched before
+ * the modulo. The finalizer is what makes the two axes independent: without it,
+ * FNV-1a's preserved low bit ties parity(field) to parity(crop) and only 24 of
+ * the 48 field × crop pairs are reachable (BD211). One code path serves both
+ * axes, so any axis added later inherits the same decorrelation.
+ */
+function seededIndex(seed: string, salt: string, len: number): number {
+  return fmix32(fnv1a(`${seed}:${salt}`)) % len;
+}
+
 export interface PlateComposition {
   field: PlateField;
   mark: MarkComponent;
@@ -206,15 +238,16 @@ export interface PlateComposition {
 
 /**
  * The full recipe for one event. Field and crop take independent slices of the
- * seed (re-hashed with a per-axis salt) so they don't move in lockstep. Given
- * the same id and event_type, the result is byte-for-byte identical, always.
+ * seed (re-hashed with a per-axis salt, then avalanched) so they don't move in
+ * lockstep. Given the same id and event_type, the result is byte-for-byte
+ * identical, always.
  */
 export function composePlate(
   id: string,
   eventType?: string | null,
 ): PlateComposition {
   const seed = id ?? '';
-  const field = PLATE_FIELDS[fnv1a(`${seed}:field`) % PLATE_FIELDS.length];
-  const crop = PLATE_CROPS[fnv1a(`${seed}:crop`) % PLATE_CROPS.length];
+  const field = PLATE_FIELDS[seededIndex(seed, 'field', PLATE_FIELDS.length)];
+  const crop = PLATE_CROPS[seededIndex(seed, 'crop', PLATE_CROPS.length)];
   return { field, mark: markForEventType(eventType), crop };
 }
