@@ -37,7 +37,7 @@ interface EventPlateProps {
  * into the `image` slot of EventCardFrame.
  */
 export const EventPlate: React.FC<EventPlateProps> = ({ event, className }) => {
-  const { field, mark: Mark, markSize } = composePlate(event.id, event.event_type);
+  const { field, mark: Mark, crop } = composePlate(event.id, event.event_type);
 
   const host = curatedHostName(event).trim();
   const city = (event.location_city ?? '').trim();
@@ -57,42 +57,63 @@ export const EventPlate: React.FC<EventPlateProps> = ({ event, className }) => {
       className={cn('relative h-full w-full overflow-hidden', className)}
       style={{ backgroundImage: `linear-gradient(135deg, ${field.from}, ${field.to})` }}
     >
-      {/* Lockup and mark share the lower zone; the top is left clear for the
-          frame's identity band, which overlays band 2. Aligned to the baseline
-          so a tall lockup and the mark sit on the same line. */}
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
-        <div className="flex min-w-0 flex-col gap-2">
-          {lockup && (
-            <p
-              className="line-clamp-2 break-words font-display text-h2 leading-tight"
-              style={{ color: field.foreground }}
-            >
-              {lockup}
-            </p>
-          )}
-          {showRule && (
-            <span
-              aria-hidden
-              className="block h-0.5 w-7 rounded-full"
-              style={{ backgroundColor: field.accent }}
-            />
-          )}
-          {showMicroCity && (
-            <span className="text-micro uppercase" style={{ color: field.foreground }}>
-              {city}
-            </span>
-          )}
-        </div>
+      {/* Mark layer — decorative, behind the lockup. Absolutely positioned and
+          driven entirely by the crop: the wrapper carries scale (width), offset
+          (x/y), rotation and opacity; the mark fills it at size="100%". The
+          plate root's overflow-hidden clips whatever runs off the edge, which is
+          what turns a placement into a crop. All five values are data-driven per
+          plate, so they live in inline style, not a class.
 
-        {/* Decorative: the host name is the real DOM text, so the mark is
-            aria-hidden. No `title` and no `filled` prop — the mark composes
-            `<AdinkraIcon filled ... {...props}>`, so passing `filled` would
-            override its silhouette into a hairline outline. */}
-        <Mark
-          size={markSize}
-          color={field.accent}
-          className="flex-shrink-0"
-        />
+          Opacity is on the wrapper, not the mark, so it resolves the deep-field
+          loudness on both light and deep grounds without a separate rule.
+
+          No `title` and no `filled` prop — the mark composes
+          `<AdinkraIcon filled ... {...props}>`, so passing `filled` would
+          override its silhouette into a hairline outline. The host name is the
+          real DOM text, so the SVG stays aria-hidden (its default). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{
+          left: `${crop.x * 100}%`,
+          top: `${crop.y * 100}%`,
+          width: `${crop.scale * 100}%`,
+          aspectRatio: '1 / 1',
+          transform: `rotate(${crop.rotation}deg)`,
+          opacity: crop.opacity,
+        }}
+      >
+        <Mark size="100%" color={field.accent} />
+      </div>
+
+      {/* Lockup — above the mark layer (z-10). Pinned to the lower zone; the top
+          is left clear for the frame's identity band, which overlays band 2.
+          Padding tracks --card-padding so the plate tightens with the frame at
+          the narrow floor instead of staying at a fixed 16px. */}
+      <div
+        className="absolute inset-x-0 bottom-0 z-10 flex flex-col gap-2"
+        style={{ padding: 'var(--card-padding)' }}
+      >
+        {lockup && (
+          <p
+            className="line-clamp-2 break-words font-display text-h2 leading-tight"
+            style={{ color: field.foreground }}
+          >
+            {lockup}
+          </p>
+        )}
+        {showRule && (
+          <span
+            aria-hidden
+            className="block h-0.5 w-7 rounded-full"
+            style={{ backgroundColor: field.accent }}
+          />
+        )}
+        {showMicroCity && (
+          <span className="text-micro uppercase" style={{ color: field.foreground }}>
+            {city}
+          </span>
+        )}
       </div>
     </div>
   );
