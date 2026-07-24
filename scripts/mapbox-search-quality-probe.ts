@@ -43,8 +43,11 @@ if (!TOKEN) {
   exit(1);
 }
 
-const BIAS_PROXIMITY = ""; // e.g. "-0.1870,5.6037" (Accra) to test the bias lever
-const BIAS_COUNTRY = "";   // e.g. "gh" to constrain to Ghana
+// Default empty = the unbiased worst-case run (deliberate; do not hardcode a bias
+// value here). The dispatch workflow can inject a value via these env vars to
+// spot-check the bias lever without editing the source. Unset env -> "" -> unbiased.
+const BIAS_PROXIMITY = env.BIAS_PROXIMITY ?? ""; // e.g. "-0.1870,5.6037" (Accra) to test the bias lever
+const BIAS_COUNTRY = env.BIAS_COUNTRY ?? "";     // e.g. "gh" to constrain to Ghana
 
 const SUGGEST = "https://api.mapbox.com/search/searchbox/v1/suggest";
 const RETRIEVE = "https://api.mapbox.com/search/searchbox/v1/retrieve";
@@ -200,10 +203,26 @@ async function main(): Promise<void> {
     console.log(`${pad(cat, 22)} clean ${clean}/${inCat.length}${errored ? `  (errors: ${errored})` : ""}`);
   }
 
+  // Three distinct outcomes, three exit codes, no overlap:
+  //   any case errored        -> UNDETERMINED (exit 2). Nothing was measured, so
+  //                              the corruption verdict below would be meaningless.
+  //                              A run that measured nothing must never print FAIL.
+  //   all resolved, corruption clean -> PASS (exit 0)
+  //   all resolved, a corruption case flagged -> FAIL (exit 1)
+  const errored = results.filter((r) => "error" in r.ex);
+  if (errored.length > 0) {
+    const first = errored[0];
+    const firstError = (first.ex as { error: string }).error;
+    console.log(`\nGATE CHECK — UNDETERMINED ⚠️  (${errored.length}/${results.length} cases errored; nothing was measured)`);
+    console.log(`First error: ${first.row.q} — ${firstError}`);
+    exit(2);
+  }
+
   const corruption = results.filter((r) => r.row.cat === "corruption");
   const corruptionClean = corruption.every((r) => !("error" in r.ex) && (r.ex as Extracted).flags.length === 0);
   console.log("\nGATE CHECK — zero corruption on failure modes:", corruptionClean ? "PASS ✅" : "FAIL ❌ (see flags above)");
   console.log("Continental + diaspora precision: eyeball the CITY/STATE columns against the table; auto-flags only catch the sharp defects.\n");
+  exit(corruptionClean ? 0 : 1);
 }
 
 main().catch((err) => {
