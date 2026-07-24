@@ -26,6 +26,11 @@ import {
 
 import { ConnectMobileHeader, ConnectMobileTabs, ConnectMobileTopBar } from '@/components/connect/ConnectMobileHeader';
 
+// Diaspora density map — rendered in-shell as the Map tab (mobile) / right
+// column (desktop). The same component also backs the standalone
+// /dna/connect/map route; `inShell` suppresses its page-level heading here.
+import { DiasporaDensityMap } from '@/components/maps/DiasporaDensityMap';
+
 // DIA Card System (Sprint 4A)
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
 
@@ -73,6 +78,10 @@ const Connect = () => {
   const [mobileSearchQuery, setMobileSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [mobileActiveFilterCount, setMobileActiveFilterCount] = useState(0);
+  // The Map tab renders in-shell without changing the URL (the standalone
+  // /dna/connect/map route stays reserved for deep links). Any real navigation
+  // resets it via the location effect below.
+  const [mapTabActive, setMapTabActive] = useState(false);
 
   // Determine mobile view from URL path
   const getMobileViewFromPath = (): 'network' | 'discover' | 'messages' => {
@@ -81,6 +90,12 @@ const Connect = () => {
     return 'discover';
   };
   const mobileView = getMobileViewFromPath();
+  // The Map tab is a peer of the routed tabs but has no route of its own; leave
+  // it as soon as the path changes (sibling tab, back/forward, deep link).
+  useEffect(() => {
+    setMapTabActive(false);
+  }, [location.pathname]);
+  const activeMobileTab = mapTabActive ? 'map' : mobileView;
 
   // Handle filter changes from NetworkPanel
   const handleFilterChange = useCallback((newFilters: FilterState) => {
@@ -134,7 +149,14 @@ const Connect = () => {
   }, []);
 
   // Mobile tab change
-  const handleMobileTabChange = (tab: 'discover' | 'network' | 'messages') => {
+  const handleMobileTabChange = (tab: 'discover' | 'network' | 'map' | 'messages') => {
+    if (tab === 'map') {
+      // Render the density map inside the Connect shell without leaving it; the
+      // standalone /dna/connect/map route is reserved for deep links and shares.
+      setMapTabActive(true);
+      return;
+    }
+    setMapTabActive(false);
     if (tab === 'messages') {
       // BD063 hide-and-freeze: messaging is OUT at v0.0 — route to discover, not /dna/messages.
       navigate(MESSAGING_ENABLED ? '/dna/messages' : '/dna/connect/discover');
@@ -182,7 +204,7 @@ const Connect = () => {
             />
           </div>
           {/* Tabs row - always visible (matches Feed behavior) */}
-          <ConnectMobileTabs activeTab={mobileView} onTabChange={handleMobileTabChange} />
+          <ConnectMobileTabs activeTab={activeMobileTab} onTabChange={handleMobileTabChange} />
         </div>
 
         {/* Mobile Content - dynamic padding from measured header */}
@@ -190,13 +212,17 @@ const Connect = () => {
           className="px-3 sm:px-4 overflow-x-hidden transition-[padding] duration-300"
           style={{ paddingTop: connectHeaderPadding || undefined }}
         >
-          <ConnectTabExplainer activeTab={mobileView} />
-          <Outlet context={{
-            mobileSearchQuery,
-            showMobileFilters,
-            setShowMobileFilters,
-            setMobileActiveFilterCount,
-          }} />
+          <ConnectTabExplainer activeTab={activeMobileTab} />
+          {mapTabActive ? (
+            <DiasporaDensityMap inShell />
+          ) : (
+            <Outlet context={{
+              mobileSearchQuery,
+              showMobileFilters,
+              setShowMobileFilters,
+              setMobileActiveFilterCount,
+            }} />
+          )}
         </div>
 
         
@@ -231,9 +257,13 @@ const Connect = () => {
           />
         }
         rightPanel={
-          /* BD063 hide-and-freeze: the DM column (conversations list + inline chat) is
-             hidden while messaging is OUT at v0.0. Frozen components stay in the tree. */
-          !MESSAGING_ENABLED ? null : (
+          /* BD063 hide-and-freeze: while messaging is OUT at v0.0 the DM column
+             (conversations list + inline chat) is frozen; the Diaspora Map takes
+             its place as the Connect Map tab's desktop column. Frozen messaging
+             components stay in the tree for when the flag flips back on. */
+          !MESSAGING_ENABLED ? (
+            <DiasporaDensityMap inShell />
+          ) : (
             expandedChat && selectedConversationId ? (
               <InlineChat
                 conversationId={selectedConversationId}

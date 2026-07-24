@@ -10,10 +10,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Network, MessageSquare } from 'lucide-react';
+import { Users, Network, Globe, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
-export type ConnectTab = 'discover' | 'network' | 'messages';
+export type ConnectTab = 'discover' | 'network' | 'map' | 'messages';
 
 interface ConnectTabExplainerProps {
   activeTab: ConnectTab;
@@ -31,6 +31,12 @@ const TAB_EXPLAINERS: Record<ConnectTab, { title: string; description: string; i
     description: 'View and manage your connections, pending requests, and grow your diaspora network',
     icon: Network,
     bgClass: 'bg-gradient-to-r from-dna-emerald/10 to-dna-emerald/5 border-dna-emerald/20',
+  },
+  map: {
+    title: 'Diaspora Map',
+    description: 'See where the diaspora is gathering. Counts are aggregated and consent-gated — this map shows places, never people.',
+    icon: Globe,
+    bgClass: 'bg-gradient-to-r from-dna-gold/10 to-dna-gold/5 border-dna-gold/20',
   },
   messages: {
     title: 'Messages',
