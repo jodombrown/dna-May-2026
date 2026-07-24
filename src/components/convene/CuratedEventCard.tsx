@@ -1,23 +1,28 @@
 /**
  * DNA | CONVENE — Curated Event Card
  *
- * A curated event is one DNA has SEEN at a source, not one DNA hosts — the
- * card is outlined with a dashed top rule (never the solid green bar of a
- * DNA-hosted card), the host's name leads, and DNA's mark is a small,
- * secondary "Seen by DNA" chip.
+ * A curated event is one DNA has SEEN at a source, not one DNA hosts. This
+ * card composes the shared geometry primitive (EventCardFrame, BD190) so it is
+ * byte-identical in shape to every other event surface, and fills the four
+ * bands with the curated read:
  *
- * Facts (title, dates, city) belong to the source; the DNA layer is the
- * reason the card exists: how many Members are going and how many from the
- * viewer's chapter. Actions: "I'm going" (DNA-side, sign-in wall at the
- * action) and "Register at source ↗" — a clean handoff, no interception.
+ *   Identity — a small "Seen by DNA" chip and the compact time, overlaid on
+ *              the top of the image band.
+ *   Image    — the source's own cover when it has one, else an <EventPlate>:
+ *              a generative, imageless cover. Never stock photography.
+ *   Fact     — title, city, and the DNA layer (how many Members are going).
+ *   Action   — two, and only two (BD193): "I'm going" (sign-in wall at the
+ *              action) and "Source ↗" (a clean handoff, no interception).
  *
- * Dates render through <EventTime>: an unconfirmed hour never prints.
- * Covers render through <CuratedCover>: no stock photography, ever.
+ * Host identity lives on the plate, derived through curatedHostName, which
+ * refuses the DNA-side profile join for a curated row (BD214): a curated
+ * card's host is the source domain, never a DNA Member.
+ *
+ * Dates render through <EventTime>: an unconfirmed hour never prints. Covers
+ * gate through realCuratedCover — the only stock-image check, never a second.
  */
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Users, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -25,8 +30,9 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { EventTime } from '@/components/events/EventTime';
 import { formatEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
-import { curatedHostName, realCuratedCover } from '@/lib/events/curated';
-import { CuratedCover } from '@/components/convene/CuratedCover';
+import { realCuratedCover } from '@/lib/events/curated';
+import { EventCardFrame } from '@/components/cards/EventCardFrame';
+import { EventPlate } from '@/components/cards/EventPlate';
 import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 
@@ -40,6 +46,7 @@ export interface CuratedEventCardProps {
     date_confirmed: boolean | null | undefined;
     cover_image_url?: string | null;
     slug?: string | null;
+    event_type?: string | null;
     organizer_name?: string | null;
     curated_source?: string | null;
     curated_source_url?: string | null;
@@ -47,15 +54,18 @@ export interface CuratedEventCardProps {
   className?: string;
 }
 
+// The card-padding token steps with the viewport (16 / 14 / 12); it has no
+// Tailwind utility, so the frame and plate apply it inline. The identity band
+// overlays the image with no padding of its own, so the chip row matches that
+// same rhythm here — the one certified way to read this token.
+const CARD_PADDING = 'var(--card-padding)';
+
 export function CuratedEventCard({ event, className }: CuratedEventCardProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { pulse, setGoing, isSettingGoing } = useCuratedEventPulse(event.id);
 
-  const hostName = curatedHostName(event);
-  // A typographic cover already leads with the host set large — repeating
-  // it in the byline row would read as a stutter.
-  const hostLeadsInCover = !realCuratedCover(event);
+  const realCover = realCuratedCover(event);
   const cityLine = formatEventPlace(event, 'compact');
   const eventPath = `/dna/convene/events/${event.slug || event.id}`;
   const isGoing = pulse?.isGoing ?? false;
@@ -73,99 +83,127 @@ export function CuratedEventCard({ event, className }: CuratedEventCardProps) {
     setGoing(!isGoing);
   };
 
-  const handleRegisterAtSource = (e: React.MouseEvent) => {
+  const handleSource = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (event.curated_source_url) {
       window.open(event.curated_source_url, '_blank', 'noopener,noreferrer');
     }
   };
 
-  return (
-    <Card
-      className={cn(
-        // Outlined with a dashed top rule — the visual grammar of "seen,
-        // not hosted". Never the solid green bar.
-        'group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg',
-        'border border-border bg-card shadow-none transition-colors hover:border-foreground/30',
-        'border-t-2 [border-top-style:dashed]',
-        className
-      )}
-      onClick={handleCardClick}
+  // Band 1 — provenance chip leading, compact time trailing. Both sit on a
+  // token-card ground so they read over a photo or a coloured plate alike.
+  const identity = (
+    <div
+      className="flex w-full items-center justify-between gap-2"
+      style={{ paddingLeft: CARD_PADDING, paddingRight: CARD_PADDING }}
     >
-      <CuratedCover event={event} hostName={hostName} className="aspect-[2/1] w-full" />
+      <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro uppercase text-foreground backdrop-blur-sm">
+        <Nkonsonkonson className="h-2.5 w-2.5" />
+        Seen by DNA
+      </span>
+      <EventTime
+        event={event}
+        variant="compact"
+        notifyAction={false}
+        className="inline-flex shrink-0 items-center rounded-full border border-border/60 bg-card/90 px-2 py-0.5 text-micro text-foreground backdrop-blur-sm"
+      />
+    </div>
+  );
 
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        {/* Host leads; DNA's mark is secondary */}
-        <div className="flex items-center justify-between gap-2">
-          <span className="min-w-0 truncate text-xs font-semibold uppercase tracking-wide text-foreground">
-            {hostLeadsInCover ? '' : hostName}
-          </span>
-          <Badge
-            variant="outline"
-            className="shrink-0 gap-1 border-border/70 px-1.5 py-0 text-[10px] font-medium text-muted-foreground"
-          >
-            <Nkonsonkonson className="h-2.5 w-2.5" />
-            Seen by DNA
-          </Badge>
-        </div>
+  // Band 2 — the source's cover, or the generative plate when there is none.
+  const image = realCover ? (
+    <img
+      src={realCover}
+      alt={event.title}
+      className="h-full w-full object-cover"
+      loading="lazy"
+      onError={(e) => {
+        (e.currentTarget as HTMLImageElement).style.display = 'none';
+      }}
+    />
+  ) : (
+    <EventPlate
+      event={{
+        id: event.id,
+        event_type: event.event_type,
+        organizer_name: event.organizer_name,
+        curated_source_url: event.curated_source_url,
+        location_city: event.location_city,
+      }}
+    />
+  );
 
-        <h3 className="line-clamp-2 text-base font-bold leading-tight text-foreground">
-          {event.title}
-        </h3>
-
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-muted-foreground">
-          <EventTime event={event} variant="compact" />
-          {cityLine && (
-            <>
-              <span className="text-border">·</span>
-              <span>{cityLine}</span>
-            </>
-          )}
-        </div>
-
-        {/* The DNA layer — the reason the card exists */}
-        {pulse && pulse.goingCount > 0 && (
-          <p className="flex items-center gap-1.5 text-sm font-medium text-foreground">
-            <Users className="h-3.5 w-3.5 text-muted-foreground" />
-            {pulse.goingCount} {pulse.goingCount === 1 ? 'Member' : 'Members'} going
+  // Band 3 — the source's facts, then the DNA layer pinned to the bottom.
+  const fact = (
+    <div className="flex h-full flex-col gap-2">
+      <h3 className="line-clamp-2 text-h3 text-foreground">{event.title}</h3>
+      {cityLine && <p className="text-meta text-muted-foreground">{cityLine}</p>}
+      <p className="mt-auto flex flex-wrap items-center gap-x-1.5 gap-y-0 text-meta">
+        <Users className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        {pulse && pulse.goingCount > 0 ? (
+          <>
+            <span className="font-semibold text-foreground">
+              {pulse.goingCount} {pulse.goingCount === 1 ? 'Member' : 'Members'} going
+            </span>
             {pulse.chapterCount > 0 && (
               <span className="text-muted-foreground">
                 · {pulse.chapterCount} from your chapter
               </span>
             )}
-          </p>
+          </>
+        ) : (
+          <span className="text-muted-foreground">No Members yet. Be the first.</span>
         )}
+      </p>
+    </div>
+  );
 
-        <div className="mt-auto flex items-center gap-2 pt-2">
-          <Button
-            variant={isGoing ? 'default' : 'outline'}
-            size="sm"
-            className="h-9 flex-1 text-xs"
-            onClick={handleGoing}
-            disabled={isSettingGoing}
-          >
-            {isGoing ? (
-              <>
-                <Check className="mr-1 h-3.5 w-3.5" /> Going
-              </>
-            ) : (
-              "I'm going"
-            )}
-          </Button>
-          {event.curated_source_url && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-9 flex-1 text-xs text-muted-foreground hover:text-foreground"
-              onClick={handleRegisterAtSource}
-            >
-              Register at source
-              <ExternalLink className="ml-1 h-3 w-3" />
-            </Button>
-          )}
-        </div>
-      </div>
-    </Card>
+  // Band 4 — exactly two actions (BD193).
+  const action = (
+    <div className="flex w-full items-center gap-2">
+      <Button
+        variant={isGoing ? 'default' : 'outline'}
+        size="sm"
+        className="flex-1"
+        onClick={handleGoing}
+        disabled={isSettingGoing}
+      >
+        {isGoing ? (
+          <>
+            <Check className="mr-1 h-3.5 w-3.5" /> Going
+          </>
+        ) : (
+          "I'm going"
+        )}
+      </Button>
+      {event.curated_source_url && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex-1 text-muted-foreground hover:text-foreground"
+          onClick={handleSource}
+        >
+          Source
+          <ExternalLink className="ml-1 h-3 w-3" />
+        </Button>
+      )}
+    </div>
+  );
+
+  return (
+    <div
+      className={cn('group block h-full w-full cursor-pointer', className)}
+      onClick={handleCardClick}
+    >
+      <EventCardFrame
+        bevelToken="event"
+        identity={identity}
+        image={image}
+        fact={fact}
+        action={action}
+        className="h-full transition-colors"
+      />
+    </div>
   );
 }
 

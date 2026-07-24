@@ -87,7 +87,9 @@ export function DiscoveryLane({
         /* Horizontal scroll on mobile, grid on desktop */
         <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 -mx-3 px-3 md:mx-0 md:px-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
           {events.map((event) => (
-            <div key={event.id} className="min-w-[300px] max-w-[340px] flex-shrink-0 md:min-w-0 md:max-w-none">
+            /* The card carries its own geometry under BD190; the rail item just
+               fixes the scroll width on phones and releases it into the grid at md. */
+            <div key={event.id} className="w-80 flex-shrink-0 md:w-auto">
               {event.is_curated ? (
                 <CuratedEventCard
                   event={{
@@ -101,7 +103,12 @@ export function DiscoveryLane({
                     cover_image_url: event.cover_image_url,
                     format: event.format,
                     slug: event.slug,
-                    organizer_name: event.organizer?.full_name ?? null,
+                    event_type: event.event_type,
+                    // BD214 — never offer the DNA-side profile join as a curated
+                    // event's host. organizer_id names the DNA row's creator, not
+                    // the third party hosting; the host is the source domain,
+                    // resolved in curatedHostName. Consumer half of the guard.
+                    organizer_name: null,
                     curated_source: event.curated_source,
                     curated_source_url: event.curated_source_url,
                   }}
