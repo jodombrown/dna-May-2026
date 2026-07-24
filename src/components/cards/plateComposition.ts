@@ -4,7 +4,10 @@
  * A plate is composed on three axes from a single seed, `event.id`:
  *   1. field  — the colour ground (curated preset, never a continuous range)
  *   2. mark   — the Adinkra symbol, chosen by event_type (BD113: never by title)
- *   3. size   — the mark's scale (curated preset)
+ *   3. crop   — how the mark is placed: scale, offset, rotation and opacity
+ *              (curated preset). The mark is deliberately constant across every
+ *              event_type, so crop — not the symbol — is what makes one plate
+ *              read differently from the next.
  *
  * Rule 1 (BD191): deterministic, never random. The seed runs through a stable
  * FNV-1a hash. There is no Math.random() in this file, by design — the same
@@ -115,8 +118,46 @@ export const PLATE_FIELDS: readonly PlateField[] = [
   },
 ];
 
-/** Mark sizes in px. A curated set — variety across a rail without randomness. */
-export const MARK_SIZES = [56, 64, 72] as const;
+/**
+ * A crop — how the single, constant mark is placed on the plate. This is the
+ * differentiation axis (BD191): the symbol never changes, so scale + offset +
+ * rotation + opacity are what stop a rail reading as one repeated tile.
+ *
+ * The mark renders in an absolutely positioned layer that the plate root clips
+ * with `overflow-hidden`; a wide `scale` and an off-edge `x`/`y` therefore crop
+ * the mark against the plate's edge rather than shrinking it into a corner.
+ */
+export interface PlateCrop {
+  /** Mark width as a share of plate width. 0–1. */
+  scale: number;
+  /** Horizontal offset as a share of plate width. May be negative to crop off the left edge. */
+  x: number;
+  /** Vertical offset as a share of plate height. May be negative to crop off the top edge. */
+  y: number;
+  /** Rotation in degrees. */
+  rotation: number;
+  /**
+   * Layer opacity, capped at 0.20 (BD191). Applied to the wrapper, not the
+   * mark, so it resolves the deep-field loudness on both light and deep grounds
+   * without a separate rule.
+   */
+  opacity: number;
+}
+
+/**
+ * Six composed placements, tuned against a 16:9 band. Curated presets — no
+ * continuous ranges, no interpolation (BD191 rule 2). The spread is deliberately
+ * wide (scale 0.40–0.92, opacity 0.09–0.20, both edges of the plate used) so
+ * eight fields × six crops read as forty-eight distinct plates, not eight.
+ */
+export const PLATE_CROPS: readonly PlateCrop[] = [
+  { scale: 0.62, x: 0.58, y: -0.30, rotation: -8, opacity: 0.14 },
+  { scale: 0.52, x: 0.52, y: 0.40, rotation: 12, opacity: 0.15 },
+  { scale: 0.78, x: 0.62, y: 0.30, rotation: 20, opacity: 0.11 },
+  { scale: 0.44, x: 0.68, y: 0.10, rotation: -14, opacity: 0.17 },
+  { scale: 0.92, x: -0.22, y: 0.34, rotation: 6, opacity: 0.09 },
+  { scale: 0.40, x: 0.72, y: -0.06, rotation: 0, opacity: 0.20 },
+];
 
 /**
  * event_type → mark. Every live enum value maps to Nkonsonkonson (CONVENE):
@@ -160,13 +201,13 @@ export function fnv1a(input: string): number {
 export interface PlateComposition {
   field: PlateField;
   mark: MarkComponent;
-  markSize: number;
+  crop: PlateCrop;
 }
 
 /**
- * The full recipe for one event. Field and size take independent slices of the
- * seed (re-hashed with an axis salt) so they don't move in lockstep. Given the
- * same id and event_type, the result is byte-for-byte identical, always.
+ * The full recipe for one event. Field and crop take independent slices of the
+ * seed (re-hashed with a per-axis salt) so they don't move in lockstep. Given
+ * the same id and event_type, the result is byte-for-byte identical, always.
  */
 export function composePlate(
   id: string,
@@ -174,6 +215,6 @@ export function composePlate(
 ): PlateComposition {
   const seed = id ?? '';
   const field = PLATE_FIELDS[fnv1a(`${seed}:field`) % PLATE_FIELDS.length];
-  const markSize = MARK_SIZES[fnv1a(`${seed}:size`) % MARK_SIZES.length];
-  return { field, mark: markForEventType(eventType), markSize };
+  const crop = PLATE_CROPS[fnv1a(`${seed}:crop`) % PLATE_CROPS.length];
+  return { field, mark: markForEventType(eventType), crop };
 }
