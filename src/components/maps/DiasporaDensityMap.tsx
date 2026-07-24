@@ -48,6 +48,16 @@ const LAYER_ID = 'diaspora-density-circles';
 const DEFAULT_CENTER: [number, number] = [10, 20];
 const DEFAULT_ZOOM = 1.4;
 
+// Founder decision: the opening frame must always contain the African continent
+// AND every marker the public RPC returns. We seed the fit with this rough bbox
+// of Africa [southwest, northeast] as [lng, lat] and then extend it with each
+// density point, so the camera is computed (never a hardcoded center/zoom) and
+// self-corrects as membership spreads. With zero rows it frames Africa alone.
+const AFRICA_BOUNDS: [[number, number], [number, number]] = [
+  [-18, -35],
+  [52, 38],
+];
+
 /** Circle radius (px) as a gentle function of member_count. */
 function radiusForCount(count: number): number {
   return Math.max(10, Math.min(48, 8 + Math.sqrt(Math.max(count, 0)) * 6));
@@ -74,7 +84,18 @@ function toFeatureCollection(rows: DensityRow[]) {
   };
 }
 
-export function DiasporaDensityMap() {
+interface DiasporaDensityMapProps {
+  /**
+   * When rendered inside the Connect shell (as the Map tab / desktop column),
+   * suppress this component's own page-level heading and explainer — the shell
+   * already provides that chrome (tab header + ConnectTabExplainer). The
+   * standalone /dna/connect/map route leaves this false so it keeps its full
+   * page heading per BD110.
+   */
+  inShell?: boolean;
+}
+
+export function DiasporaDensityMap({ inShell = false }: DiasporaDensityMapProps = {}) {
   const token = getMapboxToken();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapboxMap | null>(null);
@@ -202,33 +223,41 @@ export function DiasporaDensityMap() {
     });
     map.on('click', LAYER_ID, showPopup);
 
-    // Frame the data.
+    // Frame Africa + every marker. Seed the bounds with the African continent,
+    // then extend with each density point, so the opening view spans from Africa
+    // to the diaspora (today: an Atlantic frame with the US marker on the left).
+    // Zero points leaves the bounds on Africa alone. Small padding keeps markers
+    // off the edge.
     void loadMapbox().then((mapboxgl) => {
       if (mapRef.current !== map) return;
       const points = collection.features.map(
         (f) => f.geometry.coordinates as [number, number],
       );
-      if (points.length === 0) return;
-      const bounds = new mapboxgl.LngLatBounds();
+      const bounds = new mapboxgl.LngLatBounds(
+        AFRICA_BOUNDS[0],
+        AFRICA_BOUNDS[1],
+      );
       points.forEach((p) => bounds.extend(p));
-      map.fitBounds(bounds, { padding: 96, maxZoom: 4, duration: 0 });
+      map.fitBounds(bounds, { padding: 48, duration: 0 });
     });
   }, [mapReady, rows]);
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-8 md:py-10">
+    <div className={inShell ? 'flex flex-col gap-4 p-4' : 'container mx-auto max-w-5xl px-4 sm:px-6 py-8 md:py-10'}>
       <div className="flex flex-col gap-6">
-        <header className="flex flex-col gap-2">
-          <span className="inline-flex items-center gap-1.5 text-micro uppercase text-muted-foreground">
-            <Globe2 className="w-3.5 h-3.5" aria-hidden="true" />
-            Connect
-          </span>
-          <h1 className="text-h1 text-foreground">Diaspora Map</h1>
-          <p className="text-body text-muted-foreground max-w-2xl">
-            Where the African diaspora is gathering on DNA. Counts are aggregated
-            and consent-gated — this map shows places, never people.
-          </p>
-        </header>
+        {!inShell && (
+          <header className="flex flex-col gap-2">
+            <span className="inline-flex items-center gap-1.5 text-micro uppercase text-muted-foreground">
+              <Globe2 className="w-3.5 h-3.5" aria-hidden="true" />
+              Connect
+            </span>
+            <h1 className="text-h1 text-foreground">Diaspora Map</h1>
+            <p className="text-body text-muted-foreground max-w-2xl">
+              Where the African diaspora is gathering on DNA. Counts are aggregated
+              and consent-gated — this map shows places, never people.
+            </p>
+          </header>
+        )}
 
         {token && hasData && !isError && (
           <p className="text-meta text-muted-foreground">

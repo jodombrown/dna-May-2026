@@ -1,10 +1,10 @@
 import React from 'react';
-import { Users, Network, MessageCircle } from 'lucide-react';
+import { Users, Network, Globe, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DnaMobileHeader } from '@/components/mobile/DnaMobileHeader';
 import { MESSAGING_ENABLED } from '@/config/featureFlags';
 
-export type ConnectTab = 'discover' | 'network' | 'messages';
+export type ConnectTab = 'discover' | 'network' | 'map' | 'messages';
 
 interface ConnectMobileHeaderProps {
   activeTab: ConnectTab;
@@ -20,6 +20,7 @@ interface ConnectMobileHeaderProps {
 const TAB_CONFIG = [
   { value: 'discover' as const, icon: Users, label: 'Members' },
   { value: 'network' as const, icon: Network, label: 'Network' },
+  { value: 'map' as const, icon: Globe, label: 'Map' },
   ...(MESSAGING_ENABLED
     ? [{ value: 'messages' as const, icon: MessageCircle, label: 'Messages' }]
     : []),
