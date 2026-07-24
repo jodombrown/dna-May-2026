@@ -1,0 +1,53 @@
+name: Mapbox Search Probe (BD170)
+
+# Manual, on-demand only. This runs the BD170 search-quality probe against the
+# live Mapbox Search Box API from a runner that HAS egress to api.mapbox.com
+# (the agent/session egress policy blocks it, so the probe cannot run there).
+#
+# It is deliberately NOT a gate: no push trigger, no pull_request trigger, and it
+# must never be added to any required-checks set. It measures; it does not block
+# a merge. Dispatch it from the Actions tab and read the printed table + GATE
+# CHECK line. The probe exits 2 (UNDETERMINED) if any case errored, 0 on PASS,
+# 1 on FAIL — so a green run genuinely means every case resolved.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bias_proximity:
+        description: 'Optional proximity bias "lng,lat" (e.g. -0.1870,5.6037 for Accra). Empty = unbiased worst case.'
+        required: false
+        type: string
+        default: ''
+      bias_country:
+        description: 'Optional ISO country constraint (e.g. gh). Empty = no country bias.'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  probe:
+    name: Run BD170 search-quality probe
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Token from the repo secret if set, else the same public URL-restricted
+      # token bound in src/lib/config.ts (a pk. token ships client-side by design).
+      # Bias inputs flow in as env vars the probe reads at runtime — the source
+      # constants stay empty, so the default run is unbiased.
+      - name: Run probe
+        env:
+          MAPBOX_TOKEN: ${{ secrets.MAPBOX_PUBLIC_TOKEN || 'pk.eyJ1IjoiamF1bmVsYW1hcnJvIiwiYSI6ImNtcm4xZGRvYzA2ZHMzMG9oejg2ZTFrc2YifQ.mVNVYScrzOYlmKX1FL5n1A' }}
+          BIAS_PROXIMITY: ${{ inputs.bias_proximity }}
+          BIAS_COUNTRY: ${{ inputs.bias_country }}
+        run: npm run probe:mapbox
