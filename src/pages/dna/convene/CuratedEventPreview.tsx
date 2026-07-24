@@ -38,6 +38,7 @@ import { useCuratedEventPulse } from '@/hooks/convene/useCuratedEventPulse';
 import { ROUTES } from '@/config/routes';
 import { Nkonsonkonson } from '@/components/icons/adinkra';
 import { LocationMap } from '@/components/maps/LocationMap';
+import { LocationLine } from '@/components/maps/LocationLine';
 
 interface CuratedEventPreviewProps {
   event: Record<string, unknown>;
@@ -197,7 +198,13 @@ export function CuratedEventPreview({ event, showBack = true }: CuratedEventPrev
             variant="clock"
             className="block text-sm text-muted-foreground"
           />
-          {cityLine && <p className="text-sm text-muted-foreground">{cityLine}</p>}
+          <LocationLine
+            locationName={place.venue}
+            locationAddress={place.street}
+            locality={place.locality}
+            lat={event.location_lat as number}
+            lng={event.location_lng as number}
+          />
         </div>
       </div>
 

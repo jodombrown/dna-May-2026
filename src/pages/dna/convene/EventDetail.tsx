@@ -65,6 +65,7 @@ import { AddToCalendarButton } from '@/components/convene/AddToCalendarButton';
 // import { EventSpacesSection } from '@/components/collaboration/EventSpacesSection';
 import { EventActivityFeed } from '@/components/events/EventActivityFeed';
 import { LocationMap } from '@/components/maps/LocationMap';
+import { LocationLine } from '@/components/maps/LocationLine';
 import EventThreadCTA from '@/components/convene/EventThreadCTA';
 import { diaEventBus } from '@/services/dia/diaEventBus';
 import { platformNotifications } from '@/services/platformNotificationGenerator';
@@ -821,11 +822,13 @@ const EventDetail = () => {
                         )}
                       </>
                     ) : (
-                      <>
-                        {place.venue && <p className="font-medium">{place.venue}</p>}
-                        {place.street && <p className="text-sm text-muted-foreground">{place.street}</p>}
-                        {place.locality && <p className="text-sm text-muted-foreground">{place.locality}</p>}
-                      </>
+                      <LocationLine
+                        locationName={place.venue}
+                        locationAddress={place.street}
+                        locality={place.locality}
+                        lat={event.location_lat as number}
+                        lng={event.location_lng as number}
+                      />
                     )}
                   </div>
                 </div>
