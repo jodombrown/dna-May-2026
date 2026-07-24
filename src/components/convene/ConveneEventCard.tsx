@@ -67,6 +67,8 @@ export interface ConveneEventCardProps {
   onClick?: () => void;
   showMutualAttendees?: boolean;
   className?: string;
+  /** Distance from the viewer's near-me anchor, e.g. "1.2 km". Shown when set. */
+  distanceLabel?: string;
 }
 
 const getInitials = (name: string) =>
@@ -89,6 +91,7 @@ export function ConveneEventCard({
   onClick,
   showMutualAttendees = true,
   className,
+  distanceLabel,
 }: ConveneEventCardProps) {
   const navigate = useNavigate();
 
@@ -399,6 +402,14 @@ export function ConveneEventCard({
             )}>
               {locationInfo.text}
             </span>
+          </div>
+        )}
+
+        {/* Distance from the viewer's near-me anchor (only in the near-me sort) */}
+        {distanceLabel && (
+          <div className="flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5 text-dna-copper flex-shrink-0" />
+            <span className="text-meta font-medium text-dna-copper">{distanceLabel} away</span>
           </div>
         )}
 

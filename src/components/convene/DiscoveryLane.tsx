@@ -12,7 +12,7 @@ import { CuratedEventCard } from '@/components/convene/CuratedEventCard';
 import { pickEventPlace, type EventPlaceInput } from '@/lib/events/formatPlace';
 import { cn } from '@/lib/utils';
 
-interface DiscoveryEvent extends EventPlaceInput {
+export interface DiscoveryEvent extends EventPlaceInput {
   id: string;
   title: string;
   slug?: string | null;
@@ -48,6 +48,8 @@ interface DiscoveryLaneProps {
   showMutualAttendees?: boolean;
   emptyMessage?: string;
   className?: string;
+  /** eventId → distance label, rendered on the card when present (near-me sort) */
+  distanceLabels?: Record<string, string>;
 }
 
 export function DiscoveryLane({
@@ -58,6 +60,7 @@ export function DiscoveryLane({
   showMutualAttendees = true,
   emptyMessage,
   className,
+  distanceLabels,
 }: DiscoveryLaneProps) {
   if (events.length === 0 && !emptyMessage) return null;
 
@@ -133,6 +136,7 @@ export function DiscoveryLane({
                   variant="full"
                   showOrganizer
                   showMutualAttendees={showMutualAttendees}
+                  distanceLabel={distanceLabels?.[event.id]}
                 />
               )}
             </div>

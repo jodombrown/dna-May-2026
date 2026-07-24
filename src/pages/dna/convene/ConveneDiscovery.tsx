@@ -19,6 +19,7 @@ import { ConveneLocationSelector } from '@/components/convene/ConveneLocationSel
 import { ConveneCitiesSection } from '@/components/convene/ConveneCitiesSection';
 import { ConveneHeroEvent } from '@/components/convene/ConveneHeroEvent';
 import { DiscoveryLane } from '@/components/convene/DiscoveryLane';
+import { NearMeEventsLane } from '@/components/convene/NearMeEventsLane';
 import { HappeningNowSection } from '@/components/convene/HappeningNowSection';
 import { ConveneDIADiscoveryCard } from '@/components/convene/ConveneDIADiscoveryCard';
 import { DIAHubSection } from '@/components/dia/DIAHubSection';
@@ -174,9 +175,10 @@ export function ConveneDiscovery() {
         const weekEnd = new Date();
         weekEnd.setDate(weekEnd.getDate() + 7);
         query = query.lte('start_time', weekEnd.toISOString());
-      } else if (activePill === 'near_me' && userLocation?.city) {
-        query = query.ilike('location_city', userLocation.city);
       }
+      // 'near_me' intentionally applies no server filter here: the loaded
+      // upcoming set is reordered client-side by rpc_events_near (real
+      // distance), not narrowed to a single city string. See NearMeEventsLane.
 
       const { data, error } = await query;
       if (error) return [];
@@ -554,12 +556,16 @@ export function ConveneDiscovery() {
              ═══════════════════════════════════════ */
           <div className="space-y-6">
             <HappeningNowSection />
-            <DiscoveryLane
-              title={`${PILLS.find((p) => p.id === activePill)?.label ?? 'Filtered'} Events`}
-              events={filteredEvents}
-              emptyMessage={`No events found for this filter. Try another or host one!`}
-              onSeeAll={() => navigate('/dna/convene/events')}
-            />
+            {activePill === 'near_me' ? (
+              <NearMeEventsLane events={filteredEvents} />
+            ) : (
+              <DiscoveryLane
+                title={`${PILLS.find((p) => p.id === activePill)?.label ?? 'Filtered'} Events`}
+                events={filteredEvents}
+                emptyMessage={`No events found for this filter. Try another or host one!`}
+                onSeeAll={() => navigate('/dna/convene/events')}
+              />
+            )}
             <ConveneCitiesSection
               cities={cities}
               onCitySelect={(city) => updateFilters({ city })}
