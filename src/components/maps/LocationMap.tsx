@@ -8,6 +8,7 @@ import {
   type MapboxMap,
 } from '@/lib/mapbox/loadMapbox';
 import { tokenColor } from '@/lib/mapbox/tokenColor';
+import { getGoogleMapsUrl, getAppleMapsUrl } from '@/lib/maps/directions';
 import { logger } from '@/lib/logger';
 
 interface LocationMapProps {
@@ -64,26 +65,9 @@ export function LocationMap({
 
   const displayLocation = locality || '';
 
-  // Deep-link builders carried over verbatim from EventLocationMap, including
-  // the search-by-name fallback when coordinates are absent.
-  const getGoogleMapsUrl = () => {
-    if (hasCoordinates) {
-      // Use @lat,lng,zoom format for direct coordinates
-      return `https://www.google.com/maps/@${lat},${lng},17z`;
-    }
-    // Fallback to searching by name
-    const searchQuery = [locationName, locationAddress, locality].filter(Boolean).join(', ');
-    return `https://www.google.com/maps/place/${encodeURIComponent(searchQuery)}`;
-  };
-
-  const getAppleMapsUrl = () => {
-    if (hasCoordinates) {
-      // Use sll (start latitude/longitude) parameter with daddr for directions-compatible link
-      return `https://maps.apple.com/?sll=${lat},${lng}&z=17&q=${encodeURIComponent(locationName || locality || 'Event Location')}`;
-    }
-    const searchQuery = [locationName, locationAddress, locality].filter(Boolean).join(', ');
-    return `https://maps.apple.com/?address=${encodeURIComponent(searchQuery)}`;
-  };
+  // Deep-link builders live in src/lib/maps/directions.ts — one implementation,
+  // shared with LocationLine. The search-by-name fallback lives there too.
+  const directionsInput = { locationName, locationAddress, locality, lat, lng };
 
   const showMap = hasCoordinates && hasVenue && !!token && !mapFailed;
 
@@ -161,7 +145,7 @@ export function LocationMap({
               asChild
             >
               <a
-                href={getGoogleMapsUrl()}
+                href={getGoogleMapsUrl(directionsInput)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -176,7 +160,7 @@ export function LocationMap({
               asChild
             >
               <a
-                href={getAppleMapsUrl()}
+                href={getAppleMapsUrl(directionsInput)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
