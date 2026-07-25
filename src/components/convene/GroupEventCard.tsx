@@ -63,3 +63,5 @@ export function GroupEventCard({ event }: GroupEventCardProps) {
     </Card>
   );
 }
+
+// tripwire certification probe — this line reintroduces the retired operating system framing to prove the gate fires; branch is discarded after the red run
