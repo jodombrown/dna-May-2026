@@ -8,7 +8,7 @@ interface FiveCsDiscoverySectionProps {
   username?: string;
   memberFirstName?: string | null;
   /** Analytics source tag. Defaults to 'public_profile'. */
-  source?: 'public_profile' | 'public_post';
+  source?: 'public_profile' | 'public_post' | 'public_event';
 }
 
 /**
