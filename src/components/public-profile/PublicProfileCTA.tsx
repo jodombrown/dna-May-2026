@@ -39,7 +39,7 @@ export const PublicProfileCTA = ({ firstName, username }: PublicProfileCTAProps)
               asChild
             >
               <Link to="/auth?mode=signup">
-                Join the Waitlist
+                Sign up
               </Link>
             </Button>
             <Button

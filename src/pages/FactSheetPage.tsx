@@ -557,7 +557,7 @@ const FactSheetPage = () => {
                 Join thousands of diasporans building Africa's future
               </p>
               <Button className="w-full" variant="default" onClick={() => openStakeholderDialog('User')}>
-                Join the Waitlist
+                Sign up
               </Button>
             </Card>
 

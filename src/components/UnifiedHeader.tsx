@@ -497,7 +497,7 @@ const UnifiedHeader = () => {
                         onClick={() => navigate('/auth?mode=signup')}
                         className="hidden md:inline-flex bg-dna-emerald text-white hover:bg-dna-forest transition-all duration-200"
                       >
-                        Join the Waitlist
+                        Sign up
                       </Button>
                       <Button
                         variant="outline"
@@ -595,7 +595,7 @@ const UnifiedHeader = () => {
                               className="justify-start text-left bg-dna-emerald hover:bg-dna-forest text-white transition-all duration-200 focus:ring-0 focus:ring-offset-0"
                               onClick={() => navigate('/auth?mode=signup')}
                             >
-                              Join the Waitlist
+                              Sign up
                             </Button>
                             <Button
                               variant="outline"
