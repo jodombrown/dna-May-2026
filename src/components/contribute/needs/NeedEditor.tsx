@@ -158,7 +158,7 @@ export function NeedEditor({ externalOpenSignal }: NeedEditorProps = {}) {
           size="sm"
           className="h-9 shrink-0"
           onClick={openCreate}
-          style={{ background: '#4A8D77', color: 'white' }}
+         
         >
           <Plus className="h-4 w-4 mr-1.5" aria-hidden="true" />
           New Need
@@ -186,7 +186,7 @@ export function NeedEditor({ externalOpenSignal }: NeedEditorProps = {}) {
           <Button
             type="button"
             onClick={openCreate}
-            style={{ background: '#4A8D77', color: 'white' }}
+           
           >
             Declare your first Need
           </Button>

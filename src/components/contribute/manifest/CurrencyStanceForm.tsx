@@ -159,7 +159,7 @@ export function CurrencyStanceForm({
                 className="flex items-center gap-2 px-3 py-3 min-h-[44px] rounded-lg border text-left transition-colors disabled:opacity-50"
                 style={{
                   borderColor: selected ? visual.barHex : undefined,
-                  background: selected ? `${visual.barHex}10` : undefined,
+                  background: selected ? 'hsl(var(--muted))' : undefined,
                 }}
               >
                 <Icon className="h-4 w-4" style={{ color: visual.barHex }} aria-hidden="true" />
@@ -284,8 +284,8 @@ export function CurrencyStanceForm({
               key={opt}
               className="flex items-start gap-2 px-3 py-2.5 min-h-[44px] rounded-lg border cursor-pointer"
               style={{
-                borderColor: values.availability === opt ? '#4A8D77' : undefined,
-                background: values.availability === opt ? '#4A8D7708' : undefined,
+                borderColor: values.availability === opt ? 'hsl(var(--dna-emerald))' : undefined,
+                background: values.availability === opt ? 'hsl(var(--muted))' : undefined,
               }}
             >
               <input
@@ -318,8 +318,8 @@ export function CurrencyStanceForm({
               key={opt}
               className="flex items-start gap-2 px-3 py-2.5 min-h-[44px] rounded-lg border cursor-pointer"
               style={{
-                borderColor: values.visibility === opt ? '#4A8D77' : undefined,
-                background: values.visibility === opt ? '#4A8D7708' : undefined,
+                borderColor: values.visibility === opt ? 'hsl(var(--dna-emerald))' : undefined,
+                background: values.visibility === opt ? 'hsl(var(--muted))' : undefined,
               }}
             >
               <input
@@ -357,7 +357,7 @@ export function CurrencyStanceForm({
           className="flex-1 h-11"
           onClick={handleSubmit}
           disabled={submitting}
-          style={{ background: '#4A8D77', color: 'white' }}
+          style={{ background: 'hsl(var(--dna-emerald))', color: 'white' }}
         >
           {submitting ? 'Saving...' : editing ? 'Save changes' : 'Add stance'}
         </Button>

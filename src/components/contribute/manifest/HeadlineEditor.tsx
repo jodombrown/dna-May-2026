@@ -71,7 +71,7 @@ export function HeadlineEditor({ manifestId, initialValue, onSave }: HeadlineEdi
   return (
     <section
       className="relative pl-5 py-5 pr-4 bg-card rounded-lg border"
-      style={{ borderLeft: '4px solid #2D6A4F' }}
+      style={{ borderLeft: '4px solid hsl(var(--dna-forest))' }}
       aria-labelledby="manifest-headline-label"
     >
       <div className="flex items-baseline justify-between mb-2">

@@ -50,11 +50,11 @@ export function ManifestPublishGate({
           <div className="text-xs text-muted-foreground">
             <span
               className="inline-flex items-center gap-1.5 text-foreground font-medium"
-              style={{ color: '#2D6A4F' }}
+              style={{ color: 'hsl(var(--dna-forest))' }}
             >
               <span
                 className="inline-block h-2 w-2 rounded-full"
-                style={{ background: '#2D6A4F' }}
+                style={{ background: 'hsl(var(--dna-forest))' }}
                 aria-hidden="true"
               />
               Published
@@ -103,7 +103,7 @@ export function ManifestPublishGate({
         className="w-full h-11"
         disabled={!canPublish || busy}
         onClick={() => onPublish()}
-        style={{ background: canPublish ? '#4A8D77' : undefined, color: canPublish ? 'white' : undefined }}
+        
       >
         {busy ? 'Publishing...' : 'Publish Manifest'}
       </Button>

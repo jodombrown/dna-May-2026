@@ -124,7 +124,7 @@ export function CurationDrawer({ open, onOpenChange, curation, subject, onDismis
           type="button"
           onClick={handlePrimary}
           className="h-11 flex-1"
-          style={{ background: '#4A8D77', color: 'white' }}
+         
         >
           {isNeedKind ? 'Offer to help' : 'Reach out'}
         </Button>

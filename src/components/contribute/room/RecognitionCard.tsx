@@ -56,11 +56,11 @@ export function RecognitionCard({ curation, subject, onOpenDrawer, onDismiss }: 
       aria-label={ariaLabel}
       className={cn(
         'overflow-hidden rounded-lg border border-border/70 bg-background',
-        isMutual && 'ring-1 ring-[#2D6A4F]/30',
+        isMutual && 'ring-1 ring-dna-forest/30',
       )}
     >
       {isMutual && (
-        <div aria-hidden className="h-[3px] w-full" style={{ background: '#2D6A4F' }} />
+        <div aria-hidden className="h-[3px] w-full" style={{ background: 'hsl(var(--dna-forest))' }} />
       )}
       <div className={cn('p-4', isTagAffinity && 'opacity-90')}>
         <button
@@ -132,7 +132,7 @@ export function RecognitionCard({ curation, subject, onOpenDrawer, onDismiss }: 
             type="button"
             onClick={handleReachOut}
             className="h-11 flex-1"
-            style={{ background: '#4A8D77', color: 'white' }}
+           
           >
             Reach out
           </Button>

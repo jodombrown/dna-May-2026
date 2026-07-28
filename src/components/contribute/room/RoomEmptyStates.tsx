@@ -36,7 +36,7 @@ export function RoomEmptyStates({
         <p className="text-sm text-foreground/85">
           The room recognizes you through your Manifest. Start there.
         </p>
-        <Button onClick={onOpenManifestEditor} className="h-11" style={{ background: '#4A8D77', color: 'white' }}>
+        <Button onClick={onOpenManifestEditor} className="h-11">
           Open Manifest editor
         </Button>
       </Shell>
@@ -49,7 +49,7 @@ export function RoomEmptyStates({
         <p className="text-sm text-foreground/85">
           Your Manifest isn't visible to the diaspora yet. Publish it so the room can recognize you.
         </p>
-        <Button onClick={() => navigate('/dna/contribute/manifest')} className="h-11" style={{ background: '#4A8D77', color: 'white' }}>
+        <Button onClick={() => navigate('/dna/contribute/manifest')} className="h-11">
           Open Manifest editor
         </Button>
       </Shell>
@@ -62,7 +62,7 @@ export function RoomEmptyStates({
         <p className="text-sm text-foreground/85">
           Add at least one stance so the room knows how you show up.
         </p>
-        <Button onClick={onOpenStanceEditor} className="h-11" style={{ background: '#4A8D77', color: 'white' }}>
+        <Button onClick={onOpenStanceEditor} className="h-11">
           Add a stance
         </Button>
       </Shell>
