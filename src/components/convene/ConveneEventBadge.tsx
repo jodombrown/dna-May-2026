@@ -15,9 +15,9 @@ interface ConveneEventBadgeProps {
 
 const VARIANT_STYLES: Record<EventStatus['variant'], string> = {
   happening:
-    'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 animate-pulse',
+    'bg-dna-success/15 text-dna-success dark:text-dna-success border-dna-success/30 animate-pulse',
   urgent:
-    'bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30',
+    'bg-dna-warning/15 text-dna-warning dark:text-dna-warning border-dna-warning/30',
   info:
     'bg-muted text-muted-foreground border-border',
   neutral:
@@ -37,7 +37,7 @@ export function ConveneEventBadge({ status, className }: ConveneEventBadgeProps)
       )}
     >
       {status.variant === 'happening' && (
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1" />
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-dna-success mr-1" />
       )}
       {status.label}
     </Badge>

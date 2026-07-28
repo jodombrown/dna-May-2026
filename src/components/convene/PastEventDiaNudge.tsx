@@ -74,9 +74,9 @@ export function PastEventDiaNudge({
     <div
       className={cn(
         'relative overflow-hidden rounded-lg border p-4',
-        'bg-gradient-to-r from-teal-50/80 to-emerald-50/80',
-        'dark:from-teal-950/30 dark:to-emerald-950/30',
-        'border-teal-200/60 dark:border-teal-800/40',
+        'bg-gradient-to-r from-dna-dia/80 to-dna-success/80',
+        'dark:from-dna-dia/30 dark:to-dna-success/30',
+        'border-dna-dia/60 dark:border-dna-dia/40',
         className
       )}
     >
@@ -93,8 +93,8 @@ export function PastEventDiaNudge({
       <div className="relative flex items-start gap-3">
         {/* DIA icon */}
         <div className="flex-shrink-0 mt-0.5">
-          <div className="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
-            <Brain className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+          <div className="w-8 h-8 rounded-full bg-dna-dia/10 dark:bg-dna-dia/50 flex items-center justify-center">
+            <Brain className="h-4 w-4 text-dna-dia dark:text-dna-dia" />
           </div>
         </div>
 
@@ -112,7 +112,7 @@ export function PastEventDiaNudge({
           </p>
           <Button
             size="sm"
-            className="h-7 px-3 text-xs bg-teal-600 hover:bg-teal-700 text-white"
+            className="h-7 px-3 text-xs bg-dna-dia hover:bg-dna-dia text-white"
             onClick={handleAction}
           >
             {isStory ? (

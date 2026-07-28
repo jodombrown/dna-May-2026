@@ -168,7 +168,7 @@ export function StickyRSVPBar({
           <p className="text-sm font-semibold">Free</p>
           <p className={cn(
             'text-xs',
-            isNearCapacity || isFull ? 'text-amber-600 font-medium' : 'text-muted-foreground'
+            isNearCapacity || isFull ? 'text-dna-warning font-medium' : 'text-muted-foreground'
           )}>
             {getAvailabilityText()}
           </p>

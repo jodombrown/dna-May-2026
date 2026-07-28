@@ -656,8 +656,8 @@ const EventDetail = () => {
             to everyone but the organizer; without this banner an organizer can
             share a link nobody else can open and never learn why. */}
         {isDraft && isOrganizer && (
-          <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border-2 border-amber-500 bg-amber-500/10 p-4">
-            <p className="flex-1 font-semibold text-amber-700 dark:text-amber-400">
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border-2 border-dna-warning bg-dna-warning/10 p-4">
+            <p className="flex-1 font-semibold text-dna-warning dark:text-dna-warning">
               This event is a draft. Nobody can see it but you.
             </p>
             <Button
@@ -736,7 +736,7 @@ const EventDetail = () => {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {!isCancelled && !isCompleted && (
-                        <DropdownMenuItem onClick={() => setShowCancelDialog(true)} className="text-amber-600 focus:text-amber-600">
+                        <DropdownMenuItem onClick={() => setShowCancelDialog(true)} className="text-dna-warning focus:text-dna-warning">
                           <XCircle className="mr-2 h-4 w-4" /> Cancel Event
                         </DropdownMenuItem>
                       )}

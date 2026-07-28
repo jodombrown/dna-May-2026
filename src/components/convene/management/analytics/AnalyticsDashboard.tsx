@@ -235,8 +235,8 @@ const AnalyticsDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                <UserCheck className="h-5 w-5 text-green-500" />
+              <div className="h-10 w-10 rounded-full bg-dna-success/10 flex items-center justify-center">
+                <UserCheck className="h-5 w-5 text-dna-success" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{analytics?.totalAttended || 0}</p>
@@ -249,8 +249,8 @@ const AnalyticsDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Percent className="h-5 w-5 text-blue-500" />
+              <div className="h-10 w-10 rounded-full bg-dna-info/10 flex items-center justify-center">
+                <Percent className="h-5 w-5 text-dna-info" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{analytics?.attendanceRate || 0}%</p>
@@ -263,8 +263,8 @@ const AnalyticsDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-amber-500" />
+              <div className="h-10 w-10 rounded-full bg-dna-warning/10 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-dna-warning" />
               </div>
               <div>
                 <p className="text-2xl font-bold">
@@ -490,22 +490,22 @@ const AnalyticsDashboard: React.FC = () => {
             {analytics && analytics.totalRegistered > 0 && (
               <>
                 {analytics.attendanceRate >= 80 && (
-                  <div className="flex items-start gap-3 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                    <UserCheck className="h-5 w-5 text-green-600 mt-0.5" />
+                  <div className="flex items-start gap-3 p-3 bg-dna-success/10 dark:bg-dna-success/20 rounded-lg">
+                    <UserCheck className="h-5 w-5 text-dna-success mt-0.5" />
                     <div>
-                      <p className="font-medium text-green-800 dark:text-green-200">Great attendance!</p>
-                      <p className="text-sm text-green-700 dark:text-green-300">
+                      <p className="font-medium text-dna-success dark:text-dna-success">Great attendance!</p>
+                      <p className="text-sm text-dna-success dark:text-dna-success">
                         Your {analytics.attendanceRate}% attendance rate is excellent.
                       </p>
                     </div>
                   </div>
                 )}
                 {analytics.attendanceRate < 50 && analytics.totalAttended > 0 && (
-                  <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
-                    <Clock className="h-5 w-5 text-amber-600 mt-0.5" />
+                  <div className="flex items-start gap-3 p-3 bg-dna-warning/10 dark:bg-dna-warning/20 rounded-lg">
+                    <Clock className="h-5 w-5 text-dna-warning mt-0.5" />
                     <div>
-                      <p className="font-medium text-amber-800 dark:text-amber-200">Room for improvement</p>
-                      <p className="text-sm text-amber-700 dark:text-amber-300">
+                      <p className="font-medium text-dna-warning dark:text-dna-warning">Room for improvement</p>
+                      <p className="text-sm text-dna-warning dark:text-dna-warning">
                         Consider sending reminder emails closer to the event date to improve attendance.
                       </p>
                     </div>
@@ -513,11 +513,11 @@ const AnalyticsDashboard: React.FC = () => {
                 )}
                 {analytics.registrationsBySource.find(s => s.name === 'referral')?.value >
                   analytics.totalRegistered * 0.2 && (
-                  <div className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                    <Share2 className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div className="flex items-start gap-3 p-3 bg-dna-info/10 dark:bg-dna-info/20 rounded-lg">
+                    <Share2 className="h-5 w-5 text-dna-info mt-0.5" />
                     <div>
-                      <p className="font-medium text-blue-800 dark:text-blue-200">Strong referral rate!</p>
-                      <p className="text-sm text-blue-700 dark:text-blue-300">
+                      <p className="font-medium text-dna-info dark:text-dna-info">Strong referral rate!</p>
+                      <p className="text-sm text-dna-info dark:text-dna-info">
                         Over 20% of registrations came from referrals. Your attendees are sharing!
                       </p>
                     </div>

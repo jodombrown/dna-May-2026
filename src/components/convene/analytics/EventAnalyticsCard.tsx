@@ -48,7 +48,7 @@ export const EventAnalyticsCard = ({ analytics, eventTitle }: EventAnalyticsCard
               <UserCheck className="h-4 w-4" />
               <span className="text-sm">Going</span>
             </div>
-            <span className="text-2xl font-bold text-green-600 dark:text-green-400">
+            <span className="text-2xl font-bold text-dna-success dark:text-dna-success">
               {rsvp_stats.going}
             </span>
           </div>
@@ -68,7 +68,7 @@ export const EventAnalyticsCard = ({ analytics, eventTitle }: EventAnalyticsCard
                   <TrendingUp className="h-4 w-4" />
                   <span className="text-sm">Show-up Rate</span>
                 </div>
-                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                <span className="text-2xl font-bold text-dna-info dark:text-dna-info">
                   {checkin_stats.show_up_rate}%
                 </span>
               </div>
@@ -133,7 +133,7 @@ export const EventAnalyticsCard = ({ analytics, eventTitle }: EventAnalyticsCard
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">No-shows:</span>
-                <span className="font-medium text-orange-600 dark:text-orange-400">
+                <span className="font-medium text-dna-copper dark:text-dna-copper">
                   {checkin_stats.going_count - checkin_stats.checked_in}
                 </span>
               </div>

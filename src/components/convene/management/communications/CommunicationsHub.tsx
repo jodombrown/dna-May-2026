@@ -522,13 +522,13 @@ const CommunicationsHub: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               {nonDnaMemberCount > 0 && (
-                <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-900">
-                  <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+                <div className="flex items-start gap-3 p-3 bg-dna-warning/10 dark:bg-dna-warning/20 rounded-lg border border-dna-warning/30 dark:border-dna-warning">
+                  <AlertCircle className="h-5 w-5 text-dna-warning mt-0.5" />
                   <div>
-                    <p className="font-medium text-amber-800 dark:text-amber-200">
+                    <p className="font-medium text-dna-warning dark:text-dna-warning">
                       {nonDnaMemberCount} attendee{nonDnaMemberCount !== 1 ? 's' : ''} won't receive this
                     </p>
-                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                    <p className="text-sm text-dna-warning dark:text-dna-warning">
                       Some attendees are not DNA members and can only receive emails.
                     </p>
                   </div>
