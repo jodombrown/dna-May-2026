@@ -28,23 +28,24 @@ export const FiveCsDiscoveryRow: React.FC<FiveCsDiscoveryRowProps> = ({ onOpen }
     >
       <div className="text-center mb-6">
         <h2 className="text-h3 sm:text-h2 font-display text-foreground mb-1">
-          {"\n"}
+          Explore DNA's Five C's
         </h2>
         <p className="text-sm text-muted-foreground">
-          {"\n"}
+          See how members connect, convene, collaborate, contribute, and convey impact across the diaspora.
         </p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-        {FIVE_CS.map((c) => {
+        {FIVE_CS.map((c, index) => {
           const Icon = ICONS[c.adinkra];
+          const isLastOddMobileCard = index === FIVE_CS.length - 1 && FIVE_CS.length % 2 === 1;
           return (
             <button
               key={c.id}
               type="button"
               onClick={() => onOpen(c.id)}
               aria-label={`Learn more about ${c.name}`}
-              className="group w-full min-h-touch p-4 sm:p-5 flex flex-col items-center text-center gap-2 rounded-xl border border-border bg-card transition-colors hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              className={`group w-full min-h-touch p-4 sm:p-5 flex flex-col items-center text-center gap-2 rounded-xl border border-border bg-card transition-colors hover:border-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isLastOddMobileCard ? 'col-span-2 sm:col-span-1' : ''}`}
               data-analytics-event="five_cs_card_open"
               data-analytics-c-id={c.id}
             >

@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { useMobile } from '@/hooks/useMobile';
-import { UserPlus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Sankofa,
   Nkonsonkonson,
@@ -41,8 +41,8 @@ interface FiveCDetailSheetProps {
 
 /**
  * Right-side sheet on desktop, vaul drawer on mobile. Same content as the
- * fact-sheet screenshots (4-8). Left/right arrows cycle between C's inside
- * the sheet; every CTA lands on /waitlist.
+ * fact-sheet screenshots (4-8). Left/right arrows move between C's inside
+ * the sheet.
  */
 export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOpenChange }) => {
   const navigate = useNavigate();
@@ -51,12 +51,16 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
   const entry: FiveCEntry | undefined = openId
     ? FIVE_CS.find((c) => c.id === openId)
     : undefined;
+  const entryIndex = entry ? FIVE_CS.findIndex((c) => c.id === entry.id) : -1;
+  const hasPrevious = entryIndex > 0;
+  const hasNext = entryIndex >= 0 && entryIndex < FIVE_CS.length - 1;
 
   const cycle = useCallback(
     (delta: 1 | -1) => {
       if (!entry) return;
       const idx = FIVE_CS.findIndex((c) => c.id === entry.id);
-      const next = FIVE_CS[(idx + delta + FIVE_CS.length) % FIVE_CS.length];
+      const next = FIVE_CS[idx + delta];
+      if (!next) return;
       onOpenChange(next.id);
     },
     [entry, onOpenChange],
@@ -73,7 +77,8 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
   }, [entry, cycle]);
 
   const Body = entry ? (
-    <div className="px-6 pb-8 space-y-6 overflow-y-auto">
+    <div className="relative flex min-h-0 flex-1 flex-col">
+      <div className="px-6 pb-8 space-y-6 overflow-y-auto">
       <Section label="Overview">
         <p className="text-sm text-muted-foreground leading-relaxed">{entry.overview}</p>
       </Section>
@@ -114,15 +119,9 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
         </ul>
       </Section>
 
-      <div className="pt-2 flex flex-col sm:flex-row gap-2">
-        <Button
-          onClick={() => navigate('/waitlist')}
-          className="bg-primary hover:bg-primary/90 flex-1"
-        >
-          <UserPlus className="w-4 h-4 mr-2" />
-          Join the Waitlist
-        </Button>
-        <div className="flex gap-2 sm:justify-end">
+      <div className="pt-2 flex items-center justify-between gap-2">
+        <div>
+          {hasPrevious && (
           <Button
             variant="outline"
             size="icon"
@@ -131,6 +130,10 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
+          )}
+        </div>
+        <div>
+          {hasNext && (
           <Button
             variant="outline"
             size="icon"
@@ -139,7 +142,12 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
+          )}
         </div>
+      </div>
+
+      <div className="pointer-events-none sticky bottom-0 flex justify-center bg-gradient-to-t from-background via-background/80 to-transparent py-2">
+        <ChevronDown className="h-5 w-5 animate-bounce text-muted-foreground" aria-hidden="true" />
       </div>
     </div>
   ) : null;
@@ -167,13 +175,13 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
   if (isMobile) {
     return (
       <Drawer open={!!entry} onOpenChange={(o) => !o && onOpenChange(null)}>
-        <DrawerContent className="max-h-[92dvh] p-0">
+        <DrawerContent className="flex max-h-[92dvh] p-0">
           <DrawerHeader className="p-0 text-left">
             {Header}
             <DrawerTitle className="sr-only">{entry?.name}</DrawerTitle>
             <DrawerDescription className="sr-only">{entry?.sheetTagline}</DrawerDescription>
           </DrawerHeader>
-          <div className="pt-4">{Body}</div>
+          <div className="flex min-h-0 flex-1 flex-col pt-4">{Body}</div>
         </DrawerContent>
       </Drawer>
     );
@@ -181,13 +189,13 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
 
   return (
     <Sheet open={!!entry} onOpenChange={(o) => !o && onOpenChange(null)}>
-      <SheetContent side="right" className="w-full sm:max-w-md p-0 overflow-y-auto">
+      <SheetContent side="right" className="flex w-full flex-col p-0 sm:max-w-md">
         <SheetHeader className="p-0 text-left space-y-0">
           {Header}
           <SheetTitle className="sr-only">{entry?.name}</SheetTitle>
           <SheetDescription className="sr-only">{entry?.sheetTagline}</SheetDescription>
         </SheetHeader>
-        <div className="pt-4">{Body}</div>
+        <div className="flex min-h-0 flex-1 flex-col pt-4">{Body}</div>
       </SheetContent>
     </Sheet>
   );

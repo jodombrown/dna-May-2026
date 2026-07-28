@@ -10,13 +10,38 @@
  */
 
 import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { PublicPostView, PublicPostNotFound } from '@/components/posts/PublicPostView';
+import { isUUID } from '@/utils/slugify';
+
+type PublicPostRpcRow = NonNullable<Awaited<ReturnType<typeof fetchPublicPost>>>;
+
+const fetchPublicPost = async (postId: string) => {
+  const { data, error } = await supabase.rpc('get_public_post', {
+    p_slug_or_id: postId,
+  });
+  if (error) throw error;
+  const row = data?.[0];
+  if (!row) throw new Error('Post not found');
+  return {
+    ...row,
+    author: row.author_name
+      ? {
+          username: row.author_username,
+          full_name: row.author_name,
+          avatar_url: row.author_avatar_url,
+        }
+      : null,
+  };
+};
 
 const PublicPostPage = () => {
   const { postId } = useParams<{ postId: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const isLoggedIn = !!user;
@@ -26,31 +51,14 @@ const PublicPostPage = () => {
   // here on that raw param (mirrors get_public_event's slug-or-UUID contract).
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['public-post', postId],
-    queryFn: async () => {
-      // Single SECURITY DEFINER projection: resolves slug-or-UUID, enforces
-      // privacy_level = 'public' and is_deleted = false, and returns the
-      // engagement counts and a flat author_* byline in one round trip.
-      // profiles has no anon SELECT policy, so direct table reads here would
-      // silently return an empty byline (BD244/D089).
-      const { data, error } = await supabase.rpc('get_public_post' as any, {
-        p_slug_or_id: postId!,
-      });
-      if (error) throw error;
-      const row = data?.[0];
-      if (!row) throw new Error('Post not found');
-      return {
-        ...row,
-        author: row.author_name
-          ? {
-              username: row.author_username,
-              full_name: row.author_name,
-              avatar_url: row.author_avatar_url,
-            }
-          : null,
-      };
-    },
+    queryFn: () => fetchPublicPost(postId!),
     enabled: !!postId,
   });
+
+  useEffect(() => {
+    if (!postId || !post?.slug || !isUUID(postId)) return;
+    navigate(`/post/${post.slug}`, { replace: true });
+  }, [navigate, post?.slug, postId]);
 
   if (isLoading) {
     return (
@@ -64,7 +72,7 @@ const PublicPostPage = () => {
     return <PublicPostNotFound isLoggedIn={isLoggedIn} />;
   }
 
-  return <PublicPostView post={post} postId={postId!} isLoggedIn={isLoggedIn} />;
+  return <PublicPostView post={post as PublicPostRpcRow} postId={post.slug || postId!} isLoggedIn={isLoggedIn} />;
 };
 
 export default PublicPostPage;
