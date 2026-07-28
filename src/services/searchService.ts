@@ -1,5 +1,45 @@
 import { supabase } from '@/integrations/supabase/client';
 
+type QueryResult<T> = { data: T | null; error: Error | null };
+interface QueryBuilder<T> extends PromiseLike<QueryResult<T[]>> {
+  select(columns: string): QueryBuilder<T>;
+  or(filter: string): QueryBuilder<T>;
+  eq(column: string, value: unknown): QueryBuilder<T>;
+  in(column: string, values: readonly unknown[]): QueryBuilder<T>;
+  limit(count: number): QueryBuilder<T>;
+}
+
+interface UntypedSupabase {
+  from<T>(table: string): QueryBuilder<T>;
+}
+
+interface CommunityRow {
+  id: string;
+  name: string;
+  description: string | null;
+  category: string | null;
+  image_url: string | null;
+  member_count: number | null;
+  created_at: string | null;
+}
+
+interface CommunityPostRow {
+  id: string;
+  title: string | null;
+  content: string | null;
+  created_at: string | null;
+  post_type: string | null;
+  author_id: string | null;
+  community_id: string | null;
+}
+
+interface CommunityNameRow {
+  id: string;
+  name: string | null;
+}
+
+const untypedSupabase = supabase as unknown as UntypedSupabase;
+
 // Metadata types for different search result types
 export interface ProfileMetadata {
   location?: string | null;
@@ -178,8 +218,8 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
 
   // Search communities
   if (!filters?.types.length || filters.types.includes('community')) {
-    const { data: communities, error: communitiesError } = await supabase
-      .from('communities')
+    const { data: communities, error: communitiesError } = await untypedSupabase
+      .from<CommunityRow>('communities')
       .select('id, name, description, category, image_url, member_count, created_at')
       .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},category.ilike.${searchTerm}`)
       .eq('is_active', true)
@@ -231,8 +271,8 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
 
   // Search posts
   if (!filters?.types.length || filters.types.includes('post')) {
-    const { data: posts, error: postsError } = await supabase
-      .from('community_posts')
+    const { data: posts, error: postsError } = await untypedSupabase
+      .from<CommunityPostRow>('community_posts')
       .select('id, title, content, created_at, post_type, author_id, community_id')
       .or(`title.ilike.${searchTerm},content.ilike.${searchTerm}`)
       .limit(10);
@@ -247,8 +287,8 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
           .from('profiles')
           .select('id, full_name, display_name')
           .in('id', authorIds),
-        supabase
-          .from('communities')
+        untypedSupabase
+          .from<CommunityNameRow>('communities')
           .select('id, name')
           .in('id', communityIds)
       ]);
