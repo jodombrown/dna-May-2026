@@ -17,8 +17,8 @@ interface NeedCardProps {
 }
 
 const STATUS_TONE_CLASS: Record<string, string> = {
-  live: 'bg-success-subtle text-success-foreground border-success/30',
-  progress: 'bg-warning-subtle text-warning-foreground border-warning/30',
+  live: 'bg-dna-success/10 text-dna-success border-dna-success/30',
+  progress: 'bg-dna-warning/10 text-dna-warning border-dna-warning/30',
   done: 'bg-muted text-muted-foreground border-border',
   idle: 'bg-muted/60 text-muted-foreground border-border',
   closed: 'bg-muted/40 text-muted-foreground border-border',
