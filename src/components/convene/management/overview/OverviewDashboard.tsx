@@ -230,8 +230,8 @@ const OverviewDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center">
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <div className="h-10 w-10 rounded-full bg-dna-success/10 flex items-center justify-center">
+                <CheckCircle2 className="h-5 w-5 text-dna-success" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Checked In</p>
@@ -253,8 +253,8 @@ const OverviewDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-blue-500" />
+              <div className="h-10 w-10 rounded-full bg-dna-info/10 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-dna-info" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">This Week</p>
@@ -271,8 +271,8 @@ const OverviewDashboard: React.FC = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-amber-500" />
+              <div className="h-10 w-10 rounded-full bg-dna-warning/10 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-dna-warning" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Event Status</p>

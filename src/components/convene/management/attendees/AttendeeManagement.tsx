@@ -384,19 +384,19 @@ const AttendeeManagement: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-2xl font-bold text-green-600">{stats.going}</p>
+            <p className="text-2xl font-bold text-dna-success">{stats.going}</p>
             <p className="text-sm text-muted-foreground">Confirmed</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
+            <p className="text-2xl font-bold text-dna-warning">{stats.pending}</p>
             <p className="text-sm text-muted-foreground">Pending</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-4">
-            <p className="text-2xl font-bold text-blue-600">{stats.checkedIn}</p>
+            <p className="text-2xl font-bold text-dna-info">{stats.checkedIn}</p>
             <p className="text-sm text-muted-foreground">Checked In</p>
           </CardContent>
         </Card>
@@ -494,7 +494,7 @@ const AttendeeManagement: React.FC = () => {
               {filteredAttendees.map((attendee) => (
                 <div
                   key={attendee.id}
-                  className={`p-4 ${attendee.checked_in ? 'bg-green-50 dark:bg-green-950/20' : ''}`}
+                  className={`p-4 ${attendee.checked_in ? 'bg-dna-success/10 dark:bg-dna-success/20' : ''}`}
                 >
                   <div className="flex items-start gap-3">
                     <Checkbox
@@ -517,7 +517,7 @@ const AttendeeManagement: React.FC = () => {
                       <div className="flex items-center gap-2 mt-1">
                         {getStatusBadge(attendee.status)}
                         {attendee.checked_in && (
-                          <Badge variant="outline" className="text-green-600">
+                          <Badge variant="outline" className="text-dna-success">
                             <CheckCircle2 className="h-3 w-3 mr-1" />
                             Checked In
                           </Badge>
@@ -569,7 +569,7 @@ const AttendeeManagement: React.FC = () => {
                 {filteredAttendees.map((attendee) => (
                   <TableRow
                     key={attendee.id}
-                    className={attendee.checked_in ? 'bg-green-50/50 dark:bg-green-950/10' : ''}
+                    className={attendee.checked_in ? 'bg-dna-success/50 dark:bg-dna-success/10' : ''}
                   >
                     <TableCell>
                       <Checkbox
@@ -598,7 +598,7 @@ const AttendeeManagement: React.FC = () => {
                     <TableCell>{getStatusBadge(attendee.status)}</TableCell>
                     <TableCell>
                       {attendee.checked_in ? (
-                        <div className="flex items-center text-green-600">
+                        <div className="flex items-center text-dna-success">
                           <CheckCircle2 className="h-4 w-4 mr-1" />
                           Yes
                         </div>
@@ -770,7 +770,7 @@ const AttendeeManagement: React.FC = () => {
                   <p className="text-muted-foreground">Checked In</p>
                   <p className="mt-1 font-medium">
                     {selectedAttendee.checked_in ? (
-                      <span className="text-green-600">Yes</span>
+                      <span className="text-dna-success">Yes</span>
                     ) : (
                       'No'
                     )}

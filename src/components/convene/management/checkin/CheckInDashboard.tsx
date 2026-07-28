@@ -515,10 +515,10 @@ const CheckInDashboard: React.FC = () => {
                   <div
                     className={cn(
                       'absolute inset-0 flex flex-col items-center justify-center rounded-lg transition-colors',
-                      scanResult.state === 'processing' && 'bg-blue-500/80',
-                      scanResult.state === 'success' && 'bg-green-500/80',
-                      scanResult.state === 'already_checked_in' && 'bg-amber-500/80',
-                      scanResult.state === 'error' && 'bg-red-500/80'
+                      scanResult.state === 'processing' && 'bg-dna-info/80',
+                      scanResult.state === 'success' && 'bg-dna-success/80',
+                      scanResult.state === 'already_checked_in' && 'bg-dna-warning/80',
+                      scanResult.state === 'error' && 'bg-destructive/80'
                     )}
                   >
                     {scanResult.state === 'processing' && (
@@ -598,13 +598,13 @@ const CheckInDashboard: React.FC = () => {
                       className={cn(
                         'flex items-center justify-between p-3 rounded-lg border',
                         attendee.checked_in
-                          ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900'
+                          ? 'bg-dna-success/10 dark:bg-dna-success/20 border-dna-success/30 dark:border-dna-success'
                           : 'bg-background'
                       )}
                     >
                       <div className="flex items-center gap-3">
                         {attendee.checked_in ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                          <CheckCircle2 className="h-5 w-5 text-dna-success flex-shrink-0" />
                         ) : (
                           <div className="h-5 w-5 rounded-full border-2 border-muted-foreground flex-shrink-0" />
                         )}
@@ -689,7 +689,7 @@ const CheckInDashboard: React.FC = () => {
                       {formatDistanceToNow(new Date(checkIn.checked_in_at), { addSuffix: true })}
                     </p>
                   </div>
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <CheckCircle2 className="h-4 w-4 text-dna-success" />
                 </div>
               ))}
             </div>

@@ -346,13 +346,13 @@ const EventCheckIn = () => {
                         key={attendee.id}
                         className={`flex items-center justify-between p-3 rounded-lg border ${
                           attendee.checked_in
-                            ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900'
+                            ? 'bg-dna-success/10 dark:bg-dna-success/20 border-dna-success/30 dark:border-dna-success'
                             : 'bg-background'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           {attendee.checked_in ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-600" />
+                            <CheckCircle2 className="h-5 w-5 text-dna-success" />
                           ) : (
                             <Circle className="h-5 w-5 text-muted-foreground" />
                           )}

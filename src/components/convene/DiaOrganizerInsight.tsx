@@ -65,29 +65,28 @@ export function DiaOrganizerInsight({
     <div
       className={cn(
         'relative overflow-hidden rounded-lg border p-4',
-        'bg-gradient-to-r from-teal-50/80 to-emerald-50/80',
-        'dark:from-teal-950/30 dark:to-emerald-950/30',
-        'border-teal-200/60 dark:border-teal-800/40',
+        'bg-dna-dia/5',
+        'border-dna-dia/30',
         className,
       )}
     >
       <div className="relative flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
-          <div className="w-8 h-8 rounded-full bg-teal-100 dark:bg-teal-900/50 flex items-center justify-center">
-            <Brain className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+          <div className="w-8 h-8 rounded-full bg-dna-dia/10 flex items-center justify-center">
+            <Brain className="h-4 w-4 text-dna-dia" />
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-dna-dia">
               DIA
             </span>
           </div>
           <p className="text-sm text-foreground mb-3">{insight.message}</p>
           <Button
             size="sm"
-            className="h-7 px-3 text-xs bg-teal-600 hover:bg-teal-700 text-white"
+            className="h-7 px-3 text-xs bg-dna-dia hover:bg-dna-dia/90 text-primary-foreground"
             onClick={() => navigate(insight.ctaPath)}
           >
             {insight.ctaLabel}

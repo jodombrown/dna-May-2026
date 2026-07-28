@@ -15,9 +15,9 @@ interface OrganizerAlertsCardProps {
 }
 
 const SEVERITY_BORDER: Record<AlertSeverity, string> = {
-  critical: '#8B2635',
-  warning: '#D4A84B',
-  info: '#4A8D77',
+  critical: 'hsl(var(--dna-error))',
+  warning: 'hsl(var(--dna-warning))',
+  info: 'hsl(var(--dna-success))',
 };
 
 const SEVERITY_LABEL: Record<AlertSeverity, string> = {
