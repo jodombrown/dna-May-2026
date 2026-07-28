@@ -120,7 +120,7 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
           className="bg-primary hover:bg-primary/90 flex-1"
         >
           <UserPlus className="w-4 h-4 mr-2" />
-          Join the Waitlist
+          Sign up
         </Button>
         <div className="flex gap-2 sm:justify-end">
           <Button

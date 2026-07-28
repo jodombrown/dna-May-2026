@@ -175,31 +175,6 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
     }
   }
 
-  // Search communities
-  if (!filters?.types.length || filters.types.includes('community')) {
-    const { data: communities, error: communitiesError } = await supabase
-      .from('communities')
-      .select('id, name, description, category, image_url, member_count, created_at')
-      .or(`name.ilike.${searchTerm},description.ilike.${searchTerm},category.ilike.${searchTerm}`)
-      .eq('is_active', true)
-      .limit(10);
-
-    if (!communitiesError && communities) {
-      results.push(...communities.map(community => ({
-        id: community.id,
-        type: 'community' as const,
-        title: community.name,
-        description: community.description || `${community.category} community`,
-        image_url: community.image_url,
-        created_at: community.created_at,
-        metadata: {
-          category: community.category,
-          member_count: community.member_count
-        }
-      })));
-    }
-  }
-
   // Search events
   if (!filters?.types.length || filters.types.includes('event')) {
     const { data: events, error: eventsError } = await supabase
@@ -225,53 +200,6 @@ export const searchContent = async (query: string, filters?: SearchFilters): Pro
           event_type: event.event_type
         }
       })));
-    }
-  }
-
-  // Search posts
-  if (!filters?.types.length || filters.types.includes('post')) {
-    const { data: posts, error: postsError } = await supabase
-      .from('community_posts')
-      .select('id, title, content, created_at, post_type, author_id, community_id')
-      .or(`title.ilike.${searchTerm},content.ilike.${searchTerm}`)
-      .limit(10);
-
-    if (!postsError && posts) {
-      // Get author and community details separately
-      const authorIds = [...new Set(posts.map(post => post.author_id))];
-      const communityIds = [...new Set(posts.map(post => post.community_id))];
-
-      const [authorsResult, communitiesResult] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('id, full_name, display_name')
-          .in('id', authorIds),
-        supabase
-          .from('communities')
-          .select('id, name')
-          .in('id', communityIds)
-      ]);
-
-      const authors = authorsResult.data || [];
-      const communities = communitiesResult.data || [];
-
-      results.push(...posts.map(post => {
-        const author = authors.find(a => a.id === post.author_id);
-        const community = communities.find(c => c.id === post.community_id);
-        
-        return {
-          id: post.id,
-          type: 'post' as const,
-          title: post.title || 'Community Post',
-          description: post.content?.substring(0, 150) + (post.content?.length > 150 ? '...' : ''),
-          created_at: post.created_at,
-          metadata: {
-            post_type: post.post_type,
-            author: author?.display_name || author?.full_name,
-            community: community?.name
-          }
-        };
-      }));
     }
   }
 

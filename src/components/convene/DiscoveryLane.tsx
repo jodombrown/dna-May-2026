@@ -148,7 +148,6 @@ export function DiscoveryLane({
                     } : undefined,
                     event_attendees: event.event_attendees,
                   }}
-                  variant="full"
                   showOrganizer
                   showMutualAttendees={showMutualAttendees}
                   distanceLabel={distanceLabels?.[event.id]}

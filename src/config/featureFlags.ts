@@ -38,13 +38,13 @@ export const FEATURE_FLAGS: FeatureFlags = {
 export const MESSAGING_ENABLED = false;
 
 /**
- * Waitlist mode. When true:
- *   - All "Join Now" CTAs render as "Join the Waitlist"
- *   - The /auth signup tab redirects to /waitlist
+ * Waitlist mode. When true the /auth signup tab redirects to /waitlist.
  *
- * To restore Join Now:
- *   1. Set WAITLIST_MODE = false below
- *   2. Run: git grep -l "Join the Waitlist" src | xargs sed -i '' 's/Join the Waitlist/Join Now/g'
- *      (or the reverse of the sed used to swap them in)
+ * Currently false: signup is open and public CTAs read "Sign up".
+ *
+ * To re-close signup:
+ *   1. Set WAITLIST_MODE = true below
+ *   2. Run: git grep -l "Sign up" src | xargs sed -i '' 's/>Sign up</>Join the Waitlist</g'
+ *      (review each hit, the /auth page copy should stay "Sign up")
  */
-export const WAITLIST_MODE = true;
+export const WAITLIST_MODE = false;

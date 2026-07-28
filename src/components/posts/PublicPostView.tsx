@@ -82,7 +82,7 @@ export const PublicPostNotFound = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           </Button>
           {!isLoggedIn && (
             <Button variant="outline" onClick={() => navigate('/auth?mode=signup')}>
-              Join the Waitlist
+              Sign up
             </Button>
           )}
         </div>
@@ -302,7 +302,7 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
                       <span className="truncate">Like, comment, and reply on DNA</span>
                     </div>
                     <Button size="sm" variant="outline" className="shrink-0 h-8 text-meta" asChild>
-                      <Link to="/auth?mode=signup">Join the Waitlist</Link>
+                      <Link to="/auth?mode=signup">Sign up</Link>
                     </Button>
                   </div>
                 )}
