@@ -27,7 +27,7 @@ const PILLAR_CONTENT: Record<PillarKey, PillarContent> = {
     title: 'Connect',
     tagline: 'Build relationships that move Africa forward.',
     Icon: Sankofa,
-    accentBg: 'bg-gradient-to-br from-dna-forest to-dna-emerald',
+    accentBg: 'bg-gradient-to-br from-[hsl(var(--module-connect))] to-[hsl(var(--module-connect-dark))]',
     overview:
       'Connect is the professional networking layer of DNA. It is built to LinkedIn-class standards but designed specifically for the 200M+ Global African Diaspora, continental Africans, and allies who share a commitment to Africa\'s transformation. Every connection is verified, intentional, and purpose-driven.',
     capabilities: [
@@ -51,7 +51,7 @@ const PILLAR_CONTENT: Record<PillarKey, PillarContent> = {
     title: 'Convene',
     tagline: 'Gather the diaspora, online and on the ground.',
     Icon: Nkonsonkonson,
-    accentBg: 'bg-gradient-to-br from-dna-emerald to-dna-copper',
+    accentBg: 'bg-gradient-to-br from-[hsl(var(--module-convene))] to-[hsl(var(--module-convene-dark))]',
     overview:
       'Convene is DNA\'s event platform. It matches Luma and Eventbrite for hosting, ticketing, and check-in, but it is purpose-built for diaspora gatherings - cultural moments, professional summits, investor briefings, and local meetups across every time zone the diaspora lives in.',
     capabilities: [
@@ -75,7 +75,7 @@ const PILLAR_CONTENT: Record<PillarKey, PillarContent> = {
     title: 'Collaborate',
     tagline: 'Turn ideas into funded, accountable ventures.',
     Icon: FuntunfunefuDenkyemfunefu,
-    accentBg: 'bg-gradient-to-br from-dna-copper to-dna-gold',
+    accentBg: 'bg-gradient-to-br from-[hsl(var(--module-collaborate))] to-[hsl(var(--module-collaborate-dark))]',
     overview:
       'Collaborate is the project management layer where diaspora ideas become real work. Think Asana fused with accountability architecture: structured spaces, defined roles, milestone-based progress, and transparent contribution tracking so equity, recognition, and revenue share are never ambiguous.',
     capabilities: [
@@ -99,7 +99,7 @@ const PILLAR_CONTENT: Record<PillarKey, PillarContent> = {
     title: 'Contribute',
     tagline: 'Multi-dimensional giving, not just dollars.',
     Icon: Adinkrahene,
-    accentBg: 'bg-gradient-to-br from-dna-gold to-dna-ochre',
+    accentBg: 'bg-gradient-to-br from-[hsl(var(--module-contribute))] to-[hsl(var(--module-contribute-dark))]',
     overview:
       'Contribute is the diaspora marketplace, but the unit of exchange is wider than money. Members post needs and offers across capital, time, network introductions, knowledge, and physical resources, and the platform coordinates the match end to end.',
     capabilities: [
@@ -123,7 +123,7 @@ const PILLAR_CONTENT: Record<PillarKey, PillarContent> = {
     title: 'Convey',
     tagline: 'Publish the story of the diaspora, in your voice.',
     Icon: Mpatapo,
-    accentBg: 'bg-gradient-to-br from-dna-ochre to-dna-forest',
+    accentBg: 'bg-gradient-to-br from-[hsl(var(--module-convey))] to-[hsl(var(--module-convey-dark))]',
     overview:
       'Convey is the publishing and storytelling layer - Medium and Substack quality, native to DNA. Members share stories, essays, photo journals, audio notes, and updates that reach a built-in audience of people who care about Africa and the diaspora.',
     capabilities: [

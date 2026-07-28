@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -45,6 +45,7 @@ interface FiveCDetailSheetProps {
  */
 export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOpenChange }) => {
   const { isMobile } = useMobile();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const entry: FiveCEntry | undefined = openId
     ? FIVE_CS.find((c) => c.id === openId)
@@ -74,9 +75,15 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
     return () => window.removeEventListener('keydown', handler);
   }, [entry, cycle]);
 
+  useEffect(() => {
+    if (!openId) return;
+    const el = scrollRef.current;
+    if (el) el.scrollTop = 0;
+  }, [openId]);
+
   const Body = entry ? (
     <div className="relative flex min-h-0 flex-1 flex-col">
-      <div className="px-6 pb-8 space-y-6 overflow-y-auto">
+      <div ref={scrollRef} className="px-6 pb-8 space-y-6 overflow-y-auto">
         <Section label="Overview">
           <p className="text-sm text-muted-foreground leading-relaxed">{entry.overview}</p>
         </Section>
@@ -153,12 +160,18 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
 
   const Header = entry ? (
     <div
-      className="px-6 py-5"
+      className="relative px-6 pb-5 pt-5"
       style={{
-        background: `linear-gradient(135deg, ${entry.colorToken} 0%, ${entry.colorToken} 60%, hsl(var(--muted)) 140%)`,
+        background: `linear-gradient(135deg, ${entry.colorToken} 0%, ${entry.colorToken.replace('))', '-dark))')} 100%)`,
       }}
     >
-      <div className="flex items-center gap-3 text-primary-foreground">
+      {isMobile && (
+        <div
+          vaul-drawer-handle=""
+          className="absolute left-1/2 top-2 h-1.5 w-[68px] -translate-x-1/2 rounded-full bg-primary-foreground/50"
+        />
+      )}
+      <div className={`flex items-center gap-3 text-primary-foreground${isMobile ? ' mt-3' : ''}`}>
         <div className="w-10 h-10 rounded-md bg-background/20 flex items-center justify-center">
           {(() => {
             const Icon = ICONS[entry.adinkra];
@@ -174,7 +187,7 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
   if (isMobile) {
     return (
       <Drawer open={!!entry} onOpenChange={(o) => !o && onOpenChange(null)}>
-        <DrawerContent className="flex max-h-[92dvh] p-0">
+        <DrawerContent hideHandle className="flex max-h-[92dvh] overflow-hidden rounded-t-[10px] p-0">
           <DrawerHeader className="p-0 text-left">
             {Header}
             <DrawerTitle className="sr-only">{entry?.name}</DrawerTitle>
@@ -188,7 +201,7 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
 
   return (
     <Sheet open={!!entry} onOpenChange={(o) => !o && onOpenChange(null)}>
-      <SheetContent side="right" className="flex w-full flex-col p-0 sm:max-w-md">
+      <SheetContent side="right" className="flex w-full flex-col overflow-hidden p-0 sm:max-w-md">
         <SheetHeader className="p-0 text-left space-y-0">
           {Header}
           <SheetTitle className="sr-only">{entry?.name}</SheetTitle>
