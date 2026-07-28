@@ -25,11 +25,10 @@ import Footer from '@/components/Footer';
 import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 
 interface PublicPostAuthor {
-  id: string;
   username: string | null;
   full_name: string | null;
   avatar_url: string | null;
-  headline: string | null;
+  headline?: string | null;
 }
 
 export interface PublicPostViewPost {
@@ -42,6 +41,7 @@ export interface PublicPostViewPost {
   created_at: string;
   updated_at: string | null;
   edited_at?: string | null;
+  slug?: string | null;
   author: PublicPostAuthor | null;
   likes_count: number;
   comments_count: number;
@@ -53,6 +53,12 @@ interface PublicPostViewProps {
   postId: string;
   isLoggedIn: boolean;
 }
+
+const getThumbnailUrl = (metadata: unknown): string | undefined => {
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return undefined;
+  const value = (metadata as Record<string, unknown>).thumbnail_url;
+  return typeof value === 'string' ? value : undefined;
+};
 
 const getInitials = (name: string) => {
   return name
@@ -97,7 +103,7 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = async () => {
-    const url = `${window.location.origin}/post/${postId}`;
+    const url = `${window.location.origin}/post/${post.slug || postId}`;
     await navigator.clipboard.writeText(url);
     setCopied(true);
     toast({
@@ -108,7 +114,7 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
   };
 
   const handleNativeShare = async () => {
-    const url = `${window.location.origin}/post/${postId}`;
+    const url = `${window.location.origin}/post/${post.slug || postId}`;
     const title = post?.author?.full_name
       ? `Post by ${post.author.full_name} on DNA`
       : 'Post on DNA';
@@ -145,7 +151,8 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
   const contentPreview = rawContent.length >= 50
     ? (rawContent.length > 160 ? rawContent.slice(0, 157).trimEnd() + '...' : rawContent)
     : `Read this post by ${authorName} on DNA, the mobilization infrastructure for the Global African Diaspora's return.`;
-  const postUrl = `${SITE_URL}/post/${postId}`;
+  const canonicalPostId = post.slug || postId;
+  const postUrl = `${SITE_URL}/post/${canonicalPostId}`;
   const ogImage = post.image_url || post.author?.avatar_url || `${SITE_URL}/og-image.png`;
   const absoluteOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
   const postTitle = `${authorName} on DNA | Diaspora Network of Africa`;
@@ -267,7 +274,7 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
                       url: post.link_url,
                       title: post.link_title || undefined,
                       description: post.link_description || undefined,
-                      thumbnail_url: (post.link_metadata as any)?.thumbnail_url || undefined,
+                      thumbnail_url: getThumbnailUrl(post.link_metadata),
                     }}
                   />
                 </div>
@@ -301,9 +308,6 @@ export const PublicPostView = ({ post, postId, isLoggedIn }: PublicPostViewProps
                       <Heart className="w-4 h-4 shrink-0" />
                       <span className="truncate">Like, comment, and reply on DNA</span>
                     </div>
-                    <Button size="sm" variant="outline" className="shrink-0 h-8 text-meta" asChild>
-                      <Link to="/auth?mode=signup">Join the Waitlist</Link>
-                    </Button>
                   </div>
                 )}
 
