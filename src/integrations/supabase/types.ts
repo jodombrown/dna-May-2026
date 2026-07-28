@@ -13554,6 +13554,13 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_own_location: {
+        Args: never
+        Returns: {
+          current_lat: number
+          current_lng: number
+        }[]
+      }
       get_own_profile: {
         Args: never
         Returns: {
