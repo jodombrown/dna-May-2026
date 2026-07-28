@@ -45,13 +45,16 @@ export function useNearMeEvents<T extends { id: string }>(
     queryKey: ['near-me-declared', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data } = await supabase
-        .from('profiles')
-        .select('current_lat, current_lng')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (!data || data.current_lat == null || data.current_lng == null) return null;
-      return { lat: data.current_lat, lng: data.current_lng };
+      // Precise coordinates are owner-only at the database layer; the
+      // get_own_location definer projection is the only read path.
+      const { data, error } = await supabase.rpc('get_own_location');
+      if (error) {
+        console.error('near-me declared anchor failed', error);
+        return null;
+      }
+      const row = data?.[0];
+      if (!row || row.current_lat == null || row.current_lng == null) return null;
+      return { lat: row.current_lat, lng: row.current_lng };
     },
     enabled: enabled && !!user?.id,
     staleTime: 300_000,
