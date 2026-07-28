@@ -36,7 +36,7 @@ export const FIVE_CS: FiveCEntry[] = [
     cardTagline: 'Forge powerful bonds across the global African diaspora.',
     sheetTagline: 'Build relationships that move Africa forward.',
     adinkra: 'sankofa',
-    colorToken: 'hsl(var(--dna-emerald))',
+    colorToken: 'hsl(var(--module-connect))',
     overview:
       'Connect is the professional networking layer of DNA. It is built to LinkedIn-class standards but designed specifically for the 200M+ Global African Diaspora, continental Africans, and allies who share a commitment to Africa\'s transformation. Every connection is verified, intentional, and purpose-driven.',
     whatYouCanDo: [
@@ -62,7 +62,7 @@ export const FIVE_CS: FiveCEntry[] = [
     cardTagline: 'Gather for meaningful events and cultural celebrations.',
     sheetTagline: 'Gather the diaspora, online and on the ground.',
     adinkra: 'nkonsonkonson',
-    colorToken: 'hsl(var(--dna-copper))',
+    colorToken: 'hsl(var(--module-convene))',
     overview:
       'Convene is DNA\'s event platform. It matches Luma and Eventbrite for hosting, ticketing, and check-in, but it is purpose-built for diaspora gatherings - cultural moments, professional summits, investor briefings, and local meetups across every time zone the diaspora lives in.',
     whatYouCanDo: [
@@ -88,7 +88,7 @@ export const FIVE_CS: FiveCEntry[] = [
     cardTagline: 'Transform shared vision into action through partnerships.',
     sheetTagline: 'Turn ideas into funded, accountable ventures.',
     adinkra: 'funtunfunefu',
-    colorToken: 'hsl(var(--dna-gold))',
+    colorToken: 'hsl(var(--module-collaborate))',
     overview:
       'Collaborate is the project management layer where diaspora ideas become real work. Think Asana fused with accountability architecture: structured spaces, defined roles, milestone-based progress, and transparent contribution tracking so equity, recognition, and revenue share are never ambiguous.',
     whatYouCanDo: [
@@ -114,7 +114,7 @@ export const FIVE_CS: FiveCEntry[] = [
     cardTagline: "Step into your role in Africa's future with tangible impact.",
     sheetTagline: 'Multi-dimensional giving, not just dollars.',
     adinkra: 'adinkrahene',
-    colorToken: 'hsl(var(--dna-copper))',
+    colorToken: 'hsl(var(--module-contribute))',
     overview:
       'Contribute is the diaspora marketplace, but the unit of exchange is wider than money. Members post needs and offers across capital, time, network introductions, knowledge, and physical resources, and the platform coordinates the match end to end.',
     whatYouCanDo: [
@@ -140,7 +140,7 @@ export const FIVE_CS: FiveCEntry[] = [
     cardTagline: 'Share stories and amplify diaspora voices across platforms.',
     sheetTagline: 'Publish the story of the diaspora, in your voice.',
     adinkra: 'mpatapo',
-    colorToken: 'hsl(var(--dna-gold))',
+    colorToken: 'hsl(var(--module-convey))',
     overview:
       'Convey is the publishing and storytelling layer - Medium and Substack quality, native to DNA. Members share stories, essays, photo journals, audio notes, and updates that reach a built-in audience of people who care about Africa and the diaspora.',
     whatYouCanDo: [
