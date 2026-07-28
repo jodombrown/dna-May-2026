@@ -65,15 +65,14 @@ export function DiaOrganizerInsight({
     <div
       className={cn(
         'relative overflow-hidden rounded-lg border p-4',
-        'bg-gradient-to-r from-dna-dia/80 to-dna-success/80',
-        'dark:from-dna-dia/30 dark:to-dna-success/30',
-        'border-dna-dia/60 dark:border-dna-dia/40',
+        'bg-dna-dia/5',
+        'border-dna-dia/30',
         className,
       )}
     >
       <div className="relative flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
-          <div className="w-8 h-8 rounded-full bg-dna-dia/10 dark:bg-dna-dia/50 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-dna-dia/10 flex items-center justify-center">
             <Brain className="h-4 w-4 text-dna-dia" />
           </div>
         </div>
@@ -87,7 +86,7 @@ export function DiaOrganizerInsight({
           <p className="text-sm text-foreground mb-3">{insight.message}</p>
           <Button
             size="sm"
-            className="h-7 px-3 text-xs bg-dna-dia hover:bg-dna-dia text-white"
+            className="h-7 px-3 text-xs bg-dna-dia hover:bg-dna-dia/90 text-primary-foreground"
             onClick={() => navigate(insight.ctaPath)}
           >
             {insight.ctaLabel}
