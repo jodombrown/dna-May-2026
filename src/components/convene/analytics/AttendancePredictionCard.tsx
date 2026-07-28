@@ -21,7 +21,7 @@ export const AttendancePredictionCard = ({ input }: AttendancePredictionCardProp
   const forecast = predictAttendance(input);
 
   return (
-    <Card className="border-l-4" style={{ borderLeftColor: '#4A8D77' }}>
+    <Card className="border-l-4 border-l-dna-emerald">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">

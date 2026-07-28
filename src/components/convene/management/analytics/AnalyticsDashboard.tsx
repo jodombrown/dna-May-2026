@@ -33,7 +33,14 @@ import {
   Legend,
 } from 'recharts';
 
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088fe', '#00c49f'];
+const COLORS = [
+  'hsl(var(--module-convene))',
+  'hsl(var(--dna-emerald))',
+  'hsl(var(--dna-copper))',
+  'hsl(var(--dna-forest))',
+  'hsl(var(--dna-gold-dark))',
+  'hsl(var(--dna-emerald-light))',
+];
 
 interface AnalyticsData {
   totalRegistered: number;
@@ -340,7 +347,7 @@ const AnalyticsDashboard: React.FC = () => {
                       type="monotone"
                       dataKey="cumulative"
                       name="Cumulative"
-                      stroke="#82ca9d"
+                      stroke="hsl(var(--module-convene))"
                       fill="transparent"
                       strokeWidth={2}
                     />
@@ -372,7 +379,7 @@ const AnalyticsDashboard: React.FC = () => {
                       cy="50%"
                       labelLine={false}
                       outerRadius={80}
-                      fill="#8884d8"
+                      fill="hsl(var(--module-convene))"
                       dataKey="value"
                       label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                     >
@@ -415,7 +422,7 @@ const AnalyticsDashboard: React.FC = () => {
                       cy="50%"
                       labelLine={false}
                       outerRadius={80}
-                      fill="#8884d8"
+                      fill="hsl(var(--module-convene))"
                       dataKey="value"
                       label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                     >
