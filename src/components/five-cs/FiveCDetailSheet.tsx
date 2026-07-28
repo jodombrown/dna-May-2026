@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Sheet,
   SheetContent,
@@ -45,7 +44,6 @@ interface FiveCDetailSheetProps {
  * the sheet.
  */
 export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOpenChange }) => {
-  const navigate = useNavigate();
   const { isMobile } = useMobile();
 
   const entry: FiveCEntry | undefined = openId
@@ -79,70 +77,71 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
   const Body = entry ? (
     <div className="relative flex min-h-0 flex-1 flex-col">
       <div className="px-6 pb-8 space-y-6 overflow-y-auto">
-      <Section label="Overview">
-        <p className="text-sm text-muted-foreground leading-relaxed">{entry.overview}</p>
-      </Section>
+        <Section label="Overview">
+          <p className="text-sm text-muted-foreground leading-relaxed">{entry.overview}</p>
+        </Section>
 
-      <Section label="What You Can Do">
-        <ul className="space-y-2">
-          {entry.whatYouCanDo.map((item, i) => (
-            <li key={i} className="flex gap-2 text-sm text-muted-foreground leading-relaxed">
-              <span
-                className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: entry.colorToken }}
-              />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      </Section>
+        <Section label="What You Can Do">
+          <ul className="space-y-2">
+            {entry.whatYouCanDo.map((item, i) => (
+              <li key={i} className="flex gap-2 text-sm text-muted-foreground leading-relaxed">
+                <span
+                  className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: entry.colorToken }}
+                />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </Section>
 
-      <Section label="Who It Is For">
-        <p className="text-sm text-muted-foreground leading-relaxed">{entry.whoItIsFor}</p>
-      </Section>
+        <Section label="Who It Is For">
+          <p className="text-sm text-muted-foreground leading-relaxed">{entry.whoItIsFor}</p>
+        </Section>
 
-      <Section label="How It Connects To The Other C's">
-        <p className="text-sm text-muted-foreground leading-relaxed">{entry.howItConnects}</p>
-      </Section>
+        <Section label="How It Connects To The Other C's">
+          <p className="text-sm text-muted-foreground leading-relaxed">{entry.howItConnects}</p>
+        </Section>
 
-      <Section label="What Is Coming">
-        <ul className="space-y-2">
-          {entry.whatIsComing.map((item, i) => (
-            <li key={i} className="flex gap-2 text-sm text-muted-foreground leading-relaxed">
-              <span
-                className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{ backgroundColor: entry.colorToken }}
-              />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      </Section>
+        <Section label="What Is Coming">
+          <ul className="space-y-2">
+            {entry.whatIsComing.map((item, i) => (
+              <li key={i} className="flex gap-2 text-sm text-muted-foreground leading-relaxed">
+                <span
+                  className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: entry.colorToken }}
+                />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </Section>
 
-      <div className="pt-2 flex items-center justify-between gap-2">
-        <div>
-          {hasPrevious && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => cycle(-1)}
-            aria-label="Previous C"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          )}
-        </div>
-        <div>
-          {hasNext && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => cycle(1)}
-            aria-label="Next C"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-          )}
+        <div className="pt-2 flex items-center justify-between gap-2">
+          <div>
+            {hasPrevious && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => cycle(-1)}
+                aria-label="Previous C"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+          <div>
+            {hasNext && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => cycle(1)}
+                aria-label="Next C"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
