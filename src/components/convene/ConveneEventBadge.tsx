@@ -15,9 +15,9 @@ interface ConveneEventBadgeProps {
 
 const VARIANT_STYLES: Record<EventStatus['variant'], string> = {
   happening:
-    'bg-dna-success/15 text-dna-success dark:text-dna-success border-dna-success/30 animate-pulse',
+    'bg-dna-success/15 text-dna-success border-dna-success/30 animate-pulse',
   urgent:
-    'bg-dna-warning/15 text-dna-warning dark:text-dna-warning border-dna-warning/30',
+    'bg-dna-warning/15 text-dna-warning border-dna-warning/30',
   info:
     'bg-muted text-muted-foreground border-border',
   neutral:

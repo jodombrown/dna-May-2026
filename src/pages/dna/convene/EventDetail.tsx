@@ -657,7 +657,7 @@ const EventDetail = () => {
             share a link nobody else can open and never learn why. */}
         {isDraft && isOrganizer && (
           <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 rounded-lg border-2 border-dna-warning bg-dna-warning/10 p-4">
-            <p className="flex-1 font-semibold text-dna-warning dark:text-dna-warning">
+            <p className="flex-1 font-semibold text-dna-warning">
               This event is a draft. Nobody can see it but you.
             </p>
             <Button

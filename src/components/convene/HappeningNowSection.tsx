@@ -126,7 +126,7 @@ export function HappeningNowSection() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="w-full mt-3 text-xs border-dna-success/30 hover:bg-dna-success/10 hover:text-dna-success dark:hover:text-dna-success"
+                  className="w-full mt-3 text-xs border-dna-success/30 hover:bg-dna-success/10 hover:text-dna-success"
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`/dna/convene/events/${(event.slug as string) || (event.id as string)}`);

@@ -493,8 +493,8 @@ const AnalyticsDashboard: React.FC = () => {
                   <div className="flex items-start gap-3 p-3 bg-dna-success/10 dark:bg-dna-success/20 rounded-lg">
                     <UserCheck className="h-5 w-5 text-dna-success mt-0.5" />
                     <div>
-                      <p className="font-medium text-dna-success dark:text-dna-success">Great attendance!</p>
-                      <p className="text-sm text-dna-success dark:text-dna-success">
+                      <p className="font-medium text-dna-success">Great attendance!</p>
+                      <p className="text-sm text-dna-success">
                         Your {analytics.attendanceRate}% attendance rate is excellent.
                       </p>
                     </div>
@@ -504,8 +504,8 @@ const AnalyticsDashboard: React.FC = () => {
                   <div className="flex items-start gap-3 p-3 bg-dna-warning/10 dark:bg-dna-warning/20 rounded-lg">
                     <Clock className="h-5 w-5 text-dna-warning mt-0.5" />
                     <div>
-                      <p className="font-medium text-dna-warning dark:text-dna-warning">Room for improvement</p>
-                      <p className="text-sm text-dna-warning dark:text-dna-warning">
+                      <p className="font-medium text-dna-warning">Room for improvement</p>
+                      <p className="text-sm text-dna-warning">
                         Consider sending reminder emails closer to the event date to improve attendance.
                       </p>
                     </div>
@@ -516,8 +516,8 @@ const AnalyticsDashboard: React.FC = () => {
                   <div className="flex items-start gap-3 p-3 bg-dna-info/10 dark:bg-dna-info/20 rounded-lg">
                     <Share2 className="h-5 w-5 text-dna-info mt-0.5" />
                     <div>
-                      <p className="font-medium text-dna-info dark:text-dna-info">Strong referral rate!</p>
-                      <p className="text-sm text-dna-info dark:text-dna-info">
+                      <p className="font-medium text-dna-info">Strong referral rate!</p>
+                      <p className="text-sm text-dna-info">
                         Over 20% of registrations came from referrals. Your attendees are sharing!
                       </p>
                     </div>

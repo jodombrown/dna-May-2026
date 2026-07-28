@@ -304,7 +304,7 @@ const MyEvents = () => {
                           <h2 className="text-lg font-bold">Drafts</h2>
                           <Badge
                             variant="outline"
-                            className="rounded-full bg-dna-warning/15 text-dna-warning dark:text-dna-warning border-dna-warning/30 font-semibold"
+                            className="rounded-full bg-dna-warning/15 text-dna-warning border-dna-warning/30 font-semibold"
                           >
                             {draftHosting.length}
                           </Badge>

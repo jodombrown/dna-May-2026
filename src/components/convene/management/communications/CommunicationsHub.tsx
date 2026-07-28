@@ -525,10 +525,10 @@ const CommunicationsHub: React.FC = () => {
                 <div className="flex items-start gap-3 p-3 bg-dna-warning/10 dark:bg-dna-warning/20 rounded-lg border border-dna-warning/30 dark:border-dna-warning">
                   <AlertCircle className="h-5 w-5 text-dna-warning mt-0.5" />
                   <div>
-                    <p className="font-medium text-dna-warning dark:text-dna-warning">
+                    <p className="font-medium text-dna-warning">
                       {nonDnaMemberCount} attendee{nonDnaMemberCount !== 1 ? 's' : ''} won't receive this
                     </p>
-                    <p className="text-sm text-dna-warning dark:text-dna-warning">
+                    <p className="text-sm text-dna-warning">
                       Some attendees are not DNA members and can only receive emails.
                     </p>
                   </div>

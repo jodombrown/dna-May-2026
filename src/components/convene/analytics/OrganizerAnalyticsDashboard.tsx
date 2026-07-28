@@ -62,7 +62,7 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-dna-info dark:text-dna-info">
+            <div className="text-3xl font-bold text-dna-info">
               {avg_show_up_rate}%
             </div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -79,7 +79,7 @@ export const OrganizerAnalyticsDashboard = ({ analytics }: OrganizerAnalyticsDas
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-dna-success dark:text-dna-success">
+            <div className="text-3xl font-bold text-dna-success">
               {events_hosted.upcoming}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
@@ -226,7 +226,7 @@ const EventListTable = ({ events, forecastShowUpRate }: EventListTableProps) => 
                 </TableCell>
                 <TableCell className="text-right">
                   {isPast ? (
-                    <span className={event.show_up_rate >= 70 ? 'text-dna-success dark:text-dna-success font-medium' : ''}>
+                    <span className={event.show_up_rate >= 70 ? 'text-dna-success font-medium' : ''}>
                       {event.show_up_rate}%
                     </span>
                   ) : (

@@ -94,7 +94,7 @@ export function PastEventDiaNudge({
         {/* DIA icon */}
         <div className="flex-shrink-0 mt-0.5">
           <div className="w-8 h-8 rounded-full bg-dna-dia/10 dark:bg-dna-dia/50 flex items-center justify-center">
-            <Brain className="h-4 w-4 text-dna-dia dark:text-dna-dia" />
+            <Brain className="h-4 w-4 text-dna-dia" />
           </div>
         </div>
 

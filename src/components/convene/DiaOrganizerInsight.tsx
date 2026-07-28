@@ -74,13 +74,13 @@ export function DiaOrganizerInsight({
       <div className="relative flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
           <div className="w-8 h-8 rounded-full bg-dna-dia/10 dark:bg-dna-dia/50 flex items-center justify-center">
-            <Brain className="h-4 w-4 text-dna-dia dark:text-dna-dia" />
+            <Brain className="h-4 w-4 text-dna-dia" />
           </div>
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-dna-dia dark:text-dna-dia">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-dna-dia">
               DIA
             </span>
           </div>
