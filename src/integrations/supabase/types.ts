@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      _bd279_p4b_archive: {
+        Row: {
+          archived_at: string | null
+          original_acl: string | null
+          original_def: string | null
+          proname: unknown
+          sig: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          original_acl?: string | null
+          original_def?: string | null
+          proname?: unknown
+          sig?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          original_acl?: string | null
+          original_def?: string | null
+          proname?: unknown
+          sig?: string | null
+        }
+        Relationships: []
+      }
+      _bd280_p1a_archive: {
+        Row: {
+          captured_at: string
+          definition: string
+          object_kind: string
+          object_name: string
+        }
+        Insert: {
+          captured_at?: string
+          definition: string
+          object_kind: string
+          object_name: string
+        }
+        Update: {
+          captured_at?: string
+          definition?: string
+          object_kind?: string
+          object_name?: string
+        }
+        Relationships: []
+      }
       activity_events: {
         Row: {
           created_at: string
@@ -149,6 +194,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      affirmations_archive_d090: {
+        Row: {
+          affirmed_at: string | null
+          archived_at: string | null
+          attested_at: string | null
+          created_at: string | null
+          id: string | null
+          profile_id: string | null
+          role_at_affirm:
+            | Database["public"]["Enums"]["dna_identity_role"]
+            | null
+          statement: string | null
+          witness_id: string | null
+        }
+        Insert: {
+          affirmed_at?: string | null
+          archived_at?: string | null
+          attested_at?: string | null
+          created_at?: string | null
+          id?: string | null
+          profile_id?: string | null
+          role_at_affirm?:
+            | Database["public"]["Enums"]["dna_identity_role"]
+            | null
+          statement?: string | null
+          witness_id?: string | null
+        }
+        Update: {
+          affirmed_at?: string | null
+          archived_at?: string | null
+          attested_at?: string | null
+          created_at?: string | null
+          id?: string | null
+          profile_id?: string | null
+          role_at_affirm?:
+            | Database["public"]["Enums"]["dna_identity_role"]
+            | null
+          statement?: string | null
+          witness_id?: string | null
+        }
+        Relationships: []
       }
       alpha_feedback: {
         Row: {
@@ -532,295 +619,6 @@ export type Database = {
             columns: ["comment_id"]
             isOneToOne: false
             referencedRelation: "post_comments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      communities: {
-        Row: {
-          category: string | null
-          cover_image_url: string | null
-          created_at: string
-          created_by: string
-          description: string | null
-          id: string
-          image_url: string | null
-          is_active: boolean
-          is_featured: boolean | null
-          member_count: number | null
-          moderated_at: string | null
-          moderated_by: string | null
-          moderation_status: string | null
-          moderator_notes: string | null
-          name: string
-          purpose_goals: string | null
-          rejection_reason: string | null
-          tags: string[] | null
-          updated_at: string
-        }
-        Insert: {
-          category?: string | null
-          cover_image_url?: string | null
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          is_featured?: boolean | null
-          member_count?: number | null
-          moderated_at?: string | null
-          moderated_by?: string | null
-          moderation_status?: string | null
-          moderator_notes?: string | null
-          name: string
-          purpose_goals?: string | null
-          rejection_reason?: string | null
-          tags?: string[] | null
-          updated_at?: string
-        }
-        Update: {
-          category?: string | null
-          cover_image_url?: string | null
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          is_featured?: boolean | null
-          member_count?: number | null
-          moderated_at?: string | null
-          moderated_by?: string | null
-          moderation_status?: string | null
-          moderator_notes?: string | null
-          name?: string
-          purpose_goals?: string | null
-          rejection_reason?: string | null
-          tags?: string[] | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "communities_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      community_event_attendees: {
-        Row: {
-          event_id: string
-          id: string
-          registered_at: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          event_id: string
-          id?: string
-          registered_at?: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          event_id?: string
-          id?: string
-          registered_at?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_event_attendees_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "community_events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      community_events: {
-        Row: {
-          community_id: string
-          created_at: string
-          created_by: string
-          description: string | null
-          end_date: string | null
-          event_date: string
-          id: string
-          image_url: string | null
-          is_virtual: boolean | null
-          location: string | null
-          max_attendees: number | null
-          registration_required: boolean | null
-          registration_url: string | null
-          status: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          community_id: string
-          created_at?: string
-          created_by: string
-          description?: string | null
-          end_date?: string | null
-          event_date: string
-          id?: string
-          image_url?: string | null
-          is_virtual?: boolean | null
-          location?: string | null
-          max_attendees?: number | null
-          registration_required?: boolean | null
-          registration_url?: string | null
-          status?: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          community_id?: string
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          end_date?: string | null
-          event_date?: string
-          id?: string
-          image_url?: string | null
-          is_virtual?: boolean | null
-          location?: string | null
-          max_attendees?: number | null
-          registration_required?: boolean | null
-          registration_url?: string | null
-          status?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_events_community_id_fkey"
-            columns: ["community_id"]
-            isOneToOne: false
-            referencedRelation: "communities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      community_memberships: {
-        Row: {
-          approved_at: string | null
-          approved_by: string | null
-          community_id: string
-          id: string
-          joined_at: string
-          requested_at: string | null
-          role: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          approved_at?: string | null
-          approved_by?: string | null
-          community_id: string
-          id?: string
-          joined_at?: string
-          requested_at?: string | null
-          role?: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          approved_at?: string | null
-          approved_by?: string | null
-          community_id?: string
-          id?: string
-          joined_at?: string
-          requested_at?: string | null
-          role?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_memberships_community_id_fkey"
-            columns: ["community_id"]
-            isOneToOne: false
-            referencedRelation: "communities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      community_posts: {
-        Row: {
-          author_id: string
-          community_id: string
-          content: string
-          created_at: string
-          event_date: string | null
-          event_location: string | null
-          id: string
-          is_pinned: boolean | null
-          media_url: string | null
-          post_type: string
-          title: string | null
-          updated_at: string
-        }
-        Insert: {
-          author_id: string
-          community_id: string
-          content: string
-          created_at?: string
-          event_date?: string | null
-          event_location?: string | null
-          id?: string
-          is_pinned?: boolean | null
-          media_url?: string | null
-          post_type?: string
-          title?: string | null
-          updated_at?: string
-        }
-        Update: {
-          author_id?: string
-          community_id?: string
-          content?: string
-          created_at?: string
-          event_date?: string | null
-          event_location?: string | null
-          id?: string
-          is_pinned?: boolean | null
-          media_url?: string | null
-          post_type?: string
-          title?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_posts_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "mv_profile_footprint_counts"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "community_posts_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "community_posts_author_id_fkey"
-            columns: ["author_id"]
-            isOneToOne: false
-            referencedRelation: "public_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "community_posts_community_id_fkey"
-            columns: ["community_id"]
-            isOneToOne: false
-            referencedRelation: "communities"
             referencedColumns: ["id"]
           },
         ]
@@ -10537,6 +10335,48 @@ export type Database = {
         }
         Relationships: []
       }
+      security_baseline_anon_relations: {
+        Row: {
+          disposition: string
+          relname: string
+          ruled_at: string | null
+          ruled_by: string | null
+          seeded_at: string
+        }
+        Insert: {
+          disposition?: string
+          relname: string
+          ruled_at?: string | null
+          ruled_by?: string | null
+          seeded_at?: string
+        }
+        Update: {
+          disposition?: string
+          relname?: string
+          ruled_at?: string | null
+          ruled_by?: string | null
+          seeded_at?: string
+        }
+        Relationships: []
+      }
+      security_baseline_authenticated_reads: {
+        Row: {
+          attname: string
+          relname: string
+          seeded_at: string
+        }
+        Insert: {
+          attname: string
+          relname: string
+          seeded_at?: string
+        }
+        Update: {
+          attname?: string
+          relname?: string
+          seeded_at?: string
+        }
+        Relationships: []
+      }
       skill_analytics: {
         Row: {
           action_type: string
@@ -12363,6 +12203,19 @@ export type Database = {
       }
     }
     Functions: {
+      _inv1_policy_name_drift: {
+        Args: never
+        Returns: {
+          h: string
+        }[]
+      }
+      _inv9_authenticated_read_drift: {
+        Args: never
+        Returns: {
+          gained: string
+          lost: string
+        }[]
+      }
       _log_contrib_fixed: {
         Args: {
           _description: string
@@ -12632,6 +12485,10 @@ export type Database = {
         Args: { admin_user_id: string; target_user_id: string }
         Returns: boolean
       }
+      all_participants_connected: {
+        Args: { _creator: string; _participants: string[] }
+        Returns: boolean
+      }
       approve_beta_application: {
         Args: { admin_id: string; application_id: string }
         Returns: {
@@ -12718,6 +12575,16 @@ export type Database = {
           p_window_seconds: number
         }
         Returns: boolean
+      }
+      check_security_invariants: {
+        Args: never
+        Returns: {
+          detail: string
+          invariant: string
+          scope: string
+          status: string
+          violations: number
+        }[]
       }
       check_user_reshared: {
         Args: { p_post_id: string; p_user_id: string }
@@ -13704,6 +13571,42 @@ export type Database = {
             Args: { p_days_back: number; p_organizer_id: string }
             Returns: Json
           }
+      get_own_contact_settings: {
+        Args: never
+        Returns: {
+          contact_number_visibility: string
+          email_visible: boolean
+          preferred_contact_method: string
+        }[]
+      }
+      get_own_heritage: {
+        Args: never
+        Returns: {
+          created_at: string
+          diaspora_networks: string[]
+          ethnic_heritage: string[]
+          heritage_notes: string | null
+          id: string
+          is_primary: boolean
+          origin_country: string
+          profile_id: string
+          source_archive_ref: string | null
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "member_heritage"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      get_own_location: {
+        Args: never
+        Returns: {
+          current_lat: number
+          current_lng: number
+        }[]
+      }
       get_own_profile: {
         Args: never
         Returns: {
@@ -13922,6 +13825,16 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_own_profile_contact: {
+        Args: never
+        Returns: {
+          email: string
+          id: string
+          phone: string
+          phone_number: string
+          whatsapp_number: string
+        }[]
+      }
       get_pending_hashtag_requests: {
         Args: { p_owner_id: string }
         Returns: {
@@ -14109,7 +14022,35 @@ export type Database = {
           visibility: string
         }[]
       }
+      get_public_post: {
+        Args: { p_slug_or_id: string }
+        Returns: {
+          author_avatar_url: string
+          author_name: string
+          author_username: string
+          comments_count: number
+          content: string
+          created_at: string
+          edited_at: string
+          event_id: string
+          gallery_urls: string[]
+          id: string
+          image_url: string
+          likes_count: number
+          link_description: string
+          link_metadata: Json
+          link_title: string
+          link_url: string
+          post_type: string
+          slug: string
+          space_id: string
+          subtitle: string
+          title: string
+          updated_at: string
+        }[]
+      }
       get_public_profile: { Args: { p_username: string }; Returns: Json }
+      get_public_profile_by_id: { Args: { p_user_id: string }; Returns: Json }
       get_public_profiles: {
         Args: { p_limit?: number; p_user_id?: string }
         Returns: {
@@ -14635,6 +14576,7 @@ export type Database = {
         Args: { p_conversation_id: string; p_user_id: string }
         Returns: boolean
       }
+      is_event_organizer: { Args: { p_event_id: string }; Returns: boolean }
       is_event_owner: {
         Args: { p_event: string; p_user: string }
         Returns: boolean
@@ -15059,6 +15001,18 @@ export type Database = {
       rpc_event_waitlist_promote: {
         Args: { p_event: string; p_user?: string }
         Returns: string
+      }
+      rpc_events_near: {
+        Args: {
+          p_lat: number
+          p_limit?: number
+          p_lng: number
+          p_radius_m?: number
+        }
+        Returns: {
+          distance_m: number
+          event_id: string
+        }[]
       }
       rpc_get_profile_bundle: {
         Args: { p_username: string; p_viewer_id?: string }
