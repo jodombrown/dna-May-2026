@@ -229,17 +229,17 @@ export function NotifyMeModal({
           )}
 
           {/* Notification Preferences */}
-          <div className="space-y-3 pt-4 border-t border-neutral-100">
-            <p className="text-sm font-medium text-neutral-700">How should we notify you?</p>
+          <div className="space-y-3 pt-4 border-t border-border">
+            <p className="text-sm font-medium text-foreground">How should we notify you?</p>
 
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={notifyByEmail}
                 onChange={(e) => setNotifyByEmail(e.target.checked)}
-                className="w-4 h-4 rounded border-neutral-300 text-dna-emerald focus:ring-dna-emerald"
+                className="w-4 h-4 rounded border-border text-dna-emerald focus:ring-dna-emerald"
               />
-              <span className="text-sm text-neutral-600">Email notifications</span>
+              <span className="text-sm text-muted-foreground">Email notifications</span>
             </label>
 
             <label className="flex items-center gap-3 cursor-pointer">
@@ -247,9 +247,9 @@ export function NotifyMeModal({
                 type="checkbox"
                 checked={notifyByDia}
                 onChange={(e) => setNotifyByDia(e.target.checked)}
-                className="w-4 h-4 rounded border-neutral-300 text-dna-emerald focus:ring-dna-emerald"
+                className="w-4 h-4 rounded border-border text-dna-emerald focus:ring-dna-emerald"
               />
-              <span className="text-sm text-neutral-600">In-app notifications from DIA</span>
+              <span className="text-sm text-muted-foreground">In-app notifications from DIA</span>
             </label>
           </div>
 

@@ -62,7 +62,7 @@ export function ManifestRenderer({ targetUserId, viewerUserId }: ManifestRendere
       {manifest.headline && (
         <blockquote
           className="relative pl-5 py-2 text-xl md:text-2xl leading-snug font-serif text-foreground/90"
-          style={{ borderLeft: '4px solid #2D6A4F' }}
+          style={{ borderLeft: '4px solid hsl(var(--dna-forest))' }}
         >
           <span aria-hidden="true" className="absolute -left-1 -top-2 text-3xl text-muted-foreground/30">"</span>
           {manifest.headline}

@@ -23,7 +23,7 @@ export function EarlyContentPreview({ items, hub }: EarlyContentPreviewProps) {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-neutral-500 text-center mb-4">
+      <p className="text-sm text-muted-foreground text-center mb-4">
         Be among the first to explore
       </p>
       <div className="grid grid-cols-2 gap-3">
@@ -31,10 +31,10 @@ export function EarlyContentPreview({ items, hub }: EarlyContentPreviewProps) {
           <Link
             key={item.id}
             to={item.href}
-            className="block bg-white rounded-lg border border-neutral-200 overflow-hidden hover:border-dna-emerald transition-colors"
+            className="block bg-card rounded-lg border border-border overflow-hidden hover:border-dna-emerald transition-colors"
           >
             {item.image && (
-              <div className="aspect-video bg-neutral-100">
+              <div className="aspect-video bg-muted">
                 <img
                   src={item.image}
                   alt={item.title}
@@ -43,11 +43,11 @@ export function EarlyContentPreview({ items, hub }: EarlyContentPreviewProps) {
               </div>
             )}
             <div className="p-3">
-              <h4 className="font-medium text-sm text-neutral-900 line-clamp-2">
+              <h4 className="font-medium text-sm text-foreground line-clamp-2">
                 {item.title}
               </h4>
               {item.subtitle && (
-                <p className="text-xs text-neutral-500 mt-1">{item.subtitle}</p>
+                <p className="text-xs text-muted-foreground mt-1">{item.subtitle}</p>
               )}
               {item.date && (
                 <p className="text-xs text-dna-emerald mt-1">

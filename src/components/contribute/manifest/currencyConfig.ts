@@ -8,9 +8,9 @@ import type {
 export interface CurrencyVisual {
   key: ContributionCurrency;
   label: string;
-  /** Hex used for the 4px left bar, icons, and other non-text graphical elements. */
+  /** Token color used for the 4px left bar, icons, and other non-text graphical elements. */
   barHex: string;
-  /** Hex used wherever the currency name renders as text. AA-compliant on white. */
+  /** Token color used wherever the currency name renders as text. AA-compliant on white. */
   labelHex: string;
   icon: LucideIcon;
   placeholderTitle: string;
@@ -19,20 +19,20 @@ export interface CurrencyVisual {
 }
 
 /**
- * Single source of truth for currency presentation. Color values stay in hex
- * here (rendered as inline style on a 4px bar / icon) so each currency reads
- * with equal visual weight without polluting the shared design tokens.
+ * Single source of truth for currency presentation. Colors resolve from the
+ * DNA design tokens at runtime (rendered as inline style on a 4px bar / icon)
+ * so each currency reads with equal visual weight and stays themeable.
  *
  * `barHex` vs `labelHex`: the bar is graphical (no contrast minimum), while
- * label text must clear WCAG AA (4.5:1) on white. Expertise Emerald (#4A8D77)
- * is 3.8:1 on white, so its label uses Forest (#2D6A4F, 7.4:1) instead.
+ * label text must clear WCAG AA (4.5:1) on the cream ground. Emerald is
+ * 3.8:1 there, so Expertise labels use Forest instead.
  */
 export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   expertise: {
     key: 'expertise',
     label: 'Expertise',
-    barHex: '#4A8D77',
-    labelHex: '#2D6A4F', // Darker for AA contrast on white
+    barHex: 'hsl(var(--dna-emerald))',
+    labelHex: 'hsl(var(--dna-forest))', // Darker for AA contrast
     icon: BookOpen,
     placeholderTitle: 'e.g., FDA regulatory strategy for biotech',
     shortBlurb: 'Knowledge depth you offer to others.',
@@ -41,8 +41,8 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   network: {
     key: 'network',
     label: 'Network',
-    barHex: '#2D6A4F',
-    labelHex: '#2D6A4F',
+    barHex: 'hsl(var(--dna-forest))',
+    labelHex: 'hsl(var(--dna-forest))',
     icon: Users,
     placeholderTitle: 'e.g., Warm intros to East African agritech investors',
     shortBlurb: 'Doors you can open.',
@@ -51,8 +51,8 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   resources: {
     key: 'resources',
     label: 'Resources',
-    barHex: '#B87333',
-    labelHex: '#B87333',
+    barHex: 'hsl(var(--dna-copper))',
+    labelHex: 'hsl(var(--dna-copper))',
     icon: Package,
     placeholderTitle: 'e.g., Office space in Accra for visiting founders',
     shortBlurb: 'Tangible things you can share.',
@@ -61,8 +61,8 @@ export const CURRENCY_VISUALS: Record<ContributionCurrency, CurrencyVisual> = {
   capital: {
     key: 'capital',
     label: 'Capital',
-    barHex: '#A6884B',
-    labelHex: '#A6884B',
+    barHex: 'hsl(var(--dna-gold-dark))',
+    labelHex: 'hsl(var(--dna-gold-dark))',
     icon: Coins,
     placeholderTitle: '',
     shortBlurb: 'Coming after the trust ladder is built.',

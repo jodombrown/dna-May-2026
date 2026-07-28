@@ -39,20 +39,19 @@ export function useNearMeEvents<T extends { id: string }>(
 ): NearMeEvents<T> {
   const { user } = useAuth();
 
-  // Declared anchor: the profile's own current coordinate, read-only. This is
-  // the projection the fallback chain reads when device geolocation is denied.
+  // Declared anchor: the member's own coordinate, read through an owner-only
+  // security-definer lookup. Precise location is not readable off the profile
+  // row by other members, so this is the only path to it.
   const declaredQuery = useQuery({
     queryKey: ['near-me-declared', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data } = await supabase
-        .from('profiles')
-        .select('current_lat, current_lng')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (!data || data.current_lat == null || data.current_lng == null) return null;
-      return { lat: data.current_lat, lng: data.current_lng };
+      const { data } = await supabase.rpc('get_own_location');
+      const row = Array.isArray(data) ? data[0] : null;
+      if (!row || row.current_lat == null || row.current_lng == null) return null;
+      return { lat: row.current_lat, lng: row.current_lng };
     },
+
     enabled: enabled && !!user?.id,
     staleTime: 300_000,
   });

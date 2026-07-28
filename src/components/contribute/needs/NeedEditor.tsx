@@ -158,7 +158,7 @@ export function NeedEditor({ externalOpenSignal }: NeedEditorProps = {}) {
           size="sm"
           className="h-9 shrink-0"
           onClick={openCreate}
-          style={{ background: '#4A8D77', color: 'white' }}
+         
         >
           <Plus className="h-4 w-4 mr-1.5" aria-hidden="true" />
           New Need
@@ -166,12 +166,12 @@ export function NeedEditor({ externalOpenSignal }: NeedEditorProps = {}) {
       </header>
 
       {showSoftWarn && (
-        <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+        <div className="text-xs text-dna-warning bg-dna-warning/10 border border-dna-warning/30 rounded-md px-3 py-2">
           You have {activeCount} of {NEED_ACTIVE_CAP} active Needs. Close ones that are no longer current to keep your signal sharp.
         </div>
       )}
       {atCap && (
-        <div className="text-xs text-stone-700 bg-stone-100 border border-stone-200 rounded-md px-3 py-2">
+        <div className="text-xs text-muted-foreground bg-muted border border-border rounded-md px-3 py-2">
           You are at the {NEED_ACTIVE_CAP}-Need cap. Close one to declare another.
         </div>
       )}
@@ -186,7 +186,7 @@ export function NeedEditor({ externalOpenSignal }: NeedEditorProps = {}) {
           <Button
             type="button"
             onClick={openCreate}
-            style={{ background: '#4A8D77', color: 'white' }}
+           
           >
             Declare your first Need
           </Button>

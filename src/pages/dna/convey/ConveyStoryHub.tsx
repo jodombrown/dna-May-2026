@@ -340,7 +340,7 @@ export default function ConveyStoryHub() {
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                'rounded-xl bg-gradient-to-br from-dna-gold to-amber-600 shadow-lg shrink-0',
+                'rounded-xl bg-dna-convey shadow-lg shrink-0',
                 isMobile ? 'p-2' : 'p-2.5'
               )}
             >
@@ -414,7 +414,7 @@ export default function ConveyStoryHub() {
               title="Impact Stories"
               icon={<Target className="h-4 w-4" />}
               stories={impactStories}
-              color="text-emerald-600"
+              color="text-dna-connect"
               layout="featured"
               onSeeAll={() => setSelectedCategory('impact')}
             />
@@ -424,7 +424,7 @@ export default function ConveyStoryHub() {
               title="Latest Updates"
               icon={<Megaphone className="h-4 w-4" />}
               stories={updateStories}
-              color="text-blue-600"
+              color="text-dna-convey"
               layout="horizontal"
               onSeeAll={() => setSelectedCategory('update')}
             />
@@ -434,7 +434,7 @@ export default function ConveyStoryHub() {
               title="Community Spotlights"
               icon={<Star className="h-4 w-4" />}
               stories={spotlightStories}
-              color="text-amber-600"
+              color="text-dna-convene"
               layout="grid"
               onSeeAll={() => setSelectedCategory('spotlight')}
             />
@@ -525,7 +525,7 @@ export default function ConveyStoryHub() {
 
       {/* Write CTA Card */}
       <Card className="overflow-hidden border-0 shadow-lg">
-        <div className="h-24 bg-gradient-to-br from-dna-gold via-amber-500 to-orange-500 relative">
+        <div className="h-24 bg-dna-convey relative">
           <div className="absolute inset-0 bg-black/10" />
           <div className="absolute bottom-4 left-4 right-4">
             <h3 className="text-white font-bold text-lg drop-shadow-md">Share Your Story</h3>
@@ -545,7 +545,7 @@ export default function ConveyStoryHub() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Flame className="h-4 w-4 text-orange-500" />
+              <Flame className="h-4 w-4 text-dna-copper" />
               Hot Right Now
             </CardTitle>
           </CardHeader>

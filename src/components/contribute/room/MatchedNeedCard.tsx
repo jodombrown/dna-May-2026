@@ -100,7 +100,7 @@ export function MatchedNeedCard({ curation, subject, onOpenDrawer, onDismiss }: 
             type="button"
             onClick={handleOfferHelp}
             className="h-11 flex-1"
-            style={{ background: '#4A8D77', color: 'white' }}
+           
           >
             Offer to help
           </Button>
