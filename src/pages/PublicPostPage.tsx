@@ -9,16 +9,13 @@
  * layout classes under src/pages.
  */
 
-import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { PublicPostView, PublicPostNotFound } from '@/components/posts/PublicPostView';
 import { isUUID } from '@/utils/slugify';
-
-type PublicPostRpcRow = NonNullable<Awaited<ReturnType<typeof fetchPublicPost>>>;
 
 const fetchPublicPost = async (postId: string) => {
   const { data, error } = await supabase.rpc('get_public_post', {
@@ -72,7 +69,7 @@ const PublicPostPage = () => {
     return <PublicPostNotFound isLoggedIn={isLoggedIn} />;
   }
 
-  return <PublicPostView post={post as PublicPostRpcRow} postId={post.slug || postId!} isLoggedIn={isLoggedIn} />;
+  return <PublicPostView post={post} postId={post.slug || postId!} isLoggedIn={isLoggedIn} />;
 };
 
 export default PublicPostPage;

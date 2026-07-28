@@ -202,7 +202,7 @@ export const FiveCDetailSheet: React.FC<FiveCDetailSheetProps> = ({ openId, onOp
 
 const Section: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
   <div>
-    <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+    <div className="text-micro uppercase tracking-wider text-muted-foreground mb-2">
       {label}
     </div>
     {children}
