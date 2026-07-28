@@ -93,9 +93,9 @@ const EmojiReactions = ({
 // Story type badge colors
 const getStoryTypeBadge = (type: string) => {
   const types: Record<string, { bg: string; text: string; label: string }> = {
-    impact: { bg: 'bg-emerald-500/10', text: 'text-emerald-600', label: 'Impact Story' },
-    update: { bg: 'bg-blue-500/10', text: 'text-blue-600', label: 'Update' },
-    spotlight: { bg: 'bg-amber-500/10', text: 'text-amber-600', label: 'Spotlight' },
+    impact: { bg: 'bg-dna-connect/10', text: 'text-dna-connect', label: 'Impact Story' },
+    update: { bg: 'bg-dna-convey/10', text: 'text-dna-convey', label: 'Update' },
+    spotlight: { bg: 'bg-dna-convene/10', text: 'text-dna-convene', label: 'Spotlight' },
     photo_essay: { bg: 'bg-copper-500/10', text: 'text-copper-600', label: 'Photo Essay' },
     story: { bg: 'bg-dna-gold/10', text: 'text-dna-gold', label: 'Story' },
   };

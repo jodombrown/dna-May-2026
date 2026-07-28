@@ -166,12 +166,12 @@ export function NeedEditor({ externalOpenSignal }: NeedEditorProps = {}) {
       </header>
 
       {showSoftWarn && (
-        <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+        <div className="text-xs text-warning-foreground bg-warning-subtle border border-warning/30 rounded-md px-3 py-2">
           You have {activeCount} of {NEED_ACTIVE_CAP} active Needs. Close ones that are no longer current to keep your signal sharp.
         </div>
       )}
       {atCap && (
-        <div className="text-xs text-stone-700 bg-stone-100 border border-stone-200 rounded-md px-3 py-2">
+        <div className="text-xs text-muted-foreground bg-muted border border-border rounded-md px-3 py-2">
           You are at the {NEED_ACTIVE_CAP}-Need cap. Close one to declare another.
         </div>
       )}

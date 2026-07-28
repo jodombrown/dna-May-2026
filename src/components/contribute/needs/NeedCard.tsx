@@ -17,11 +17,11 @@ interface NeedCardProps {
 }
 
 const STATUS_TONE_CLASS: Record<string, string> = {
-  live: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  progress: 'bg-amber-50 text-amber-700 border-amber-200',
-  done: 'bg-stone-100 text-stone-600 border-stone-200',
-  idle: 'bg-stone-50 text-stone-500 border-stone-200',
-  closed: 'bg-stone-50 text-stone-400 border-stone-200',
+  live: 'bg-success-subtle text-success-foreground border-success/30',
+  progress: 'bg-warning-subtle text-warning-foreground border-warning/30',
+  done: 'bg-muted text-muted-foreground border-border',
+  idle: 'bg-muted/60 text-muted-foreground border-border',
+  closed: 'bg-muted/40 text-muted-foreground border-border',
 };
 
 export function NeedCard({

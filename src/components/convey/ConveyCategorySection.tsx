@@ -101,7 +101,7 @@ export function ConveyDiscussionPrompt({
   onAnswer?: () => void;
 }) {
   return (
-    <div className="rounded-xl md:rounded-lg bg-gradient-to-br from-amber-100 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/10 p-4 md:p-5 border border-amber-200/50 dark:border-amber-800/30">
+    <div className="rounded-xl md:rounded-lg bg-dna-convey-light p-4 md:p-5 border border-dna-convey/20">
       <p className="text-xs font-semibold text-dna-gold uppercase tracking-wide mb-2">
         Join the Discussion
       </p>
