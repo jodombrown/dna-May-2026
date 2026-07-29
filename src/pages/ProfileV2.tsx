@@ -43,6 +43,7 @@ import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandi
 import PageFrame from '@/components/layout/PageFrame';
 import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 import { ROUTES } from '@/config/routes';
+import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
 import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
 import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
 
@@ -74,6 +75,7 @@ const ProfileV2: React.FC = () => {
   const threshold = isThresholdResult(result) ? result : null;
   const bundle = isThresholdResult(result) ? null : result ?? null;
   const { data: ownerProfile } = useProfile();
+
 
 
   // Sprint 13: Impact scores for radar chart
@@ -168,9 +170,11 @@ const ProfileV2: React.FC = () => {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button onClick={() => navigate('/dna')}>DNA home</Button>
-              <Button variant="outline" onClick={() => navigate(ROUTES.connect.discover)}>
-                Discover Members
-              </Button>
+              {user ? (
+                <Button variant="outline" onClick={() => navigate(ROUTES.connect.discover)}>
+                  Discover Members
+                </Button>
+              ) : null}
             </div>
           </CardContent>
         </Card>
@@ -196,14 +200,13 @@ const ProfileV2: React.FC = () => {
                 {name ? <h1 className="text-h2 font-display">{name}</h1> : null}
                 <p className="text-body text-muted-foreground">@{threshold.username}</p>
                 {threshold.headline ? <p className="text-body">{threshold.headline}</p> : null}
-                {threshold.role ? <p className="text-meta text-muted-foreground">{threshold.role}</p> : null}
+                {threshold.role && threshold.role !== 'exploring' && getRoleLabel(threshold.role) ? (
+                  <p className="text-meta text-muted-foreground">{getRoleLabel(threshold.role)}</p>
+                ) : null}
                 {threshold.current_country ? (
                   <p className="text-meta text-muted-foreground">{threshold.current_country}</p>
                 ) : null}
-                <p className="text-micro text-muted-foreground inline-flex items-center gap-1">
-                  <Lock className="h-3 w-3" aria-hidden="true" />
-                  Member of DNA
-                </p>
+                <p className="text-micro text-muted-foreground">Member of DNA</p>
               </div>
             </div>
 
