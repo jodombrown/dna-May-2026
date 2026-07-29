@@ -67,8 +67,11 @@ const ProfileV2: React.FC = () => {
   const { openMessageOverlay } = useMessage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data: bundle, isLoading, error } = useProfileV2(username);
+  const { data: result, isLoading, error, refetch } = useProfileV2(username);
+  const threshold = isThresholdResult(result) ? result : null;
+  const bundle = threshold ? null : result ?? null;
   const { data: ownerProfile } = useProfile();
+
 
   // Sprint 13: Impact scores for radar chart
   const { scores: impactScores } = useImpactScores(bundle?.profile?.id);
