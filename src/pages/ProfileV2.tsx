@@ -43,6 +43,7 @@ import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandi
 import PageFrame from '@/components/layout/PageFrame';
 import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
 import { ROUTES } from '@/config/routes';
+import { getRoleLabel } from '@/components/onboarding/RoleDeclarationStep';
 import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
 import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
 
