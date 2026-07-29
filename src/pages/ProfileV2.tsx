@@ -77,6 +77,7 @@ const ProfileV2: React.FC = () => {
   const { data: ownerProfile } = useProfile();
 
 
+
   // Sprint 13: Impact scores for radar chart
   const { scores: impactScores } = useImpactScores(bundle?.profile?.id);
 
