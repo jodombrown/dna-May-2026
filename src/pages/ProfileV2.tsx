@@ -169,9 +169,11 @@ const ProfileV2: React.FC = () => {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button onClick={() => navigate('/dna')}>DNA home</Button>
-              <Button variant="outline" onClick={() => navigate(ROUTES.connect.discover)}>
-                Discover Members
-              </Button>
+              {user ? (
+                <Button variant="outline" onClick={() => navigate(ROUTES.connect.discover)}>
+                  Discover Members
+                </Button>
+              ) : null}
             </div>
           </CardContent>
         </Card>
