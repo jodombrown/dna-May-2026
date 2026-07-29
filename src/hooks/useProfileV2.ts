@@ -85,29 +85,80 @@ const normalizePublicProfileBundle = (raw: PublicProfileRow): ProfileV2Bundle =>
   };
 };
 
+/** Threshold shapes returned by public.get_profile_threshold for anonymous viewers. */
+export interface ProfileThresholdPrivate {
+  threshold_state: 'private';
+  username: string;
+  full_name?: string | null;
+  display_name?: string | null;
+  avatar_url?: string | null;
+  headline?: string | null;
+  role?: string | null;
+  current_country?: string | null;
+}
+
+export interface ProfileThresholdNotFound {
+  threshold_state: 'not_found';
+  username: string;
+}
+
+export type ProfileV2Result = ProfileV2Bundle | ProfileThresholdPrivate | ProfileThresholdNotFound;
+
+export const isThresholdResult = (
+  result: ProfileV2Result | null | undefined,
+): result is ProfileThresholdPrivate | ProfileThresholdNotFound =>
+  !!result && 'threshold_state' in result;
+
+interface ThresholdRow extends Partial<PublicProfileRow> {
+  visibility_state: 'public' | 'private' | 'not_found';
+  username: string;
+  role?: string | null;
+}
+
 export const useProfileV2 = (username: string | undefined) => {
   const { user } = useAuth();
 
   return useQuery({
     queryKey: ['profile-v2', username, user?.id],
-    queryFn: async (): Promise<ProfileV2Bundle | null> => {
+    queryFn: async (): Promise<ProfileV2Result | null> => {
       if (!username) return null;
 
       try {
         // Anonymous viewers can't read the full bundle (RLS); use the
-        // anon-callable public profile RPC instead. A null result means the
-        // profile is private or doesn't exist.
+        // anon-callable threshold RPC, which never returns null and always
+        // reports one of: public, private, not_found.
         if (!user?.id) {
-          const { data, error } = await supabase.rpc('get_public_profile', {
+          const { data, error } = await supabase.rpc('get_profile_threshold', {
             p_username: username,
           });
 
-          if (error || data == null) {
-            return null;
+          // A genuine query failure must stay distinguishable from private
+          // and not_found, so it throws instead of collapsing to null.
+          if (error) throw error;
+
+          const row = data as unknown as ThresholdRow | null;
+          if (!row) throw new Error('get_profile_threshold returned no payload');
+
+          if (row.visibility_state === 'public') {
+            return normalizePublicProfileBundle(row as unknown as PublicProfileRow);
           }
 
-          return normalizePublicProfileBundle(data as unknown as PublicProfileRow);
+          if (row.visibility_state === 'private') {
+            return {
+              threshold_state: 'private',
+              username: row.username ?? username,
+              full_name: row.full_name ?? null,
+              display_name: row.display_name ?? null,
+              avatar_url: row.avatar_url ?? null,
+              headline: row.headline ?? null,
+              role: row.role ?? null,
+              current_country: row.current_country ?? null,
+            };
+          }
+
+          return { threshold_state: 'not_found', username };
         }
+
 
         const { data, error } = await supabase.rpc('rpc_get_profile_bundle', {
           p_username: username,
