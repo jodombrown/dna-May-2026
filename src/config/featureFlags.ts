@@ -1,3 +1,4 @@
+// BD291 gate probe, revert immediately: text-emerald-600
 /**
  * Alpha Testing Feature Flags
  *
