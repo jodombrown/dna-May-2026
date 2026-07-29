@@ -40,6 +40,9 @@ import { ProfileRecentPosts } from '@/components/profile-v2/ProfileRecentPosts';
 
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
+import PageFrame from '@/components/layout/PageFrame';
+import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
+import { ROUTES } from '@/config/routes';
 import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
 import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
 
@@ -229,8 +232,6 @@ const ProfileV2: React.FC = () => {
 
   if (!bundle) {
     return null;
-  }
-
   }
 
   // Normalize the bundle - handle both flat RPC response and expected structure
