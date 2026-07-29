@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useProfileV2 } from '@/hooks/useProfileV2';
+import { useProfileV2, isThresholdResult } from '@/hooks/useProfileV2';
 import { Loader2, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -69,7 +69,7 @@ const ProfileV2: React.FC = () => {
   const navigate = useNavigate();
   const { data: result, isLoading, error, refetch } = useProfileV2(username);
   const threshold = isThresholdResult(result) ? result : null;
-  const bundle = threshold ? null : result ?? null;
+  const bundle = isThresholdResult(result) ? null : result ?? null;
   const { data: ownerProfile } = useProfile();
 
 
