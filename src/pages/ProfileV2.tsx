@@ -196,14 +196,13 @@ const ProfileV2: React.FC = () => {
                 {name ? <h1 className="text-h2 font-display">{name}</h1> : null}
                 <p className="text-body text-muted-foreground">@{threshold.username}</p>
                 {threshold.headline ? <p className="text-body">{threshold.headline}</p> : null}
-                {threshold.role ? <p className="text-meta text-muted-foreground">{threshold.role}</p> : null}
+                {threshold.role && threshold.role !== 'exploring' && getRoleLabel(threshold.role) ? (
+                  <p className="text-meta text-muted-foreground">{getRoleLabel(threshold.role)}</p>
+                ) : null}
                 {threshold.current_country ? (
                   <p className="text-meta text-muted-foreground">{threshold.current_country}</p>
                 ) : null}
-                <p className="text-micro text-muted-foreground inline-flex items-center gap-1">
-                  <Lock className="h-3 w-3" aria-hidden="true" />
-                  Member of DNA
-                </p>
+                <p className="text-micro text-muted-foreground">Member of DNA</p>
               </div>
             </div>
 
