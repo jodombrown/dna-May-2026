@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useProfileV2 } from '@/hooks/useProfileV2';
+import { useProfileV2, isThresholdResult } from '@/hooks/useProfileV2';
 import { Loader2, Lock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,6 +40,9 @@ import { ProfileRecentPosts } from '@/components/profile-v2/ProfileRecentPosts';
 
 import { MutualConnectionsWidget } from '@/components/connections/MutualConnectionsWidget';
 import PublicProfileLandingView from '@/components/profile-v2/PublicProfileLandingView';
+import PageFrame from '@/components/layout/PageFrame';
+import { FiveCsDiscoverySection } from '@/components/five-cs/FiveCsDiscoverySection';
+import { ROUTES } from '@/config/routes';
 import { ManifestRenderer } from '@/components/contribute/manifest/ManifestRenderer';
 import { NeedsRenderer } from '@/components/contribute/needs/NeedsRenderer';
 
@@ -67,8 +70,11 @@ const ProfileV2: React.FC = () => {
   const { openMessageOverlay } = useMessage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data: bundle, isLoading, error } = useProfileV2(username);
+  const { data: result, isLoading, error, refetch } = useProfileV2(username);
+  const threshold = isThresholdResult(result) ? result : null;
+  const bundle = isThresholdResult(result) ? null : result ?? null;
   const { data: ownerProfile } = useProfile();
+
 
   // Sprint 13: Impact scores for radar chart
   const { scores: impactScores } = useImpactScores(bundle?.profile?.id);
@@ -132,24 +138,100 @@ const ProfileV2: React.FC = () => {
     );
   }
 
-  // Graceful fallback for missing profile OR any query error
-  if (error || !bundle) {
+  // C. A genuine query failure. Distinct from private and not_found.
+  if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Profile Not Found</h1>
-        <p className="text-muted-foreground mb-6 text-center">
-          {username ? `@${username} doesn't exist or is temporarily unavailable.` : 'No username provided.'}
-        </p>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => navigate(-1)}>
-            Go Back
-          </Button>
-          <Button onClick={() => navigate('/dna/connect/discover')}>
-            Discover Members
-          </Button>
-        </div>
-      </div>
+      <PageFrame contained>
+        <Card>
+          <CardContent className="py-10 space-y-4">
+            <h1 className="text-h2 font-display">We could not load this page.</h1>
+            <p className="text-body text-muted-foreground">Something went wrong on our side.</p>
+            <Button onClick={() => refetch()}>Try again</Button>
+          </CardContent>
+        </Card>
+      </PageFrame>
     );
+  }
+
+  // B. No Member at this address.
+  if (threshold?.threshold_state === 'not_found' || (!bundle && !threshold)) {
+    const handle = threshold?.username ?? username;
+    return (
+      <PageFrame contained>
+        <Card>
+          <CardContent className="py-10 space-y-4">
+            <h1 className="text-h2 font-display">No Member at this address.</h1>
+            <p className="text-body text-muted-foreground">
+              {handle
+                ? `The handle @${handle} is not in the network. It may have changed, or the link may be incomplete.`
+                : 'That handle is not in the network. It may have changed, or the link may be incomplete.'}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => navigate('/dna')}>DNA home</Button>
+              <Button variant="outline" onClick={() => navigate(ROUTES.connect.discover)}>
+                Discover Members
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </PageFrame>
+    );
+  }
+
+  // A. The threshold. Visible to Members, named here only as far as consented.
+  if (threshold?.threshold_state === 'private') {
+    const name = threshold.full_name || threshold.display_name || null;
+    return (
+      <PageFrame contained>
+        <Card>
+          <CardContent className="py-10 space-y-6">
+            <div className="flex items-center gap-4">
+              {threshold.avatar_url ? (
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={threshold.avatar_url} alt={name ?? threshold.username} />
+                  <AvatarFallback>{(name ?? threshold.username).slice(0, 1).toUpperCase()}</AvatarFallback>
+                </Avatar>
+              ) : null}
+              <div className="space-y-1">
+                {name ? <h1 className="text-h2 font-display">{name}</h1> : null}
+                <p className="text-body text-muted-foreground">@{threshold.username}</p>
+                {threshold.headline ? <p className="text-body">{threshold.headline}</p> : null}
+                {threshold.role ? <p className="text-meta text-muted-foreground">{threshold.role}</p> : null}
+                {threshold.current_country ? (
+                  <p className="text-meta text-muted-foreground">{threshold.current_country}</p>
+                ) : null}
+                <p className="text-micro text-muted-foreground inline-flex items-center gap-1">
+                  <Lock className="h-3 w-3" aria-hidden="true" />
+                  Member of DNA
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-body">This Member is visible to Members.</p>
+              <p className="text-body text-muted-foreground">
+                DNA is where the Diaspora is named and visible to each other, not to the open internet.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => navigate('/auth')}>Sign in</Button>
+              <Button variant="outline" onClick={() => navigate('/auth?mode=signup')}>
+                Sign up
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="mt-8">
+          <FiveCsDiscoverySection username={threshold.username} memberFirstName={name} />
+        </div>
+      </PageFrame>
+    );
+  }
+
+  if (!bundle) {
+    return null;
   }
 
   // Normalize the bundle - handle both flat RPC response and expected structure
