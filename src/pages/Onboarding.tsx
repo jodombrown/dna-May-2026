@@ -226,7 +226,15 @@ const Onboarding = () => {
       // diaspora_status is retired; user_type is never written here.
       const profileData: any = {
         id: user.id,
-        email: user.email,
+        // Never write profiles.email from the client. `authenticated` holds no
+        // SELECT on this column by design (PII lockdown), and Postgres requires
+        // SELECT on every column read back through EXCLUDED in an
+        // INSERT ... ON CONFLICT DO UPDATE. Including it here rejected the whole
+        // upsert with 42501 "permission denied for table profiles" and blocked
+        // every new signup at Step 5. handle_new_user (SECURITY DEFINER) already
+        // mirrors auth.users.email into this column at account creation, and the
+        // client cannot add information Auth does not already hold. Do not re-add.
+
         full_name: fullName,
         first_name: formData.first_name,
         last_name: formData.last_name,
