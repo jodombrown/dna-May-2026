@@ -8039,6 +8039,7 @@ export type Database = {
           skills_needed: string[] | null
           skills_offered: string[] | null
           support_areas: string[] | null
+          threshold_fields: string[]
           timezone: string | null
           tour_completed_at: string | null
           tour_current_step: number | null
@@ -8248,6 +8249,7 @@ export type Database = {
           skills_needed?: string[] | null
           skills_offered?: string[] | null
           support_areas?: string[] | null
+          threshold_fields?: string[]
           timezone?: string | null
           tour_completed_at?: string | null
           tour_current_step?: number | null
@@ -8457,6 +8459,7 @@ export type Database = {
           skills_needed?: string[] | null
           skills_offered?: string[] | null
           support_areas?: string[] | null
+          threshold_fields?: string[]
           timezone?: string | null
           tour_completed_at?: string | null
           tour_current_step?: number | null
@@ -12441,6 +12444,7 @@ export type Database = {
           skills_needed: string[] | null
           skills_offered: string[] | null
           support_areas: string[] | null
+          threshold_fields: string[]
           timezone: string | null
           tour_completed_at: string | null
           tour_current_step: number | null
@@ -13785,6 +13789,7 @@ export type Database = {
           skills_needed: string[] | null
           skills_offered: string[] | null
           support_areas: string[] | null
+          threshold_fields: string[]
           timezone: string | null
           tour_completed_at: string | null
           tour_current_step: number | null
@@ -13969,6 +13974,7 @@ export type Database = {
           status: string
         }[]
       }
+      get_profile_threshold: { Args: { p_username: string }; Returns: Json }
       get_profile_viewers: {
         Args: { p_limit?: number; p_offset?: number; p_profile_id: string }
         Returns: {
