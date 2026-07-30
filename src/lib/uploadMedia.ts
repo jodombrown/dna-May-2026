@@ -144,7 +144,10 @@ export const uploadMedia = async (file: File, surface: Surface) => {
   const filePath = `${uid}/${surface}/${Date.now()}-${safeName}`;
 
   // g. One public bucket for all four surfaces in this pass.
-  const bucket = 'dna-media-public';
+  // TEMP(cert #197 RED): retarget to the SELECT-less dna-media-certtest bucket to
+  // certify tests 1–4 go RED — they only can if they genuinely call uploadMedia().
+  // Reverted in the GREEN commit; do not merge.
+  const bucket = 'dna-media-certtest';
 
   // REACTIVE: the proactive check can still be beaten — a clock skewed slow, or
   // a token revoked server-side before expiry. If the storage request comes back

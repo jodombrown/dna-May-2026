@@ -250,6 +250,25 @@ describe('security · a signed-in member can upload every media class', () => {
   }, 30000);
 });
 
+// TEMP(cert #197 RED): the side-by-side that makes the finding visible. A direct
+// upsert:false INSERT into the SELECT-less dna-media-certtest bucket SUCCEEDS —
+// a plain INSERT never touches the SELECT policy — while tests 1–4 (the spine,
+// upsert:true) go RED against that same bucket, because the read-modify-write DOES.
+// That is the exact upsert:false / upsert:true permission split that let four green
+// gates sit on top of a broken product. Reverted in the GREEN commit; do not merge.
+describe('security · TEMP cert — upsert:false never exercises the SELECT policy', () => {
+  it('TEMP. direct upsert:false into dna-media-certtest succeeds without a SELECT policy', async () => {
+    const path = `${testUid}/security-test/${Date.now()}-certtest-upsertfalse.png`;
+    const { data, error } = await userClient.storage
+      .from('dna-media-certtest')
+      .upload(path, PNG_BYTES, { contentType: 'image/png', upsert: false });
+    expect(error).toBeNull();
+    expect(data?.path).toBe(path);
+    // Teardown only sweeps PUBLIC_BUCKET, so clean this certtest row here.
+    await service.storage.from('dna-media-certtest').remove([path]);
+  }, 30000);
+});
+
 describe('security · uploads that must be refused', () => {
   it('5. anon (no session) cannot upload to dna-media-public', async () => {
     const path = uniquePath(testUid, 'png');
