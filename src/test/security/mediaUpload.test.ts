@@ -17,6 +17,15 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+// node's native File, NOT jsdom's. This suite runs under the jsdom environment
+// (the app client needs window/localStorage), but the actual upload is performed
+// by node's global fetch. storage-js wraps a value that is `instanceof Blob` in
+// FormData; a jsdom Blob part cannot be serialized by node's fetch and the
+// connection resets mid-upload. A node File is not `instanceof` the jsdom Blob,
+// so the spine's upload takes the same raw-body path the Uint8Array negative
+// tests already prove works. It is still a real File the spine classifies and
+// uploads unchanged — only its Blob lineage differs.
+import { File as NodeFile } from 'node:buffer';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import {
   uploadMedia,
@@ -180,7 +189,8 @@ async function uploadAndVerify(
   // A real File, exactly what a picker hands the spine. uploadMedia() derives the
   // media class from file.type and builds the uid/surface-scoped path itself — the
   // test never names the path, so it cannot drift from what the product writes.
-  const file = new File([body], `security-test.${ext}`, { type: contentType });
+  // (node File, not jsdom's — see the import note; the spine treats it identically.)
+  const file = new NodeFile([body], `security-test.${ext}`, { type: contentType }) as unknown as File;
   const publicUrl = await uploadMedia(file, surface);
 
   // The spine's return value: a public URL keyed to THIS member and the surface it
