@@ -23,9 +23,11 @@ import {
   IMAGE_TYPES,
   VIDEO_TYPES,
   DOC_TYPES,
+  type Surface,
 } from '@/lib/uploadMedia';
-// The singleton the app (and uploadMedia) actually uses. Test 8 drives the real
-// uploadMedia() through this client, so it must carry the member's session too.
+// The singleton the app (and uploadMedia) actually uses. Tests 1–4, 8 and 10 all
+// drive the real uploadMedia() through this client, so it must carry the member's
+// session too.
 import { supabase as appClient } from '@/integrations/supabase/client';
 
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -122,8 +124,9 @@ beforeAll(async () => {
   });
 
   // uploadMedia() reaches for the app's singleton client. Give it the same
-  // member session so test 8 exercises the real size gate rather than tripping
-  // the "session expired" guard first.
+  // member session so the tests that drive the real spine — 1–4 landing each
+  // media class, 8 hitting the size gate — exercise the product path rather than
+  // tripping the "session expired" guard first.
   const { error: appSignInErr } = await appClient.auth.setSession({
     access_token: signIn.session.access_token,
     refresh_token: signIn.session.refresh_token,
@@ -157,18 +160,41 @@ afterAll(async () => {
 }, 60000);
 
 /**
- * Upload as the signed-in member, then read the row back through the service
- * client and prove it is keyed to this member. Upload success alone is not the
- * assertion — the row is.
+ * Drive a real File of the given class through uploadMedia() — the spine the
+ * product ships — as the signed-in member, then read the landed row back through
+ * the service client and prove it is keyed to this member. Upload success alone
+ * is not the assertion — the row is.
+ *
+ * This calls uploadMedia() rather than reconstructing the storage call, on
+ * purpose. A hand-rolled userClient.upload(..., { upsert: false }) is a DIFFERENT
+ * SQL statement with a DIFFERENT permission set than the spine's upsert: true
+ * read-modify-write, which is how a broken product once passed this gate. The
+ * only faithful exercise of the spine is the spine.
  */
-async function uploadAndVerify(contentType: string, ext: string, body: Uint8Array) {
-  const path = uniquePath(testUid, ext);
-  const { data, error } = await userClient.storage
-    .from(PUBLIC_BUCKET)
-    .upload(path, body, { contentType, upsert: false });
+async function uploadAndVerify(
+  contentType: string,
+  ext: string,
+  body: Uint8Array,
+  surface: Surface = 'post',
+) {
+  // A real File, exactly what a picker hands the spine. uploadMedia() derives the
+  // media class from file.type and builds the uid/surface-scoped path itself — the
+  // test never names the path, so it cannot drift from what the product writes.
+  const file = new File([body], `security-test.${ext}`, { type: contentType });
+  const publicUrl = await uploadMedia(file, surface);
 
-  expect(error).toBeNull();
-  expect(data?.path).toBe(path);
+  // The spine's return value: a public URL keyed to THIS member and the surface it
+  // was told to file under.
+  expect(typeof publicUrl).toBe('string');
+  expect(publicUrl).toContain(testUid);
+  expect(publicUrl).toContain(`/${surface}/`);
+
+  // Recover the storage key (uid/surface/ts-name) the spine chose from the URL, so
+  // the read-back below probes the exact object that landed.
+  const marker = `/${PUBLIC_BUCKET}/`;
+  const at = publicUrl.indexOf(marker);
+  expect(at).toBeGreaterThan(-1);
+  const path = decodeURIComponent(publicUrl.slice(at + marker.length));
   createdPaths.push(path);
 
   // Read the persisted row back. PostgREST here exposes only public +
@@ -217,9 +243,13 @@ describe('security · a signed-in member can upload every media class', () => {
 describe('security · uploads that must be refused', () => {
   it('5. anon (no session) cannot upload to dna-media-public', async () => {
     const path = uniquePath(testUid, 'png');
+    // upsert: true — the same statement shape the spine issues. These three tests
+    // stay direct client calls (the spine refuses to CONSTRUCT a cross-tenant or
+    // unapproved-type request at all), but they must fail against the exact SQL the
+    // product runs, not a plainer INSERT with a looser permission set.
     const { data, error } = await anonClient.storage
       .from(PUBLIC_BUCKET)
-      .upload(path, PNG_BYTES, { contentType: 'image/png', upsert: false });
+      .upload(path, PNG_BYTES, { contentType: 'image/png', upsert: true });
     expect(error).not.toBeNull();
     expect(data).toBeNull();
   }, 30000);
@@ -230,7 +260,7 @@ describe('security · uploads that must be refused', () => {
     const path = `${otherUid}/security-test/${Date.now()}-cross-tenant.png`;
     const { data, error } = await userClient.storage
       .from(PUBLIC_BUCKET)
-      .upload(path, PNG_BYTES, { contentType: 'image/png', upsert: false });
+      .upload(path, PNG_BYTES, { contentType: 'image/png', upsert: true });
     expect(error).not.toBeNull();
     expect(data).toBeNull();
   }, 30000);
@@ -241,7 +271,7 @@ describe('security · uploads that must be refused', () => {
     const path = uniquePath(testUid, 'exe');
     const { data, error } = await userClient.storage
       .from(PUBLIC_BUCKET)
-      .upload(path, TINY, { contentType: badType, upsert: false });
+      .upload(path, TINY, { contentType: badType, upsert: true });
     expect(error).not.toBeNull();
     expect(data).toBeNull();
   }, 30000);
@@ -373,3 +403,20 @@ describe('security · an expired session is refused before it reaches storage', 
     }
   }, 30000);
 });
+
+// ---------------------------------------------------------------------------
+// OWED — test 11: the same four media classes through the PRIVATE bucket path
+// (dna-media-private), landing under the member's folder and readable back only
+// by that member (dna_media_private_select_own).
+//
+// It is NOT written yet, and it is NOT a describe.skip / it.skip, on purpose.
+// uploadMedia() hard-codes bucket = 'dna-media-public' for all four surfaces in
+// this pass (uploadMedia.ts §g); nothing routes to dna-media-private until
+// messages and Spaces move onto the spine. A skipped test reads, in the suite
+// summary, as coverage that exists and happens to be paused — under the
+// fail-closed preflight (BD238) that is exactly the "green that asserted nothing"
+// this file exists to prevent. So the coverage is recorded here as an explicit
+// debt, visible in the source and owed against the private-bucket cutover, and it
+// will be added — through the spine, never reconstructed — when that surface
+// lands. Do not discharge this by adding a placeholder that skips.
+// ---------------------------------------------------------------------------
