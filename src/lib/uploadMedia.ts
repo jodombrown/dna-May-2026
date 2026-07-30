@@ -16,7 +16,6 @@ export const IMAGE_TYPES = [
   'image/png',
   'image/webp',
   'image/gif',
-  'image/heic',
   'image/heif',
 ];
 
