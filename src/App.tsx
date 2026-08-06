@@ -623,17 +623,6 @@ function App() {
                   <EditEventPage />
                 </OnboardingGuard>
               } />
-              <Route path="/dna/convene/events/:id/analytics" element={
-                <OnboardingGuard>
-                  <EventAnalytics />
-                </OnboardingGuard>
-              } />
-              <Route path="/dna/convene/events/:id/check-in" element={
-                <OnboardingGuard>
-                  <EventCheckIn />
-                </OnboardingGuard>
-              } />
-
               <Route path="/dna/convene/mine" element={
                 <OnboardingGuard>
                   <MyEvents />
