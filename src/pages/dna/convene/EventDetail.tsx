@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Navigate, Outlet } from 'react-router-dom';
 import { CuratedEventPreview } from '@/pages/dna/convene/CuratedEventPreview';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2, ArrowLeft, LayoutDashboard, Users, QrCode, Mail, BarChart3, UserCog } from 'lucide-react';
+import { Loader2, ArrowLeft, LayoutDashboard, Users, QrCode, Mail, Share2, BarChart3, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,9 +16,10 @@ export const EVENT_MANAGE_NAV: SectionNavItem[] = [
   { label: 'Overview', path: '', icon: LayoutDashboard, roles: ['owner', 'co-host', 'manager', 'promoter'] },
   { label: 'Attendees', path: 'attendees', icon: Users, roles: ['owner', 'co-host', 'manager'] },
   { label: 'Check-In', path: 'check-in', icon: QrCode, roles: ['owner', 'co-host', 'manager', 'check-in'] },
-  { label: 'Communications', path: 'communications', icon: Mail, roles: ['owner', 'co-host', 'manager'] },
-  { label: 'Analytics', path: 'analytics', icon: BarChart3, roles: ['owner', 'co-host', 'manager', 'promoter'] },
+  { label: 'Relationships', path: 'communications', icon: Mail, roles: ['owner', 'co-host', 'manager'] },
+  { label: 'Promotion', path: 'promotion', icon: Share2, roles: ['owner', 'co-host', 'manager', 'promoter'] },
   { label: 'Team', path: 'team', icon: UserCog, roles: ['owner', 'co-host'] },
+  { label: 'Analytics', path: 'analytics', icon: BarChart3, roles: ['owner', 'co-host', 'manager', 'promoter'] },
 ];
 
 const EventDetail = () => {

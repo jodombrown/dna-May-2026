@@ -126,6 +126,7 @@ const EventCheckIn = lazy(() => import("./pages/dna/convene/EventCheckIn"));
 const AttendeeManagement = lazy(() => import("./components/convene/management/attendees/AttendeeManagement"));
 const ManagementCheckInDashboard = lazy(() => import("./components/convene/management/checkin/CheckInDashboard"));
 const CommunicationsHub = lazy(() => import("./components/convene/management/communications/CommunicationsHub"));
+const PromotionPanel = lazy(() => import("./components/convene/management/promotion/PromotionPanel"));
 const ManagementAnalyticsDashboard = lazy(() => import("./components/convene/management/analytics/AnalyticsDashboard"));
 const TeamManager = lazy(() => import("./components/convene/management/team/TeamManager"));
 // Event settings folded into the unified event form (EditEventPage) — old
@@ -603,6 +604,7 @@ function App() {
                 <Route path="attendees" element={<AttendeeManagement />} />
                 <Route path="check-in" element={<ManagementCheckInDashboard />} />
                 <Route path="communications" element={<CommunicationsHub />} />
+                <Route path="promotion" element={<PromotionPanel />} />
                 <Route path="analytics" element={<ManagementAnalyticsDashboard />} />
                 <Route path="team" element={<TeamManager />} />
                 <Route path="settings" element={<EventSettingsRedirect />} />
