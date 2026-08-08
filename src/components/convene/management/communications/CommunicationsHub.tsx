@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Mail,
@@ -11,7 +12,13 @@ import {
   Trash2,
   Loader2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Search,
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  Building2,
+  UserRound,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,12 +63,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useEventManagement } from '../EventManagementContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface BlastSegment {
   type?: string;
   status?: string;
+  partyId?: string;
+  role?: string;
 }
 
 interface EmailBlast {
@@ -95,13 +106,123 @@ const TEMPLATE_VARS = [
   { var: '{{check_in_link}}', description: 'Link to check-in page' },
 ];
 
+// Relationship categories a Party can hold against one event. Kept separate
+// from event_roles (platform access/permissions for staff) — team_member here
+// describes a relationship, not a login grant.
+const PARTY_CATEGORIES: { id: string; label: string }[] = [
+  { id: 'all', label: 'All' },
+  { id: 'sponsor', label: 'Sponsor' },
+  { id: 'partner', label: 'Partner' },
+  { id: 'vendor', label: 'Vendor' },
+  { id: 'exhibitor', label: 'Exhibitor' },
+  { id: 'volunteer', label: 'Volunteer' },
+  { id: 'team_member', label: 'Team member' },
+];
+
+const roleLabel = (role: string) => PARTY_CATEGORIES.find((c) => c.id === role)?.label ?? role;
+
+interface Party {
+  id: string;
+  kind: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  notes: string | null;
+}
+
+interface EngagementRow {
+  id: string;
+  party_id: string;
+  created_at: string;
+  parties: Party | null;
+  event_engagement_roles: { role: string }[];
+}
+
+interface CrossEventEngagement {
+  id: string;
+  event_id: string;
+  events: { id: string; title: string; slug: string | null; start_time: string | null } | null;
+  event_engagement_roles: { role: string }[];
+}
+
+// Pack 07's filter-chip grammar (see ConveneCategoryChips.tsx /
+// ConnectFilterChips.tsx): narrows the corpus in place, local state, not a
+// route change. Reused verbatim here rather than introducing a new pattern.
+const PartyCategoryChips: React.FC<{
+  activeCategory: string;
+  onSelect: (id: string) => void;
+  counts: Record<string, number>;
+}> = ({ activeCategory, onSelect, counts }) => (
+  <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+    {PARTY_CATEGORIES.map((cat) => {
+      const isActive = activeCategory === cat.id;
+      const count = cat.id === 'all'
+        ? Object.values(counts).reduce((sum, c) => sum + c, 0)
+        : counts[cat.id] || 0;
+
+      return (
+        <button
+          key={cat.id}
+          type="button"
+          onClick={() => onSelect(cat.id)}
+          className={cn(
+            'flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all shrink-0',
+            'border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+            isActive
+              ? 'bg-[hsl(var(--module-convene))] text-white border-[hsl(var(--module-convene))] shadow-sm'
+              : 'bg-background text-foreground border-border hover:border-[hsl(var(--module-convene)/0.4)] hover:bg-[hsl(var(--module-convene)/0.06)]',
+          )}
+        >
+          {cat.label}
+          {count > 0 && (
+            <span
+              className={cn(
+                'text-[10px] font-semibold ml-0.5',
+                isActive ? 'text-white/70' : 'text-muted-foreground',
+              )}
+            >
+              {count}
+            </span>
+          )}
+        </button>
+      );
+    })}
+  </div>
+);
+
 const CommunicationsHub: React.FC = () => {
   const { event } = useEventManagement();
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Tab state
   const [activeTab, setActiveTab] = useState('compose');
+
+  // Party list state
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [partySearch, setPartySearch] = useState('');
+  const [matchedPartyId, setMatchedPartyId] = useState<string | null>(null);
+  const [newPartyKind, setNewPartyKind] = useState<'person' | 'organization'>('organization');
+  const [historyExpanded, setHistoryExpanded] = useState(false);
+  const selectedPartyId = searchParams.get('party');
+
+  useEffect(() => {
+    setHistoryExpanded(false);
+  }, [selectedPartyId]);
+
+  const handleSelectParty = (partyId: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (next.get('party') === partyId) {
+        next.delete('party');
+      } else {
+        next.set('party', partyId);
+      }
+      return next;
+    });
+  };
 
   // Email compose state
   const [emailSubject, setEmailSubject] = useState('');
@@ -119,6 +240,148 @@ const CommunicationsHub: React.FC = () => {
 
   // Delete confirmation
   const [deleteBlastId, setDeleteBlastId] = useState<string | null>(null);
+
+  // Fetch every party engaged on this event, with roles. Filtered to the
+  // active category client-side so the same fetch also drives chip counts.
+  const { data: allEngagements = [], isLoading: partiesLoading } = useQuery({
+    queryKey: ['event-party-engagements', event.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('event_engagements')
+        .select('id, party_id, created_at, parties(id, kind, name, email, phone, notes), event_engagement_roles(role)')
+        .eq('event_id', event.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return (data || []) as unknown as EngagementRow[];
+    },
+    enabled: !!event.id,
+  });
+
+  const roleCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const row of allEngagements) {
+      for (const r of row.event_engagement_roles) {
+        counts[r.role] = (counts[r.role] || 0) + 1;
+      }
+    }
+    return counts;
+  }, [allEngagements]);
+
+  const partyEngagements = useMemo(() => (
+    activeCategory === 'all'
+      ? allEngagements
+      : allEngagements.filter((row) => row.event_engagement_roles.some((r) => r.role === activeCategory))
+  ), [allEngagements, activeCategory]);
+
+  // Live search over parties this organizer can already see (own or
+  // previously engaged), so "Search or add" can link instead of duplicate.
+  const { data: partyMatches = [] } = useQuery({
+    queryKey: ['party-search', partySearch],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parties')
+        .select('id, kind, name, email, phone, notes')
+        .ilike('name', `%${partySearch.trim()}%`)
+        .limit(6);
+      if (error) throw error;
+      return (data || []) as Party[];
+    },
+    enabled: partySearch.trim().length > 1,
+  });
+
+  // Selected party's own record, for the disclosure header even if it isn't
+  // in the currently filtered list (e.g. a stale/shared ?party= link).
+  const { data: selectedPartyDetail } = useQuery({
+    queryKey: ['party-detail', selectedPartyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parties')
+        .select('id, kind, name, email, phone, notes')
+        .eq('id', selectedPartyId as string)
+        .single();
+      if (error) throw error;
+      return data as Party;
+    },
+    enabled: !!selectedPartyId,
+  });
+
+  const selectedParty = useMemo(() => (
+    allEngagements.find((row) => row.party_id === selectedPartyId)?.parties ?? selectedPartyDetail ?? null
+  ), [allEngagements, selectedPartyId, selectedPartyDetail]);
+
+  // Cross-event history: every engagement this party has, across ALL events,
+  // not just this one — the point of the disclosure.
+  const { data: partyHistory = [], isLoading: partyHistoryLoading } = useQuery({
+    queryKey: ['party-cross-event-history', selectedPartyId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('event_engagements')
+        .select('id, event_id, events(id, title, slug, start_time), event_engagement_roles(role)')
+        .eq('party_id', selectedPartyId as string)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []) as unknown as CrossEventEngagement[];
+    },
+    enabled: !!selectedPartyId && historyExpanded,
+  });
+
+  // Add a new party (or link an existing one found via search) to this
+  // event, in the currently active category.
+  const addOrLinkPartyMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error('You must be signed in.');
+      const name = partySearch.trim();
+      if (!name) throw new Error('Enter a name to add.');
+      if (activeCategory === 'all') throw new Error('Choose a category above first.');
+
+      let partyId = matchedPartyId;
+      if (!partyId) {
+        const { data: newParty, error: partyErr } = await supabase
+          .from('parties')
+          .insert({ name, kind: newPartyKind, created_by: user.id })
+          .select('id')
+          .single();
+        if (partyErr) throw partyErr;
+        partyId = newParty.id;
+      }
+
+      const { data: engagement, error: engagementErr } = await supabase
+        .from('event_engagements')
+        .upsert(
+          { event_id: event.id, party_id: partyId, created_by: user.id },
+          { onConflict: 'event_id,party_id' },
+        )
+        .select('id')
+        .single();
+      if (engagementErr) throw engagementErr;
+
+      const { error: roleErr } = await supabase
+        .from('event_engagement_roles')
+        .upsert(
+          { event_engagement_id: engagement.id, role: activeCategory },
+          { onConflict: 'event_engagement_id,role' },
+        );
+      if (roleErr) throw roleErr;
+
+      return partyId as string;
+    },
+    onSuccess: (partyId) => {
+      queryClient.invalidateQueries({ queryKey: ['event-party-engagements', event.id] });
+      setPartySearch('');
+      setMatchedPartyId(null);
+      setNewPartyKind('organization');
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('party', partyId);
+        return next;
+      });
+      toast({ title: 'Added', description: 'Party added to this event.' });
+    },
+    onError: (error: Error) => {
+      toast({ title: 'Error', description: error.message || 'Failed to add party.', variant: 'destructive' });
+    },
+  });
 
   // Fetch email blasts
   const { data: blasts = [], isLoading: blastsLoading } = useQuery({
@@ -160,14 +423,32 @@ const CommunicationsHub: React.FC = () => {
     enabled: !!event.id,
   });
 
+  // The Compose tab's audience: a selected Party takes priority, then an
+  // active (non-"All") category, falling back to the original attendee
+  // SEGMENT_OPTIONS behavior untouched when nothing is selected.
+  const audienceMode: 'party' | 'role' | 'default' =
+    selectedPartyId ? 'party' : activeCategory !== 'all' ? 'role' : 'default';
+
+  const audienceRecipientCount =
+    audienceMode === 'party'
+      ? (selectedParty?.email ? 1 : 0)
+      : audienceMode === 'role'
+        ? partyEngagements.filter((row) => row.parties?.email).length
+        : (segmentCounts[emailSegment as keyof typeof segmentCounts] || 0);
+
   // Send email blast mutation
   const sendBlastMutation = useMutation({
     mutationFn: async () => {
+      const segment: BlastSegment | null =
+        audienceMode === 'party' ? { type: 'party', partyId: selectedPartyId as string }
+        : audienceMode === 'role' ? { type: 'role', role: activeCategory }
+        : (emailSegment === 'all' ? null : { type: emailSegment });
+
       const blastData = {
         event_id: event.id,
         subject: emailSubject.trim(),
         body_markdown: emailBody.trim(),
-        segment: emailSegment === 'all' ? null : { type: emailSegment },
+        segment,
         scheduled_for: scheduleType === 'later' && scheduledFor
           ? new Date(scheduledFor).toISOString()
           : new Date().toISOString(),
@@ -316,7 +597,6 @@ const CommunicationsHub: React.FC = () => {
     }
   };
 
-  const selectedSegmentCount = segmentCounts[emailSegment as keyof typeof segmentCounts] || 0;
   const notifSegmentCount = segmentCounts[notifSegment as keyof typeof segmentCounts] || 0;
   const nonDnaMemberCount = (segmentCounts.all || 0) - (segmentCounts.dna_members || 0);
 
@@ -325,8 +605,174 @@ const CommunicationsHub: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold">Communications</h1>
-        <p className="text-muted-foreground">Send email blasts and notifications to attendees</p>
+        <p className="text-muted-foreground">Manage relationships and send updates to attendees</p>
       </div>
+
+      {/* Party / Role list — primary view */}
+      <div className="space-y-3">
+        <h2 className="text-h3 font-semibold">Parties</h2>
+        <PartyCategoryChips activeCategory={activeCategory} onSelect={setActiveCategory} counts={roleCounts} />
+
+        <div className="relative">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={partySearch}
+                onChange={(e) => {
+                  setPartySearch(e.target.value);
+                  setMatchedPartyId(null);
+                }}
+                placeholder="Search or add a person or organization"
+                className="pl-9"
+              />
+            </div>
+            {!matchedPartyId && partySearch.trim().length > 0 && (
+              <div className="flex rounded-md border border-border overflow-hidden shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setNewPartyKind('organization')}
+                  className={cn(
+                    'px-3 text-xs font-medium',
+                    newPartyKind === 'organization' ? 'bg-muted text-foreground' : 'text-muted-foreground',
+                  )}
+                >
+                  Org
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNewPartyKind('person')}
+                  className={cn(
+                    'px-3 text-xs font-medium border-l border-border',
+                    newPartyKind === 'person' ? 'bg-muted text-foreground' : 'text-muted-foreground',
+                  )}
+                >
+                  Person
+                </button>
+              </div>
+            )}
+            <Button
+              onClick={() => addOrLinkPartyMutation.mutate()}
+              disabled={!partySearch.trim() || activeCategory === 'all' || addOrLinkPartyMutation.isPending}
+            >
+              {addOrLinkPartyMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+
+          {activeCategory === 'all' && partySearch.trim() && (
+            <p className="text-xs text-muted-foreground mt-1">Choose a category above to add "{partySearch.trim()}".</p>
+          )}
+
+          {partySearch.trim().length > 1 && partyMatches.length > 0 && (
+            <Card className="absolute z-10 mt-1 w-full p-1">
+              {partyMatches.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setPartySearch(m.name);
+                    setMatchedPartyId(m.id);
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-muted/60 flex items-center justify-between"
+                >
+                  <span>{m.name}</span>
+                  <span className="text-xs text-muted-foreground capitalize">{m.kind}</span>
+                </button>
+              ))}
+            </Card>
+          )}
+        </div>
+
+        {partiesLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : partyEngagements.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-6 text-center">No parties yet in this category.</p>
+        ) : (
+          <div className="rounded-lg border border-border divide-y divide-border">
+            {partyEngagements.map((row) => {
+              const isSelected = selectedPartyId === row.party_id;
+              return (
+                <div key={row.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectParty(row.party_id)}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-muted/40"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      {row.parties?.kind === 'person' ? (
+                        <UserRound className="h-4 w-4 text-muted-foreground shrink-0" />
+                      ) : (
+                        <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{row.parties?.name}</p>
+                        <div className="flex gap-1 flex-wrap mt-0.5">
+                          {row.event_engagement_roles.map((r) => (
+                            <Badge key={r.role} variant="outline" className="text-[10px]">
+                              {roleLabel(r.role)}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    {isSelected ? (
+                      <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                    )}
+                  </button>
+
+                  {isSelected && (
+                    <div className="px-4 pb-4 pt-1 bg-muted/20 space-y-2 text-sm">
+                      <button
+                        type="button"
+                        onClick={() => setHistoryExpanded((v) => !v)}
+                        className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
+                      >
+                        {historyExpanded ? (
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        ) : (
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        )}
+                        {selectedParty?.name} · {partyHistory.length} event{partyHistory.length === 1 ? '' : 's'}
+                      </button>
+
+                      {historyExpanded && (
+                        partyHistoryLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        ) : (
+                          <ul className="space-y-1 pl-5">
+                            {partyHistory.map((h) => (
+                              <li key={h.id} className="flex items-center justify-between text-xs text-muted-foreground">
+                                <span>{h.events?.title ?? 'Untitled event'}</span>
+                                <span>
+                                  {h.events?.start_time ? format(new Date(h.events.start_time), 'MMM d, yyyy') : '—'}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )
+                      )}
+
+                      {selectedParty?.email && (
+                        <p className="text-xs text-muted-foreground">{selectedParty.email}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <Separator />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
@@ -357,29 +803,49 @@ const CommunicationsHub: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Segment Selector */}
-              <div className="space-y-2">
-                <Label>Audience</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {SEGMENT_OPTIONS.map((option) => (
-                    <Card
-                      key={option.value}
-                      className={`p-3 cursor-pointer transition-all ${
-                        emailSegment === option.value ? 'ring-2 ring-primary' : 'hover:bg-muted/50'
-                      }`}
-                      onClick={() => setEmailSegment(option.value)}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <p className="font-medium text-sm">{option.label}</p>
-                        <Badge variant="outline">
-                          {segmentCounts[option.value as keyof typeof segmentCounts] || 0}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{option.description}</p>
-                    </Card>
-                  ))}
+              {/* Audience */}
+              {audienceMode === 'default' ? (
+                <div className="space-y-2">
+                  <Label>Audience</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {SEGMENT_OPTIONS.map((option) => (
+                      <Card
+                        key={option.value}
+                        className={`p-3 cursor-pointer transition-all ${
+                          emailSegment === option.value ? 'ring-2 ring-primary' : 'hover:bg-muted/50'
+                        }`}
+                        onClick={() => setEmailSegment(option.value)}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-medium text-sm">{option.label}</p>
+                          <Badge variant="outline">
+                            {segmentCounts[option.value as keyof typeof segmentCounts] || 0}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{option.description}</p>
+                      </Card>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2">
+                  <Label>Audience</Label>
+                  <Card className="p-3 flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-sm">
+                        {audienceMode === 'party' ? selectedParty?.name : `${roleLabel(activeCategory)} (this event)`}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {audienceMode === 'party' ? 'Selected from the Party list' : 'Every engaged party in this category'}
+                      </p>
+                    </div>
+                    <Badge variant="outline">{audienceRecipientCount}</Badge>
+                  </Card>
+                  <p className="text-xs text-muted-foreground">
+                    Clear the {audienceMode === 'party' ? 'party selection' : 'category filter'} above to email attendees instead.
+                  </p>
+                </div>
+              )}
 
               <Separator />
 
@@ -483,7 +949,7 @@ const CommunicationsHub: React.FC = () => {
               <div className="flex items-center justify-between pt-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Users className="h-4 w-4" />
-                  Will be sent to {selectedSegmentCount} recipients
+                  Will be sent to {audienceRecipientCount} recipient{audienceRecipientCount === 1 ? '' : 's'}
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -492,7 +958,8 @@ const CommunicationsHub: React.FC = () => {
                       !emailSubject.trim() ||
                       !emailBody.trim() ||
                       sendBlastMutation.isPending ||
-                      (scheduleType === 'later' && !scheduledFor)
+                      (scheduleType === 'later' && !scheduledFor) ||
+                      (audienceMode !== 'default' && audienceRecipientCount === 0)
                     }
                   >
                     {sendBlastMutation.isPending ? (

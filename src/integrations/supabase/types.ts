@@ -3065,6 +3065,77 @@ export type Database = {
           },
         ]
       }
+      event_engagement_roles: {
+        Row: {
+          created_at: string
+          event_engagement_id: string
+          id: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          event_engagement_id: string
+          id?: string
+          role: string
+        }
+        Update: {
+          created_at?: string
+          event_engagement_id?: string
+          id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_engagement_roles_event_engagement_id_fkey"
+            columns: ["event_engagement_id"]
+            isOneToOne: false
+            referencedRelation: "event_engagements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_engagements: {
+        Row: {
+          created_at: string
+          created_by: string
+          event_id: string
+          id: string
+          party_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          event_id: string
+          id?: string
+          party_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          event_id?: string
+          id?: string
+          party_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_engagements_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_engagements_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_promo_codes: {
         Row: {
           code: string
@@ -6794,6 +6865,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      parties: {
+        Row: {
+          created_at: string
+          created_by: string
+          email: string | null
+          id: string
+          kind: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          email?: string | null
+          id?: string
+          kind?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          email?: string | null
+          id?: string
+          kind?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       political_digest: {
         Row: {

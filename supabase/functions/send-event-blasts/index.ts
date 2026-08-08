@@ -118,8 +118,64 @@ serve(async (req) => {
     const results: any[] = [];
 
     for (const blast of blasts) {
-      const seg = (blast.segment || {}) as { type?: string; status?: string };
+      const seg = (blast.segment || {}) as { type?: string; status?: string; partyId?: string; role?: string };
       const segType = (seg.type ?? seg.status ?? 'all') as string;
+
+      // Relationships Phase 1 (BD411/423): audience is a Party or a role
+      // category rather than an event_attendees segment. Parties are not DNA
+      // members and carry their own email directly — resolve and send to
+      // that address, skipping the user_id/profiles lookup path below.
+      if (segType === 'party' || segType === 'role') {
+        let partyEmails: string[] = [];
+        if (segType === 'party' && seg.partyId) {
+          const { data: party, error: partyErr } = await supabase
+            .from('parties')
+            .select('email')
+            .eq('id', seg.partyId)
+            .maybeSingle();
+          if (partyErr) throw partyErr;
+          if (party?.email) partyEmails = [party.email];
+        } else if (segType === 'role' && seg.role) {
+          const { data: rows, error: rowsErr } = await supabase
+            .from('event_engagements')
+            .select('parties(email), event_engagement_roles!inner(role)')
+            .eq('event_id', blast.event_id)
+            .eq('event_engagement_roles.role', seg.role);
+          if (rowsErr) throw rowsErr;
+          partyEmails = Array.from(new Set(
+            ((rows || []) as any[])
+              .map((r) => r.parties?.email)
+              .filter((e: string | null | undefined): e is string => !!e),
+          ));
+        }
+
+        const isHtmlParty = (blast.body_markdown || '').trim().startsWith('<');
+        const bodyHtmlParty = isHtmlParty ? (blast.body_markdown || '') : mdToHtml(blast.body_markdown || '');
+        const htmlParty = `<div style="font-family:Inter,system-ui,sans-serif;line-height:1.6;">
+          <h2>${escapeHtml(blast.subject)}</h2>
+          <div>${bodyHtmlParty}</div>
+        </div>`;
+
+        const partySendResults: any[] = [];
+        for (const to of partyEmails) {
+          try {
+            const res = await resend.emails.send({ from: fromEmail, to: [to], subject: blast.subject, html: htmlParty });
+            partySendResults.push({ to, id: (res as any).id || null });
+          } catch (e) {
+            console.error('send error', e);
+            partySendResults.push({ to, error: String(e) });
+          }
+        }
+
+        const { error: updErrParty } = await supabase
+          .from('event_blasts')
+          .update({ sent_at: new Date().toISOString() })
+          .eq('id', blast.id);
+        if (updErrParty) console.error('update blast sent err', updErrParty);
+
+        results.push({ blastId: blast.id, recipients: partyEmails.length, sendResults: partySendResults });
+        continue;
+      }
 
       // Collect recipient user IDs based on segment
       let userIds: string[] = [];
